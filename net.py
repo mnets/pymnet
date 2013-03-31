@@ -1,5 +1,7 @@
 import networkx
 
+COLON=slice(None,None,None)
+
 class MultisliceNetwork(object):
     """
 
@@ -43,12 +45,25 @@ class MultisliceNetwork(object):
 
         #should keep table of degs and strenghts
         
+
     def _link_to_nodes(self,link):
         """Returns the link as tuple of nodes in the graph representing
         the multislice structure. I.e. when given (i,j,s_1,r_1, ... ,s_d,r_d)
         (i,s_1,...,s_d),(j,r_1,...,r_d) is returned.
         """
-        return (item[0],)+item[2::2],(item[1],)+item[3::2]
+        return (link[0],)+link[2::2],(link[1],)+link[3::2]
+    def _short_link_to_link(self,slink):
+        """ Returns a full link for the shortened version of the link. That is,
+        if (i,j,s_1,...,s_d) is given as input, then (i,j,s_1,s_1,...,s_d,s_d) is 
+        returned.
+        """
+        l=list(slink[:2])
+        for k in slink[2:]:
+            l.append(k)
+            l.append(k)
+
+        return tuple(l)
+    
 
     def _get_link(self,link):
         """Return link weight or 0 if no link.
@@ -65,7 +80,7 @@ class MultisliceNetwork(object):
 
     def _set_link(self,link,value):
         node1,node2=self._link_to_nodes(link)
-        self.net[node1][node2]['weight']=value
+        self.net.add_edge(node1,node2,weight=value)
 
     def _get_degree(self,node, dims):
         if dims==None:
@@ -99,16 +114,29 @@ class MultisliceNetwork(object):
         i,s,x = node i at slice1 and slice2 x
         i,j,s,x = same as i,j,s,s,x,x
         i,j,s,r,x,y = ...
-        """
+        """        
         d=self.dimensions
         if not isinstance(item,tuple):
             item=(item,)
         if len(item)==d: #node
-            pass
-        elif len(item)==2*d: #link
-            pass
-        elif len(item)==d+1: #link
-            pass
+            return MultisliceNode(item,self)
+        elif len(item)==2*d: #link, or a node if slicing
+            colons=0
+            layers=[]
+            for i in range(d):
+                if item[2*i+1]!=COLON:
+                    layers.append(item[2*i])
+                else:
+                    colons+=1
+                    layers.append(None)
+            if colons>0:
+                return MultisliceNode(self._link_to_nodes(item)[0],self,layers=layers)
+            else:
+                return self._get_link(item)
+        elif len(item)==d+1: #interslice link or node if slicing            
+            #check if colons are in the slice indices
+            
+            raise NotImplemented("yet.")
         else:
             if d>1:
                 raise KeyError("%d, %d, or %d indices please."%(d,d+1,2*d))
@@ -116,7 +144,13 @@ class MultisliceNetwork(object):
                 raise KeyError("1 or 2 indices please.")
 
     def __setitem__(self,item,val):
-        pass
+        d=self.dimensions
+        if not isinstance(item,tuple):
+            item=(item,)
+        if len(item)==2*d:
+            self._set_link(item,val)
+        elif len(item)==d+1:
+            self._set_link(self._short_link_to_link(item),val)
 
     def __iter__(self):
         """Iterates over all nodes.
