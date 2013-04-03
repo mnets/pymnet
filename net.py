@@ -1,43 +1,35 @@
-import networkx
+import networkx,math
 
 COLON=slice(None,None,None)
 
-class MultisliceNetwork(object):
-    """
 
-    couplings - A list or tuple with lenght equal to dimensions
-                Each couling must be either a policy or a network
-                policy is a tuple: (type, weight)
-                policy types: ordinal, categorical, ordinal_warp, categorical_warp
-    
-    policies by giving inter-slice couplings ??
+class SparseTensor(object):
+    def __init__(self,dimensions):
+        self.dimensions=dimensions
+        self.items={}
+    def __getitem__(self,*item):
+        assert len(item)==self.dimensions
+        return self.items.get(item,0)
+    def __setitem__(self,item,value):
+        assert len(item)==self.dimensions
+        self.items[item]=value
+
+class MultisliceNetwork(object):
+    """Multislice network with arbitrary number of dimension and a tensor-like interface.
 
     """
     def __init__(self,
                  dimensions=1,
-                 directed=False,
-                 couplings=None,
-                 intersliceLinks=True):
-        #todo: assert that parameters are ok
+                 directed=False):
+        assert dimensions>=0
 
         self.dimensions=dimensions
         self.directed=directed
-        self.intersliceLinks=intersliceLinks
-
-        if couplings!=None:
-            assert len(couplings)==dimensions
-            self.couplings=[]
-            for coupling in couplings:
-                if isinstance(coupling,tuple):
-                    raise NotImplemented("yet.")
-                elif isinstance(coupling,MultisliceNetwork):
-                    self.couplings.append(coupling)
-                else:
-                    raise ValueError("Invalid coupling type: "+str(type(coupling)))
-        else:
-            couplings=map(lambda x:None,range(dimensions))
 
         self.slices=[] #set for each dimension
+        for d in dimensions:
+            self.slices.append(set())
+
         if directed:
             self.net=networkx.DiGraph()
         else:
@@ -45,13 +37,14 @@ class MultisliceNetwork(object):
 
         #should keep table of degs and strenghts
         
-
+    #@classmehtod
     def _link_to_nodes(self,link):
         """Returns the link as tuple of nodes in the graph representing
         the multislice structure. I.e. when given (i,j,s_1,r_1, ... ,s_d,r_d)
         (i,s_1,...,s_d),(j,r_1,...,r_d) is returned.
         """
         return (link[0],)+link[2::2],(link[1],)+link[3::2]
+    #@classmehtod
     def _short_link_to_link(self,slink):
         """ Returns a full link for the shortened version of the link. That is,
         if (i,j,s_1,...,s_d) is given as input, then (i,j,s_1,s_1,...,s_d,s_d) is 
@@ -64,6 +57,11 @@ class MultisliceNetwork(object):
 
         return tuple(l)
     
+    def add_node(self,node,dimension):
+        """Adds an empty node to the dimension.
+        Does nothing if node already exists.
+        """
+        self.slices[dimension].add(node)
 
     def _get_link(self,link):
         """Return link weight or 0 if no link.
@@ -105,15 +103,28 @@ class MultisliceNetwork(object):
 
         i,:,s,: = i,s = node i at slice s
         i,j,s,: = node i at slice s, but only links to j are visible
-        i,:,s,r = node i at slice s, but only links to slide s are visible
+        i,:,s,r = node i at slice s, but only links to slide r are visible
 
         i,:,s   = i,:,s,s
+        Not implemented yet:
         i,s,:   = i,i,s,:
 
         dimensions=3
-        i,s,x = node i at slice1 and slice2 x
-        i,j,s,x = same as i,j,s,s,x,x
-        i,j,s,r,x,y = ...
+        i,s,x       = node i at slice s in dimension 1 and at slice x in dimension 2
+        i,j,s,x     = link i,j at slice s in dim 1 and slice x in dim 2 = i,j,s,s,x,x
+        i,j,s,r,x,y = link i,j between slices s and r in dim 1 and between slices x and y in dim 2
+
+        i,:,s,:,x,: = i,s,x
+        i,j,s,:,x,y = node i at slice s and y, but only links to j and y are visible
+        ...
+
+        i,:,s,x = i,:,s,s,x,x
+        Not implemented yet:
+        i,s,:,x = i,i,s,:,x,x
+        i,s,x,: = i,i,s,s,x,:
+
+        
+
         """        
         d=self.dimensions
         if not isinstance(item,tuple):
@@ -134,9 +145,10 @@ class MultisliceNetwork(object):
             else:
                 return self._get_link(item)
         elif len(item)==d+1: #interslice link or node if slicing            
-            #check if colons are in the slice indices
-            
-            raise NotImplemented("yet.")
+            if COLON not in item[2:]: #check if colons are in the slice indices
+                return self[self.short_link_to_link(item)]
+            else:
+                raise NotImplemented("yet.")
         else:
             if d>1:
                 raise KeyError("%d, %d, or %d indices please."%(d,d+1,2*d))
@@ -148,19 +160,28 @@ class MultisliceNetwork(object):
         if not isinstance(item,tuple):
             item=(item,)
         if len(item)==2*d:
+            link=item
             self._set_link(item,val)
         elif len(item)==d+1:
-            self._set_link(self._short_link_to_link(item),val)
+            link=self._short_link_to_link(item)
+        else:
+            raise KeyError("Invalid number of indices.")
+        self._set_link(item,val)
+
+        #There might be new nodes, add them to sets of nodes
+        for i in range(d):
+            self.add_node(link[i],int(math.floor(i/2))) #just d/2 would work, but ugly
+
+
+    def iter_dimension(self,dimension):
+        for node in self.slices[dimension]:
+            yield node
 
     def __iter__(self):
         """Iterates over all nodes.
         """
-
-    def add_slice(self,dimension,s):
-        pass
-
-    def add_node(self,node):
-        pass
+        for node in self.slices[0]:
+            yield node
 
     def deg(self,*args):
         """
@@ -200,6 +221,81 @@ class MultisliceNode(object):
 
 
 class CoupledMultiplexNetwork(MultisliceNetwork):
+    """
+    couplings - A list or tuple with lenght equal to dimensions
+                Each couling must be either a policy or a network
+                policy is a tuple: (type, weight)
+                policy types: ordinal, categorical, ordinal_warp, categorical_warp
+    
+    policies by giving inter-slice couplings ??
+    """
+
+    def __init__(self,couplings=None):
+        if couplings!=None:
+            assert len(couplings)==dimensions
+            self.couplings=[]
+            for coupling in couplings:
+                if isinstance(coupling,tuple):
+                    self.couplings.append(coupling)
+                elif isinstance(coupling,MultisliceNetwork):
+                    self.couplings.append((coupling,))
+                else:
+                    raise ValueError("Invalid coupling type: "+str(type(coupling)))
+        else:
+            couplings=map(lambda x:None,range(dimensions))
+
+        self.A={}
+
+    def _get_dimension(self,link):
+        dims=[]
+        for d in range(self.dimensions):
+            if link[2*d]!=link[2*d+1]:
+                dims.append(d)
+        if len(dims)==1:
+            return dims[0]
+        else:
+            return None
+
+    def _get_link(self,link):
+        """Overrides parents method.
+        """
+        #if len(reduce(map(lambda d:link[2*d]!=link[2*d+1],range(self.dimensions))))!=1:
+        #    return 0.0 
+        d=self.get_dimension(link)
+        if d!=None:
+            if d>0:
+                coupling=self.couplings[d]
+                if coupling[0]=="categorical":
+                    return coupling[1]
+                elif:
+                    raise NotImplemented("yet.")
+            else:
+                return self.A[link[2::2]][link[0],link[1]]
+        else:
+            return 0.0
+                
+    def _set_link(self,link,value):
+        """Overrides parents method.
+        """
+        d=self.get_dimension(link)
+        if d==0:
+            S=link[2::2]
+            if S not in self.A:
+                self.A[S]=MultisliceNetwork(dimensions=1)
+                self.A[S][link[0],link[1]]=value
+        else:
+            raise KeyError("Can only set links in the first dimension.")
+
+    def _get_degree(self,node, dims):
+        """Overrides parents method.
+        """
+        raise NotImplemented("yet.")
+
+    def _iter_neighbors(self,node,dims):
+        """Overrides parents method.
+        """
+        raise NotImplemented("yet.")
+
     def get_couplings(self,dimension):
         """Returns a view to a network of couplings between nodes and
         their counterparts in other slices of the given dimension.        
@@ -209,20 +305,29 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
     def set_connection_policy(self,dimension,policy):
         pass
 
-class FlatMultisliceNetworkView(object):
+class FlatMultisliceNetworkView(MultisliceNetwork):
     def __init__(self,mnet):
         self.mnet=mnet
-        self.dim=0
-    def __getitem__(self,a):
-        if isinstance(a,tuple):
-            if len(a)!=2:
-                raise KeyError("Too many indices.")
-            return self.mnet[tuple(itertools.chain(*zip(*a)))]
-        else: #it must be a list
-            return FlatMultisliceNetworkViewNode(self,a)
+        self.dimensions=1
+    def _get_link(self,link):
+        """Overrides parents method.
+        """
+        return self.mnet[tuple(itertools.chain(*zip(*a)))]
+                
+    def _set_link(self,link,value):
+        """Overrides parents method.
+        """
+        raise NotImplemented("yet.")
 
-class FlatMultisliceNetworkViewNode(object):
-    pass
+    def _get_degree(self,node, dims):
+        """Overrides parents method.
+        """
+        raise NotImplemented("yet.")
+
+    def _iter_neighbors(self,node,dims):
+        """Overrides parents method.
+        """
+        raise NotImplemented("yet.")
 
 class ModularityMultisliceNetworkView(MultisliceNetwork):
     def __init__(self,mnet,alpha=1.0,omega=1.0):
@@ -237,7 +342,7 @@ class ModularityMultisliceNetworkView(MultisliceNetwork):
                 kis=self.mnet.str((item[0],)+item[2::2])
                 kjs=self.mnet.str((item[1],)+item[3::2])
                 ms=None
-                v-alpha*kis*kjs/float(2.0*ms)
+                return v-alpha*kis*kjs/float(2.0*ms)
             else:
                 return omega*v
         else:
