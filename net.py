@@ -80,7 +80,10 @@ class MultisliceNetwork(object):
         node1,node2=self._link_to_nodes(link)
         self.net.add_edge(node1,node2,weight=value)
 
-    def _get_degree(self,node, dims):
+    def _get_degree(self,node, dims=None):
+
+        #TODO: lookuptables for intradimensional degrees
+
         if dims==None:
             return self.net.degree(node)
         else:
@@ -123,6 +126,8 @@ class MultisliceNetwork(object):
         i,s,:,x = i,i,s,:,x,x
         i,s,x,: = i,i,s,s,x,:
 
+        i,:,s,:,x = i,:,s,:,x,x
+        i,s,:,x,: = i,i,s,:,x,:
         
 
         """        
@@ -206,6 +211,14 @@ class MultisliceNode(object):
         self.node=node
         self.mnet=mnet
         self.layers=layers
+
+    def __getitem__(self,item):
+        """
+        example:
+        net[1,'a','x'][:,:,'y']=net[1,:,'a',:,'x','y']
+        """
+        raise NotImplemented("yet.")
+
     def deg(self,*layers):
         assert len(layers)==0 or len(layers)==self.mnet.dimensions
         if layers==():
@@ -267,7 +280,7 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
                 coupling=self.couplings[d]
                 if coupling[0]=="categorical":
                     return coupling[1]
-                elif:
+                else:
                     raise NotImplemented("yet.")
             else:
                 return self.A[link[2::2]][link[0],link[1]]
@@ -286,10 +299,24 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
         else:
             raise KeyError("Can only set links in the first dimension.")
 
+    def _get_dim_degree(self,dimension):
+        coupling_type=self.couplings[dimension]
+        if coupling_type=="categorical":
+            return len(self.slices[dimension])-1
+        else:
+            raise NotImplemented()
+
     def _get_degree(self,node, dims):
         """Overrides parents method.
         """
-        raise NotImplemented("yet.")
+        k=0
+        for d,val in dims:
+            if val!=None and val==node[d]:
+                if d==0:
+                    k+=self.A[node[1:]].degree()
+                else:
+                    k+=self._get_dim_degree(d)
+        return k
 
     def _iter_neighbors(self,node,dims):
         """Overrides parents method.
