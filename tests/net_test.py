@@ -32,10 +32,16 @@ class TestNet(unittest.TestCase):
         testnet[3,3,'a','b']=1
         self.test_simple_couplings(testnet)
 
+
+    def test_simple_couplings_cmnet(self):
+        testnet=net.CoupledMultiplexNetwork(couplings=[('categorical',1.0)])
+        self.test_simple_couplings(testnet)
+
 def test_net():
     suite = unittest.TestSuite()    
     #symmetric tests:
     suite.addTest(TestNet("test_simple_couplings_mnet"))
+    suite.addTest(TestNet("test_simple_couplings_cmnet"))
 
     unittest.TextTestRunner().run(suite) 
 

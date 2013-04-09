@@ -25,10 +25,8 @@ class MultisliceNetwork(object):
 
         self.dimensions=dimensions
         self.directed=directed
-
-        self.slices=[] #set for each dimension
-        for d in range(dimensions):
-            self.slices.append(set())
+        self._init_slices(dimensions)
+        
 
         if directed:
             self.net=networkx.DiGraph()
@@ -36,6 +34,12 @@ class MultisliceNetwork(object):
             self.net=networkx.Graph()        
 
         #should keep table of degs and strenghts
+
+    def _init_slices(self,dimensions):
+        self.slices=[] #set for each dimension
+        for d in range(dimensions):
+            self.slices.append(set())
+       
         
     #@classmehtod
     def _link_to_nodes(self,link):
@@ -81,7 +85,10 @@ class MultisliceNetwork(object):
         self.net.add_edge(node1,node2,weight=value)
 
     def _get_degree(self,node, dims=None):
+        """Private method returning nodes degree (number of neighbors).
 
+        See _iter_neighbors for description of the parameters.
+        """
         #TODO: lookuptables for intradimensional degrees
 
         if dims==None:
@@ -89,6 +96,18 @@ class MultisliceNetwork(object):
         else:
             return len(list(self._iter_neighbors(node,dims)))
     def _iter_neighbors(self,node,dims):
+        """Private method to iterate over neighbors of a node.
+
+        Parameters
+        ----------
+        node(tuple) : (i,s_1,...,s_d)
+        dims : If None, iterate over all neighbors. If tuple of size d+1,
+               then we iterate over neighbors which are have exactly the same
+               value at each dimension in the tuple or None. E.g. when
+               given ('a',None,'x'), iterate over all neighbors which are node
+               'a' and in slice 'x' in the second dimension.
+
+        """
         if dims==None:
             for neigh in self.net[node]:
                 yield neigh
@@ -174,7 +193,7 @@ class MultisliceNetwork(object):
         self._set_link(link,val)
 
         #There might be new nodes, add them to sets of nodes
-        for i in range(d):
+        for i in range(2*d):
             self.add_node(link[i],int(math.floor(i/2))) #just d/2 would work, but ugly
 
 
@@ -227,8 +246,12 @@ class MultisliceNode(object):
     def str(self,*layers):
         pass
     def __iter__(self):
-        for node in self.mnet._iter_neighbors(self.node,self.layers):
-            yield node #maybe should only return the indices that can change?
+        if self.mnet.dimensions>1:
+            for node in self.mnet._iter_neighbors(self.node,self.layers):
+                yield node #maybe should only return the indices that can change?
+        else:
+            for node in self.mnet._iter_neighbors(self.node,self.layers):
+                yield node[0]
     def layers(self,*layers):
         return MultisliceNode(self.node,self.mnet,layers=layers)
 
@@ -236,16 +259,16 @@ class MultisliceNode(object):
 class CoupledMultiplexNetwork(MultisliceNetwork):
     """
     couplings - A list or tuple with lenght equal to dimensions
-                Each couling must be either a policy or a network
+                Each coupling must be either a policy or a network
                 policy is a tuple: (type, weight)
-                policy types: ordinal, categorical, ordinal_warp, categorical_warp
+                policy types: 'ordinal', 'categorical', 'ordinal_warp', 'categorical_warp'
     
     policies by giving inter-slice couplings ??
     """
 
     def __init__(self,couplings=None):
         if couplings!=None:
-            assert len(couplings)==dimensions
+            #assert len(couplings)==dimensions
             self.couplings=[]
             for coupling in couplings:
                 if isinstance(coupling,tuple):
@@ -254,12 +277,15 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
                     self.couplings.append((coupling,))
                 else:
                     raise ValueError("Invalid coupling type: "+str(type(coupling)))
+            self.dimensions=len(couplings)+1
         else:
-            couplings=map(lambda x:None,range(dimensions))
+            #couplings=map(lambda x:None,range(dimensions))
+            self.dimensions=1
 
-        self.A={}
+        self._init_slices(self.dimensions)
+        self.A={} #diagonal elements, map with keys as tuples of slices and vals as MultiSliceNetwork objects
 
-    def _get_dimension(self,link):
+    def _get_link_dimension(self,link):
         dims=[]
         for d in range(self.dimensions):
             if link[2*d]!=link[2*d+1]:
@@ -274,7 +300,7 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
         """
         #if len(reduce(map(lambda d:link[2*d]!=link[2*d+1],range(self.dimensions))))!=1:
         #    return 0.0 
-        d=self.get_dimension(link)
+        d=self._get_link_dimension(link)
         if d!=None:
             if d>0:
                 coupling=self.couplings[d]
@@ -290,38 +316,67 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
     def _set_link(self,link,value):
         """Overrides parents method.
         """
-        d=self.get_dimension(link)
+        d=self._get_link_dimension(link)
         if d==0:
             S=link[2::2]
             if S not in self.A:
                 self.A[S]=MultisliceNetwork(dimensions=1)
                 self.A[S][link[0],link[1]]=value
         else:
-            raise KeyError("Can only set links in the first dimension.")
+            raise KeyError("Can only set links in the node dimension.")
 
-    def _get_dim_degree(self,dimension):
-        coupling_type=self.couplings[dimension]
+    def _get_dim_degree(self,node,dimension):
+        coupling_type=self.couplings[dimension-1][0]
         if coupling_type=="categorical":
             return len(self.slices[dimension])-1
         else:
             raise NotImplemented()
 
+    def _iter_dim(self,node,dimension):
+        coupling_type=self.couplings[dimension-1][0]
+        if coupling_type=="categorical":
+            for n in self.slices[dimension]:
+                if n!=node[dimension]:
+                    yield node[:dimension]+(n,)+node[dimension+1:]
+        else:
+            raise NotImplemented()
+        
+    def _select_dimensions(self,node,dims):
+        if dims==None:
+            for d in range(self.dimensions):
+                yield d
+        else:
+            l=[]
+            for d,val in enumerate(dims):
+                if val!=None and node[d]!=val:
+                    return
+                if val==None:
+                    l.append(d)
+            for d in l:
+                yield d
+
     def _get_degree(self,node, dims):
         """Overrides parents method.
         """
         k=0
-        for d,val in dims:
-            if val!=None and val==node[d]:
-                if d==0:
-                    k+=self.A[node[1:]].degree()
-                else:
-                    k+=self._get_dim_degree(d)
+        for d in self._select_dimensions(node,dims):
+            if d==0:
+                k+=self.A[node[1:]][node[0]].degree()
+            else:
+                k+=self._get_dim_degree(node,d)
         return k
 
     def _iter_neighbors(self,node,dims):
         """Overrides parents method.
         """
-        raise NotImplemented("yet.")
+        for d in self._select_dimensions(node,dims):
+            if d==0:                
+                for n in self.A[node[1:]][node[0]]:
+                    yield (n,)+node[1:]
+            else:
+                for n in self._iter_dim(node,d):
+                    yield n
+
 
     def get_couplings(self,dimension):
         """Returns a view to a network of couplings between nodes and
