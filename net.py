@@ -27,7 +27,7 @@ class MultisliceNetwork(object):
         self.directed=directed
 
         self.slices=[] #set for each dimension
-        for d in dimensions:
+        for d in range(dimensions):
             self.slices.append(set())
 
         if directed:
@@ -171,7 +171,7 @@ class MultisliceNetwork(object):
             link=self._short_link_to_link(item)
         else:
             raise KeyError("Invalid number of indices.")
-        self._set_link(item,val)
+        self._set_link(link,val)
 
         #There might be new nodes, add them to sets of nodes
         for i in range(d):
