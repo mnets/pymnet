@@ -20,11 +20,13 @@ class MultisliceNetwork(object):
     """
     def __init__(self,
                  dimensions=1,
+                 noEdge=0,
                  directed=False):
         assert dimensions>=0
 
         self.dimensions=dimensions
         self.directed=directed
+        self.noEdge=noEdge
         self._init_slices(dimensions)
         
 
@@ -48,6 +50,18 @@ class MultisliceNetwork(object):
         (i,s_1,...,s_d),(j,r_1,...,r_d) is returned.
         """
         return (link[0],)+link[2::2],(link[1],)+link[3::2]
+    #@classmehtod
+    def _nodes_to_link(self,node1,node2):
+        """Returns a link when tuple of nodes is given in the graph representing
+        the multislice structure. I.e. when given (i,s_1,...,s_d),(j,r_1,...,r_d) 
+        (i,j,s_1,r_1, ... ,s_d,r_d) is returned.
+        """
+        assert len(node1)==len(node2)
+        l=[]
+        for i,n1 in enumerate(node1):
+            l.append(n1)
+            l.append(node2[i])
+        return tuple(l)
     #@classmehtod
     def _short_link_to_link(self,slink):
         """ Returns a full link for the shortened version of the link. That is,
@@ -78,11 +92,19 @@ class MultisliceNetwork(object):
         link(tuple) : (i,j,s_1,r_1, ... ,s_d,r_d)
         """
         node1,node2=self._link_to_nodes(link)
-        return self.net[node1][node2]['weight']
+        if node1 in self.net:
+            if node2 in self.net[node1]:
+                return self.net[node1][node2]['weight']
+        return self.noEdge
 
-    def _set_link(self,link,value):
+    def _set_link(self,link,value):        
         node1,node2=self._link_to_nodes(link)
-        self.net.add_edge(node1,node2,weight=value)
+        if value==self.noEdge:
+            if node1 in self.net:
+                if node2 in self.net[node1]:
+                    self.net.remove_edge(node1,node2)
+        else:
+            self.net.add_edge(node1,node2,weight=value)
 
     def _get_degree(self,node, dims=None):
         """Private method returning nodes degree (number of neighbors).
@@ -95,6 +117,16 @@ class MultisliceNetwork(object):
             return self.net.degree(node)
         else:
             return len(list(self._iter_neighbors(node,dims)))
+
+    def _get_strength(self,node, dims=None):
+        """Private method returning nodes strenght (sum of weights).
+
+        See _iter_neighbors for description of the parameters.
+        """
+        #TODO: lookuptables for intradimensional strengths        
+        return sum(map(lambda n:self._get_link(self._nodes_to_link(node,n)),self._iter_neighbors(node,dims)))
+
+
     def _iter_neighbors(self,node,dims):
         """Private method to iterate over neighbors of a node.
 
@@ -242,9 +274,12 @@ class MultisliceNode(object):
         assert len(layers)==0 or len(layers)==self.mnet.dimensions
         if layers==():
             layers=self.layers
-        return self.mnet._get_deg(self.node,layers)
+        return self.mnet._get_degree(self.node,layers)
     def str(self,*layers):
-        pass
+        assert len(layers)==0 or len(layers)==self.mnet.dimensions
+        if layers==():
+            layers=self.layers
+        return self.mnet._get_strength(self.node,layers)
     def __iter__(self):
         if self.mnet.dimensions>1:
             for node in self.mnet._iter_neighbors(self.node,self.layers):
@@ -303,7 +338,7 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
         d=self._get_link_dimension(link)
         if d!=None:
             if d>0:
-                coupling=self.couplings[d]
+                coupling=self.couplings[d-1]                
                 if coupling[0]=="categorical":
                     return coupling[1]
                 else:
@@ -321,9 +356,10 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
             S=link[2::2]
             if S not in self.A:
                 self.A[S]=MultisliceNetwork(dimensions=1)
-                self.A[S][link[0],link[1]]=value
+            self.A[S][link[0],link[1]]=value
         else:
             raise KeyError("Can only set links in the node dimension.")
+
 
     def _get_dim_degree(self,node,dimension):
         coupling_type=self.couplings[dimension-1][0]
