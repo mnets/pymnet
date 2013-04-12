@@ -368,6 +368,11 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
         else:
             raise NotImplemented()
 
+    def _get_dim_strength(self,node,dimension):
+        coupling_str=self.couplings[dimension-1][1]
+        return self._get_dim_degree(node,dimension)*coupling_str
+
+
     def _iter_dim(self,node,dimension):
         coupling_type=self.couplings[dimension-1][0]
         if coupling_type=="categorical":
@@ -397,10 +402,21 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
         k=0
         for d in self._select_dimensions(node,dims):
             if d==0:
-                k+=self.A[node[1:]][node[0]].degree()
+                k+=self.A[node[1:]][node[0]].deg()
             else:
                 k+=self._get_dim_degree(node,d)
         return k
+
+    def _get_strength(self,node, dims):
+        """Overrides parents method.
+        """
+        s=0
+        for d in self._select_dimensions(node,dims):
+            if d==0:
+                s+=self.A[node[1:]][node[0]].str()
+            else:
+                s+=self._get_dim_strength(node,d)
+        return s
 
     def _iter_neighbors(self,node,dims):
         """Overrides parents method.
