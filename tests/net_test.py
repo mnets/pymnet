@@ -112,7 +112,7 @@ class TestNet(unittest.TestCase):
 
 
     def test_2dim_categorical_couplings(self,net):
-        net[1,2,'a','x']=1
+        net[1,2,'a','x']=3
         net[2,3,'a','x']=1
         net[1,2,'b','x']=1
         net[1,3,'b','x']=1
@@ -128,13 +128,44 @@ class TestNet(unittest.TestCase):
         net[1,3,'a','y']=1
         net[2,3,'a','y']=1
 
-        self.assertEqual(net[1,2,'a','a','x','x'],1)
+        #Test existing edges
+        self.assertEqual(net[1,2,'a','a','x','x'],3)
         self.assertEqual(net[1,1,'a','b','x','x'],1)
         self.assertEqual(net[1,1,'a','a','x','y'],1)
         
+        #Test missing edges
         self.assertEqual(net[1,2,'a','b','x','x'],0)
         self.assertEqual(net[1,2,'a','b','x','y'],0)
         self.assertEqual(net[1,1,'a','b','x','y'],0)
+
+        #Test iterators
+        self.assertEqual(set(net[1,'a','x']),set([(2,'a','x'),(1,'b','x'),(1,'c','x'),(1,'a','y')]))
+        self.assertEqual(set(net[1,:,'a','a','x','x']),set([(2,'a','x')]))
+        self.assertEqual(set(net[1,1,'a',:,'x','x']),set([(1,'b','x'),(1,'c','x')]))
+        self.assertEqual(set(net[1,1,'a','a','x',:]),set([(1,'a','y')]))
+        self.assertEqual(set(net[1,:,'a',:,'x','x']),set([(2,'a','x'),(1,'b','x'),(1,'c','x')]))
+        self.assertEqual(set(net[1,:,'a','a','x',:]),set([(2,'a','x'),(1,'a','y')]))
+        self.assertEqual(set(net[1,1,'a',:,'x',:]),set([(1,'b','x'),(1,'c','x'),(1,'a','y')]))
+
+        #Test degs
+        self.assertEqual(net[1,'a','x'].deg(),4)
+        self.assertEqual(net[1,:,'a','a','x','x'].deg(),1)
+        self.assertEqual(net[1,1,'a',:,'x','x'].deg(),2)
+        self.assertEqual(net[1,1,'a','a','x',:].deg(),1)
+        self.assertEqual(net[1,:,'a',:,'x','x'].deg(),3)
+        self.assertEqual(net[1,:,'a','a','x',:].deg(),2)
+        self.assertEqual(net[1,1,'a',:,'x',:].deg(),3)
+
+        #Test strengths
+        self.assertEqual(net[1,'a','x'].str(),6)
+        self.assertEqual(net[1,:,'a','a','x','x'].str(),3)
+        self.assertEqual(net[1,1,'a',:,'x','x'].str(),2)
+        self.assertEqual(net[1,1,'a','a','x',:].str(),1)
+        self.assertEqual(net[1,:,'a',:,'x','x'].str(),5)
+        self.assertEqual(net[1,:,'a','a','x',:].str(),4)
+        self.assertEqual(net[1,1,'a',:,'x',:].str(),3)
+
+
 
     def test_2dim_categorical_couplings_mnet(self): 
         testnet=net.MultisliceNetwork(dimensions=3)
