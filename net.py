@@ -1,4 +1,4 @@
-import networkx,math
+import networkx,math,itertools
 
 COLON=slice(None,None,None)
 
@@ -140,13 +140,14 @@ class MultisliceNetwork(object):
                'a' and in slice 'x' in the second dimension.
 
         """
-        if dims==None:
-            for neigh in self.net[node]:
-                yield neigh
-        else:
-            for neigh in self.net[node]:
-                if all(map(lambda i:dims[i]==None or neigh[i]==dims[i], range(len(dims)))):
+        if node in self.net:
+            if dims==None:
+                for neigh in self.net[node]:
                     yield neigh
+            else:
+                for neigh in self.net[node]:
+                    if all(map(lambda i:dims[i]==None or neigh[i]==dims[i], range(len(dims)))):
+                        yield neigh
 
     def __getitem__(self,item):
         """
@@ -268,7 +269,14 @@ class MultisliceNode(object):
         example:
         net[1,'a','x'][:,:,'y']=net[1,:,'a',:,'x','y']
         """
-        raise NotImplemented("yet.")
+        if self.mnet.dimensions==1:
+            item=(item,)
+        return self.mnet[self.mnet._nodes_to_link(self.node,item)]
+
+    def __setitem__(self,item,value):
+        if self.mnet.dimensions==1:
+            item=(item,)
+        self.mnet[self.mnet._nodes_to_link(self.node,item)]=value
 
     def deg(self,*layers):
         assert len(layers)==0 or len(layers)==self.mnet.dimensions
@@ -440,9 +448,23 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
         pass
 
 class FlatMultisliceNetworkView(MultisliceNetwork):
+    """
+
+    fnet[(1,'a','b')]
+    fnet[(1,'a','b'),(2,'a','b')]
+
+    """
     def __init__(self,mnet):
         self.mnet=mnet
         self.dimensions=1
+
+    def _flat_node_to_node(self,node):
+        pass
+
+    def _flat_edge_to_edge(self,edge):
+        pass
+
+
     def _get_link(self,link):
         """Overrides parents method.
         """
@@ -465,39 +487,39 @@ class FlatMultisliceNetworkView(MultisliceNetwork):
 
 class ModularityMultisliceNetworkView(MultisliceNetwork):
     def __init__(self,mnet,alpha=1.0,omega=1.0):
+        self.alpha=alpha
+        self.omega=omega
         self.mnet=mnet
-        #precalc ms,kis,u
-        #copy mnet to self
 
-    def _get_link(self,link):
+        self.slices=mnet.slices
+        self.dimensions=mnet.dimensions
+
+        #precalc ms,u
+        self.m={}
+        for s in itertools.product(*mnet.slices[1:]):
+            for node in mnet:
+                self.m[s]=self.m.get(s,0)+mnet[(node,)+s][(COLON,)+s].str()
+            self.m[s]=self.m[s]/2.0
+        self.u=0
+        for i in itertools.product(*mnet.slices):
+            for j in itertools.product(*mnet.slices):
+                self.u+=mnet[i][j]
+        self.oneper2u=1.0/self.u/2.0
+
+    def _get_link(self,item):
         v=self.mnet[item]
         if v>0:
             if item[0]!=item[1]: #its inside slice
-                kis=self.mnet.str((item[0],)+item[2::2])
-                kjs=self.mnet.str((item[1],)+item[3::2])
-                ms=None
-                return v-alpha*kis*kjs/float(2.0*ms)
+                assert item[2::2]==item[3::2]
+                s=item[2::2]
+                kis=self.mnet[(item[0],)+s][(COLON,)+s].str()
+                kjs=self.mnet[(item[1],)+s][(COLON,)+s].str()
+                ms=self.m[s]
+                return v-self.alpha*kis*kjs/float(2.0*ms)
             else:
-                return omega*v
+                return self.omega*v
         else:
-            return v
-    """
-    def __getitem__(self,item):
-        if len(item)==2*self.mnet.dimensions:
-            v=self.mnet[item]
-            if v>0:
-                if item[0]!=item[1]: #its inside slice
-                    kis=self.mnet.str((item[0],)+item[2::2])
-                    kjs=self.mnet.str((item[1],)+item[3::2])
-                    ms=None
-                    v-alpha*kis*kjs/float(2.0*ms)
-                else:
-                    return omega*v
-            else:
-                return v
-        else:
-            pass
-    """
+            return 0.0
 
 try:
     import networkx
