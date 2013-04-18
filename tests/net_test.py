@@ -31,6 +31,10 @@ class TestNet(unittest.TestCase):
         self.assertEqual(net[2].deg(),2)
         self.assertEqual(net[1].str(),1)
         self.assertEqual(net[2].str(),2)
+        self.assertEqual(list(net[4]),[])
+
+        #Test alternative notations
+        self.assertEqual(net[1][2],1)
 
         #Modify and repeat previous tests
         net[1,2]=0 #Removes the edge
@@ -48,7 +52,9 @@ class TestNet(unittest.TestCase):
         self.assertEqual(net[2].deg(),1)
         self.assertEqual(net[1].str(),1)
         self.assertEqual(net[2].str(),1)
+        self.assertEqual(list(net[4]),[])
 
+        self.assertEqual(net[1][2],0)
 
     def test_flat_mnet(self):
         testnet=net.MultisliceNetwork(dimensions=1)
@@ -91,6 +97,7 @@ class TestNet(unittest.TestCase):
         self.assertEqual(set(net[1,:,'a',:]),set([(1,'b'),(2,'a')]))
         self.assertEqual(list(net[1,:,'a','a']),[(2,'a')])
         self.assertEqual(list(net[1,1,'a',:]),[(1,'b')])
+        self.assertEqual(list(net[4,:,'a','a']),[])
 
         #TODO: Tests for degrees and strength
 
