@@ -352,7 +352,10 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
                 else:
                     raise NotImplemented("yet.")
             else:
-                return self.A[link[2::2]][link[0],link[1]]
+                if link[2::2] in self.A:
+                    return self.A[link[2::2]][link[0],link[1]]
+                else:
+                    return 0.0
         else:
             return 0.0
                 
@@ -486,9 +489,8 @@ class FlatMultisliceNetworkView(MultisliceNetwork):
         raise NotImplemented("yet.")
 
 class ModularityMultisliceNetworkView(MultisliceNetwork):
-    def __init__(self,mnet,alpha=1.0,omega=1.0):
-        self.alpha=alpha
-        self.omega=omega
+    def __init__(self,mnet,gamma=1.0):
+        self.gamma=gamma
         self.mnet=mnet
 
         self.slices=mnet.slices
@@ -508,18 +510,16 @@ class ModularityMultisliceNetworkView(MultisliceNetwork):
 
     def _get_link(self,item):
         v=self.mnet[item]
-        if v>0:
-            if item[0]!=item[1]: #its inside slice
-                assert item[2::2]==item[3::2]
-                s=item[2::2]
-                kis=self.mnet[(item[0],)+s][(COLON,)+s].str()
-                kjs=self.mnet[(item[1],)+s][(COLON,)+s].str()
-                ms=self.m[s]
-                return v-self.alpha*kis*kjs/float(2.0*ms)
-            else:
-                return self.omega*v
+
+        if item[2::2]==item[3::2]: #its inside slice
+            s=item[2::2]
+            kis=self.mnet[(item[0],)+s][(COLON,)+s].str()
+            kjs=self.mnet[(item[1],)+s][(COLON,)+s].str()
+            ms=self.m[s]
+            return v-self.gamma*kis*kjs/float(2.0*ms)
         else:
-            return 0.0
+            return v
+
 
 try:
     import networkx
