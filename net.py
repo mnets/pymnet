@@ -349,8 +349,10 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
                 coupling=self.couplings[d-1]                
                 if coupling[0]=="categorical":
                     return coupling[1]
+                elif isinstance(coupling[0],MultisliceNetwork):
+                    return self.couplings[d-1][0][link[2*d],link[2*d+1]]
                 else:
-                    raise NotImplemented("yet.")
+                    raise Exception("Coupling not implemented: "+str(coupling))
             else:
                 if link[2::2] in self.A:
                     return self.A[link[2::2]][link[0],link[1]]
@@ -376,11 +378,15 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
         coupling_type=self.couplings[dimension-1][0]
         if coupling_type=="categorical":
             return len(self.slices[dimension])-1
+        elif isinstance(coupling[0],MultisliceNetwork):
+            return self.couplings[d-1][0][node[d]].deg()
         else:
             raise NotImplemented()
 
     def _get_dim_strength(self,node,dimension):
         coupling_str=self.couplings[dimension-1][1]
+        if isinstance(coupling[0],MultisliceNetwork):
+            raise Exception() #please implement this
         return self._get_dim_degree(node,dimension)*coupling_str
 
 

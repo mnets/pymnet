@@ -103,8 +103,43 @@ class TestNet(unittest.TestCase):
 
         #TODO: Tests for iterating over nodes and layers
 
-    #TODO: Add tests for removing links by setting them to 0
-                
+        #TODO: Add tests for removing links by setting them to 0
+
+    def test_network_coupling(self,net):
+        net[1,2,'a']=1
+        net[2,3,'a']=1
+        net[1,2,'b']=1
+        net[1,3,'b']=1
+
+        self.assertEqual(net[1,1,'a','b'],1)
+        self.assertEqual(net[1,1,'a','c'],0)
+        self.assertEqual(net[1,1,'b','c'],1)
+
+        self.assertEqual(net[1,1,'a','d'],0) #d not in net
+
+
+
+    def test_network_coupling_mnet(self):
+        testnet=net.MultisliceNetwork(dimensions=2)
+        testnet[1,1,'a','b']=1
+        testnet[2,2,'a','b']=1
+        testnet[3,3,'a','b']=1
+        testnet[1,1,'a','c']=0
+        testnet[2,2,'a','c']=0
+        testnet[3,3,'a','c']=0
+        testnet[1,1,'b','c']=1
+        testnet[2,2,'b','c']=1
+        testnet[3,3,'b','c']=1
+        self.test_network_coupling(testnet)
+        
+    def test_network_coupling_cmnet(self):
+        couplingNet=net.MultisliceNetwork(dimensions=1)
+        couplingNet['a','b']=1
+        couplingNet['a','c']=0
+        couplingNet['b','c']=1
+        testnet=net.CoupledMultiplexNetwork(couplings=[couplingNet])
+        self.test_network_coupling(testnet)
+
     def test_simple_couplings_mnet(self):
         testnet=net.MultisliceNetwork(dimensions=2)
         testnet[1,1,'a','b']=1
@@ -216,6 +251,8 @@ def test_net():
     suite.addTest(TestNet("test_simple_couplings_cmnet"))
     suite.addTest(TestNet("test_2dim_categorical_couplings_mnet"))
     suite.addTest(TestNet("test_2dim_categorical_couplings_cmnet"))
+    suite.addTest(TestNet("test_network_coupling_mnet"))
+    suite.addTest(TestNet("test_network_coupling_cmnet"))
 
     unittest.TextTestRunner().run(suite) 
 
