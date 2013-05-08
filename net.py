@@ -240,6 +240,26 @@ class MultisliceNetwork(object):
         for node in self.slices[0]:
             yield node
 
+    @property
+    def edges(self):
+        if self.directed:
+            for node in itertools.product(*self.slices):
+                for neigh in self[node]:                
+                    if self.dimensions==1:
+                        neigh=(neigh,)
+                    link=self._nodes_to_link(node,neigh)
+                    yield link+(self[link],)
+        else:
+            iterated=set()
+            for node in itertools.product(*self.slices):
+                for neigh in self[node]:                
+                    if self.dimensions==1:
+                        neigh=(neigh,)
+                    if neigh not in iterated:
+                        link=self._nodes_to_link(node,neigh)
+                        yield link+(self[link],)            
+                iterated.add(node)
+
     def deg(self,*args):
         """
         net.deg(i)
@@ -253,6 +273,15 @@ class MultisliceNetwork(object):
         """Strenght, see deg.
         """
         pass
+
+    def write_flattened(self,output):
+        nodes=map(lambda x: tuple(reversed(x)),sorted(itertools.product(*map(lambda i:sorted(self.slices[i]),reversed(range(len(self.slices)))))))
+        for i in nodes:
+            row=[str(self[i][j]) for j in nodes]
+            output.write(" ".join(row)+"\n")
+        #print " ".join(row)
+        output.close()
+
 
 class MultisliceNode(object):
     def __init__(self,node,mnet,layers=None):
@@ -309,7 +338,9 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
     policies by giving inter-slice couplings ??
     """
 
-    def __init__(self,couplings=None):
+    def __init__(self,couplings=None,directed=False):
+        self.directed=directed
+
         if couplings!=None:
             #assert len(couplings)==dimensions
             self.couplings=[]
@@ -378,14 +409,15 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
         coupling_type=self.couplings[dimension-1][0]
         if coupling_type=="categorical":
             return len(self.slices[dimension])-1
-        elif isinstance(coupling[0],MultisliceNetwork):
+        elif isinstance(coupling_type,MultisliceNetwork):
             return self.couplings[d-1][0][node[d]].deg()
         else:
             raise NotImplemented()
 
     def _get_dim_strength(self,node,dimension):
         coupling_str=self.couplings[dimension-1][1]
-        if isinstance(coupling[0],MultisliceNetwork):
+        coupling_type=self.couplings[dimension-1][0]
+        if isinstance(coupling_type,MultisliceNetwork):
             raise Exception() #please implement this
         return self._get_dim_degree(node,dimension)*coupling_str
 
