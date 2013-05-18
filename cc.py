@@ -74,7 +74,7 @@ def cc_barrat(net,node,undefReturn=0.0):
         for i,j in itertools.combinations(net[node],2):
             if net[i][j]!=net.noEdge:
                 nom+=net[node][i]+net[node][j]
-        return nom/float(2*(degree-1)*net[node].str())
+        return nom/float((degree-1)*net[node].str())
     else:
         return undefReturn
 
@@ -148,7 +148,7 @@ def cc_5cycles(net,node,anet,undefReturn=0.0):
                     if net[i,layer2][j,layer2]!=net.noEdge:
                         t+=1
         tr_central+=t
-        tu_central+=(len(net.layers)-1)*(degree*(degree-1))/2)
+        tu_central+=(len(net.layers)-1)*((degree*(degree-1))/2)
    
     #Last, go through cases where node is not central
     #to be done
