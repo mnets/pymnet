@@ -401,6 +401,9 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
             if S not in self.A:
                 self.A[S]=MultisliceNetwork(dimensions=1)
             self.A[S][link[0],link[1]]=value
+        elif d==None:
+            print link
+            raise KeyError("No self-links.")
         else:
             raise KeyError("Can only set links in the node dimension.")
 
