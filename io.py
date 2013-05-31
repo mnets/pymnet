@@ -146,7 +146,7 @@ def read_ucinet(netinput):
     else:
         net=CoupledMultiplexNetwork(couplings=[("categorical",1.0)])
 
-    if format=="fullmatrix":
+    if format=="fullmatrix" or "fullmatrix diagonal present":
         try:
             if labels_embedded: #first line is labels
                 clabels=map(lambda x:x.lower(),ii.next().split())
