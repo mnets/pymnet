@@ -203,7 +203,7 @@ class MultisliceNetwork(object):
                 return self._get_link(item)
         elif len(item)==d+1: #interslice link or node if slicing            
             if COLON not in item[2:]: #check if colons are in the slice indices
-                return self[self.short_link_to_link(item)]
+                return self[self._short_link_to_link(item)]
             else:
                 raise NotImplemented("yet.")
         else:
