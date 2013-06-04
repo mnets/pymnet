@@ -80,6 +80,12 @@ def cc_barrat(net,node,undefReturn=0.0):
 
 
 def cc_barrett(net,node,anet,undefReturn=0.0):
+    """Multiplex clustering coefficient defined by Barrett et al.
+
+    See SI of "Taking sociality seriously: the structure of multi-dimensional social networks as a source of information for individuals.", Louise Barrett, S. Peter Henzi, David Lusseau, Phil. Trans. R. Soc. B 5 August 2012 vol. 367 no. 1599 2108-2118
+
+    \frac{\sum_j^n \sum_h^n \sum_k^b ( a_{ijk} \sum_l^b (a_{ihl} \sum_m^b a_{jhm} ) )} {\sum_j^n \sum_h^n \sum_k^b (a_{ijk} \sum_l^b \max(a_{ihl},a_{jhl}) )}
+    """
     degree=anet[node].deg()
     if degree>=2:
         nom,den=0,0
@@ -92,13 +98,47 @@ def cc_barrett(net,node,anet,undefReturn=0.0):
         for j in anet[node]:
             for h in anet:
                 m=0
-                for layer in net.layers:
+                for layer in net.slices[1]:
                     m+=max(net[node,h,layer],net[j,h,layer])
                 den+=anet[node,j]*m
-                    
-        return nom/float(den)
+
+        return 2*nom/float(den)
     else:
         return undefReturn
+
+def cc_barrett_explicit(net,node,undefReturn=0.0):
+    """Same as cc_barrett, but slower implementation.
+
+    The Barrett cc is implemented here as it is written in the article
+    without any optimizations. This function is here for validating
+    the optimized version.
+    """
+    i=node
+    n=list(net)
+    b=net.slices[1]
+    nom=0.0
+    for j in n:
+        for h in n:
+            for k in b:
+                t1=0.0
+                for l in b:
+                    t2=0.0
+                    for m in b:
+                        t2+=net[j,h,m]
+                    t1+=t2*net[i,h,l]
+                nom+=net[i,j,k]*t1
+
+    den=0.0
+    for j in n:
+        for h in n:
+            for k in b:
+                t1=0.0
+                for l in b:
+                    t1+=max(net[i,h,l],net[j,h,l])
+                den+=net[i,j,k]*t1
+
+    return nom/float(den)
+
 
 def cc_sequence(net,node):
     """Returns number of triangles and connected tuples around the node for each layer.
