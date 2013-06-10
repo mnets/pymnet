@@ -144,7 +144,7 @@ def cc_sequence(net,node):
     """Returns number of triangles and connected tuples around the node for each layer.
     """
     triangles,tuples=[],[]
-    for layer in net.layers:
+    for layer in net.A:
         intranet=net.A[layer]
         t=0
         degree=intranet[node].deg()
@@ -178,7 +178,7 @@ def cc_5cycles(net,node,anet,undefReturn=0.0):
     #Then go through the cases where node is central
     tr_central=0
     tu_central=0
-    for layer in net.layers:
+    for layer in net.A:
         intranet=net.A[layer]
         t=0
         degree=intranet[node].deg()

@@ -218,7 +218,6 @@ class TestNet(unittest.TestCase):
         self.assertEqual(net[1,1,'a',:,'x',:].str(),3)
 
         #Test edge iterator
-        print list(net.edges)
         self.assertEqual(len(list(net.edges)),38)
 
 
@@ -258,6 +257,19 @@ class TestNet(unittest.TestCase):
         testnet=net.CoupledMultiplexNetwork(couplings=[('categorical',1.0),('categorical',1.0)])
         self.test_2dim_categorical_couplings(testnet)
 
+
+    def test_multiplex_diagonal_notation(self):
+        n=net.CoupledMultiplexNetwork(couplings=[('categorical',1.0)])
+        n[1,2,1]=1
+        n[1,2,2]=1
+        
+        #test iterator consistency
+        for layer in n.slices[1]:
+            n.A[layer]
+
+        self.assertEqual(n.A[1][1,2],1)
+        self.assertEqual(n.A[2][1,2],1)
+
 def test_net():
     suite = unittest.TestSuite()    
     suite.addTest(TestNet("test_flat_mnet"))
@@ -267,6 +279,7 @@ def test_net():
     #suite.addTest(TestNet("test_2dim_categorical_couplings_cmnet"))
     suite.addTest(TestNet("test_network_coupling_mnet"))
     suite.addTest(TestNet("test_network_coupling_cmnet"))
+    suite.addTest(TestNet("test_multiplex_diagonal_notation"))
 
     unittest.TextTestRunner().run(suite) 
 

@@ -56,15 +56,18 @@ class TestNet(unittest.TestCase):
         an[1,3]=4
         an[2,3]=4
 
+        #barrett
         self.assertEqual(cc.cc_barrett(n,1,an),128./96.)
         self.assertEqual(cc.cc_barrett(n,1,an),cc.cc_barrett_explicit(n,1))
+
+        #cc seq
+        self.assertEqual(cc.cc_sequence(n,1),([1,1,1,1],[1,1,1,1]))
 
     def test_unweighted_mplex_simple(self):
         n=net.CoupledMultiplexNetwork([('categorical',1.0)])
 
         n[1,2,1]=1
         n[1,3,1]=1
-        n[1,4,1]=1
         n[2,3,1]=1
 
         n[1,2,2]=1
@@ -80,7 +83,7 @@ class TestNet(unittest.TestCase):
         an=net.MultisliceNetwork(dimensions=1)
         an[1,2]=3
         an[1,3]=3
-        an[1,4]=3
+        an[1,4]=2
         an[2,3]=1
         an[3,4]=1
         an[2,4]=1
