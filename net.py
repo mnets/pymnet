@@ -357,7 +357,10 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
             self.dimensions=1
 
         self._init_slices(self.dimensions)
-        self.A={} #diagonal elements, map with keys as tuples of slices and vals as MultiSliceNetwork objects
+        
+        #diagonal elements, map with keys as tuples of slices and vals as MultiSliceNetwork objects
+        #keys are not tuples if dimensions==2
+        self.A={} 
 
     def _get_link_dimension(self,link):
         dims=[]
@@ -368,6 +371,29 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
             return dims[0]
         else:
             return None
+
+    def get_A(self,layer):
+        """Return self.A. Layer must be given as tuple.
+        """
+        if self.dimensions==2:
+            return self.A[layer[0]]
+        else:
+            return self.A[layer]
+    def add_layer(self,layer):
+        """Add new layer to self.A. Layer must be given as tuple.
+        """
+        if self.dimensions==2:
+            self.A[layer[0]]=MultisliceNetwork(dimensions=1)
+        else:
+            self.A[layer]=MultisliceNetwork(dimensions=1)
+    def has_layer(self,layer):
+        """Return true if layer in self.A. Layer must be given as tuple.
+        """
+        if self.dimensions==2:
+            return layer[0] in self.A
+        else:
+            return layer in self.A
+
 
     def _get_link(self,link):
         """Overrides parents method.
@@ -385,8 +411,8 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
                 else:
                     raise Exception("Coupling not implemented: "+str(coupling))
             else:
-                if link[2::2] in self.A:
-                    return self.A[link[2::2]][link[0],link[1]]
+                if self.has_layer(link[2::2]):
+                    return self.get_A(link[2::2])[link[0],link[1]]
                 else:
                     return 0.0
         else:
@@ -398,11 +424,10 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
         d=self._get_link_dimension(link)
         if d==0:
             S=link[2::2]
-            if S not in self.A:
-                self.A[S]=MultisliceNetwork(dimensions=1)
-            self.A[S][link[0],link[1]]=value
+            if not self.has_layer(S):
+                self.add_layer(S)
+            self.get_A(S)[link[0],link[1]]=value
         elif d==None:
-            print link
             raise KeyError("No self-links.")
         else:
             raise KeyError("Can only set links in the node dimension.")
@@ -454,7 +479,7 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
         k=0
         for d in self._select_dimensions(node,dims):
             if d==0:
-                k+=self.A[node[1:]][node[0]].deg()
+                k+=self.get_A(node[1:])[node[0]].deg()
             else:
                 k+=self._get_dim_degree(node,d)
         return k
@@ -465,7 +490,7 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
         s=0
         for d in self._select_dimensions(node,dims):
             if d==0:
-                s+=self.A[node[1:]][node[0]].str()
+                s+=self.get_A(node[1:])[node[0]].str()
             else:
                 s+=self._get_dim_strength(node,d)
         return s
@@ -475,7 +500,7 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
         """
         for d in self._select_dimensions(node,dims):
             if d==0:                
-                for n in self.A[node[1:]][node[0]]:
+                for n in self.get_A(node[1:])[node[0]]:
                     yield (n,)+node[1:]
             else:
                 for n in self._iter_dim(node,d):
