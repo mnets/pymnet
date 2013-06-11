@@ -214,6 +214,7 @@ class MultisliceNetwork(object):
 
     def __setitem__(self,item,val):
         d=self.dimensions
+
         if not isinstance(item,tuple):
             item=(item,)
         if len(item)==2*d:
@@ -223,11 +224,13 @@ class MultisliceNetwork(object):
             link=self._short_link_to_link(item)
         else:
             raise KeyError("Invalid number of indices.")
-        self._set_link(link,val)
 
         #There might be new nodes, add them to sets of nodes
         for i in range(2*d):
             self.add_node(link[i],int(math.floor(i/2))) #just d/2 would work, but ugly
+
+        self._set_link(link,val)
+
 
 
     def iter_dimension(self,dimension):
@@ -372,21 +375,34 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
         else:
             return None
 
-    def get_A(self,layer):
+    def _get_A_with_tuple(self,layer):
         """Return self.A. Layer must be given as tuple.
         """
         if self.dimensions==2:
             return self.A[layer[0]]
         else:
             return self.A[layer]
-    def add_layer(self,layer):
-        """Add new layer to self.A. Layer must be given as tuple.
-        """
-        if self.dimensions==2:
-            self.A[layer[0]]=MultisliceNetwork(dimensions=1)
-        else:
-            self.A[layer]=MultisliceNetwork(dimensions=1)
-    def has_layer(self,layer):
+
+    def add_node(self,node,dimension):
+        #overrrides the parent method
+
+        #check if new diagonal matrices needs to be added
+        if node not in self.slices[dimension]:
+            if dimension>0:            
+                if self.dimensions>2:
+                    new_slices=list(self.slices[1:])
+                    new_slices[dimension-1]=[node]
+                    for s in itertools.product(*new_slices):
+                        self.A[s]=MultisliceNetwork(dimensions=1)
+                else:
+                    self.A[node]=MultisliceNetwork(dimensions=1)
+
+
+            #call parent method
+            MultisliceNetwork.add_node(self,node,dimension)
+
+
+    def _has_layer_with_tuple(self,layer):
         """Return true if layer in self.A. Layer must be given as tuple.
         """
         if self.dimensions==2:
@@ -411,8 +427,8 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
                 else:
                     raise Exception("Coupling not implemented: "+str(coupling))
             else:
-                if self.has_layer(link[2::2]):
-                    return self.get_A(link[2::2])[link[0],link[1]]
+                if self._has_layer_with_tuple(link[2::2]):
+                    return self._get_A_with_tuple(link[2::2])[link[0],link[1]]
                 else:
                     return 0.0
         else:
@@ -424,9 +440,9 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
         d=self._get_link_dimension(link)
         if d==0:
             S=link[2::2]
-            if not self.has_layer(S):
-                self.add_layer(S)
-            self.get_A(S)[link[0],link[1]]=value
+            #if not self._has_layer_with_tuple(S):
+            #    self._add_layer_with_tuple(S)
+            self._get_A_with_tuple(S)[link[0],link[1]]=value
         elif d==None:
             raise KeyError("No self-links.")
         else:
@@ -479,7 +495,7 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
         k=0
         for d in self._select_dimensions(node,dims):
             if d==0:
-                k+=self.get_A(node[1:])[node[0]].deg()
+                k+=self._get_A_with_tuple(node[1:])[node[0]].deg()
             else:
                 k+=self._get_dim_degree(node,d)
         return k
@@ -490,7 +506,7 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
         s=0
         for d in self._select_dimensions(node,dims):
             if d==0:
-                s+=self.get_A(node[1:])[node[0]].str()
+                s+=self._get_A_with_tuple(node[1:])[node[0]].str()
             else:
                 s+=self._get_dim_strength(node,d)
         return s
@@ -500,7 +516,7 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
         """
         for d in self._select_dimensions(node,dims):
             if d==0:                
-                for n in self.get_A(node[1:])[node[0]]:
+                for n in self._get_A_with_tuple(node[1:])[node[0]]:
                     yield (n,)+node[1:]
             else:
                 for n in self._iter_dim(node,d):
