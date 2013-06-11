@@ -162,7 +162,6 @@ class TestNet(unittest.TestCase):
         testnet=net.CoupledMultiplexNetwork(couplings=[('categorical',1.0)])
         self.test_simple_couplings(testnet)
 
-
     def test_2dim_categorical_couplings(self,net):
         net[1,2,'a','x']=3
         net[2,3,'a','x']=1
@@ -260,6 +259,7 @@ class TestNet(unittest.TestCase):
 
     def test_multiplex_diagonal_notation(self):
         n=net.CoupledMultiplexNetwork(couplings=[('categorical',1.0)])
+        n.add_node(1,1)
         n[1,2,1]=1
         n[1,2,2]=1
         
