@@ -227,6 +227,7 @@ def cc_cycle_vector_bf(net,node,layer,undefReturn=0.0):
     return aaa,aacac,acaac,acaca,acacac
 
 def cc_cycle_vector_adj(net,node,layer):
+    import numpy
     adj,nodes1=net.get_supra_adjacency_matrix()
 
     temp=net.couplings[0]
@@ -237,6 +238,8 @@ def cc_cycle_vector_adj(net,node,layer):
     assert nodes1==nodes2
 
     c=adj-a
+
+    ch=c+numpy.eye(len(c))
 
     node=node+layer*len(net)
     aaa=(a*a*a)[node,node]
@@ -252,6 +255,9 @@ def cc_cycle_vector_adj(net,node,layer):
     assert aacac==cacaa
     assert acaac==caaca
     assert acacac==cacaca
+
+    ach3=(a*ch*a*ch*a*ch)[node,node]
+    assert aaa+aacac+acaac+acaca+acacac==ach3
 
     return aaa,aacac,acaac,acaca,acacac
 
