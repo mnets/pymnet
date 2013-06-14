@@ -22,7 +22,7 @@ def aggregate(net,dimensions,newNet=None,selfEdges=False):
         pass
     
     if newNet==None:
-        newNet==MultisliceNetwork(dimensions=net.dimensions-len(dimensions),
+        newNet=MultisliceNetwork(dimensions=net.dimensions-len(dimensions),
                                   noEdge=net.noEdge,
                                   directed=net.directed)
     assert newNet.dimensions==net.dimensions-len(dimensions)
@@ -31,7 +31,7 @@ def aggregate(net,dimensions,newNet=None,selfEdges=False):
 
 
     for node in net:
-        newNet.add_node(node)
+        newNet.add_node(node,0)
     
     edgeIndices=filter(lambda x:math.floor(x/2) not in dimensions,range(2*net.dimensions))
     for edge in net.edges:
