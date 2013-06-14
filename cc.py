@@ -267,12 +267,12 @@ def cc_cycle_vector_adj(net,node,layer):
 def gcc_moreno(net):
     def get_nom_den(p,ph):
         nom=0.0
-        for i in len(p):
+        for i in range(len(p)):
             nom+=p[i,i]
 
         den=0.0
-        for i in len(p):
-            for j in len(p):
+        for i in range(len(p)):
+            for j in range(len(p)):
                 if i!=j:
                     den+=ph[i,j]
         return nom,den
