@@ -3,8 +3,8 @@ from operator import itemgetter
 
 import sys
 sys.path.append("../../")
-from pymnet import net,cc,models
-#from .. import net
+from pymnet import net,cc,models,transforms
+import itertools
 
 
 class TestNet(unittest.TestCase):
@@ -96,6 +96,22 @@ class TestNet(unittest.TestCase):
     def test_unweighted_consistency_er(self):
         net=models.er(10,[0.4,0.6,0.5,0.3])
         self.assertEqual(cc.cc_cycle_vector_bf(net,1,1),cc.cc_cycle_vector_adj(net,1,1))
+
+        anet=transforms.aggregate(net,1)
+
+        #----
+        t=0
+        node=1
+        for i,j in itertools.combinations(anet[node],2):
+            t+=anet[node][i]*anet[node][j]*anet[i][j]
+
+        print 2*t
+        lc=0
+        for l in net.slices[1]:
+            aaa,aacac,acaac,acaca,acacac=cc.cc_cycle_vector_bf(net,1,l)
+            lc+= aaa+aacac+acaac+acaca+acacac
+        print lc
+        self.assertEqual(2*t,lc)
 
 def test_net():
     suite = unittest.TestSuite()    
