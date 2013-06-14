@@ -75,6 +75,9 @@ class MultisliceNetwork(object):
 
         return tuple(l)
     
+    def __len__(self):
+        return len(self.slices[0])
+
     def add_node(self,node,dimension):
         """Adds an empty node to the dimension.
         Does nothing if node already exists.
@@ -286,6 +289,15 @@ class MultisliceNetwork(object):
         output.close()
 
 
+    def get_supra_adjacency_matrix(self):
+        import numpy
+        nodes=map(lambda x: tuple(reversed(x)),sorted(itertools.product(*map(lambda i:sorted(self.slices[i]),reversed(range(len(self.slices)))))))
+        matrix=numpy.zeros((len(nodes),len(nodes)),dtype=int)
+        for i_index,i in enumerate(nodes):
+            for j_index,j in enumerate(nodes):
+                matrix[i_index,j_index]=self[i][j]
+        return numpy.matrix(matrix),nodes
+
 class MultisliceNode(object):
     def __init__(self,node,mnet,layers=None):
         """A node in multilice network. 
@@ -330,6 +342,12 @@ class MultisliceNode(object):
     def layers(self,*layers):
         return MultisliceNode(self.node,self.mnet,layers=layers)
 
+class MultisliceNetworkWithParent(MultisliceNetwork):
+    def _set_parent(self,parent):
+        self.parent=parent
+    def add_node(self,node,dimension):
+        self.parent.add_node(node,0)
+        MultisliceNetwork.add_node(self,node,dimension)
 
 class CoupledMultiplexNetwork(MultisliceNetwork):
     """
@@ -341,8 +359,9 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
     policies by giving inter-slice couplings ??
     """
 
-    def __init__(self,couplings=None,directed=False):
+    def __init__(self,couplings=None,directed=False,noEdge=0):
         self.directed=directed
+        self.noEdge=noEdge
 
         if couplings!=None:
             #assert len(couplings)==dimensions
@@ -383,6 +402,11 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
         else:
             return self.A[layer]
 
+    def _add_A(self,node):
+        net=MultisliceNetworkWithParent(dimensions=1)
+        net._set_parent(self)
+        self.A[node]=net
+
     def add_node(self,node,dimension):
         #overrrides the parent method
 
@@ -393,9 +417,9 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
                     new_slices=list(self.slices[1:])
                     new_slices[dimension-1]=[node]
                     for s in itertools.product(*new_slices):
-                        self.A[s]=MultisliceNetwork(dimensions=1)
+                        self._add_A(s)
                 else:
-                    self.A[node]=MultisliceNetwork(dimensions=1)
+                    self._add_A(node)
 
 
             #call parent method
