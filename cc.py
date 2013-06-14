@@ -1,5 +1,5 @@
 import itertools
-
+from net import CoupledMultiplexNetwork
 
 def cc(net,node,undefReturn=0.0):
     """Returns the clustering coefficient of a flat network.
@@ -167,6 +167,93 @@ def cc_layers_wavg(net,node):
 
     nom,den=cc_sequence(net,node)
     return sum(nom)/float(sum(den))
+
+def cc_cycle_vector_bf(net,node,layer,undefReturn=0.0):
+    """Counts all the cycles.
+
+    Brute force implementation.
+    """
+    assert isinstance(net,CoupledMultiplexNetwork)
+    assert net.dimensions==2
+    
+    aaa=0
+    aacac=0 # == cacaa
+    acaac=0 # == caaca
+    acaca=0
+    acacac=0
+
+    intranet=net.A[layer]
+    degree=intranet[node].deg()
+    other_layers=map(lambda x:x[1],net[node,node,layer,:])
+
+    #aaa
+    if degree>=2:
+        for i,j in itertools.combinations(intranet[node],2):
+            if intranet[i][j]!=intranet.noEdge:
+                aaa+=1    
+    aaa=aaa*2
+
+    #aacac
+    for i in intranet[node]:
+        for j in intranet[i]:
+            for layer2 in other_layers:
+                if net[j,layer2][node,layer2]!=net.noEdge:
+                    aacac+=1
+
+    #acaac
+    for i in intranet[node]:
+        for layer2 in other_layers:
+            for j,dummy in net[i,:,layer2,layer2]:
+                if net[j,layer2][node,layer2]!=net.noEdge:
+                    acaac+=1
+
+    #acaca
+    if degree>=2:
+        for i,j in itertools.combinations(intranet[node],2):
+            for layer2 in other_layers:
+                if net[i,layer2][j,layer2]!=net.noEdge:
+                    acaca+=1
+    acaca=acaca*2
+
+    #acacac
+    for i in intranet[node]:
+        for layer2 in other_layers:
+            for j,dummy in net[i,:,layer2,layer2]:
+                for layer3 in other_layers:
+                    if layer3!=layer2:
+                        if net[j,layer3][node,layer3]!=net.noEdge:
+                            acacac+=1
+    
+    return aaa,aacac,acaac,acaca,acacac
+
+def cc_cycle_vector_adj(net,node,layer):
+    adj,nodes1=net.get_supra_adjacency_matrix()
+
+    temp=net.couplings[0]
+    net.couplings[0]=('categorical',0)
+    a,nodes2=net.get_supra_adjacency_matrix()
+    net.couplings[0]=temp
+
+    assert nodes1==nodes2
+
+    c=adj-a
+
+    node=node+layer*len(net)
+    aaa=(a*a*a)[node,node]
+    aacac=(a*a*c*a*c)[node,node]
+    acaac=(a*c*a*a*c)[node,node]
+    acaca=(a*c*a*c*a)[node,node]
+    acacac=(a*c*a*c*a*c)[node,node]
+
+    cacaa=(c*a*c*a*a)[node,node]
+    caaca=(c*a*a*c*a)[node,node]
+    cacaca=(c*a*c*a*c*a)[node,node]
+
+    assert aacac==cacaa
+    assert acaac==caaca
+    assert acacac==cacaca
+
+    return aaa,aacac,acaac,acaca,acacac
 
 def cc_5cycles(net,node,anet,undefReturn=0.0):
     nom,den=0,0

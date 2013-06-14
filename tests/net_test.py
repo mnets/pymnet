@@ -71,17 +71,18 @@ class TestNet(unittest.TestCase):
         self.test_flat(testnet)
 
 
-    def test_simple_couplings(self,net):
+    def test_simple_couplings(self,net,hasDiagonalLinks=False):
         """Tests basic functionality of Multiplex networks with two layers.
 
         The input network must have connections between nodes i,i,s,s, where
         i is in {1,2,3} and s is in {'a','b'}.
         """
         #First, we add some links
-        net[1,2,'a']=1
-        net[2,3,'a']=1
-        net[1,2,'b']=1
-        net[1,3,'b']=1
+        if not hasDiagonalLinks:
+            net[1,2,'a']=1
+            net[2,3,'a']=1
+            net[1,2,'b']=1
+            net[1,3,'b']=1
 
         #Test the lattice
         self.assertEqual(net[1,1,'a','b'],1)
@@ -112,6 +113,8 @@ class TestNet(unittest.TestCase):
         #TODO: Tests for degrees and strength
 
         #TODO: Tests for iterating over nodes and layers
+        self.assertEqual(set(net.slices[0]),set([1,2,3]))
+        self.assertEqual(set(net.slices[1]),set(['a','b']))
 
         #TODO: Add tests for removing links by setting them to 0
 
@@ -270,11 +273,27 @@ class TestNet(unittest.TestCase):
         self.assertEqual(n.A[1][1,2],1)
         self.assertEqual(n.A[2][1,2],1)
 
+    #TODO: tests for noEdge parameter
+
+    def test_simple_couplings_cmnet_add_to_A(self):
+        """test_simple_couplings with links added to the net.A matrices directly.
+        """
+        n=net.CoupledMultiplexNetwork(couplings=[('categorical',1.0)])
+        n.add_node('a',1)
+        n.add_node('b',1)
+        n.A['a'][1][2]=1
+        n.A['a'][2,3]=1
+        n.A['b'][1,2]=1
+        n.A['b'][1,3]=1
+        #print n[3,'a'][2,'a']
+        self.test_simple_couplings(n,hasDiagonalLinks=True)
+
 def test_net():
     suite = unittest.TestSuite()    
     suite.addTest(TestNet("test_flat_mnet"))
     suite.addTest(TestNet("test_simple_couplings_mnet"))
     suite.addTest(TestNet("test_simple_couplings_cmnet"))
+    suite.addTest(TestNet("test_simple_couplings_cmnet_add_to_A"))
     suite.addTest(TestNet("test_2dim_categorical_couplings_mnet"))
     #suite.addTest(TestNet("test_2dim_categorical_couplings_cmnet"))
     suite.addTest(TestNet("test_network_coupling_mnet"))

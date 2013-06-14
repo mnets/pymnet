@@ -3,7 +3,7 @@ from operator import itemgetter
 
 import sys
 sys.path.append("../../")
-from pymnet import net,cc
+from pymnet import net,cc,models
 #from .. import net
 
 
@@ -63,6 +63,9 @@ class TestNet(unittest.TestCase):
         #cc seq
         self.assertEqual(cc.cc_sequence(n,1),([1,1,1,1],[1,1,1,1]))
 
+        print cc.cc_cycle_vector_bf(n,1,1)
+        print cc.cc_cycle_vector_adj(n,1,1)
+
     def test_unweighted_mplex_simple(self):
         n=net.CoupledMultiplexNetwork([('categorical',1.0)])
 
@@ -90,12 +93,17 @@ class TestNet(unittest.TestCase):
 
         self.assertEqual(cc.cc_barrett(n,1,an),cc.cc_barrett_explicit(n,1))
 
+    def test_unweighted_consistency_er(self):
+        net=models.er(10,[0.4,0.6,0.5,0.3])
+        self.assertEqual(cc.cc_cycle_vector_bf(net,1,1),cc.cc_cycle_vector_adj(net,1,1))
+
 def test_net():
     suite = unittest.TestSuite()    
     suite.addTest(TestNet("test_unweighted_flat_triangle"))
     suite.addTest(TestNet("test_unweighted_flat_simple"))
     suite.addTest(TestNet("test_unweighted_mplex_triangle"))
     suite.addTest(TestNet("test_unweighted_mplex_simple"))
+    suite.addTest(TestNet("test_unweighted_consistency_er"))
 
     unittest.TextTestRunner().run(suite) 
 
