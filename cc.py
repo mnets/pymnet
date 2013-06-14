@@ -235,6 +235,9 @@ def cc_cycle_vector_adj(net,node,layer):
     a,nodes2=net.get_supra_adjacency_matrix()
     net.couplings[0]=temp
 
+    a_test,nodes3=net.get_supra_adjacency_matrix(includeCouplings=False)
+    assert (a==a_test).all()
+
     assert nodes1==nodes2
 
     c=adj-a
@@ -260,6 +263,38 @@ def cc_cycle_vector_adj(net,node,layer):
     assert aaa+aacac+acaac+acaca+acacac==ach3
 
     return aaa,aacac,acaac,acaca,acacac
+
+def gcc_moreno(net):
+    def get_nom_den(p,ph):
+        nom=0.0
+        for i in len(p):
+            nom+=p[i,i]
+
+        den=0.0
+        for i in len(p):
+            for j in len(p):
+                if i!=j:
+                    den+=ph[i,j]
+        return nom,den
+
+    import numpy
+    adj,nodes1=net.get_supra_adjacency_matrix()    
+    a,nodes2=net.get_supra_adjacency_matrix(includeCouplings=False)
+    c=adj-a
+
+    aaa=a*a*a
+    aa=a*a
+    c1_nom,c1_den=get_nom_den(aaa,aa)
+
+    p21=a*a*c*a*c + c*a*c*a*a + a*c*a*a*c + c*a*a*c*a + a*c*a*c*a
+    ph21=a*a*c + c*a*c*a + a*c*a + c*a*a*c + a*c*a*c
+    c2_nom,c2_den=get_nom_den(p21,ph21)
+    
+    p111=a*c*a*c*a*c + c*a*c*a*c*a #????
+    ph111=a*c*a*c + c*a*c*a*c #????
+    c3_nom,c3_den=get_nom_den(p111,ph111)
+
+    return c1_nom/float(c1_den),c2_nom/float(c2_den),c3_nom/float(c3_den)
 
 def cc_5cycles(net,node,anet,undefReturn=0.0):
     nom,den=0,0

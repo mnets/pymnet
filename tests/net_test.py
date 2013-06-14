@@ -80,7 +80,7 @@ class TestNet(unittest.TestCase):
         #First, we add some links
         if not hasDiagonalLinks:
             net[1,2,'a']=1
-            net[2,3,'a']=1
+            net[2,'a'][3,'a']=1#net[2,3,'a']=1
             net[1,2,'b']=1
             net[1,3,'b']=1
 

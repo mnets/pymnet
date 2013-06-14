@@ -222,7 +222,7 @@ class MultisliceNetwork(object):
             item=(item,)
         if len(item)==2*d:
             link=item
-            self._set_link(item,val)
+            #self._set_link(item,val)
         elif len(item)==d+1:
             link=self._short_link_to_link(item)
         else:
@@ -289,13 +289,14 @@ class MultisliceNetwork(object):
         output.close()
 
 
-    def get_supra_adjacency_matrix(self):
+    def get_supra_adjacency_matrix(self,includeCouplings=True):
         import numpy
         nodes=map(lambda x: tuple(reversed(x)),sorted(itertools.product(*map(lambda i:sorted(self.slices[i]),reversed(range(len(self.slices)))))))
         matrix=numpy.zeros((len(nodes),len(nodes)),dtype=int)
         for i_index,i in enumerate(nodes):
             for j_index,j in enumerate(nodes):
-                matrix[i_index,j_index]=self[i][j]
+                if includeCouplings or i[1:]==j[1:]:
+                    matrix[i_index,j_index]=self[i][j]
         return numpy.matrix(matrix),nodes
 
 class MultisliceNode(object):
