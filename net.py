@@ -117,7 +117,11 @@ class MultisliceNetwork(object):
         #TODO: lookuptables for intradimensional degrees
 
         if dims==None:
-            return self.net.degree(node)
+            deg=self.net.degree(node)
+            if deg=={}:
+                return 0
+            else:
+                return deg
         else:
             return len(list(self._iter_neighbors(node,dims)))
 
@@ -291,12 +295,21 @@ class MultisliceNetwork(object):
 
     def get_supra_adjacency_matrix(self,includeCouplings=True):
         import numpy
-        nodes=map(lambda x: tuple(reversed(x)),sorted(itertools.product(*map(lambda i:sorted(self.slices[i]),reversed(range(len(self.slices)))))))
-        matrix=numpy.zeros((len(nodes),len(nodes)),dtype=int)
-        for i_index,i in enumerate(nodes):
-            for j_index,j in enumerate(nodes):
-                if includeCouplings or i[1:]==j[1:]:
-                    matrix[i_index,j_index]=self[i][j]
+        if self.dimensions>1:
+            nodes=map(lambda x: tuple(reversed(x)),sorted(itertools.product(*map(lambda i:sorted(self.slices[i]),reversed(range(len(self.slices)))))))
+            matrix=numpy.zeros((len(nodes),len(nodes)),dtype=int)
+            for i_index,i in enumerate(nodes):
+                for j_index,j in enumerate(nodes):
+                    if includeCouplings or i[1:]==j[1:]:
+                        matrix[i_index,j_index]=self[i][j]
+        else:
+            nodes=sorted(self)
+            matrix=numpy.zeros((len(nodes),len(nodes)),dtype=int)
+            for i_index,i in enumerate(nodes):
+                for j_index,j in enumerate(nodes):
+                    if i_index!=j_index:
+                        matrix[i_index,j_index]=self[i][j]
+
         return numpy.matrix(matrix),nodes
 
 class MultisliceNode(object):

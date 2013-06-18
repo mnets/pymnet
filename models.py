@@ -35,3 +35,19 @@ def er(n,p):
             single_layer_er(net.A[l],n,lp)
 
     return net
+
+
+def full(nodes,layers):
+    if layers==None:
+        pass
+    elif not hasattr(layers,'__iter__'): #is not sequence
+        n=CoupledMultiplexNetwork(couplings=[('categorical',1.0)])
+        for layer in range(layers):
+            for node1 in range(nodes):
+                for node2 in range(nodes):
+                    if node1!=node2:
+                        n[node1,node2,layer,layer]=1
+    else:
+        pass
+    return n
+
