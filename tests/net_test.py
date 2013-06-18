@@ -65,6 +65,7 @@ class TestNet(unittest.TestCase):
         self.assertTrue((1,3,1) or (3,1,1) in list(net.edges))
         self.assertTrue((2,3,1) or (3,2,1) in list(net.edges))
 
+        self.assertEqual(net['a'].deg(),0) #missing node
 
     def test_flat_mnet(self):
         testnet=net.MultisliceNetwork(dimensions=1)

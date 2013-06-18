@@ -63,6 +63,12 @@ class TestNet(unittest.TestCase):
         #cc seq
         self.assertEqual(cc.cc_sequence(n,1),([1,1,1,1],[1,1,1,1]))
 
+        #cc moreno
+        print "m ",
+        print cc.gcc_moreno(n)
+        print "m2 ",
+        print cc.gcc_moreno2(n)
+
         print cc.cc_cycle_vector_bf(n,1,1)
         print cc.cc_cycle_vector_adj(n,1,1)
 
