@@ -32,7 +32,7 @@ def read_ucinet(netinput):
                 fields=line.split(",")
                 for label in fields:
                     nlabels+=1
-                    yield label.strip().lower()
+                    yield label.strip()#.lower()
         except StopIteration:
             raise Exception("File ended while reading labels.")
 
@@ -99,7 +99,7 @@ def read_ucinet(netinput):
                 if len(f)==2:
                     format=f[1].strip()
                 else:
-                    raise Exception("Invalid line: %s"%line)
+                    raise Exception("Invalid line: '%s'"%line.strip())
             elif line.startswith("labels:"):
                 labels=list(read_labels(ii,n))
             elif line.startswith("row labels:"):
@@ -114,7 +114,7 @@ def read_ucinet(netinput):
             elif line.startswith("labels embedded"):
                 labels_embedded=True
             else:
-                raise Exception("Invalid command: %")%line
+                raise Exception("Invalid command: '%s'"%line.strip())
     except StopIteration:
         pass
     if data==False:
