@@ -258,9 +258,33 @@ def cc_cycle_vector_bf(net,node,layer,undefReturn=0.0):
                 for layer3 in other_layers:
                     if layer3!=layer2:
                         if net[j,layer3][node,layer3]!=net.noEdge:
+                            #print node,",",layer,"-",i,",",layer2,"-",j,",",layer3
+                            #print j,node,layer3,net[j,layer3][node,layer3]
+                            #print i,node,layer,net[i,layer][node,layer]
+                            #print i,j,layer2,net[i,layer2][j,layer2]
                             acacac+=1
-    
-    return aaa,aacac,acaac,acaca,acacac
+
+    afa=0 
+    afcac=0 # == acfac
+    #acfac=0 
+    #acfca=0 # == (b-1)*afa
+    #acfcac=0 # == (b-2)*afcac
+
+    #afa
+    afa=(intranet[node].deg()*(intranet[node].deg()-1))
+    acfca=afa*(len(net.slices[1])-1)
+
+    #afcac,acfac
+    for i in intranet[node]:
+        for layer2 in other_layers:
+            for j,dummy in net[node,:,layer2,layer2]:
+                if i!=j:
+                    afcac+=1
+    acfac=afcac
+    acfcac=afcac*(len(net.slices[1])-2)
+
+    #return aaa,aacac,acaac,acaca,acacac
+    return aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac
 
 def cc_cycle_vector_adj(net,node,layer):
     import numpy
@@ -280,7 +304,7 @@ def cc_cycle_vector_adj(net,node,layer):
 
     ch=c+numpy.eye(len(c))
 
-    node=node+layer*len(net)
+    node=nodes1.index( (node,layer) )
     aaa=(a*a*a)[node,node]
     aacac=(a*a*c*a*c)[node,node]
     acaac=(a*c*a*a*c)[node,node]
@@ -298,7 +322,20 @@ def cc_cycle_vector_adj(net,node,layer):
     ach3=(a*ch*a*ch*a*ch)[node,node]
     assert aaa+aacac+acaac+acaca+acacac==ach3
 
-    return aaa,aacac,acaac,acaca,acacac
+    fn=get_full_multiplex_network(net.slices[0],net.slices[1])
+    f,node3=fn.get_supra_adjacency_matrix(includeCouplings=False)
+    afa=(a*f*a)[node,node]
+    afcac=(a*f*c*a*c)[node,node]
+    acfac=(a*c*f*a*c)[node,node]
+    acfca=(a*c*f*c*a)[node,node]
+    acfcac=(a*c*f*c*a*c)[node,node]
+
+    b=len(net.slices[1])
+    assert (b-1)*afa==acfca
+    assert afcac==acfac
+    assert acfcac==(b-2)*afcac
+
+    return aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac
 
 def gcc_alternating_walks_vector_adj(net):
     def get_nom_den(p,ph):
@@ -326,7 +363,11 @@ def gcc_alternating_walks_vector_adj(net):
     p21=a*a*c*a*c + a*c*a*a*c + a*c*a*c*a
     ph21=a*f*c*a*c + a*c*f*a*c + a*c*f*c*a
     c2_nom,c2_den=get_nom_den(p21,ph21)
-    
+    #assert (a*f*c*a*c)[1,1]==(a*c*f*a*c)[1,1]
+    #assert (a*c*f*c*a)[1,1]==(a*f*a)[1,1]*(len(net.slices[1])-1)
+    #assert (a*f*c*a*c)[1,1]*(len(net.slices[1])-2)==(a*c*f*c*a*c)[1,1]
+    #assert (f*c==c*f).all()
+
     p111=a*c*a*c*a*c
     ph111=a*c*f*c*a*c
     c3_nom,c3_den=get_nom_den(p111,ph111)
@@ -334,14 +375,67 @@ def gcc_alternating_walks_vector_adj(net):
     return c1_nom,c1_den,c2_nom,c2_den,c3_nom,c3_den
             
 
-def gcc_alternating_walks_seplayers(net,w1=1./3.,w2=1./3.,w3=1./3.):
+def gcc_alternating_walks_seplayers_adj(net,w1=1./3.,w2=1./3.,w3=1./3.):
     c1_nom,c1_den,c2_nom,c2_den,c3_nom,c3_den=gcc_alternating_walks_vector_adj(net)
-    c1=sum(c1_nom)/float(sum(c1_den))
-    c2=sum(c2_nom)/float(sum(c2_den))
+    if sum(c1_den)!=0:
+        c1=sum(c1_nom)/float(sum(c1_den))
+    else:
+        c1=0
+    if sum(c2_den)!=0:
+        c2=sum(c2_nom)/float(sum(c2_den))
+    else:
+        c2=0
     if len(net.slices[1])==2:
         return w1*c1+w2*c2
-    c3=sum(c3_nom)/float(sum(c3_den))
+    if sum(c3_den)!=0:
+        c3=sum(c3_nom)/float(sum(c3_den))
+    else:
+        c3=0
     return w1*c1+w2*c2+w3*c3
+
+def gcc_alternating_walks_seplayers(net,w1=1./3.,w2=1./3.,w3=1./3.):
+    t1,t2,t3,d1,d2,d3=0,0,0,0,0,0
+    for node in net.slices[0]:
+        for layer in net.slices[1]:
+            aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac=cc_cycle_vector_bf(net,node,layer,undefReturn=0.0)
+            t1+=aaa
+            d1+=afa
+            t2+=aacac+acaac+acaca
+            d2+=afcac+acfac+acfca
+            t3+=acacac
+            d3+=acfcac
+
+    if d3!=0:
+        c3=t3/float(d3)
+    else:
+        c3=0
+    if d2!=0:
+        c2=t2/float(d2)
+    else:
+        c2=0
+    if d1!=0:
+        c1=t1/float(d1)
+    else:
+        c1=0
+
+    return w1*c1+w2*c2+w3*c3
+
+
+def sncc_alternating_walks(net,supernode,a=0.5,b=0.5):
+    t1,t2,t3,d1,d2,d3=0,0,0,0,0,0
+    for layer in net.slices[1]:
+        aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac=cc_cycle_vector_bf(net,supernode,layer,undefReturn=0.0)
+        t1+=aaa
+        d1+=afa
+        t2+=aacac+acaac+acaca
+        d2+=afcac+acfac+acfca
+        t3+=acacac
+        d3+=acfcac
+
+    if float(a**3*d1+a*b**2*d2+b**3*d3)!=0:        
+        return (a**3*t1+a*b**2*t2+b**3*t3)/float(a**3*d1+a*b**2*d2+b**3*d3)
+    else:
+        return 0
 
 def gcc_from_lcc(net,lcc):
     lcc_vector=map(lambda node:lcc(net,node,undefReturn=None),net)
@@ -350,6 +444,7 @@ def gcc_from_lcc(net,lcc):
         return sum(lcc_fvector)/len(lcc_fvector)
     else:
         return None
+
 
 def gcc_vector_moreno(net):
     def get_nom_den(p,ph):
@@ -437,6 +532,8 @@ def gcc_moreno2(net,w1=1./3.,w2=1./3.,w3=1./3.):
     if len(net.slices[1])==2:
         return w1*c1+w2*c2
     return w1*c1+w2*c2+w3*c3
+
+
 
 def cc_5cycles(net,node,anet,undefReturn=0.0):
     nom,den=0,0

@@ -5,7 +5,8 @@ import sys
 sys.path.append("../../")
 from pymnet import net,cc,models,transforms
 import itertools
-
+import random
+import pymnet.net
 
 class TestNet(unittest.TestCase):
     
@@ -99,25 +100,63 @@ class TestNet(unittest.TestCase):
 
         self.assertEqual(cc.cc_barrett(n,1,an),cc.cc_barrett_explicit(n,1))
 
-    def test_unweighted_consistency_er(self):
-        net=models.er(10,[0.4,0.6,0.5,0.3])
-        self.assertEqual(cc.cc_cycle_vector_bf(net,1,1),cc.cc_cycle_vector_adj(net,1,1))
-
+    def test_unweighted_consistency(self,net):
         anet=transforms.aggregate(net,1)
+
+        if cc.cc_cycle_vector_bf(net,1,1)!=cc.cc_cycle_vector_adj(net,1,1):
+            print list(anet.edges)
+            print list(net.edges)
+        self.assertEqual(cc.cc_cycle_vector_bf(net,1,1),cc.cc_cycle_vector_adj(net,1,1))
 
         #----
         t=0
         node=1
         for i,j in itertools.combinations(anet[node],2):
             t+=anet[node][i]*anet[node][j]*anet[i][j]
+        d=0
+        for i,j in itertools.combinations(anet[node],2):
+            d+=anet[node][i]*anet[node][j]*len(net.slices[1])
+        #print 2*t,2*d
 
-        print 2*t
-        lc=0
+        lt=0
+        ld=0
         for l in net.slices[1]:
-            aaa,aacac,acaac,acaca,acacac=cc.cc_cycle_vector_bf(net,1,l)
-            lc+= aaa+aacac+acaac+acaca+acacac
-        print lc
-        self.assertEqual(2*t,lc)
+            aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac=cc.cc_cycle_vector_bf(net,1,l)
+            lt+= aaa+aacac+acaac+acaca+acacac
+            ld+= afa+afcac+acfac+acfca+acfcac            
+        #print lt,ld
+        self.assertEqual(2*t,lt)
+        self.assertEqual(2*d,ld)
+
+        cc.gcc_alternating_walks_vector_adj(net)
+
+        self.assertEqual(cc.gcc_alternating_walks_seplayers(net,w1=0.3,w2=0.3,w3=0.3),cc.gcc_alternating_walks_seplayers_adj(net,w1=0.3,w2=0.3,w3=0.3))
+
+        wmax=max(map(lambda x:x[2],anet.edges))
+        b=len(net.slices[1])
+        for supernode in net.slices[0]:
+            if cc.sncc_alternating_walks(net,supernode,a=0.5,b=0.5)!=wmax/float(b)*cc.cc_zhang(anet,supernode):
+                print wmax,b,cc.sncc_alternating_walks(net,supernode,a=0.5,b=0.5),cc.cc_zhang(anet,supernode)
+                print supernode
+                print list(anet.edges)
+                print list(net.edges)
+            self.assertEqual(cc.sncc_alternating_walks(net,supernode,a=0.5,b=0.5),wmax/float(b)*cc.cc_zhang(anet,supernode))
+
+
+    def test_unweighted_consistency_er(self):
+        #net=models.er(10,[0.9,0.1])
+        #net=models.er(10,[0.1,0.3])
+        #net=models.er(10,[0.4,0.6,0.5,0.3])
+        #for i in range(10):        
+        #    net=models.er(10,[random.random(),random.random()])
+        #    self.test_unweighted_consistency(net)
+
+        net=pymnet.net.CoupledMultiplexNetwork([('categorical',1.0)])
+        net[1, 9, 1, 1]=1 
+        net[2, 9, 1, 1]=1  
+        net[2, 4, 1, 1]=1  
+        net[5, 8, 0, 0]=1  
+        self.test_unweighted_consistency(net)
 
 def test_net():
     suite = unittest.TestSuite()    

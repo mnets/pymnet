@@ -22,6 +22,7 @@ def read_ucinet(netinput):
     labels to lower case.
 
     """
+
     def read_labels(iterator,length):
         """Reads labels after label tag in the file.
         Labels can be separated with commas or line changes"""

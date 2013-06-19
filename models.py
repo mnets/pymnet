@@ -15,6 +15,8 @@ def er(n,p):
         """
         Efficient generation of large random networks PRE 71, 036113 (2005) 
         """
+        for node in range(n):
+            net.add_node(node,0)
         v,w=1,-1
         while (v < n):
             r=random.random()
