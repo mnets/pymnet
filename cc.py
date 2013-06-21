@@ -232,13 +232,15 @@ def cc_cycle_vector_bf(net,node,layer,undefReturn=0.0):
     #aacac
     for i in intranet[node]:
         for j in intranet[i]:
-            for layer2 in other_layers:
+            #for layer2 in other_layers:
+            for dummy,layer2 in net[j,j,layer,:]:
                 if net[j,layer2][node,layer2]!=net.noEdge:
                     aacac+=1
 
     #acaac
     for i in intranet[node]:
-        for layer2 in other_layers:
+        #for layer2 in other_layers:
+        for dummy,layer2 in net[i,i,layer,:]:
             for j,dummy in net[i,:,layer2,layer2]:
                 if net[j,layer2][node,layer2]!=net.noEdge:
                     acaac+=1
@@ -246,17 +248,20 @@ def cc_cycle_vector_bf(net,node,layer,undefReturn=0.0):
     #acaca
     if degree>=2:
         for i,j in itertools.combinations(intranet[node],2):
-            for layer2 in other_layers:
+            #for layer2 in other_layers:
+            for dummy,layer2 in net[i,i,layer,:]:
                 if net[i,layer2][j,layer2]!=net.noEdge:
                     acaca+=1
     acaca=acaca*2
 
     #acacac
     for i in intranet[node]:
-        for layer2 in other_layers:
+        #for layer2 in other_layers:
+        for dummy,layer2 in net[i,i,layer,:]:
             for j,dummy in net[i,:,layer2,layer2]:
-                for layer3 in other_layers:
-                    if layer3!=layer2:
+                #for layer3 in other_layers:
+                for dummy,layer3 in net[j,j,layer2,:]:
+                    if layer3!=layer:
                         if net[j,layer3][node,layer3]!=net.noEdge:
                             #print node,",",layer,"-",i,",",layer2,"-",j,",",layer3
                             #print j,node,layer3,net[j,layer3][node,layer3]
@@ -264,26 +269,72 @@ def cc_cycle_vector_bf(net,node,layer,undefReturn=0.0):
                             #print i,j,layer2,net[i,layer2][j,layer2]
                             acacac+=1
 
-    afa=0 
-    afcac=0 # == acfac
-    #acfac=0 
-    #acfca=0 # == (b-1)*afa
-    #acfcac=0 # == (b-2)*afcac
 
     #afa
     afa=(intranet[node].deg()*(intranet[node].deg()-1))
-    acfca=afa*(len(net.slices[1])-1)
 
-    #afcac,acfac
-    for i in intranet[node]:
-        for layer2 in other_layers:
-            for j,dummy in net[node,:,layer2,layer2]:
-                if i!=j:
-                    afcac+=1
-    acfac=afcac
-    acfcac=afcac*(len(net.slices[1])-2)
+    afcac=0
+    neighbors=set(intranet[node])
+    for dummy,layer2 in net[node,node,layer,:]:
+        for i,dummy in net[node,:,layer2,layer2]:
+            if net[i,i,layer,layer2]!=net.noEdge:
+                if i in neighbors:
+                    afcac+=len(neighbors)-1
+                else:
+                    afcac+=len(neighbors)
 
-    #return aaa,aacac,acaac,acaca,acacac
+    if net.globalNodes:
+        acfca=afa*(len(net.slices[1])-1)        
+        #afcac,acfac
+        #afcac=0 
+        #for i in intranet[node]:
+        #    for layer2 in other_layers:
+        #        for j,dummy in net[node,:,layer2,layer2]:
+        #            if i!=j:
+        #                afcac+=1
+        acfac=afcac
+        acfcac=afcac*(len(net.slices[1])-2)
+    else:
+        acfac=0 
+        for i in intranet[node]:
+            for dummy,layer2 in net[i,i,layer,:]:
+                if net[node,node,layer,layer2]!=net.noEdge:
+                    if net[node,i,layer2,layer2]:
+                        acfac+=net[node,:,layer2,layer2].deg()-1
+                    else:
+                        acfac+=net[node,:,layer2,layer2].deg()
+
+        acfca=0 
+        layertonode={}
+        for i in intranet[node]:
+            for dummy,layer2 in net[i,i,layer,:]:
+                if layer2 not in layertonode:
+                    layertonode[layer2]=set()
+                layertonode[layer2].add(i)
+        #if intranet[node].deg()>0:
+        #   assert len(layertonode)==(len(net.slices[1])-1),(len(layertonode),(len(net.slices[1])-1))
+        for nodelist in layertonode.values():
+            #assert len(nodelist)==intranet[node].deg(),(len(nodelist),intranet[node].deg())
+            acfca+=(len(nodelist)*(len(nodelist)-1))
+    
+        raise NotImplemented()
+        acfcac=0
+        for i in intranet[node]:
+            for dummy,layer3 in net[node,node,layer,:]:
+                for j,dummy in net[node,:,layer3,layer3]:
+                    if i!=j:
+                        if net[i,i,layer,:].deg()>net[j,j,layer3,:].deg():
+                            for layer2 in net[j,j,layer3,:]:
+                                if layer2!=layer:
+                                    if net[i,i,layer,layer2]!=net.noEdge:
+                                        acfcac+=1
+                        else:
+                            for layer2 in net[i,i,layer,:]:
+                                if layer2!=layer3:
+                                    if net[j,j,layer3,layer2]!=net.noEdge:
+                                        acfcac+=1
+
+
     return aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac
 
 def cc_cycle_vector_adj(net,node,layer):
