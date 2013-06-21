@@ -130,26 +130,26 @@ class TestNet(unittest.TestCase):
 
         cc.gcc_alternating_walks_vector_adj(net)
 
-        self.assertEqual(cc.gcc_alternating_walks_seplayers(net,w1=0.3,w2=0.3,w3=0.3),cc.gcc_alternating_walks_seplayers_adj(net,w1=0.3,w2=0.3,w3=0.3))
+        self.assertAlmostEqual(cc.gcc_alternating_walks_seplayers(net,w1=0.3,w2=0.3,w3=0.3),cc.gcc_alternating_walks_seplayers_adj(net,w1=0.3,w2=0.3,w3=0.3))
 
         wmax=max(map(lambda x:x[2],anet.edges))
         b=len(net.slices[1])
         for supernode in net.slices[0]:
-            if cc.sncc_alternating_walks(net,supernode,a=0.5,b=0.5)!=wmax/float(b)*cc.cc_zhang(anet,supernode):
+            if abs(cc.sncc_alternating_walks(net,supernode,a=0.5,b=0.5)-wmax/float(b)*cc.cc_zhang(anet,supernode))>10**-6:
                 print wmax,b,cc.sncc_alternating_walks(net,supernode,a=0.5,b=0.5),cc.cc_zhang(anet,supernode)
                 print supernode
                 print list(anet.edges)
                 print list(net.edges)
-            self.assertEqual(cc.sncc_alternating_walks(net,supernode,a=0.5,b=0.5),wmax/float(b)*cc.cc_zhang(anet,supernode))
+            self.assertAlmostEqual(cc.sncc_alternating_walks(net,supernode,a=0.5,b=0.5),wmax/float(b)*cc.cc_zhang(anet,supernode))
 
 
     def test_unweighted_consistency_er(self):
-        #net=models.er(10,[0.9,0.1])
-        #net=models.er(10,[0.1,0.3])
-        #net=models.er(10,[0.4,0.6,0.5,0.3])
-        #for i in range(10):        
-        #    net=models.er(10,[random.random(),random.random()])
-        #    self.test_unweighted_consistency(net)
+        net=models.er(10,[0.9,0.1])
+        net=models.er(10,[0.1,0.3])
+        net=models.er(10,[0.4,0.6,0.5,0.3])
+        for i in range(10):        
+            net=models.er(10,[random.random(),random.random(),random.random()])
+            self.test_unweighted_consistency(net)
 
         net=pymnet.net.CoupledMultiplexNetwork([('categorical',1.0)])
         net[1, 9, 1, 1]=1 
