@@ -288,6 +288,102 @@ class TestNet(unittest.TestCase):
         n.A['b'][1,3]=1
         #print n[3,'a'][2,'a']
         self.test_simple_couplings(n,hasDiagonalLinks=True)
+        
+    def test_simple_couplings_cmnet_nonglobalnodes(self):
+        """ Test that CoupledMultiplexNetwork globalNodes parameter
+        is working as it is supposed.
+        """
+        n=net.CoupledMultiplexNetwork(couplings=[('categorical',1.0)],globalNodes=False)
+
+        #Add three layers to the network
+        n.add_node('a',1)
+        n.add_node('b',1)
+        n.add_node('c',1)
+
+        #Implicitely add nodes 1, 2 and 3 to the networks
+        n.A['a'][1,2]=1
+        n.A['b'][1,2]=1
+        n.A['c'][2,3]=1
+        
+        #Explicitely add nodes 4 and 5 to the networks
+        n.A['a'].add_node(4,0)
+        n.A['b'].add_node(4,0)
+        n.A['a'].add_node(5,0)
+        n.A['b'].add_node(5,0)
+        n.A['c'].add_node(5,0)
+
+        #Tests for edge getters
+        self.assertEqual(n[1,1,'a','b'],1)
+        self.assertEqual(n[1,1,'a','c'],0)
+        self.assertEqual(n[1,1,'b','c'],0)
+        self.assertEqual(n[2,2,'a','b'],1)
+        self.assertEqual(n[2,2,'a','c'],1)
+        self.assertEqual(n[2,2,'b','c'],1)
+        self.assertEqual(n[3,3,'a','b'],0)
+        self.assertEqual(n[3,3,'a','c'],0)
+        self.assertEqual(n[3,3,'b','c'],0)
+        
+        self.assertEqual(n[4,4,'a','b'],1)
+        self.assertEqual(n[4,4,'a','c'],0)
+        self.assertEqual(n[4,4,'b','c'],0)
+        self.assertEqual(n[5,5,'a','b'],1)
+        self.assertEqual(n[5,5,'a','c'],1)
+        self.assertEqual(n[5,5,'b','c'],1)
+
+        #Tests for iterators
+        self.assertEqual(set(n[1,1,'a',:]),set([(1,'b')]))
+        self.assertEqual(set(n[2,2,'a',:]),set([(2,'b'),(2,'c')]))
+        self.assertEqual(set(n[3,3,'a',:]),set([]))
+        self.assertEqual(set(n[1,1,'b',:]),set([(1,'a')]))
+        self.assertEqual(set(n[2,2,'b',:]),set([(2,'a'),(2,'c')]))
+        self.assertEqual(set(n[3,3,'b',:]),set([]))
+        self.assertEqual(set(n[1,1,'c',:]),set([]))
+        self.assertEqual(set(n[2,2,'c',:]),set([(2,'a'),(2,'b')]))
+        self.assertEqual(set(n[3,3,'c',:]),set([]))
+
+        self.assertEqual(set(n[4,4,'a',:]),set([(4,'b')]))
+        self.assertEqual(set(n[5,5,'a',:]),set([(5,'b'),(5,'c')]))
+        self.assertEqual(set(n[4,4,'b',:]),set([(4,'a')]))
+        self.assertEqual(set(n[5,5,'b',:]),set([(5,'a'),(5,'c')]))
+        self.assertEqual(set(n[4,4,'c',:]),set([]))
+        self.assertEqual(set(n[5,5,'c',:]),set([(5,'a'),(5,'b')]))
+
+        #Tests for deg,str
+        self.assertEqual(n[1,1,'a',:].deg(),1)
+        self.assertEqual(n[2,2,'a',:].deg(),2)
+        self.assertEqual(n[3,3,'a',:].deg(),0)
+        self.assertEqual(n[1,1,'b',:].deg(),1)
+        self.assertEqual(n[2,2,'b',:].deg(),2)
+        self.assertEqual(n[3,3,'b',:].deg(),0)
+        self.assertEqual(n[1,1,'c',:].deg(),0)
+        self.assertEqual(n[2,2,'c',:].deg(),2)
+        self.assertEqual(n[3,3,'c',:].deg(),0)
+
+        self.assertEqual(n[4,4,'a',:].deg(),1)
+        self.assertEqual(n[5,5,'a',:].deg(),2)
+        self.assertEqual(n[4,4,'b',:].deg(),1)
+        self.assertEqual(n[5,5,'b',:].deg(),2)
+        self.assertEqual(n[4,4,'c',:].deg(),0)
+        self.assertEqual(n[5,5,'c',:].deg(),2)
+
+        self.assertEqual(n[1,1,'a',:].str(),1)
+        self.assertEqual(n[2,2,'a',:].str(),2)
+        self.assertEqual(n[3,3,'a',:].str(),0)
+        self.assertEqual(n[1,1,'b',:].str(),1)
+        self.assertEqual(n[2,2,'b',:].str(),2)
+        self.assertEqual(n[3,3,'b',:].str(),0)
+        self.assertEqual(n[1,1,'c',:].str(),0)
+        self.assertEqual(n[2,2,'c',:].str(),2)
+        self.assertEqual(n[3,3,'c',:].str(),0)
+
+        self.assertEqual(n[4,4,'a',:].str(),1)
+        self.assertEqual(n[5,5,'a',:].str(),2)
+        self.assertEqual(n[4,4,'b',:].str(),1)
+        self.assertEqual(n[5,5,'b',:].str(),2)
+        self.assertEqual(n[4,4,'c',:].str(),0)
+        self.assertEqual(n[5,5,'c',:].str(),2)
+
+
 
 def test_net():
     suite = unittest.TestSuite()    
@@ -300,6 +396,7 @@ def test_net():
     suite.addTest(TestNet("test_network_coupling_mnet"))
     suite.addTest(TestNet("test_network_coupling_cmnet"))
     suite.addTest(TestNet("test_multiplex_diagonal_notation"))
+    suite.addTest(TestNet("test_simple_couplings_cmnet_nonglobalnodes"))
 
     unittest.TextTestRunner().run(suite) 
 
