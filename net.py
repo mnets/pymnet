@@ -359,9 +359,15 @@ class MultisliceNode(object):
 class MultisliceNetworkWithParent(MultisliceNetwork):
     def _set_parent(self,parent):
         self.parent=parent
+    def _set_name(self,name):
+        self._name=name
     def add_node(self,node,dimension):
         self.parent.add_node(node,0)
         MultisliceNetwork.add_node(self,node,dimension)
+        if not self.parent.globalNodes:
+            if node not in self.parent._nodeToLayers:
+                 self.parent._nodeToLayers[node]=set()
+            self.parent._nodeToLayers[node].add(self._name)
 
 class CoupledMultiplexNetwork(MultisliceNetwork):
     """
@@ -373,9 +379,13 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
     policies by giving inter-slice couplings ??
     """
 
-    def __init__(self,couplings=None,directed=False,noEdge=0):
+    def __init__(self,couplings=None,directed=False,noEdge=0,globalNodes=True):
         self.directed=directed
         self.noEdge=noEdge
+
+        self.globalNodes=globalNodes
+        if not globalNodes:
+            self._nodeToLayers={}
 
         if couplings!=None:
             #assert len(couplings)==dimensions
@@ -419,6 +429,11 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
     def _add_A(self,node):
         net=MultisliceNetworkWithParent(dimensions=1)
         net._set_parent(self)
+        if not self.globalNodes:
+            if self.dimensions==2:
+                net._set_name((node,))
+            else:
+                net._set_name(node)
         self.A[node]=net
 
     def add_node(self,node,dimension):
@@ -434,7 +449,6 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
                         self._add_A(s)
                 else:
                     self._add_A(node)
-
 
             #call parent method
             MultisliceNetwork.add_node(self,node,dimension)
@@ -457,9 +471,16 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
         d=self._get_link_dimension(link)
         if d!=None:
             if d>0:
+                assert link[0]==link[1]
+                if not link[0] in self.slices[0]:
+                    return self.noEdge
+                if not self.globalNodes:
+                    supernode1, supernode2=self._link_to_nodes(link)
+                    if not (link[0] in self._get_A_with_tuple(supernode1[1:]).slices[0] and link[0] in self._get_A_with_tuple(supernode2[1:]).slices[0]):
+                        return self.noEdge
                 coupling=self.couplings[d-1]                
                 if coupling[0]=="categorical":
-                    return coupling[1]
+                        return coupling[1]                        
                 elif isinstance(coupling[0],MultisliceNetwork):
                     return self.couplings[d-1][0][link[2*d],link[2*d+1]]
                 else:
@@ -487,12 +508,18 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
             raise KeyError("Can only set links in the node dimension.")
 
 
-    def _get_dim_degree(self,node,dimension):
+    def _get_dim_degree(self,supernode,dimension):
         coupling_type=self.couplings[dimension-1][0]
         if coupling_type=="categorical":
-            return len(self.slices[dimension])-1
+            if self.globalNodes:
+                return len(self.slices[dimension])-1
+            else:
+                if supernode[1:] in self._nodeToLayers[supernode[0]]:
+                    return len(self._nodeToLayers[supernode[0]])-1
+                else:
+                    return 0
         elif isinstance(coupling_type,MultisliceNetwork):
-            return self.couplings[d-1][0][node[d]].deg()
+            return self.couplings[d-1][0][supernode[d]].deg()
         else:
             raise NotImplemented()
 
@@ -504,12 +531,22 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
         return self._get_dim_degree(node,dimension)*coupling_str
 
 
-    def _iter_dim(self,node,dimension):
+    def _iter_dim(self,supernode,dimension):
         coupling_type=self.couplings[dimension-1][0]
-        if coupling_type=="categorical":
-            for n in self.slices[dimension]:
-                if n!=node[dimension]:
-                    yield node[:dimension]+(n,)+node[dimension+1:]
+        if coupling_type=="categorical":            
+            if self.globalNodes:
+                for n in self.slices[dimension]:
+                    if n!=supernode[dimension]:                    
+                        yield supernode[:dimension]+(n,)+supernode[dimension+1:]
+            elif supernode[0] in self._get_A_with_tuple(supernode[1:]).slices[0]:
+                for layers in self._nodeToLayers[supernode[0]]:
+                    if layers!=supernode[1:]:                    
+                        yield (supernode[0],)+layers
+                #for n in self.slices[dimension]:
+                #    if n!=supernode[dimension]:                    
+                #        candidate=supernode[:dimension]+(n,)+supernode[dimension+1:]
+                #        if supernode[0] in self._get_A_with_tuple(candidate[1:]).slices[0]:
+                #            yield candidate
         else:
             raise NotImplemented()
         
