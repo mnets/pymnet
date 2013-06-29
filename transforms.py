@@ -42,3 +42,16 @@ def aggregate(net,dimensions,newNet=None,selfEdges=False):
             newNet[tuple(newEdge)]=newNet[tuple(newEdge)]+edge[-1]
 
     return newNet
+
+
+def overlay_network(net):
+    """Returns the overlay network of 2 dimensional multislice network.
+    """
+    assert net.dimensions==2
+    newnet=MultisliceNetwork()
+    for layer in net.slices[1]:
+        for node1 in net.slices[0]:
+            for node2 in net.slices[0]:
+                if net.directed or node1>node2:
+                    newnet[node1,node2]=newnet[node1,node2]+net[node1,node2,layer,layer]
+    return newnet

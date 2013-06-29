@@ -53,3 +53,32 @@ def full(nodes,layers):
         pass
     return n
 
+def full_multislice(nodes,layers):
+    if not hasattr(layers,'__iter__'): #is not sequence
+        n=MultisliceNetwork(dimensions=2)
+        for layer1 in range(layers):
+            for layer2 in range(layers):
+                for node1 in range(nodes):
+                    for node2 in range(nodes):
+                        if node1!=node2 or layer1!=layer2:
+                            n[node1,node2,layer1,layer2]=1
+    else:
+        raise Exception("not implemented")
+    return n
+
+def er_multislice(nodes,layers,p,randomWeights=False):
+    if not hasattr(layers,'__iter__'): #is not sequence
+        n=MultisliceNetwork(dimensions=2)
+        for layer1 in range(layers):
+            for layer2 in range(layers):
+                for node1 in range(nodes):
+                    for node2 in range(node1+1,nodes):
+                        if node1!=node2 or layer1!=layer2:
+                            if random.random()<p:
+                                if randomWeights:
+                                    n[node1,node2,layer1,layer2]=random.random()*10
+                                else:
+                                    n[node1,node2,layer1,layer2]=1
+    else:
+        raise Exception("not implemented")
+    return n

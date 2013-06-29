@@ -52,6 +52,24 @@ def cc_zhang(net,node,undefReturn=0.0):
     else:
         return undefReturn
 
+def gcc_zhang(net):
+    maxw=max(map(lambda x:x[2],net.edges))
+    nom,den=0,0
+    for node in net:
+        degree=net[node].deg()
+        if degree>=2:
+            for i,j in itertools.combinations(net[node],2):
+                nij=net[node][i]*net[node][j]
+                ij=net[i][j]
+                den+=nij            
+                if ij!=net.noEdge:
+                    nom+=nij*ij
+    if den!=0:
+        return nom/float(den)/float(maxw)
+    else:
+        return None
+
+
 def cc_onnela(net,node,undefReturn=0.0):
     """
     References
@@ -583,6 +601,193 @@ def gcc_moreno2(net,w1=1./3.,w2=1./3.,w3=1./3.):
     if len(net.slices[1])==2:
         return w1*c1+w2*c2
     return w1*c1+w2*c2+w3*c3
+
+def gcc_contraction_m(net):
+    num=0
+    nodes=net.slices[0]
+    layers=net.slices[1]
+    for a in nodes:
+        for b in nodes:
+            for e in nodes:
+                for g in layers:
+                    for d in layers:
+                        for n in layers:
+                            num+=net[a,b,g,d]*net[b,e,d,n]*net[e,a,n,g]
+    den=0
+    for a in nodes:
+        for b in nodes:
+            for e in nodes:
+                for g in layers:
+                    for d in layers:
+                        for n in layers:
+                            den+=net[a,b,g,d]*net[b,e,d,n]*1
+
+    for a in nodes:
+        for b in nodes:
+            for g in layers:
+                for d in layers:
+                    den+= -net[a,b,g,d]*net[b,a,d,g]
+
+    if den!=0:
+        return num/float(den)
+    else:
+        return None
+
+def gcc_contraction_m_ct(net):
+    num=0
+    nodes=net.slices[0]
+    layers=net.slices[1]
+    for a in nodes:
+        for b in nodes:
+            for e in nodes:
+                for g in layers:
+                    for d in layers:
+                        for n in layers:
+                            num+=net[a,b,g,d]*net[b,e,d,n]*net[e,a,n,g]
+    den=0
+    for a in nodes:
+        for b in nodes:
+            for e in nodes:
+                for g in layers:
+                    for d in layers:
+                        for n in layers:
+                            den+=net[a,b,g,d]*net[b,e,d,n]*1
+                            if e==a and n==g:
+                                den+= net[a,b,g,d]*net[b,e,d,n]*(-1)
+
+    if den!=0:
+        return num/float(den)
+    else:
+        return None
+
+
+def gcc_contraction_m_full(net):
+    num=0
+    nodes=net.slices[0]
+    layers=net.slices[1]
+    for a in nodes:
+        for b in nodes:
+            for e in nodes:
+                for g in layers:
+                    for d in layers:
+                        for n in layers:
+                            num+=net[a,b,g,d]*net[b,e,d,n]*net[e,a,n,g]
+
+    den=0
+    for a in nodes:
+        for b in nodes:
+            for e in nodes:
+                for g in layers:
+                    for d in layers:
+                        for n in layers:
+                            if b!=e or d!=n:
+                                den+=net[a,b,g,d]*1*net[e,a,n,g]
+
+    if den!=0:
+        return num/float(den)
+    else:
+        return None
+
+
+
+def gcc_contraction_o(net):
+    num=0
+    nodes=net.slices[0]
+    layers=net.slices[1]
+    for a in nodes:
+        for b in nodes:
+            for e in nodes:
+                for g in layers:
+                    for d in layers:
+                        for n in layers:
+                            num+=net[a,b,g,g]*net[b,e,d,d]*net[e,a,n,n]
+    den=0
+    for a in nodes:
+        for b in nodes:
+            for e in nodes:
+                for g in layers:
+                    for d in layers:
+                        for n in layers:
+                            den+=net[a,b,g,g]*net[b,e,d,d]*1
+                            #if net[a,b,g,g]*net[b,e,d,d]*1>0:
+                            #    print a,b,e,g,d,n
+
+    for a in nodes:
+        for b in nodes:
+            for g in layers:
+                for d in layers:
+                    den+= -net[a,b,g,g]*net[b,a,d,d]
+   # print num,den
+    if den!=0:
+        return num/float(den)
+    else:
+        return None
+
+
+def gcc_contraction_o_full(net):
+    num=0
+    nodes=net.slices[0]
+    layers=net.slices[1]
+    for a in nodes:
+        for b in nodes:
+            for e in nodes:
+                for g in layers:
+                    for d in layers:
+                        for n in layers:
+                            num+=net[a,b,g,g]*net[b,e,d,d]*net[e,a,n,n]
+    den=0
+    for a in nodes:
+        for b in nodes:
+            for e in nodes:
+                for g in layers:
+                    for d in layers:
+                        for n in layers:
+                            if b!=e:
+                                den+=net[a,b,g,g]*1*net[e,a,n,n]
+
+    if den!=0:
+        return num/float(den)
+    else:
+        return None
+
+
+
+def gcc_contraction_o2(net):
+    num=0
+    nodes=net.slices[0]
+    layers=net.slices[1]
+    for a in nodes:
+        for b in nodes:
+            for e in nodes:
+                for g in layers:
+                    for d in layers:
+                        for n in layers:
+                            num+=net[a,b,g,g]*net[b,e,d,d]*net[e,a,n,n]
+    den=0
+    for a in nodes:
+        for b in nodes:
+            for e in nodes:
+                for g in layers:
+                    for d in layers:
+                        for n in layers:
+                            den+=net[a,b,g,g]*net[b,e,d,d]*1
+                            if e==a:
+                                den+= net[a,b,g,g]*net[b,e,d,d]*(-1)
+                            #if net[a,b,g,g]*net[b,e,d,d]*1>0:
+                            #    print a,b,e,g,d,n
+
+    #for a in nodes:
+    #    for b in nodes:
+    #        for g in layers:
+    #            for d in layers:
+    #                den+= -net[a,b,g,g]*net[b,a,d,d]*len(layers)
+   # print num,den
+    if den!=0:
+        return num/float(den)
+    else:
+        return None
+
+
 
 
 
