@@ -104,10 +104,28 @@ Data:
         self.assertEqual(set(net.A[1][3]),set([0,2,4]))
         self.assertEqual(set(net.A[1][4]),set([1,3]))       
 
+    def test_read_ucinet_mplex_nonglobalnodes(self):
+        netfile="""DL N = 3 nm =2
+Data:
+0 1 1
+1 0 1
+1 1 0
+0 0 0
+0 0 1
+0 1 0"""
+        net=io.read_ucinet(netfile.split("\n"),globalNodes=False)
+        self.assertEqual(set(net[0,0]),set([(1,0),(2,0)]))
+        self.assertEqual(set(net[1,0]),set([(0,0),(2,0),(1,1)]))
+        self.assertEqual(set(net[2,0]),set([(0,0),(1,0),(2,1)]))
+        self.assertEqual(set(net[0,1]),set([]))
+        self.assertEqual(set(net[1,1]),set([(2,1),(1,0)]))
+        self.assertEqual(set(net[2,1]),set([(1,1),(2,0)]))
+
 def test_net():
     suite = unittest.TestSuite()    
     suite.addTest(TestNet("test_read_ucinet_flat_fullnet"))
     suite.addTest(TestNet("test_read_ucinet_mplex_fullnet"))
+    suite.addTest(TestNet("test_read_ucinet_mplex_nonglobalnodes"))
 
     unittest.TextTestRunner().run(suite) 
 
