@@ -442,7 +442,9 @@ def gcc_alternating_walks_vector_adj(net):
     c3_nom,c3_den=get_nom_den(p111,ph111)
 
     return c1_nom,c1_den,c2_nom,c2_den,c3_nom,c3_den
-            
+
+
+
 
 def gcc_alternating_walks_seplayers_adj(net,w1=1./3.,w2=1./3.,w3=1./3.):
     c1_nom,c1_den,c2_nom,c2_den,c3_nom,c3_den=gcc_alternating_walks_vector_adj(net)

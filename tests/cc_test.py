@@ -160,7 +160,89 @@ class TestNet(unittest.TestCase):
         print "gcc",cc.gcc_contraction_m(net),cc.gcc_contraction_m_ct(net),cc.gcc_super_graph(net),cc.gcc_contraction_o2(net),owmax*cc.gcc_zhang(onet)/float(b),cc.gcc_contraction_o(net)
         """
 
-    def test_unweighted_consistency_mslice(self,net):
+    def test_symmetric_alternating_walkers(self,net):
+            import numpy
+            adj,nodes1=net.get_supra_adjacency_matrix()    
+            a,nodes2=net.get_supra_adjacency_matrix(includeCouplings=False)
+            c=adj-a
+            i=numpy.eye(len(a))
+            ch=c+i
+
+            b=len(net.slices[1])
+            assert (c*c==(b-1)*i+(b-2)*c).all()
+            
+            #fn=cc.get_full_multiplex_network(net.slices[0],net.slices[1])
+            #f,node3=fn.get_supra_adjacency_matrix(includeCouplings=False)
+
+            #ca+ac version            
+            t=(ch*a+a*ch)*(ch*a+a*ch)*(ch*a+a*ch)
+            t_simple=4*(b+1)*a*a*a + 2*(b+2)*a*c*a*a*c + 4*a*a*c*a*c + 2*(b+1)*a*c*a*c*a + 2*a*c*a*c*a*c + 2*c*a*c*a*a*c + 2*c*a*a*a*c            
+            for node in range(len(a)):
+                assert t[node,node]==t_simple[node,node]
+
+            #cac version
+            t=(ch*a*ch)*(ch*a*ch)*(ch*a*ch)
+            t_simple=b**2*(a**3 + (2*a*c*a**2*c + 2*a**2*c*a*c +a*c*a*c*a) + (2*a*c*a*c*a*c) +  c*a**3*c + c*a**2*c*a*c+c*a*c*a**2*c + c*a*c*a*c*a*c)
+
+            cac_sum=0
+            for node in range(len(a)):
+                cac_sum+=t[node,node]
+                assert t[node,node]==t_simple[node,node]
+                #print nodes2[node],t[node,node]/b/b,(a**3 + (2*a*c*a**2*c + 2*a**2*c*a*c +a*c*a*c*a) + (2*a*c*a*c*a*c))[node,node],(c*a**3*c + c*a**2*c*a*c+c*a*c*a**2*c + c*a*c*a*c*a*c)[node,node]
+                #aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac=cc.cc_cycle_vector_bf(net,nodes2[node][0],nodes2[node][1])
+                #print aaa+2*aacac+2*acaac+acaca+2*acacac
+
+            anet=transforms.aggregate(net,1)
+            w,nodes1=anet.get_supra_adjacency_matrix()
+
+            m=ch*a*ch
+            saw=m*m*m
+            moreno_tot=0
+            aw_tot=0
+            w_tot=0
+            for snode in range(len(w)):
+                moreno_sum=0
+                aw_sum=0
+                for layer in range(len(a)/len(w)):
+                    aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac=cc.cc_cycle_vector_bf(net,snode,layer)
+                    moreno_sum+=aaa+2*aacac+2*acaac+acaca+2*acacac
+                    aw_sum+=aaa+aacac+acaac+acaca+acacac
+                    
+                #print aw_sum,moreno_sum,(w*w*w)[snode,snode],saw[snode+len(w),snode+len(w)]/b/b
+                self.assertEqual(aw_sum,saw[snode+len(w),snode+len(w)]/b/b)
+                self.assertEqual(aw_sum,(w*w*w)[snode,snode])
+                moreno_tot+=moreno_sum
+                aw_tot+=aw_sum
+                w_tot+=(w*w*w)[snode,snode]
+            #print "totals",aw_tot,moreno_tot,w_tot
+            self.assertEqual(aw_tot,w_tot)
+
+            """
+            print "w0 ", (w*w*w)[0,0]
+            s=0
+            m=ch*a*ch
+            for jt in range(len(w)):
+                for kt in range(len(w)):
+                    s+=m[0,jt]*m[jt,kt]*m[kt,0]
+            print "s0 ",s*16
+            print nodes2[0],(m*m*m)[0,0]
+
+            wsum=0
+            for node in range(len(w)):
+                wsum+=(w*w*w)[node,node]
+                print (w*w*w)[node,node]
+            #print cac_sum/b/b,wsum
+            #print ch*a*ch
+
+            wsum2=0
+            node=1
+            for i,j in itertools.combinations(anet[node],2):
+                wsum+=anet[node][i]*anet[node][j]*anet[i][j]
+            """
+
+
+
+    def test_weighted_consistency_mslice(self,net):
         anet=transforms.aggregate(net,1)
         onet=transforms.overlay_network(net)
         wmax=max(map(lambda x:x[2],anet.edges))
@@ -178,12 +260,21 @@ class TestNet(unittest.TestCase):
 
         #print "gcc",cc.gcc_contraction_m(net),cc.gcc_contraction_m_ct(net),cc.gcc_contraction_m_full(net),cc.gcc_super_graph(net),cc.gcc_contraction_o2(net),owmax*cc.gcc_zhang(onet)/float(b),cc.gcc_contraction_o(net)
 
+    def test_unweighted_consistency_mslice(self,net):
+        self.assertAlmostEqual(cc.gcc_contraction_m_full(net),cc.gcc_super_graph(net))
 
-    def test_unweighted_consistency_mslice_er(self):
+
+    def test_consistency_mslice_er(self):
         net=models.er_multislice(10,5,0.5,randomWeights=True)
-        self.test_unweighted_consistency_mslice(net)
+        self.test_weighted_consistency_mslice(net)
 
         net=models.er_multislice(10,5,0.1,randomWeights=True)
+        self.test_weighted_consistency_mslice(net)
+
+        net=models.er_multislice(10,5,0.5,randomWeights=False)
+        self.test_unweighted_consistency_mslice(net)
+
+        net=models.er_multislice(10,5,0.1,randomWeights=False)
         self.test_unweighted_consistency_mslice(net)
 
     def test_normalization_full_mslice(self):
@@ -209,9 +300,10 @@ class TestNet(unittest.TestCase):
         net=models.er(10,[0.9,0.1])
         net=models.er(10,[0.1,0.3])
         net=models.er(10,[0.4,0.6,0.5,0.3])
-        for i in range(10):        
-            net=models.er(10,[random.random(),random.random(),random.random()])
+        for i in range(1):        
+            net=models.er(10,map(lambda x:random.random(),range(5)))
             self.test_unweighted_consistency(net)
+            self.test_symmetric_alternating_walkers(net)
 
         net=pymnet.net.CoupledMultiplexNetwork([('categorical',1.0)])
         net[1, 9, 1, 1]=1 
@@ -241,7 +333,7 @@ def test_net():
     suite.addTest(TestNet("test_unweighted_mplex_triangle"))
     suite.addTest(TestNet("test_unweighted_mplex_simple"))
     suite.addTest(TestNet("test_unweighted_consistency_er"))
-    suite.addTest(TestNet("test_unweighted_consistency_mslice_er"))
+    suite.addTest(TestNet("test_consistency_mslice_er"))
     suite.addTest(TestNet("test_normalization_full_mslice"))
     unittest.TextTestRunner().run(suite) 
 
