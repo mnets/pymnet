@@ -1,7 +1,7 @@
 from net import MultisliceNetwork,CoupledMultiplexNetwork
 import math
 
-def read_ucinet(netinput):
+def read_ucinet(netinput,couplings=('categorical',1.0),globalNodes=True):
     """Reads network in UCINET DL format.
 
     See http://www.analytictech.com/networks/dataentry.htm
@@ -14,7 +14,11 @@ def read_ucinet(netinput):
     ----------
     netinput : The input file name if string, otherwise
                any iterable.
-
+    couplings : Passed for CoupledMultiplexNetwork when the
+               network object is created.
+    globalNodes (bool) : If False, nodes having zero degree
+               on a layer are not added to that layer.
+               
     Notes
     -----
     The labels are not case sensitive according to the example
@@ -145,7 +149,7 @@ def read_ucinet(netinput):
     if nm==1:
         net=MultisliceNetwork(dimensions=1)
     else:
-        net=CoupledMultiplexNetwork(couplings=[("categorical",1.0)])
+        net=CoupledMultiplexNetwork(couplings=[couplings],globalNodes=globalNodes)
 
     if format=="fullmatrix" or "fullmatrix diagonal present":
         try:
@@ -165,11 +169,13 @@ def read_ucinet(netinput):
                     for column,field in enumerate(fields):
                         if nm==1:
                             if clabels[column]!=rlabels[row]:
-                                net[clabels[column]][rlabels[row]]=float(field)
+                                if float(field)!=0.0:
+                                    net[clabels[column]][rlabels[row]]=float(field)
                         else:
                             level=int(math.floor(row/n))
                             if clabels[column]!=rlabels[row%n]:
-                                net[clabels[column],rlabels[row%n],llabels[level],llabels[level]]=float(field)
+                                if float(field)!=0.0:
+                                    net[clabels[column],rlabels[row%n],llabels[level],llabels[level]]=float(field)
                     row+=1
         except StopIteration:
             assert row==n*nm, "Invalid number of rows in the data"
