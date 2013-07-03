@@ -335,19 +335,19 @@ def cc_cycle_vector_bf(net,node,layer,undefReturn=0.0):
             #assert len(nodelist)==intranet[node].deg(),(len(nodelist),intranet[node].deg())
             acfca+=(len(nodelist)*(len(nodelist)-1))
     
-        raise NotImplemented()
+        #raise NotImplemented()
         acfcac=0
         for i in intranet[node]:
             for dummy,layer3 in net[node,node,layer,:]:
                 for j,dummy in net[node,:,layer3,layer3]:
                     if i!=j:
                         if net[i,i,layer,:].deg()>net[j,j,layer3,:].deg():
-                            for layer2 in net[j,j,layer3,:]:
+                            for dummy,layer2 in net[j,j,layer3,:]:
                                 if layer2!=layer:
                                     if net[i,i,layer,layer2]!=net.noEdge:
                                         acfcac+=1
                         else:
-                            for layer2 in net[i,i,layer,:]:
+                            for dummy,layer2 in net[i,i,layer,:]:
                                 if layer2!=layer3:
                                     if net[j,j,layer3,layer2]!=net.noEdge:
                                         acfcac+=1
@@ -399,10 +399,12 @@ def cc_cycle_vector_adj(net,node,layer):
     acfca=(a*c*f*c*a)[node,node]
     acfcac=(a*c*f*c*a*c)[node,node]
 
+
     b=len(net.slices[1])
-    assert (b-1)*afa==acfca
-    assert afcac==acfac
-    assert acfcac==(b-2)*afcac
+    if net.globalNodes:
+        assert afcac==acfac
+        assert (b-1)*afa==acfca
+        assert acfcac==(b-2)*afcac
 
     return aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac
 
