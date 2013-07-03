@@ -326,15 +326,26 @@ class TestNet(unittest.TestCase):
         #net=models.full_multislice(10,5)
         #self.test_unweighted_consistency(net)
 
+    def test_unweighted_nonglobalnodes_consistency(self,net):
+        for snode in net.slices[0]:
+            for layer in net.slices[1]:
+                self.assertEqual(cc.cc_cycle_vector_adj(net,snode,layer),cc.cc_cycle_vector_bf(net,snode,layer))
+                #print snode,layer,cc.cc_cycle_vector_bf(net,snode,layer)
+
+    def test_unweighted_nonglobalnodes_consistency_er(self):
+        net=pymnet.models.er_nonoverlapping([range(10),range(5,15),range(10,20),range(15,25),range(0,25)],[0.5]*5)
+        self.test_unweighted_nonglobalnodes_consistency(net)
+
 def test_net():
     suite = unittest.TestSuite()    
-    suite.addTest(TestNet("test_unweighted_flat_triangle"))
-    suite.addTest(TestNet("test_unweighted_flat_simple"))
-    suite.addTest(TestNet("test_unweighted_mplex_triangle"))
-    suite.addTest(TestNet("test_unweighted_mplex_simple"))
-    suite.addTest(TestNet("test_unweighted_consistency_er"))
-    suite.addTest(TestNet("test_consistency_mslice_er"))
-    suite.addTest(TestNet("test_normalization_full_mslice"))
+    #suite.addTest(TestNet("test_unweighted_flat_triangle"))
+    #suite.addTest(TestNet("test_unweighted_flat_simple"))
+    #suite.addTest(TestNet("test_unweighted_mplex_triangle"))
+    #suite.addTest(TestNet("test_unweighted_mplex_simple"))
+    #suite.addTest(TestNet("test_unweighted_consistency_er"))
+    #suite.addTest(TestNet("test_consistency_mslice_er"))
+    #suite.addTest(TestNet("test_normalization_full_mslice"))
+    suite.addTest(TestNet("test_unweighted_nonglobalnodes_consistency_er"))
     unittest.TextTestRunner().run(suite) 
 
 if __name__ == '__main__':
