@@ -1,6 +1,12 @@
 from net import MultisliceNetwork,CoupledMultiplexNetwork
 import math
 
+def write_ucinet(net,outputfile,outputType="edges"):
+    assert isinstance(net,CoupledMultiplexNetwork), "Multislice networks not supported by the UCINET file format."
+    if isinstance(outputfile,str) or isinstance(outputfile,unicode):
+        outputfile=open(outputfile,'w')
+    
+
 def read_ucinet(netinput,couplings=('categorical',1.0),globalNodes=True):
     """Reads network in UCINET DL format.
 
@@ -181,5 +187,13 @@ def read_ucinet(netinput,couplings=('categorical',1.0),globalNodes=True):
             assert row==n*nm, "Invalid number of rows in the data"
     else:
         raise Exception("Format '%s' is not supported" % format)
+
+
+    if globalNodes and nm!=1:
+        for layer in llabels:
+            for node in clabels:
+                net.A[layer].add_node(node,0)
+            for node in rlabels:
+                net.A[layer].add_node(node,0)
 
     return net
