@@ -467,6 +467,8 @@ def gcc_alternating_walks_seplayers_adj(net,w1=1./3.,w2=1./3.,w3=1./3.):
     return w1*c1+w2*c2+w3*c3
 
 def gcc_alternating_walks_seplayers(net,w1=1./3.,w2=1./3.,w3=1./3.):
+    """ If w3==None: w1 = \alpha and w2 =\beta
+    """
     t1,t2,t3,d1,d2,d3=0,0,0,0,0,0
     for layer in net.slices[1]:
         for node in net.A[layer]:#net.slices[0]:
@@ -479,22 +481,34 @@ def gcc_alternating_walks_seplayers(net,w1=1./3.,w2=1./3.,w3=1./3.):
             d3+=acfcac
             #print node,layer,aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac
 
-    if d3!=0:
-        c3=t3/float(d3)
-    else:
-        c3=0
-    if d2!=0:
-        c2=t2/float(d2)
-    else:
-        c2=0
-    if d1!=0:
-        c1=t1/float(d1)
-    else:
-        c1=0
+    if w3!=None:
+        if d3!=0:
+            c3=t3/float(d3)
+        else:
+            c3=0
+        if d2!=0:
+            c2=t2/float(d2)
+        else:
+            c2=0
+        if d1!=0:
+            c1=t1/float(d1)
+        else:
+            c1=0
 
-    return w1*c1+w2*c2+w3*c3
+        return w1*c1+w2*c2+w3*c3
+    else:
+        a,b=w1,w2
+        t=t1*a**3 + t2*a*b*b + t3*b**3
+        d=d1*a**3 + d2*a*b*b + d3*b**3        
+        if d!=0:
+            return t/float(d)
+        else:
+            return 0
+
 
 def gcc_moreno2_seplayers(net,w1=1./3.,w2=1./3.,w3=1./3.):
+    """ If w3==None: w1 = \alpha and w2 =\beta
+    """
     t1,t2,t3,d1,d2,d3=0,0,0,0,0,0
     for layer in net.slices[1]:
         for node in net.A[layer]:#net.slices[0]:
@@ -507,20 +521,29 @@ def gcc_moreno2_seplayers(net,w1=1./3.,w2=1./3.,w3=1./3.):
             d3+=2*acfcac
             #print node,layer,aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac
 
-    if d3!=0:
-        c3=t3/float(d3)
-    else:
-        c3=0
-    if d2!=0:
-        c2=t2/float(d2)
-    else:
-        c2=0
-    if d1!=0:
-        c1=t1/float(d1)
-    else:
-        c1=0
+    if w3!=None: 
+        if d3!=0:
+            c3=t3/float(d3)
+        else:
+            c3=0
+        if d2!=0:
+            c2=t2/float(d2)
+        else:
+            c2=0
+        if d1!=0:
+            c1=t1/float(d1)
+        else:
+            c1=0
 
-    return w1*c1+w2*c2+w3*c3
+        return w1*c1+w2*c2+w3*c3
+    else:
+        a,b=w1,w2
+        t=t1*a**3 + t2*a*b*b + t3*b**3
+        d=d1*a**3 + d2*a*b*b + d3*b**3        
+        if d!=0:
+            return t/float(d)
+        else:
+            return 0
 
 
 def sncc_alternating_walks(net,supernode,a=0.5,b=0.5):
