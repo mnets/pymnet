@@ -468,8 +468,8 @@ def gcc_alternating_walks_seplayers_adj(net,w1=1./3.,w2=1./3.,w3=1./3.):
 
 def gcc_alternating_walks_seplayers(net,w1=1./3.,w2=1./3.,w3=1./3.):
     t1,t2,t3,d1,d2,d3=0,0,0,0,0,0
-    for node in net.slices[0]:
-        for layer in net.slices[1]:
+    for layer in net.slices[1]:
+        for node in net.A[layer]:#net.slices[0]:
             aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac=cc_cycle_vector_bf(net,node,layer,undefReturn=0.0)
             t1+=aaa
             d1+=afa
@@ -477,6 +477,35 @@ def gcc_alternating_walks_seplayers(net,w1=1./3.,w2=1./3.,w3=1./3.):
             d2+=afcac+acfac+acfca
             t3+=acacac
             d3+=acfcac
+            #print node,layer,aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac
+
+    if d3!=0:
+        c3=t3/float(d3)
+    else:
+        c3=0
+    if d2!=0:
+        c2=t2/float(d2)
+    else:
+        c2=0
+    if d1!=0:
+        c1=t1/float(d1)
+    else:
+        c1=0
+
+    return w1*c1+w2*c2+w3*c3
+
+def gcc_moreno2_seplayers(net,w1=1./3.,w2=1./3.,w3=1./3.):
+    t1,t2,t3,d1,d2,d3=0,0,0,0,0,0
+    for layer in net.slices[1]:
+        for node in net.A[layer]:#net.slices[0]:
+            aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac=cc_cycle_vector_bf(net,node,layer,undefReturn=0.0)
+            t1+=aaa
+            d1+=afa
+            t2+=2*aacac+2*acaac+acaca
+            d2+=2*afcac+2*acfac+acfca
+            t3+=2*acacac
+            d3+=2*acfcac
+            #print node,layer,aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac
 
     if d3!=0:
         c3=t3/float(d3)
