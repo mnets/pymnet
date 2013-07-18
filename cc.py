@@ -104,6 +104,39 @@ def cc_barrat(net,node,undefReturn=0.0):
     else:
         return undefReturn
 
+def cc_barrett_optimized(net,node,anet,undefReturn=0.0):
+    """Multiplex clustering coefficient defined by Barrett et al.
+
+    See SI of "Taking sociality seriously: the structure of multi-dimensional social networks as a source of information for individuals.", Louise Barrett, S. Peter Henzi, David Lusseau, Phil. Trans. R. Soc. B 5 August 2012 vol. 367 no. 1599 2108-2118
+
+    \frac{\sum_j^n \sum_h^n \sum_k^b ( a_{ijk} \sum_l^b (a_{ihl} \sum_m^b a_{jhm} ) )} {\sum_j^n \sum_h^n \sum_k^b (a_{ijk} \sum_l^b \max(a_{ihl},a_{jhl}) )}
+    """
+    degree=anet[node].deg()
+    if degree>=2:
+        nom,den=0,0
+        for i,j in itertools.combinations(anet[node],2):
+            nij=anet[node][i]*anet[node][j]
+            ij=anet[i][j]
+            if ij!=anet.noEdge:
+                nom+=nij*ij
+
+        ineighs=set(anet[node])
+        for j in anet[node]:
+            jneighs=set(anet[j])
+            for h in ineighs | jneighs:
+                m=0
+                #for layer in net.slices[1]:
+                for layer in net._nodeToLayers[h]:
+                    layer=layer[0]
+                    m+=max(net[node,h,layer],net[j,h,layer])
+                den+=anet[node,j]*m
+
+        if den!=0.0:
+            return 2*nom/float(den)
+        else:
+            return undefReturn
+    else:
+        return undefReturn
 
 def cc_barrett(net,node,anet,undefReturn=0.0):
     """Multiplex clustering coefficient defined by Barrett et al.
