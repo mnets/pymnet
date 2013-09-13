@@ -1,5 +1,6 @@
 from net import *
 import math
+import itertools
 
 def aggregate(net,dimensions,newNet=None,selfEdges=False):
     """ Returns a new network with reduced number of dimensions. 
@@ -55,3 +56,57 @@ def overlay_network(net):
                 if net.directed or node1>node2:
                     newnet[node1,node2]=newnet[node1,node2]+net[node1,node2,layer,layer]
     return newnet
+
+def subnet(net,nodes,*layers):
+    """Returns an induced subgraph with given set of nodes and layers.
+
+    Parameters
+    ----------
+    net: The original network.
+    nodes : sequence
+        The nodes that span the induces subgraph.
+    *layers : *sequence
+        Layers included in the subgraph. One parameter for each dimension.
+
+    Return
+    ------
+    subnet : type(net)
+        The induced subgraph that contains only nodes given in
+        `nodes` and the edges between those nodes that are
+        present in `net`. Node properties etc are left untouched.
+    """
+    newNet=None
+    if newNet==None:
+        if type(net)==MultisliceNetwork:
+            newNet=MultisliceNetwork(dimensions=net.dimensions,
+                                     noEdge=net.noEdge,
+                                     directed=net.directed)
+            raise Exception("Not implemented yet.")
+        elif type(net)==CoupledMultiplexNetwork:
+            newNet=CoupledMultiplexNetwork(couplings=net.couplings,
+                                           directed=net.directed,
+                                           noEdge=net.noEdge,
+                                           globalNodes=net.globalNodes)
+
+            #Go through all the combinations of new layers
+            for layer in itertools.product(*layers):
+                degsum=0
+                for node in nodes:        
+                    degsum += net[(node,)+layer].deg()
+                    newNet.add_node(node,0)
+
+                if degsum >= len(nodes)*(len(nodes)-1)/2:
+                    othernodes=set(nodes)
+                    for node in nodes:
+                        if not net.directed:
+                            othernodes.remove(node)
+                        for othernode in othernodes:
+                            if net[(node,othernode)+layer]!=net.noEdge:
+                                newNet[(node,othernode)+layer]=net[(node,othernode)+layer]
+                else:
+                    for node in nodes:
+                        for neigh in itertools.imap(lambda x:x[0],net[(node,COLON)+layer]):
+                            if neigh in nodes:
+                                newNet[(node,neigh)+layer]=net[(node,neigh)+layer]
+
+    return newNet
