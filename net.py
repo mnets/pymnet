@@ -297,14 +297,14 @@ class MultisliceNetwork(object):
         import numpy
         if self.dimensions>1:
             nodes=map(lambda x: tuple(reversed(x)),sorted(itertools.product(*map(lambda i:sorted(self.slices[i]),reversed(range(len(self.slices)))))))
-            matrix=numpy.zeros((len(nodes),len(nodes)),dtype=int)
+            matrix=numpy.zeros((len(nodes),len(nodes)),dtype=float)
             for i_index,i in enumerate(nodes):
                 for j_index,j in enumerate(nodes):
                     if includeCouplings or i[1:]==j[1:]:
                         matrix[i_index,j_index]=self[i][j]
         else:
             nodes=sorted(self)
-            matrix=numpy.zeros((len(nodes),len(nodes)),dtype=int)
+            matrix=numpy.zeros((len(nodes),len(nodes)),dtype=float)
             for i_index,i in enumerate(nodes):
                 for j_index,j in enumerate(nodes):
                     if i_index!=j_index:
@@ -437,6 +437,15 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
         self.A[node]=net
 
     def add_node(self,node,dimension):
+        """ Adds node or a layer to given dimension.
+
+        Maybe we should have add_node and add_layer methods separately?
+
+        Examples
+        --------
+        >>> myNet.add_node('myNode',0) #Adds a new node with label 'myNode'
+        >>> myNet.add_node('myLayer',1) #Adds a new layer to the first dimension
+        """
         #overrrides the parent method
 
         #check if new diagonal matrices needs to be added
