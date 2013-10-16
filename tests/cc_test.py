@@ -351,10 +351,18 @@ class TestNet(unittest.TestCase):
         #self.test_unweighted_consistency(net)
 
     def test_unweighted_nonglobalnodes_consistency(self,net):
+        #Tests direct cycle vector numeration against matrix multiplication
         for snode in net.slices[0]:
             for layer in net.slices[1]:
                 self.assertEqual(cc.cc_cycle_vector_adj(net,snode,layer),cc.cc_cycle_vector_bf(net,snode,layer))
-                #print snode,layer,cc.cc_cycle_vector_bf(net,snode,layer)
+
+        #Test that Barrett clustering coeffiecient is consistent across different versions
+        anet=pymnet.transforms.aggregate(net,1)
+        for snode in net.slices[0]:
+            self.assertEqual(cc.cc_barrett_explicit(net,snode),cc.cc_barrett(net,snode,anet))
+            self.assertEqual(cc.cc_barrett_optimized(net,snode,anet),cc.cc_barrett(net,snode,anet))
+
+
 
     def test_unweighted_nonglobalnodes_consistency_er(self):
         net=pymnet.models.er_nonoverlapping([range(10),range(5,15),range(10,20),range(15,25),range(0,25)],[0.5]*5)
