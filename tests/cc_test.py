@@ -180,7 +180,31 @@ class TestNet(unittest.TestCase):
             for node in range(len(a)):
                 assert t[node,node]==t_simple[node,node]
 
+            #c'a+ac' version
+            chd=c+0.5*i
+            t=(chd*a+a*chd)*(chd*a+a*chd)*(chd*a+a*chd)
+            t_simple=(2*b-1)*a**3 + 2*a**2*c*a*c+ 2*b*a*c*a**2*c+ (2*b-1)* a*c*a*c*a + 2*a*c*a*c*a*c + c*a**3*c+ 2*c*a**2*c*a*c
+            for node in range(len(a)):
+                assert t[node,node]==t_simple[node,node]
+
+            #c'a+ac' version with random alpha and beta
+            alpha,beta=random.random(),random.random()
+            chd=beta*c+0.5*alpha*i
+            t=(chd*a+a*chd)*(chd*a+a*chd)*(chd*a+a*chd)
+            t_simple=alpha**3*a**3 - 2*alpha*beta**2*a**3 + 2*alpha*b*beta**2*a**3 + alpha*beta**2*c*a**3*c - 4*beta**3*a*c*a**2*c - 4*beta**3*a*c*a*c*a + 2*alpha*beta**2*a**2*c*a*c + 2*b*beta**3*a*c*a**2*c + 2*beta**3*c*a**2*c*a*c + 4*alpha*beta**2*a*c*a**2*c + 2*b*beta**3*a*c*a*c*a + 2*beta**3*a*c*a*c*a*c + 3*alpha*beta**2*a*c*a*c*a
+            for node in range(len(a)):
+                self.assertAlmostEqual(t[node,node],t_simple[node,node])
+
+            #cac version with random alpha and beta
+            alpha,beta=random.random(),random.random()
+            ch=beta*c+alpha*i
+            t=(ch*a*ch)*(ch*a*ch)*(ch*a*ch)
+            t_simple=alpha**6*a**3 + alpha**2*beta**4*a**3 - 2*alpha**4*beta**2*a**3 + alpha**2*beta**4*b**2*a**3 + beta**6*c*a**3*c - 2*b*alpha**2*beta**4*a**3 + 2*b*alpha**4*beta**2*a**3 + alpha**4*beta**2*c*a**3*c + beta**6*b**2*c*a**3*c - 2*b*beta**6*c*a**3*c - 2*alpha**2*beta**4*c*a**3*c - 4*alpha**2*beta**4*a*c*a**2*c - 4*alpha**2*beta**4*a**2*c*a*c - 4*alpha**3*beta**3*a*c*a**2*c - 4*alpha**3*beta**3*a**2*c*a*c + 2*b*alpha**2*beta**4*c*a**3*c + 4*alpha*beta**5*a*c*a**2*c + 4*alpha*beta**5*a**2*c*a*c + 4*alpha**4*beta**2*a*c*a**2*c + 4*alpha**4*beta**2*a**2*c*a*c + 4*beta**6*c*a**2*c*a*c - 8*alpha**3*beta**3*a*c*a*c*a - 6*alpha*b*beta**5*a*c*a**2*c - 6*alpha*b*beta**5*a**2*c*a*c - 6*b*beta**6*c*a**2*c*a*c - 4*alpha*beta**5*c*a**2*c*a*c - 4*alpha**2*beta**4*c*a**2*c*a*c + 2*alpha*beta**5*b**2*a*c*a**2*c + 2*alpha*beta**5*b**2*a**2*c*a*c + 2*b*alpha**3*beta**3*a*c*a**2*c + 2*b*alpha**3*beta**3*a**2*c*a*c + 2*beta**6*b**2*c*a**2*c*a*c + 4*b*alpha**2*beta**4*a*c*a**2*c + 4*b*alpha**2*beta**4*a**2*c*a*c + 4*alpha**2*beta**4*a*c*a*c*a + 4*alpha**3*beta**3*c*a**2*c*a*c + 4*alpha**4*beta**2*a*c*a*c*a + alpha**2*beta**4*b**2*a*c*a*c*a - 16*alpha**2*beta**4*a*c*a*c*a*c - 4*b*alpha**2*beta**4*a*c*a*c*a + 2*b*alpha**2*beta**4*c*a**2*c*a*c + 4*alpha*b*beta**5*c*a**2*c*a*c + 4*b*alpha**3*beta**3*a*c*a*c*a + 4*beta**6*c*a*c*a*c*a*c + 8*alpha*beta**5*a*c*a*c*a*c + 8*alpha**3*beta**3*a*c*a*c*a*c + beta**6*b**2*c*a*c*a*c*a*c - 8*alpha*b*beta**5*a*c*a*c*a*c - 8*alpha*beta**5*c*a*c*a*c*a*c - 4*b*beta**6*c*a*c*a*c*a*c + 2*alpha*beta**5*b**2*a*c*a*c*a*c + 4*alpha**2*beta**4*c*a*c*a*c*a*c + 8*b*alpha**2*beta**4*a*c*a*c*a*c + 4*alpha*b*beta**5*c*a*c*a*c*a*c
+            for node in range(len(a)):
+                self.assertAlmostEqual(t[node,node],t_simple[node,node])
+
             #cac version
+            ch=c+i
             t=(ch*a*ch)*(ch*a*ch)*(ch*a*ch)
             t_simple=b**2*(a**3 + (2*a*c*a**2*c + 2*a**2*c*a*c +a*c*a*c*a) + (2*a*c*a*c*a*c) +  c*a**3*c + c*a**2*c*a*c+c*a*c*a**2*c + c*a*c*a*c*a*c)
 
