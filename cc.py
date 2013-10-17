@@ -481,7 +481,7 @@ def gcc_alternating_walks_vector_adj(net):
 
 
 
-def gcc_alternating_walks_seplayers_adj(net,w1=1./3.,w2=1./3.,w3=1./3.):
+def gcc_alternating_walks_seplayers_adj(net,w1=1./3.,w2=1./3.,w3=1./3.,returnCVector=False):
     c1_nom,c1_den,c2_nom,c2_den,c3_nom,c3_den=gcc_alternating_walks_vector_adj(net)
     if sum(c1_den)!=0:
         c1=sum(c1_nom)/float(sum(c1_den))
@@ -497,9 +497,13 @@ def gcc_alternating_walks_seplayers_adj(net,w1=1./3.,w2=1./3.,w3=1./3.):
         c3=sum(c3_nom)/float(sum(c3_den))
     else:
         c3=0
+
+    if returnCVector:
+        return c1,c2,c3
+
     return w1*c1+w2*c2+w3*c3
 
-def gcc_alternating_walks_seplayers(net,w1=1./3.,w2=1./3.,w3=1./3.):
+def gcc_alternating_walks_seplayers(net,w1=1./3.,w2=1./3.,w3=1./3.,returnCVector=False):
     """ If w3==None: w1 = \alpha and w2 =\beta
     """
     t1,t2,t3,d1,d2,d3=0,0,0,0,0,0
@@ -513,6 +517,9 @@ def gcc_alternating_walks_seplayers(net,w1=1./3.,w2=1./3.,w3=1./3.):
             t3+=acacac
             d3+=acfcac
             #print node,layer,aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac
+
+    if returnCVector:
+        return c1,c2,c3
 
     if w3!=None:
         if d3!=0:
