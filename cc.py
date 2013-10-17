@@ -595,6 +595,41 @@ def sncc_alternating_walks(net,supernode,a=0.5,b=0.5):
     else:
         return 0
 
+def sncc_alternating_walks_seplayers(net,supernode,w1=1./3.,w2=1./3.,w3=1./3.,undefined=None):
+    t1,t2,t3,d1,d2,d3=0,0,0,0,0,0
+    for layer in net.slices[1]:
+        aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac=cc_cycle_vector_bf(net,supernode,layer,undefReturn=0.0)
+        t1+=aaa
+        d1+=afa
+        t2+=aacac+acaac+acaca
+        d2+=afcac+acfac+acfca
+        t3+=acacac
+        d3+=acfcac
+
+    if d1==0:
+        if w1>0:
+            return undefined
+        else:
+            c1=0
+    else:
+        c1=t1/float(d1)
+    if d2==0:
+        if w2>0:
+            return undefined
+        else:
+            c2=0
+    else:
+        c2=t2/float(d2)
+    if d3==0:
+        if w3>0:
+            return undefined
+        else:
+            c3=0
+    else:
+        c3=t3/float(d3)
+    return w1*c1+w2*c2+w3*c3
+
+
 def gcc_from_lcc(net,lcc):
     lcc_vector=map(lambda node:lcc(net,node,undefReturn=None),net)
     lcc_fvector=filter(lambda x:x!=None,lcc_vector)
