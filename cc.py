@@ -503,6 +503,64 @@ def gcc_alternating_walks_seplayers_adj(net,w1=1./3.,w2=1./3.,w3=1./3.,returnCVe
 
     return w1*c1+w2*c2+w3*c3
 
+
+
+def lcc_alternating_walks(net,node,layer,w1=1./3.,w2=1./3.,w3=1./3.,returnCVector=False):
+    """ If w3==None: w1 = \alpha and w2 =\beta
+    """
+    aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac=cc_cycle_vector_bf(net,node,layer,undefReturn=0.0)
+    t1=aaa
+    d1=afa
+    t2=aacac+acaac+acaca
+    d2=afcac+acfac+acfca
+    t3=acacac
+    d3=acfcac
+
+    if d3!=0:
+        c3=t3/float(d3)
+    else:
+        c3=0
+    if d2!=0:
+        c2=t2/float(d2)
+    else:
+        c2=0
+    if d1!=0:
+        c1=t1/float(d1)
+    else:
+        c1=0
+
+    if returnCVector:
+        return c1,c2,c3
+
+    if w3!=None:
+        return w1*c1+w2*c2+w3*c3
+    else:
+        a,b=w1,w2
+        t=t1*a**3 + t2*a*b*b + t3*b**3
+        d=d1*a**3 + d2*a*b*b + d3*b**3        
+        if d!=0:
+            return t/float(d)
+        else:
+            return 0
+
+def avg_lcc_alternating_walks(net,w1=1./3.,w2=1./3.,w3=1./3.,returnCVector=False):
+    c,c1,c2,c3=0,0,0,0
+    n=0.
+    for layer in net.slices[1]:
+        for node in net.A[layer]:
+            n+=1.
+            if returnCVector:
+                tc1,tc2,tc3=lcc_alternating_walks(net,node,layer,returnCVector=True)
+                c1,c2,c3=c1+tc1,c2+tc2,c3+tc3
+            else:
+                c+=lcc_alternating_walks_seplayers(net,node,layer,w1=w1,w2=w2,w3=w3)
+                
+    if returnCVector:
+        return c1/n,c2/n,c3/n
+    else:
+        return c/n
+
+
 def gcc_alternating_walks_seplayers(net,w1=1./3.,w2=1./3.,w3=1./3.,returnCVector=False):
     """ If w3==None: w1 = \alpha and w2 =\beta
     """
@@ -518,23 +576,24 @@ def gcc_alternating_walks_seplayers(net,w1=1./3.,w2=1./3.,w3=1./3.,returnCVector
             d3+=acfcac
             #print node,layer,aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac
 
+
+    if d3!=0:
+        c3=t3/float(d3)
+    else:
+        c3=0
+    if d2!=0:
+        c2=t2/float(d2)
+    else:
+        c2=0
+    if d1!=0:
+        c1=t1/float(d1)
+    else:
+        c1=0
+
     if returnCVector:
         return c1,c2,c3
 
     if w3!=None:
-        if d3!=0:
-            c3=t3/float(d3)
-        else:
-            c3=0
-        if d2!=0:
-            c2=t2/float(d2)
-        else:
-            c2=0
-        if d1!=0:
-            c1=t1/float(d1)
-        else:
-            c1=0
-
         return w1*c1+w2*c2+w3*c3
     else:
         a,b=w1,w2
