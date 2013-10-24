@@ -6,9 +6,11 @@ def single_layer_conf(net,degs):
 
     Parameters
     ----------
-    net : Empty network object that is to be filled.
-    deg (dict) : The degree distribution. Keys are degrees, and corresponding
-                 values are number of nodes with the given degree.
+    net : MultilayerNetwork with aspects=0
+       Empty network object that is to be filled.
+    deg : dict 
+       The degree distribution. Keys are degrees, and corresponding
+       values are number of nodes with the given degree.
 
     Notes
     -----
@@ -99,8 +101,20 @@ def single_layer_conf(net,degs):
 
 
 def single_layer_er(net,nodes,p):
-    """Efficient generation of large random networks. 
-    See PRE 71, 036113 (2005) 
+    """Generates a realization of a monoplex Erdos-Renyi network.
+
+    Parameters
+    ----------
+    net : MultilayerNetwork with aspects=0
+       Empty network object that is to be filled.
+    nodes : iterable
+       Sequence of node labels.       
+    p : float
+       Probability that edges is present.
+
+    References
+    ----------
+    Efficient generation of large random networks. PRE 71, 036113 (2005) 
     """
     n=len(nodes)
     for node in nodes:
@@ -120,15 +134,25 @@ def conf(degs,aspects=0,couplings=("categorical",1.0)):
 
     Parameters
     ----------
-    degs (dict(s)) : If a monoplex network, then a single dict where keys are the
-                     degrees and values give the number of nodes. If more aspects,
-                     then degs is a sequence of same type of dictionaries.
-    aspectes (int) : Number of aspects in the network, 0 or 1.
-    couplings      : The coupling types of the multiplex network object.
+    degs : dict or sequence of dicts
+      If a monoplex network, then a single dict where keys are the
+      degrees and values give the number of nodes. If more aspects,
+      then degs is a sequence of same type of dictionaries.
+    aspectes : int 
+       Number of aspects in the network, 0 or 1.
+    couplings : tuple
+       The coupling types of the multiplex network object.
 
     Returns
     -------
-    net : The (multiplex) network produced with the configuration model.
+    net : MultiplexNetwork
+       The (multiplex) network produced with the configuration model.
+
+
+    See also
+    --------
+    single_layer_conf : the function used to generate a network on each layer
+
 
     """
     if aspects==0:
@@ -154,8 +178,20 @@ def er(n,p):
 
     Parameters
     ----------
-    n (int) : Number of nodes
-    p (int or list of ints) : Connection probability.
+    n : int 
+       Number of nodes
+    p : int or list of ints
+       Connection probability.
+
+    Returns
+    -------
+    net : MultiplexNetwork
+       The (multiplex) network produced.
+
+
+    See also
+    --------
+    single_layer_er : the function used to generate a network on each layer
     """
  
 
