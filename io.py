@@ -79,7 +79,7 @@ def read_ucinet(netinput,couplings=('categorical',1.0),globalNodes=True):
             elif dims==0:
                 raise Exception("Number of nodes (and slices) not given")
             else:
-                raise Exception("Too many dimensions?")
+                raise Exception("Too many aspects?")
 
             assert nchar.strip().lower()=="n"
             assert mchar.strip().lower()=="nm"
@@ -159,7 +159,7 @@ def read_ucinet(netinput,couplings=('categorical',1.0),globalNodes=True):
     
     #create the empty network
     if nm==1:
-        net=MultilayerNetwork(dimensions=1)
+        net=MultilayerNetwork(aspects=0)
     else:
         net=MultiplexNetwork(couplings=[couplings],globalNodes=globalNodes)
 

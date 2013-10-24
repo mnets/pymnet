@@ -14,7 +14,7 @@ class TestNet(unittest.TestCase):
         pass
 
     def test_unweighted_flat_triangle(self):
-        n=net.MultilayerNetwork(dimensions=1)
+        n=net.MultilayerNetwork(aspects=0)
         n[1,2]=1
         n[2,3]=1
         n[3,1]=1
@@ -26,7 +26,7 @@ class TestNet(unittest.TestCase):
 
 
     def test_unweighted_flat_simple(self):
-        n=net.MultilayerNetwork(dimensions=1)
+        n=net.MultilayerNetwork(aspects=0)
         n[1,2]=1
         n[2,3]=1
         n[3,1]=1
@@ -52,7 +52,7 @@ class TestNet(unittest.TestCase):
         add_clique(n,3)
         add_clique(n,4)
 
-        an=net.MultilayerNetwork(dimensions=1)
+        an=net.MultilayerNetwork(aspects=0)
         an[1,2]=4
         an[1,3]=4
         an[2,3]=4
@@ -90,7 +90,7 @@ class TestNet(unittest.TestCase):
         n[1,4,3]=1
         n[2,4,3]=1
 
-        an=net.MultilayerNetwork(dimensions=1)
+        an=net.MultilayerNetwork(aspects=0)
         an[1,2]=3
         an[1,3]=3
         an[1,4]=2

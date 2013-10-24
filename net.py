@@ -18,15 +18,15 @@ class MultilayerNetwork(object):
     """Multilayer network with arbitrary number of aspects and a tensor-like interface.
     """
     def __init__(self,
-                 dimensions=1,
+                 aspects=0,
                  noEdge=0,
                  directed=False):
-        assert dimensions>=0
+        assert aspects>=0
 
-        self.dimensions=dimensions
+        self.aspects=aspects
         self.directed=directed
         self.noEdge=noEdge
-        self._init_slices(dimensions)
+        self._init_slices(aspects)
         
 
         if directed:
@@ -36,9 +36,9 @@ class MultilayerNetwork(object):
 
         #should keep table of degs and strenghts
 
-    def _init_slices(self,dimensions):
+    def _init_slices(self,aspects):
         self.slices=[] #set for each dimension
-        for d in range(dimensions):
+        for a in range(aspects+1):
             self.slices.append(set())
        
         
@@ -77,11 +77,11 @@ class MultilayerNetwork(object):
     def __len__(self):
         return len(self.slices[0])
 
-    def add_node(self,node,dimension):
-        """Adds an empty node to the dimension.
+    def add_node(self,node,aspect):
+        """Adds an empty node to the aspect.
         Does nothing if node already exists.
         """
-        self.slices[dimension].add(node)
+        self.slices[aspect].add(node)
 
     def _get_link(self,link):
         """Return link weight or 0 if no link.
@@ -89,7 +89,7 @@ class MultilayerNetwork(object):
         This is a private method, so no sanity checks on the parameters are
         done at this point.
 
-        Paramters
+        Parameters
         ---------
         link(tuple) : (i,j,s_1,r_1, ... ,s_d,r_d)
         """
@@ -157,26 +157,26 @@ class MultilayerNetwork(object):
 
     def __getitem__(self,item):
         """
-        dimensions=2
-        i,s     = node i at slice s
-        i,j,s   = link i,j at slice s = i,j,s,s
-        i,j,s,r = link i,j between slices s and r
+        aspects=1
+        i,s     = node i at layer s
+        i,j,s   = link i,j at layer s = i,j,s,s
+        i,j,s,r = link i,j between layers s and r
 
-        i,:,s,: = i,s = node i at slice s
-        i,j,s,: = node i at slice s, but only links to j are visible
-        i,:,s,r = node i at slice s, but only links to slide r are visible
+        i,:,s,: = i,s = node i at layer s
+        i,j,s,: = node i at layer s, but only links to j are visible
+        i,:,s,r = node i at layer s, but only links to layer r are visible
 
         i,:,s   = i,:,s,s
         Not implemented yet:
         i,s,:   = i,i,s,:
 
-        dimensions=3
-        i,s,x       = node i at slice s in dimension 1 and at slice x in dimension 2
-        i,j,s,x     = link i,j at slice s in dim 1 and slice x in dim 2 = i,j,s,s,x,x
-        i,j,s,r,x,y = link i,j between slices s and r in dim 1 and between slices x and y in dim 2
+        aspects=2
+        i,s,x       = node i at layer s in aspect 1 and at layer x in aspect 2
+        i,j,s,x     = link i,j at layer s in aspect 1 and layer x in aspect 2 = i,j,s,s,x,x
+        i,j,s,r,x,y = link i,j between layers s and r in aspect 1 and between layers x and y in aspect 2
 
         i,:,s,:,x,: = i,s,x
-        i,j,s,:,x,y = node i at slice s and y, but only links to j and y are visible
+        i,j,s,:,x,y = node i at layer s and y, but only links to j and y are visible
         ...
 
         i,:,s,x = i,:,s,s,x,x
@@ -189,7 +189,7 @@ class MultilayerNetwork(object):
         
 
         """        
-        d=self.dimensions
+        d=self.aspects+1
         if not isinstance(item,tuple):
             item=(item,)
         if len(item)==d: #node
@@ -219,7 +219,7 @@ class MultilayerNetwork(object):
                 raise KeyError("1 or 2 indices please.")
 
     def __setitem__(self,item,val):
-        d=self.dimensions
+        d=self.aspects+1
 
         if not isinstance(item,tuple):
             item=(item,)
@@ -239,8 +239,8 @@ class MultilayerNetwork(object):
 
 
 
-    def iter_dimension(self,dimension):
-        for node in self.slices[dimension]:
+    def iter_dimension(self,aspect):
+        for node in self.slices[aspect]:
             yield node
 
     def __iter__(self):
@@ -254,7 +254,7 @@ class MultilayerNetwork(object):
         if self.directed:
             for node in itertools.product(*self.slices):
                 for neigh in self[node]:                
-                    if self.dimensions==1:
+                    if self.aspects==0:
                         neigh=(neigh,)
                     link=self._nodes_to_link(node,neigh)
                     yield link+(self[link],)
@@ -262,7 +262,7 @@ class MultilayerNetwork(object):
             iterated=set()
             for node in itertools.product(*self.slices):
                 for neigh in self[node]:                
-                    if self.dimensions==1:
+                    if self.aspects==0:
                         neigh=(neigh,)
                     if neigh not in iterated:
                         link=self._nodes_to_link(node,neigh)
@@ -288,13 +288,12 @@ class MultilayerNetwork(object):
         for i in nodes:
             row=[str(self[i][j]) for j in nodes]
             output.write(" ".join(row)+"\n")
-        #print " ".join(row)
         output.close()
 
 
     def get_supra_adjacency_matrix(self,includeCouplings=True):
         import numpy
-        if self.dimensions>1:
+        if self.aspects>0:
             nodes=map(lambda x: tuple(reversed(x)),sorted(itertools.product(*map(lambda i:sorted(self.slices[i]),reversed(range(len(self.slices)))))))
             matrix=numpy.zeros((len(nodes),len(nodes)),dtype=float)
             for i_index,i in enumerate(nodes):
@@ -324,27 +323,27 @@ class MultilayerNode(object):
         example:
         net[1,'a','x'][:,:,'y']=net[1,:,'a',:,'x','y']
         """
-        if self.mnet.dimensions==1:
+        if self.mnet.aspects==0:
             item=(item,)
         return self.mnet[self.mnet._nodes_to_link(self.node,item)]
 
     def __setitem__(self,item,value):
-        if self.mnet.dimensions==1:
+        if self.mnet.aspects==0:
             item=(item,)
         self.mnet[self.mnet._nodes_to_link(self.node,item)]=value
 
     def deg(self,*layers):
-        assert len(layers)==0 or len(layers)==self.mnet.dimensions
+        assert len(layers)==0 or len(layers)==(self.mnet.aspects+1)
         if layers==():
             layers=self.layers
         return self.mnet._get_degree(self.node,layers)
     def str(self,*layers):
-        assert len(layers)==0 or len(layers)==self.mnet.dimensions
+        assert len(layers)==0 or len(layers)==(self.mnet.aspects+1)
         if layers==():
             layers=self.layers
         return self.mnet._get_strength(self.node,layers)
     def __iter__(self):
-        if self.mnet.dimensions>1:
+        if self.mnet.aspects>0:
             for node in self.mnet._iter_neighbors(self.node,self.layers):
                 yield node #maybe should only return the indices that can change?
         else:
@@ -358,9 +357,9 @@ class MultilayerNetworkWithParent(MultilayerNetwork):
         self.parent=parent
     def _set_name(self,name):
         self._name=name
-    def add_node(self,node,dimension):
+    def add_node(self,node,aspect):
         self.parent.add_node(node,0)
-        MultilayerNetwork.add_node(self,node,dimension)
+        MultilayerNetwork.add_node(self,node,aspect)
         if not self.parent.globalNodes:
             if node not in self.parent._nodeToLayers:
                  self.parent._nodeToLayers[node]=set()
@@ -368,7 +367,7 @@ class MultilayerNetworkWithParent(MultilayerNetwork):
 
 class MultiplexNetwork(MultilayerNetwork):
     """
-    couplings - A list or tuple with lenght equal to dimensions
+    couplings - A list or tuple with lenght equal to number of aspects
                 Each coupling must be either a policy or a network
                 policy is a tuple: (type, weight)
                 policy types: 'ordinal', 'categorical', 'ordinal_warp', 'categorical_warp'
@@ -394,12 +393,12 @@ class MultiplexNetwork(MultilayerNetwork):
                     self.couplings.append((coupling,))
                 else:
                     raise ValueError("Invalid coupling type: "+str(type(coupling)))
-            self.dimensions=len(couplings)+1
+            self.aspects=len(couplings)
         else:
             #couplings=map(lambda x:None,range(dimensions))
-            self.dimensions=1
+            self.aspects=0
 
-        self._init_slices(self.dimensions)
+        self._init_slices(self.aspects)
         
         #diagonal elements, map with keys as tuples of slices and vals as MultiSliceNetwork objects
         #keys are not tuples if dimensions==2
@@ -407,7 +406,7 @@ class MultiplexNetwork(MultilayerNetwork):
 
     def _get_link_dimension(self,link):
         dims=[]
-        for d in range(self.dimensions):
+        for d in range(self.aspects+1):
             if link[2*d]!=link[2*d+1]:
                 dims.append(d)
         if len(dims)==1:
@@ -418,22 +417,22 @@ class MultiplexNetwork(MultilayerNetwork):
     def _get_A_with_tuple(self,layer):
         """Return self.A. Layer must be given as tuple.
         """
-        if self.dimensions==2:
+        if self.aspects==1:
             return self.A[layer[0]]
         else:
             return self.A[layer]
 
     def _add_A(self,node):
-        net=MultilayerNetworkWithParent(dimensions=1)
+        net=MultilayerNetworkWithParent(aspects=0)
         net._set_parent(self)
         if not self.globalNodes:
-            if self.dimensions==2:
+            if self.aspects==1:
                 net._set_name((node,))
             else:
                 net._set_name(node)
         self.A[node]=net
 
-    def add_node(self,node,dimension):
+    def add_node(self,node,aspect):
         """ Adds node or a layer to given dimension.
 
         Maybe we should have add_node and add_layer methods separately?
@@ -446,24 +445,24 @@ class MultiplexNetwork(MultilayerNetwork):
         #overrrides the parent method
 
         #check if new diagonal matrices needs to be added
-        if node not in self.slices[dimension]:
-            if dimension>0:            
-                if self.dimensions>2:
+        if node not in self.slices[aspect]:
+            if aspect>0:            
+                if self.aspects>1:
                     new_slices=list(self.slices[1:])
-                    new_slices[dimension-1]=[node]
+                    new_slices[aspect-1]=[node]
                     for s in itertools.product(*new_slices):
                         self._add_A(s)
                 else:
                     self._add_A(node)
 
             #call parent method
-            MultilayerNetwork.add_node(self,node,dimension)
+            MultilayerNetwork.add_node(self,node,aspect)
 
 
     def _has_layer_with_tuple(self,layer):
         """Return true if layer in self.A. Layer must be given as tuple.
         """
-        if self.dimensions==2:
+        if self.aspects==1:
             return layer[0] in self.A
         else:
             return layer in self.A
@@ -514,36 +513,36 @@ class MultiplexNetwork(MultilayerNetwork):
             raise KeyError("Can only set links in the node dimension.")
 
 
-    def _get_dim_degree(self,supernode,dimension):
-        coupling_type=self.couplings[dimension-1][0]
+    def _get_dim_degree(self,supernode,aspect):
+        coupling_type=self.couplings[aspect-1][0]
         if coupling_type=="categorical":
             if self.globalNodes:
-                return len(self.slices[dimension])-1
+                return len(self.slices[aspect])-1
             else:
                 if supernode[1:] in self._nodeToLayers[supernode[0]]:
                     return len(self._nodeToLayers[supernode[0]])-1
                 else:
                     return 0
         elif isinstance(coupling_type,MultilayerNetwork):
-            return self.couplings[d-1][0][supernode[d]].deg()
+            return self.couplings[aspect-1][0][supernode[aspect]].deg()
         else:
             raise NotImplemented()
 
-    def _get_dim_strength(self,node,dimension):
-        coupling_str=self.couplings[dimension-1][1]
-        coupling_type=self.couplings[dimension-1][0]
+    def _get_dim_strength(self,node,aspect):
+        coupling_str=self.couplings[aspect-1][1]
+        coupling_type=self.couplings[aspect-1][0]
         if isinstance(coupling_type,MultilayerNetwork):
             raise Exception() #please implement this
-        return self._get_dim_degree(node,dimension)*coupling_str
+        return self._get_dim_degree(node,aspect)*coupling_str
 
 
-    def _iter_dim(self,supernode,dimension):
-        coupling_type=self.couplings[dimension-1][0]
+    def _iter_dim(self,supernode,aspect):
+        coupling_type=self.couplings[aspect-1][0]
         if coupling_type=="categorical":            
             if self.globalNodes:
-                for n in self.slices[dimension]:
-                    if n!=supernode[dimension]:                    
-                        yield supernode[:dimension]+(n,)+supernode[dimension+1:]
+                for n in self.slices[aspect]:
+                    if n!=supernode[aspect]:                    
+                        yield supernode[:aspect]+(n,)+supernode[aspect+1:]
             elif supernode[0] in self._get_A_with_tuple(supernode[1:]).slices[0]:
                 for layers in self._nodeToLayers[supernode[0]]:
                     if layers!=supernode[1:]:                    
@@ -558,7 +557,7 @@ class MultiplexNetwork(MultilayerNetwork):
         
     def _select_dimensions(self,node,dims):
         if dims==None:
-            for d in range(self.dimensions):
+            for d in range(self.aspects+1):
                 yield d
         else:
             l=[]
@@ -604,13 +603,13 @@ class MultiplexNetwork(MultilayerNetwork):
                     yield n
 
 
-    def get_couplings(self,dimension):
+    def get_couplings(self,aspect):
         """Returns a view to a network of couplings between nodes and
         their counterparts in other slices of the given dimension.        
         """
         pass
 
-    def set_connection_policy(self,dimension,policy):
+    def set_connection_policy(self,aspect,policy):
         pass
 
 class FlatMultilayerNetworkView(MultilayerNetwork):
@@ -622,7 +621,7 @@ class FlatMultilayerNetworkView(MultilayerNetwork):
     """
     def __init__(self,mnet):
         self.mnet=mnet
-        self.dimensions=1
+        self.aspects=0
 
     def _flat_node_to_node(self,node):
         pass
@@ -657,7 +656,7 @@ class ModularityMultilayerNetworkView(MultilayerNetwork):
         self.mnet=mnet
 
         self.slices=mnet.slices
-        self.dimensions=mnet.dimensions
+        self.aspects=mnet.aspects
 
         #precalc ms,u
         self.m={}

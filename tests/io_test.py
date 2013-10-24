@@ -21,7 +21,7 @@ Data:
 1 0 0 0 0
 1 0 1 0 0"""
         net=io.read_ucinet(netfile.split("\n"))
-        self.assertEqual(net.dimensions,1)
+        self.assertEqual(net.aspects,0)
         self.assertEqual(set(net),set([0,1,2,3,4]))
         self.assertEqual(set(net[0]),set([1,2,3,4]))
         self.assertEqual(set(net[1]),set([0,2]))
@@ -31,7 +31,7 @@ Data:
 
         def test_labeled(netfile):
             net=io.read_ucinet(netfile.split("\n"))
-            self.assertEqual(net.dimensions,1)
+            self.assertEqual(net.aspects,0)
             self.assertEqual(set(net),set(["barry","david","lin","pat","russ"]))
             self.assertEqual(set(net["barry"]),set(["david","lin","pat"]))
             self.assertEqual(set(net["david"]),set(["barry","russ"]))
@@ -91,7 +91,7 @@ Data:
 1 0 1 0 1
 0 1 0 1 0"""
         net=io.read_ucinet(netfile.split("\n"))
-        self.assertEqual(net.dimensions,2)
+        self.assertEqual(net.aspects,1)
         self.assertEqual(set(net),set([0,1,2,3,4]))
         self.assertEqual(set(net.A[0][0]),set([1,2,3,4]))
         self.assertEqual(set(net.A[0][1]),set([0,2]))
