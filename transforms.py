@@ -7,10 +7,10 @@ def aggregate(net,dimensions,newNet=None,selfEdges=False):
 
     Parameters
     ----------
-    net (MultisliceNetwork) : The original network
+    net (MultilayerNetwork) : The original network
     dimensions (int,tuple) : The dimension which is aggregated over,
                              or a tuple if many dimensions
-    newNet (MultisliceNetwork) : Empty network to be filled and returne.
+    newNet (MultilayerNetwork) : Empty network to be filled and returne.
                                  If None, a new one is created by this
                                  function.
     selfEdges (bool) : If true aggregates self-edges too
@@ -23,7 +23,7 @@ def aggregate(net,dimensions,newNet=None,selfEdges=False):
         pass
     
     if newNet==None:
-        newNet=MultisliceNetwork(dimensions=net.dimensions-len(dimensions),
+        newNet=MultilayerNetwork(dimensions=net.dimensions-len(dimensions),
                                   noEdge=net.noEdge,
                                   directed=net.directed)
     assert newNet.dimensions==net.dimensions-len(dimensions)
@@ -49,7 +49,7 @@ def overlay_network(net):
     """Returns the overlay network of 2 dimensional multislice network.
     """
     assert net.dimensions==2
-    newnet=MultisliceNetwork()
+    newnet=MultilayerNetwork()
     for layer in net.slices[1]:
         for node1 in net.slices[0]:
             for node2 in net.slices[0]:
@@ -77,13 +77,13 @@ def subnet(net,nodes,*layers):
     """
     newNet=None
     if newNet==None:
-        if type(net)==MultisliceNetwork:
-            newNet=MultisliceNetwork(dimensions=net.dimensions,
+        if type(net)==MultilayerNetwork:
+            newNet=MultilayerNetwork(dimensions=net.dimensions,
                                      noEdge=net.noEdge,
                                      directed=net.directed)
             raise Exception("Not implemented yet.")
-        elif type(net)==CoupledMultiplexNetwork:
-            newNet=CoupledMultiplexNetwork(couplings=net.couplings,
+        elif type(net)==MultiplexNetwork:
+            newNet=MultiplexNetwork(couplings=net.couplings,
                                            directed=net.directed,
                                            noEdge=net.noEdge,
                                            globalNodes=net.globalNodes)

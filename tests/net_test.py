@@ -68,7 +68,7 @@ class TestNet(unittest.TestCase):
         self.assertEqual(net['a'].deg(),0) #missing node
 
     def test_flat_mnet(self):
-        testnet=net.MultisliceNetwork(dimensions=1)
+        testnet=net.MultilayerNetwork(dimensions=1)
         self.test_flat(testnet)
 
 
@@ -134,7 +134,7 @@ class TestNet(unittest.TestCase):
 
 
     def test_network_coupling_mnet(self):
-        testnet=net.MultisliceNetwork(dimensions=2)
+        testnet=net.MultilayerNetwork(dimensions=2)
         testnet[1,1,'a','b']=1
         testnet[2,2,'a','b']=1
         testnet[3,3,'a','b']=1
@@ -147,15 +147,15 @@ class TestNet(unittest.TestCase):
         self.test_network_coupling(testnet)
         
     def test_network_coupling_cmnet(self):
-        couplingNet=net.MultisliceNetwork(dimensions=1)
+        couplingNet=net.MultilayerNetwork(dimensions=1)
         couplingNet['a','b']=1
         couplingNet['a','c']=0
         couplingNet['b','c']=1
-        testnet=net.CoupledMultiplexNetwork(couplings=[couplingNet])
+        testnet=net.MultiplexNetwork(couplings=[couplingNet])
         self.test_network_coupling(testnet)
 
     def test_simple_couplings_mnet(self):
-        testnet=net.MultisliceNetwork(dimensions=2)
+        testnet=net.MultilayerNetwork(dimensions=2)
         testnet[1,1,'a','b']=1
         testnet[2,2,'a','b']=1
         testnet[3,3,'a','b']=1
@@ -163,7 +163,7 @@ class TestNet(unittest.TestCase):
 
 
     def test_simple_couplings_cmnet(self):
-        testnet=net.CoupledMultiplexNetwork(couplings=[('categorical',1.0)])
+        testnet=net.MultiplexNetwork(couplings=[('categorical',1.0)])
         self.test_simple_couplings(testnet)
 
     def test_2dim_categorical_couplings(self,net):
@@ -226,7 +226,7 @@ class TestNet(unittest.TestCase):
 
 
     def test_2dim_categorical_couplings_mnet(self): 
-        testnet=net.MultisliceNetwork(dimensions=3)
+        testnet=net.MultilayerNetwork(dimensions=3)
         testnet[1,1,'a','b','x','x']=1
         testnet[2,2,'a','b','x','x']=1
         testnet[3,3,'a','b','x','x']=1
@@ -257,12 +257,12 @@ class TestNet(unittest.TestCase):
         self.test_2dim_categorical_couplings(testnet)
 
     def test_2dim_categorical_couplings_cmnet(self):
-        testnet=net.CoupledMultiplexNetwork(couplings=[('categorical',1.0),('categorical',1.0)])
+        testnet=net.MultiplexNetwork(couplings=[('categorical',1.0),('categorical',1.0)])
         self.test_2dim_categorical_couplings(testnet)
 
 
     def test_multiplex_diagonal_notation(self):
-        n=net.CoupledMultiplexNetwork(couplings=[('categorical',1.0)])
+        n=net.MultiplexNetwork(couplings=[('categorical',1.0)])
         n.add_node(1,1)
         n[1,2,1]=1
         n[1,2,2]=1
@@ -279,7 +279,7 @@ class TestNet(unittest.TestCase):
     def test_simple_couplings_cmnet_add_to_A(self):
         """test_simple_couplings with links added to the net.A matrices directly.
         """
-        n=net.CoupledMultiplexNetwork(couplings=[('categorical',1.0)])
+        n=net.MultiplexNetwork(couplings=[('categorical',1.0)])
         n.add_node('a',1)
         n.add_node('b',1)
         n.A['a'][1][2]=1
@@ -290,10 +290,10 @@ class TestNet(unittest.TestCase):
         self.test_simple_couplings(n,hasDiagonalLinks=True)
         
     def test_simple_couplings_cmnet_nonglobalnodes(self):
-        """ Test that CoupledMultiplexNetwork globalNodes parameter
+        """ Test that MultiplexNetwork globalNodes parameter
         is working as it is supposed.
         """
-        n=net.CoupledMultiplexNetwork(couplings=[('categorical',1.0)],globalNodes=False)
+        n=net.MultiplexNetwork(couplings=[('categorical',1.0)],globalNodes=False)
 
         #Add three layers to the network
         n.add_node('a',1)
