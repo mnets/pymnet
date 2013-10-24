@@ -1,6 +1,103 @@
 from net import MultisliceNetwork,CoupledMultiplexNetwork
 import math,random
 
+def single_layer_conf(net,degs):
+    """Generates a realization of configuration model network.
+
+    Parameters
+    ----------
+    net : Empty network object that is to be filled.
+    deg (dict) : The degree distribution. Keys are degrees, and corresponding
+                 values are number of nodes with the given degree.
+
+    Notes
+    -----
+    The algorithm used here is similar to the one in article:
+    B.D McKay, N.C Wormald 'Uniform Generation of Random Regular Graphs of Moderate Degree'
+    Journal of Algorithms 11, pages 52-67 (1990)
+
+    The difference between the algorithm presented in the article and the one in this
+    function is that the random restarts are not implemented here. This means that the
+    sampled networks are not exactly statistically uniform. However, if the degrees 
+    are small compared to the number of nodes the error is likely to be small.
+    """
+    assert sum(map(lambda x:x[0]*x[1],degs.items()))%2==0
+    stubs=[]
+    selfedges={}
+    multiedges=set()
+    edgetoindex={}
+    nodes=sum(degs.values())
+
+    node=0
+    for k,num in degs.items():
+        for i in range(num):
+            for j in range(k):
+                stubs.append(node)
+            node+=1
+    random.shuffle(stubs)
+
+    for s in range(len(stubs)/2):
+        node1,node2=sorted([stubs[2*s],stubs[2*s+1]])
+
+        edgetoindex[(node1,node2)]=edgetoindex.get((node1,node2),[])+[s]
+
+        if net[node1,node2]!=0:
+            multiedges.add((node1,node2))
+
+        if node1==node2:
+            selfedges[node1]=selfedges.get(node1,[])+[s]
+        else:
+            net[node1,node2]=1
+
+    for node,sis in selfedges.items():
+        for si in sis:
+            repeat=True
+            while repeat:
+                #select two edges at random
+                e1i,e2i=map(lambda x:2*x,random.sample(xrange(len(stubs)/2),2))
+                c=[node,stubs[e1i],stubs[e1i+1],stubs[e2i],stubs[e2i+1]]
+                n2,n3=sorted([c[1],c[2]])
+                n4,n5=sorted([c[3],c[4]])
+                if len(set(c))==len(c):
+                    if (n2,n3) not in multiedges and (n4,n5) not in multiedges:
+                        if net[node,n2]==0 and net[node,n4]==0 and net[n3,n5]==0:                            
+                            net[n2,n3]=0
+                            net[n4,n5]=0
+                            net[node,n2]=1
+                            net[node,n4]=1
+                            net[n3,n5]=1
+                            stubs[si],stubs[si+1]=n3,n5
+                            stubs[e1i],stubs[e1i+1]=node,n2
+                            stubs[e2i],stubs[e2i+1]=node,n4
+                            repeat=False
+
+    for n1,n2 in multiedges:
+        for dummy in range(len(edgetoindex[(n1,n2)])/2):
+            repeat=True
+            while repeat:
+                #select two edges at random
+                e1i,e2i=map(lambda x:2*x,random.sample(xrange(len(stubs)/2),2))
+                c=[n1,n2,stubs[e1i],stubs[e1i+1],stubs[e2i],stubs[e2i+1]]
+                n3,n4=sorted([c[2],c[3]])
+                n5,n6=sorted([c[4],c[5]])
+                if len(set(c))==len(c):
+                    if (n3,n4) not in multiedges and (n5,n6) not in multiedges:
+                        if net[n1,n3]==0 and net[n2,n4]==0 and net[n1,n5]==0 and net[n2,n6]==0:
+                            net[n1,n2]=0
+                            net[n3,n4]=0
+                            net[n5,n6]=0
+                            net[n1,n3]=1
+                            net[n2,n4]=1
+                            net[n1,n5]=1
+                            net[n2,n6]=1
+                            si1,si2=edgetoindex[n1,n2].pop(),edgetoindex[n1,n2].pop()
+                            stubs[si1],stubs[si1+1]=n1,n3
+                            stubs[si1],stubs[si1+1]=n2,n4
+                            stubs[e1i],stubs[e1i+1]=n1,n5
+                            stubs[e2i],stubs[e2i+1]=n2,n6
+                            repeat=False
+
+
 def single_layer_er(net,nodes,p):
     """Efficient generation of large random networks. 
     See PRE 71, 036113 (2005) 
@@ -17,6 +114,40 @@ def single_layer_er(net,nodes,p):
             v = v+1
         if (v < n):
             net[nodes[v],nodes[w]]=1
+
+def conf(degs,aspects=0,couplings=("categorical",1.0)):
+    """Independent configuration models for fully interconnected multiplex networks.
+
+    Parameters
+    ----------
+    degs (dict(s)) : If a monoplex network, then a single dict where keys are the
+                     degrees and values give the number of nodes. If more aspects,
+                     then degs is a sequence of same type of dictionaries.
+    aspectes (int) : Number of aspects in the network, 0 or 1.
+    couplings      : The coupling types of the multiplex network object.
+
+    Returns
+    -------
+    net : The (multiplex) network produced with the configuration model.
+
+    """
+    if aspects==0:
+        net=MultisliceNetwork(dimensions=1)
+        single_layer_conf(net,degs)
+    elif aspects==1:
+        nodes=None
+        for ldegs in degs:
+            assert nodes==None or sum(ldegs.values())==nodes, "Number of nodes in layers differ."
+            nodes=sum(ldegs.values())
+        net=CoupledMultiplexNetwork(couplings=aspects*[couplings])
+        for l,ldegs in enumerate(degs):
+            net.add_node(l,1)
+            single_layer_conf(net.A[l],ldegs)
+    else:
+        raise Exception("0 or 1 aspects, please.")
+
+    return net
+
 
 def er(n,p):
     """Multiplex Erdos-Renyi model.
