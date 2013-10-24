@@ -360,7 +360,7 @@ class MultilayerNetworkWithParent(MultilayerNetwork):
     def add_node(self,node,aspect):
         self.parent.add_node(node,0)
         MultilayerNetwork.add_node(self,node,aspect)
-        if not self.parent.globalNodes:
+        if not self.parent.fullyInterconnected:
             if node not in self.parent._nodeToLayers:
                  self.parent._nodeToLayers[node]=set()
             self.parent._nodeToLayers[node].add(self._name)
@@ -375,12 +375,12 @@ class MultiplexNetwork(MultilayerNetwork):
     policies by giving inter-slice couplings ??
     """
 
-    def __init__(self,couplings=None,directed=False,noEdge=0,globalNodes=True):
+    def __init__(self,couplings=None,directed=False,noEdge=0,fullyInterconnected=True):
         self.directed=directed
         self.noEdge=noEdge
 
-        self.globalNodes=globalNodes
-        if not globalNodes:
+        self.fullyInterconnected=fullyInterconnected
+        if not fullyInterconnected:
             self._nodeToLayers={}
 
         if couplings!=None:
@@ -425,7 +425,7 @@ class MultiplexNetwork(MultilayerNetwork):
     def _add_A(self,node):
         net=MultilayerNetworkWithParent(aspects=0)
         net._set_parent(self)
-        if not self.globalNodes:
+        if not self.fullyInterconnected:
             if self.aspects==1:
                 net._set_name((node,))
             else:
@@ -479,7 +479,7 @@ class MultiplexNetwork(MultilayerNetwork):
                 assert link[0]==link[1]
                 if not link[0] in self.slices[0]:
                     return self.noEdge
-                if not self.globalNodes:
+                if not self.fullyInterconnected:
                     supernode1, supernode2=self._link_to_nodes(link)
                     if not (link[0] in self._get_A_with_tuple(supernode1[1:]).slices[0] and link[0] in self._get_A_with_tuple(supernode2[1:]).slices[0]):
                         return self.noEdge
@@ -516,7 +516,7 @@ class MultiplexNetwork(MultilayerNetwork):
     def _get_dim_degree(self,supernode,aspect):
         coupling_type=self.couplings[aspect-1][0]
         if coupling_type=="categorical":
-            if self.globalNodes:
+            if self.fullyInterconnected:
                 return len(self.slices[aspect])-1
             else:
                 if supernode[1:] in self._nodeToLayers[supernode[0]]:
@@ -539,7 +539,7 @@ class MultiplexNetwork(MultilayerNetwork):
     def _iter_dim(self,supernode,aspect):
         coupling_type=self.couplings[aspect-1][0]
         if coupling_type=="categorical":            
-            if self.globalNodes:
+            if self.fullyInterconnected:
                 for n in self.slices[aspect]:
                     if n!=supernode[aspect]:                    
                         yield supernode[:aspect]+(n,)+supernode[aspect+1:]

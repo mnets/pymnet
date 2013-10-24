@@ -7,7 +7,7 @@ def write_ucinet(net,outputfile,outputType="edges"):
         outputfile=open(outputfile,'w')
     
 
-def read_ucinet(netinput,couplings=('categorical',1.0),globalNodes=True):
+def read_ucinet(netinput,couplings=('categorical',1.0),fullyInterconnected=True):
     """Reads network in UCINET DL format.
 
     See http://www.analytictech.com/networks/dataentry.htm
@@ -22,7 +22,7 @@ def read_ucinet(netinput,couplings=('categorical',1.0),globalNodes=True):
                any iterable.
     couplings : Passed for MultiplexNetwork when the
                network object is created.
-    globalNodes (bool) : If False, nodes having zero degree
+    fullyInterconnected (bool) : If False, nodes having zero degree
                on a layer are not added to that layer.
                
     Notes
@@ -161,7 +161,7 @@ def read_ucinet(netinput,couplings=('categorical',1.0),globalNodes=True):
     if nm==1:
         net=MultilayerNetwork(aspects=0)
     else:
-        net=MultiplexNetwork(couplings=[couplings],globalNodes=globalNodes)
+        net=MultiplexNetwork(couplings=[couplings],fullyInterconnected=fullyInterconnected)
 
     if format=="fullmatrix" or "fullmatrix diagonal present":
         try:
@@ -195,7 +195,7 @@ def read_ucinet(netinput,couplings=('categorical',1.0),globalNodes=True):
         raise Exception("Format '%s' is not supported" % format)
 
 
-    if globalNodes and nm!=1:
+    if fullyInterconnected and nm!=1:
         for layer in llabels:
             for node in clabels:
                 net.A[layer].add_node(node,0)

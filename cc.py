@@ -334,7 +334,7 @@ def cc_cycle_vector_bf(net,node,layer,undefReturn=0.0):
                 else:
                     afcac+=len(neighbors)
 
-    if net.globalNodes:
+    if net.fullyInterconnected:
         acfca=afa*(len(net.slices[1])-1)        
         #afcac,acfac
         #afcac=0 
@@ -434,7 +434,7 @@ def cc_cycle_vector_adj(net,node,layer):
 
 
     b=len(net.slices[1])
-    if net.globalNodes:
+    if net.fullyInterconnected:
         assert afcac==acfac
         assert (b-1)*afa==acfca
         assert acfcac==(b-2)*afcac

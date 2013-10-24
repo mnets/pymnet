@@ -86,7 +86,7 @@ def subnet(net,nodes,*layers):
             newNet=MultiplexNetwork(couplings=net.couplings,
                                            directed=net.directed,
                                            noEdge=net.noEdge,
-                                           globalNodes=net.globalNodes)
+                                           fullyInterconnected=net.fullyInterconnected)
 
             #Go through all the combinations of new layers
             for layer in itertools.product(*layers):
