@@ -180,7 +180,7 @@ def er_nonoverlapping(nodes,ps):
     ps : List of edge occupation probabilities for layers
     """
     assert len(nodes)==len(ps)
-    net=MultiplexNetwork(couplings=[('categorical',1.0)],globalNodes=False)
+    net=MultiplexNetwork(couplings=[('categorical',1.0)],fullyInterconnected=False)
     for layer,lnodes in enumerate(nodes):
         net.add_node(layer,1)
         single_layer_er(net.A[layer],lnodes,ps[layer])

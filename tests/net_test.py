@@ -290,10 +290,10 @@ class TestNet(unittest.TestCase):
         self.test_simple_couplings(n,hasDiagonalLinks=True)
         
     def test_simple_couplings_cmnet_nonglobalnodes(self):
-        """ Test that MultiplexNetwork globalNodes parameter
+        """ Test that MultiplexNetwork fullyInterconnected parameter
         is working as it is supposed.
         """
-        n=net.MultiplexNetwork(couplings=[('categorical',1.0)],globalNodes=False)
+        n=net.MultiplexNetwork(couplings=[('categorical',1.0)],fullyInterconnected=False)
 
         #Add three layers to the network
         n.add_node('a',1)

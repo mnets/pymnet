@@ -113,7 +113,7 @@ Data:
 0 0 0
 0 0 1
 0 1 0"""
-        net=io.read_ucinet(netfile.split("\n"),globalNodes=False)
+        net=io.read_ucinet(netfile.split("\n"),fullyInterconnected=False)
         self.assertEqual(set(net[0,0]),set([(1,0),(2,0)]))
         self.assertEqual(set(net[1,0]),set([(0,0),(2,0),(1,1)]))
         self.assertEqual(set(net[2,0]),set([(0,0),(1,0),(2,1)]))
