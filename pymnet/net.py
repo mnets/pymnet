@@ -1,3 +1,6 @@
+"""Data structures for handling various forms of multilayer networks.
+"""
+
 import networkx,math,itertools
 
 COLON=slice(None,None,None)
