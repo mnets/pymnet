@@ -1,4 +1,4 @@
-from net import MultisliceNetwork,CoupledMultiplexNetwork
+from net import MultilayerNetwork,MultiplexNetwork
 import math,random
 
 def single_layer_conf(net,degs):
@@ -132,14 +132,14 @@ def conf(degs,aspects=0,couplings=("categorical",1.0)):
 
     """
     if aspects==0:
-        net=MultisliceNetwork(dimensions=1)
+        net=MultilayerNetwork(dimensions=1)
         single_layer_conf(net,degs)
     elif aspects==1:
         nodes=None
         for ldegs in degs:
             assert nodes==None or sum(ldegs.values())==nodes, "Number of nodes in layers differ."
             nodes=sum(ldegs.values())
-        net=CoupledMultiplexNetwork(couplings=aspects*[couplings])
+        net=MultiplexNetwork(couplings=aspects*[couplings])
         for l,ldegs in enumerate(degs):
             net.add_node(l,1)
             single_layer_conf(net.A[l],ldegs)
@@ -160,10 +160,10 @@ def er(n,p):
  
 
     if not hasattr(p,'__iter__'): #is some sequence
-        net=MultisliceNetwork(dimensions=1)
+        net=MultilayerNetwork(dimensions=1)
         single_layer_er(net,range(n),p)
     else:
-        net=CoupledMultiplexNetwork(couplings=[('categorical',1.0)])
+        net=MultiplexNetwork(couplings=[('categorical',1.0)])
         for l,lp in enumerate(p):
             net.add_node(l,1)
             single_layer_er(net.A[l],range(n),lp)
@@ -180,7 +180,7 @@ def er_nonoverlapping(nodes,ps):
     ps : List of edge occupation probabilities for layers
     """
     assert len(nodes)==len(ps)
-    net=CoupledMultiplexNetwork(couplings=[('categorical',1.0)],globalNodes=False)
+    net=MultiplexNetwork(couplings=[('categorical',1.0)],globalNodes=False)
     for layer,lnodes in enumerate(nodes):
         net.add_node(layer,1)
         single_layer_er(net.A[layer],lnodes,ps[layer])
@@ -190,7 +190,7 @@ def full(nodes,layers):
     if layers==None:
         pass
     elif not hasattr(layers,'__iter__'): #is not sequence
-        n=CoupledMultiplexNetwork(couplings=[('categorical',1.0)])
+        n=MultiplexNetwork(couplings=[('categorical',1.0)])
         for layer in range(layers):
             for node1 in range(nodes):
                 for node2 in range(nodes):
@@ -202,7 +202,7 @@ def full(nodes,layers):
 
 def full_multislice(nodes,layers):
     if not hasattr(layers,'__iter__'): #is not sequence
-        n=MultisliceNetwork(dimensions=2)
+        n=MultilayerNetwork(dimensions=2)
         for layer1 in range(layers):
             for layer2 in range(layers):
                 for node1 in range(nodes):
@@ -215,7 +215,7 @@ def full_multislice(nodes,layers):
 
 def er_multislice(nodes,layers,p,randomWeights=False):
     if not hasattr(layers,'__iter__'): #is not sequence
-        n=MultisliceNetwork(dimensions=2)
+        n=MultilayerNetwork(dimensions=2)
         for layer1 in range(layers):
             for layer2 in range(layers):
                 for node1 in range(nodes):

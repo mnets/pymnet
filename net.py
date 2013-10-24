@@ -14,9 +14,8 @@ class SparseTensor(object):
         assert len(item)==self.dimensions
         self.items[item]=value
 
-class MultisliceNetwork(object):
-    """Multislice network with arbitrary number of dimension and a tensor-like interface.
-
+class MultilayerNetwork(object):
+    """Multilayer network with arbitrary number of aspects and a tensor-like interface.
     """
     def __init__(self,
                  dimensions=1,
@@ -194,7 +193,7 @@ class MultisliceNetwork(object):
         if not isinstance(item,tuple):
             item=(item,)
         if len(item)==d: #node
-            return MultisliceNode(item,self)
+            return MultilayerNode(item,self)
         elif len(item)==2*d: #link, or a node if slicing
             colons=0
             layers=[]
@@ -205,7 +204,7 @@ class MultisliceNetwork(object):
                     colons+=1
                     layers.append(None)
             if colons>0:
-                return MultisliceNode(self._link_to_nodes(item)[0],self,layers=layers)
+                return MultilayerNode(self._link_to_nodes(item)[0],self,layers=layers)
             else:
                 return self._get_link(item)
         elif len(item)==d+1: #interslice link or node if slicing            
@@ -312,11 +311,9 @@ class MultisliceNetwork(object):
 
         return numpy.matrix(matrix),nodes
 
-class MultisliceNode(object):
+class MultilayerNode(object):
     def __init__(self,node,mnet,layers=None):
-        """A node in multilice network. 
-
-        ...
+        """A node in multilayer network. 
         """
         self.node=node
         self.mnet=mnet
@@ -354,22 +351,22 @@ class MultisliceNode(object):
             for node in self.mnet._iter_neighbors(self.node,self.layers):
                 yield node[0]
     def layers(self,*layers):
-        return MultisliceNode(self.node,self.mnet,layers=layers)
+        return MultilayerNode(self.node,self.mnet,layers=layers)
 
-class MultisliceNetworkWithParent(MultisliceNetwork):
+class MultilayerNetworkWithParent(MultilayerNetwork):
     def _set_parent(self,parent):
         self.parent=parent
     def _set_name(self,name):
         self._name=name
     def add_node(self,node,dimension):
         self.parent.add_node(node,0)
-        MultisliceNetwork.add_node(self,node,dimension)
+        MultilayerNetwork.add_node(self,node,dimension)
         if not self.parent.globalNodes:
             if node not in self.parent._nodeToLayers:
                  self.parent._nodeToLayers[node]=set()
             self.parent._nodeToLayers[node].add(self._name)
 
-class CoupledMultiplexNetwork(MultisliceNetwork):
+class MultiplexNetwork(MultilayerNetwork):
     """
     couplings - A list or tuple with lenght equal to dimensions
                 Each coupling must be either a policy or a network
@@ -393,7 +390,7 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
             for coupling in couplings:
                 if isinstance(coupling,tuple):
                     self.couplings.append(coupling)
-                elif isinstance(coupling,MultisliceNetwork):
+                elif isinstance(coupling,MultilayerNetwork):
                     self.couplings.append((coupling,))
                 else:
                     raise ValueError("Invalid coupling type: "+str(type(coupling)))
@@ -427,7 +424,7 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
             return self.A[layer]
 
     def _add_A(self,node):
-        net=MultisliceNetworkWithParent(dimensions=1)
+        net=MultilayerNetworkWithParent(dimensions=1)
         net._set_parent(self)
         if not self.globalNodes:
             if self.dimensions==2:
@@ -460,7 +457,7 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
                     self._add_A(node)
 
             #call parent method
-            MultisliceNetwork.add_node(self,node,dimension)
+            MultilayerNetwork.add_node(self,node,dimension)
 
 
     def _has_layer_with_tuple(self,layer):
@@ -490,7 +487,7 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
                 coupling=self.couplings[d-1]                
                 if coupling[0]=="categorical":
                         return coupling[1]                        
-                elif isinstance(coupling[0],MultisliceNetwork):
+                elif isinstance(coupling[0],MultilayerNetwork):
                     return self.couplings[d-1][0][link[2*d],link[2*d+1]]
                 else:
                     raise Exception("Coupling not implemented: "+str(coupling))
@@ -527,7 +524,7 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
                     return len(self._nodeToLayers[supernode[0]])-1
                 else:
                     return 0
-        elif isinstance(coupling_type,MultisliceNetwork):
+        elif isinstance(coupling_type,MultilayerNetwork):
             return self.couplings[d-1][0][supernode[d]].deg()
         else:
             raise NotImplemented()
@@ -535,7 +532,7 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
     def _get_dim_strength(self,node,dimension):
         coupling_str=self.couplings[dimension-1][1]
         coupling_type=self.couplings[dimension-1][0]
-        if isinstance(coupling_type,MultisliceNetwork):
+        if isinstance(coupling_type,MultilayerNetwork):
             raise Exception() #please implement this
         return self._get_dim_degree(node,dimension)*coupling_str
 
@@ -616,7 +613,7 @@ class CoupledMultiplexNetwork(MultisliceNetwork):
     def set_connection_policy(self,dimension,policy):
         pass
 
-class FlatMultisliceNetworkView(MultisliceNetwork):
+class FlatMultilayerNetworkView(MultilayerNetwork):
     """
 
     fnet[(1,'a','b')]
@@ -654,7 +651,7 @@ class FlatMultisliceNetworkView(MultisliceNetwork):
         """
         raise NotImplemented("yet.")
 
-class ModularityMultisliceNetworkView(MultisliceNetwork):
+class ModularityMultilayerNetworkView(MultilayerNetwork):
     def __init__(self,mnet,gamma=1.0):
         self.gamma=gamma
         self.mnet=mnet
@@ -689,7 +686,7 @@ class ModularityMultisliceNetworkView(MultisliceNetwork):
 
 try:
     import networkx
-    class FlattenedMultisliceNetworkxView(networkx.Graph):
+    class FlattenedMultilayerNetworkxView(networkx.Graph):
         pass
 except ImportError:
     pass

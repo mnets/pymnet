@@ -14,7 +14,7 @@ class TestNet(unittest.TestCase):
 
 
     def test_aggregate_unweighted_mplex_simple(self):
-        n=net.CoupledMultiplexNetwork([('categorical',1.0)])
+        n=net.MultiplexNetwork([('categorical',1.0)])
 
         n[1,2,1]=1
         n[1,3,1]=1
@@ -39,7 +39,7 @@ class TestNet(unittest.TestCase):
         self.assertEqual(an[2,4],1)
 
     def test_aggregate_2dim_mplex(self):
-        n=net.CoupledMultiplexNetwork([('categorical',1.0),('categorical',1.0)])
+        n=net.MultiplexNetwork([('categorical',1.0),('categorical',1.0)])
         n[1,2,'a','x']=3
         n[2,3,'a','x']=1
         n[1,2,'b','x']=1

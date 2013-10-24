@@ -14,7 +14,7 @@ class TestNet(unittest.TestCase):
         pass
 
     def test_unweighted_flat_triangle(self):
-        n=net.MultisliceNetwork(dimensions=1)
+        n=net.MultilayerNetwork(dimensions=1)
         n[1,2]=1
         n[2,3]=1
         n[3,1]=1
@@ -26,7 +26,7 @@ class TestNet(unittest.TestCase):
 
 
     def test_unweighted_flat_simple(self):
-        n=net.MultisliceNetwork(dimensions=1)
+        n=net.MultilayerNetwork(dimensions=1)
         n[1,2]=1
         n[2,3]=1
         n[3,1]=1
@@ -46,13 +46,13 @@ class TestNet(unittest.TestCase):
             net[1,3,level]=1
             net[2,3,level]=1
 
-        n=net.CoupledMultiplexNetwork([('categorical',1.0)])
+        n=net.MultiplexNetwork([('categorical',1.0)])
         add_clique(n,1)
         add_clique(n,2)
         add_clique(n,3)
         add_clique(n,4)
 
-        an=net.MultisliceNetwork(dimensions=1)
+        an=net.MultilayerNetwork(dimensions=1)
         an[1,2]=4
         an[1,3]=4
         an[2,3]=4
@@ -74,7 +74,7 @@ class TestNet(unittest.TestCase):
         print cc.cc_cycle_vector_adj(n,1,1)
 
     def test_unweighted_mplex_simple(self):
-        n=net.CoupledMultiplexNetwork([('categorical',1.0)])
+        n=net.MultiplexNetwork([('categorical',1.0)])
 
         n[1,2,1]=1
         n[1,3,1]=1
@@ -90,7 +90,7 @@ class TestNet(unittest.TestCase):
         n[1,4,3]=1
         n[2,4,3]=1
 
-        an=net.MultisliceNetwork(dimensions=1)
+        an=net.MultilayerNetwork(dimensions=1)
         an[1,2]=3
         an[1,3]=3
         an[1,4]=2
@@ -329,14 +329,14 @@ class TestNet(unittest.TestCase):
             self.test_unweighted_consistency(net)
             self.test_symmetric_alternating_walkers(net)
 
-        net=pymnet.net.CoupledMultiplexNetwork([('categorical',1.0)])
+        net=pymnet.net.MultiplexNetwork([('categorical',1.0)])
         net[1, 9, 1, 1]=1 
         net[2, 9, 1, 1]=1  
         net[2, 4, 1, 1]=1  
         net[5, 8, 0, 0]=1  
         self.test_unweighted_consistency(net)
 
-        net=pymnet.net.CoupledMultiplexNetwork([('categorical',1.0)])
+        net=pymnet.net.MultiplexNetwork([('categorical',1.0)])
         #net.add_node(1,0)
         net.add_node(1,1)
         net.add_node(2,1)

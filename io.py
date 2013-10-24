@@ -1,8 +1,8 @@
-from net import MultisliceNetwork,CoupledMultiplexNetwork
+from net import MultilayerNetwork,MultiplexNetwork
 import math
 
 def write_ucinet(net,outputfile,outputType="edges"):
-    assert isinstance(net,CoupledMultiplexNetwork), "Multislice networks not supported by the UCINET file format."
+    assert isinstance(net,MultiplexNetwork), "Multislice networks not supported by the UCINET file format."
     if isinstance(outputfile,str) or isinstance(outputfile,unicode):
         outputfile=open(outputfile,'w')
     
@@ -20,7 +20,7 @@ def read_ucinet(netinput,couplings=('categorical',1.0),globalNodes=True):
     ----------
     netinput : The input file name if string, otherwise
                any iterable.
-    couplings : Passed for CoupledMultiplexNetwork when the
+    couplings : Passed for MultiplexNetwork when the
                network object is created.
     globalNodes (bool) : If False, nodes having zero degree
                on a layer are not added to that layer.
@@ -159,9 +159,9 @@ def read_ucinet(netinput,couplings=('categorical',1.0),globalNodes=True):
     
     #create the empty network
     if nm==1:
-        net=MultisliceNetwork(dimensions=1)
+        net=MultilayerNetwork(dimensions=1)
     else:
-        net=CoupledMultiplexNetwork(couplings=[couplings],globalNodes=globalNodes)
+        net=MultiplexNetwork(couplings=[couplings],globalNodes=globalNodes)
 
     if format=="fullmatrix" or "fullmatrix diagonal present":
         try:

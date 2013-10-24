@@ -1,5 +1,5 @@
 import itertools
-from net import CoupledMultiplexNetwork
+from net import MultiplexNetwork
 
 def cc_num_den(net,node):
     degree=net[node].deg()
@@ -260,7 +260,7 @@ def cc_cycle_vector_bf(net,node,layer,undefReturn=0.0):
 
     Brute force implementation.
     """
-    assert isinstance(net,CoupledMultiplexNetwork)
+    assert isinstance(net,MultiplexNetwork)
     assert net.dimensions==2
     
     aaa=0
@@ -742,7 +742,7 @@ def gcc_moreno(net,w1=1./3.,w2=1./3.,w3=1./3.):
     return w1*c1+w2*c2+w3*c3
 
 def get_full_multiplex_network(nodes,layers):
-    n=CoupledMultiplexNetwork(couplings=[('categorical',1.0)])
+    n=MultiplexNetwork(couplings=[('categorical',1.0)])
     for layer in layers:
         for node1 in nodes:
             for node2 in nodes:
