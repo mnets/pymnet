@@ -132,7 +132,7 @@ def conf(degs,aspects=0,couplings=("categorical",1.0)):
 
     """
     if aspects==0:
-        net=MultilayerNetwork(dimensions=1)
+        net=MultilayerNetwork(aspects=aspects)
         single_layer_conf(net,degs)
     elif aspects==1:
         nodes=None
@@ -160,7 +160,7 @@ def er(n,p):
  
 
     if not hasattr(p,'__iter__'): #is some sequence
-        net=MultilayerNetwork(dimensions=1)
+        net=MultilayerNetwork(aspects=0)
         single_layer_er(net,range(n),p)
     else:
         net=MultiplexNetwork(couplings=[('categorical',1.0)])
@@ -202,7 +202,7 @@ def full(nodes,layers):
 
 def full_multislice(nodes,layers):
     if not hasattr(layers,'__iter__'): #is not sequence
-        n=MultilayerNetwork(dimensions=2)
+        n=MultilayerNetwork(aspects=1)
         for layer1 in range(layers):
             for layer2 in range(layers):
                 for node1 in range(nodes):
@@ -215,7 +215,7 @@ def full_multislice(nodes,layers):
 
 def er_multislice(nodes,layers,p,randomWeights=False):
     if not hasattr(layers,'__iter__'): #is not sequence
-        n=MultilayerNetwork(dimensions=2)
+        n=MultilayerNetwork(aspects=1)
         for layer1 in range(layers):
             for layer2 in range(layers):
                 for node1 in range(nodes):

@@ -2,39 +2,39 @@ from net import *
 import math
 import itertools
 
-def aggregate(net,dimensions,newNet=None,selfEdges=False):
-    """ Returns a new network with reduced number of dimensions. 
+def aggregate(net,aspects,newNet=None,selfEdges=False):
+    """Returns a new network with reduced number of aspects. 
 
     Parameters
     ----------
     net (MultilayerNetwork) : The original network
-    dimensions (int,tuple) : The dimension which is aggregated over,
-                             or a tuple if many dimensions
-    newNet (MultilayerNetwork) : Empty network to be filled and returne.
+    aspects (int,tuple) : The aspect which is aggregated over,
+                          or a tuple if many aspects
+    newNet (MultilayerNetwork) : Empty network to be filled and returned.
                                  If None, a new one is created by this
                                  function.
     selfEdges (bool) : If true aggregates self-edges too
 
     """
     try:
-        dimensions=int(dimensions)
-        dimensions=(dimensions,)
+        aspects=int(aspects)
+        aspects=(aspects,)
     except TypeError:
         pass
     
     if newNet==None:
-        newNet=MultilayerNetwork(dimensions=net.dimensions-len(dimensions),
+        newNet=MultilayerNetwork(aspects=net.aspects-len(aspects),
                                   noEdge=net.noEdge,
                                   directed=net.directed)
-    assert newNet.dimensions==net.dimensions-len(dimensions)
-    for d in dimensions:
-        assert 0<d<=net.dimensions
+    assert newNet.aspects==net.aspects-len(aspects)
+    for d in aspects:
+        assert 0<d<=(net.aspects+1)
 
 
     for node in net:
         newNet.add_node(node,0)
     
-    edgeIndices=filter(lambda x:math.floor(x/2) not in dimensions,range(2*net.dimensions))
+    edgeIndices=filter(lambda x:math.floor(x/2) not in aspects,range(2*(net.aspects+1)))
     for edge in net.edges:
         newEdge=[]
         for index in edgeIndices:
@@ -46,9 +46,9 @@ def aggregate(net,dimensions,newNet=None,selfEdges=False):
 
 
 def overlay_network(net):
-    """Returns the overlay network of 2 dimensional multislice network.
+    """Returns the overlay network of a multilayer network with 1 aspect.
     """
-    assert net.dimensions==2
+    assert net.aspects==1
     newnet=MultilayerNetwork()
     for layer in net.slices[1]:
         for node1 in net.slices[0]:
@@ -66,7 +66,7 @@ def subnet(net,nodes,*layers):
     nodes : sequence
         The nodes that span the induces subgraph.
     *layers : *sequence
-        Layers included in the subgraph. One parameter for each dimension.
+        Layers included in the subgraph. One parameter for each aspect.
 
     Return
     ------
@@ -78,7 +78,7 @@ def subnet(net,nodes,*layers):
     newNet=None
     if newNet==None:
         if type(net)==MultilayerNetwork:
-            newNet=MultilayerNetwork(dimensions=net.dimensions,
+            newNet=MultilayerNetwork(aspects=net.aspects,
                                      noEdge=net.noEdge,
                                      directed=net.directed)
             raise Exception("Not implemented yet.")

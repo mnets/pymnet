@@ -68,7 +68,7 @@ class TestNet(unittest.TestCase):
         self.assertEqual(net['a'].deg(),0) #missing node
 
     def test_flat_mnet(self):
-        testnet=net.MultilayerNetwork(dimensions=1)
+        testnet=net.MultilayerNetwork(aspects=0)
         self.test_flat(testnet)
 
 
@@ -134,7 +134,7 @@ class TestNet(unittest.TestCase):
 
 
     def test_network_coupling_mnet(self):
-        testnet=net.MultilayerNetwork(dimensions=2)
+        testnet=net.MultilayerNetwork(aspects=1)
         testnet[1,1,'a','b']=1
         testnet[2,2,'a','b']=1
         testnet[3,3,'a','b']=1
@@ -147,7 +147,7 @@ class TestNet(unittest.TestCase):
         self.test_network_coupling(testnet)
         
     def test_network_coupling_cmnet(self):
-        couplingNet=net.MultilayerNetwork(dimensions=1)
+        couplingNet=net.MultilayerNetwork(aspects=0)
         couplingNet['a','b']=1
         couplingNet['a','c']=0
         couplingNet['b','c']=1
@@ -155,7 +155,7 @@ class TestNet(unittest.TestCase):
         self.test_network_coupling(testnet)
 
     def test_simple_couplings_mnet(self):
-        testnet=net.MultilayerNetwork(dimensions=2)
+        testnet=net.MultilayerNetwork(aspects=1)
         testnet[1,1,'a','b']=1
         testnet[2,2,'a','b']=1
         testnet[3,3,'a','b']=1
@@ -226,7 +226,7 @@ class TestNet(unittest.TestCase):
 
 
     def test_2dim_categorical_couplings_mnet(self): 
-        testnet=net.MultilayerNetwork(dimensions=3)
+        testnet=net.MultilayerNetwork(aspects=2)
         testnet[1,1,'a','b','x','x']=1
         testnet[2,2,'a','b','x','x']=1
         testnet[3,3,'a','b','x','x']=1

@@ -261,7 +261,7 @@ def cc_cycle_vector_bf(net,node,layer,undefReturn=0.0):
     Brute force implementation.
     """
     assert isinstance(net,MultiplexNetwork)
-    assert net.dimensions==2
+    assert net.aspects==1
     
     aaa=0
     aacac=0 # == cacaa
