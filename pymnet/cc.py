@@ -1,3 +1,6 @@
+"""Clustering coefficients in multiplex networks.
+"""
+
 import itertools
 from net import MultiplexNetwork
 
@@ -10,17 +13,30 @@ def cc_num_den(net,node):
     return t,(degree*(degree-1))/2
 
 def cc(net,node,undefReturn=0.0):
-    """Returns the clustering coefficient of a flat network.
+    """The local clustering coefficient of a node in monoplex network.
 
-    Complexity
+    Parameters
     ----------
+    net : MultilayerNetwork with aspects=0
+       The input network.
+    node : any object
+       The focal node. Given as the node index in the network.
+    undefReturn : any object
+       Value of this parameter is returned if the clustering coefficient is not defined.
+
+    Returns
+    -------
+    float or object
+       The clustering coefficient value, or the undefReturn value if the clustering
+       coefficient is not defined for the node.
+
+    Notes
+    -----
     Time complexity O(k^2), where k is the degree of the node. This 
     could be improved if it is known that the neighbors degrees are
     smaller than the nodes degrees to O(k*kn), where kn is the average 
     degree of all the neighbors. 
 
-    Notices
-    -------
     The function assumes that the network doesn't have any self-links,
     and that it's undirected.
     """
@@ -33,10 +49,21 @@ def cc(net,node,undefReturn=0.0):
 
 
 def cc_zhang(net,node,undefReturn=0.0):
-    """
+    r"""Zhang's local clustering coefficient of a node in weighted monoplex network.
+
+    The clustering coefficient for node i is given by formula:
+
+    .. math:: c_{Z,i} = \frac{\sum_{j,h} W_{ij}W_{ih}W_{jh}}{ w_{\max}\sum_{j \neq h} W_{ij}W_{ih}}=\frac{(W^3)_{ii}}{((W(w_{\max}F)W)_{ii}}
+
+
     References
     ----------
     B. Zhang and S. Horvath, Stat. App. Genet. Mol. Biol. 4, 17 (2005)
+
+    See also
+    --------
+    gcc_zhang : The global version of the clustering coefficient
+
     """
     maxw=max(map(lambda x:x[2],net.edges))
     degree=net[node].deg()
@@ -53,6 +80,18 @@ def cc_zhang(net,node,undefReturn=0.0):
         return undefReturn
 
 def gcc_zhang(net):
+    r"""Global version of the Zhang's clustering coefficient of a node in weighted monoplex network.
+
+    The clustering coefficient is given by formula:
+
+    .. math:: c_Z = \frac{\sum_{i,j,h} W_{ij}W_{ih}W_{jh}}{ w_{\max}\sum_i \sum_{j \neq h} W_{ij}W_{ih}}
+
+    See also
+    --------
+    cc_zhang : The local version of the clustering coefficient
+
+    """
+
     maxw=max(map(lambda x:x[2],net.edges))
     nom,den=0,0
     for node in net:
@@ -71,7 +110,12 @@ def gcc_zhang(net):
 
 
 def cc_onnela(net,node,undefReturn=0.0):
-    """
+    r"""Onnela's local clustering coefficient of a node in weighted monoplex network.
+
+    The clustering coefficient for node i is given by formula:
+
+    .. math:: c_{O,i} = \frac{1}{w_{\max}k_{i}(k_{i}-1)} \sum_{j,h} (W_{ij}W_{ih}W_{jh})^{1/3}
+
     References
     ----------
     J.-P. Onnela, J. Saramaki, J. Kertesz, and K. Kaski, Phys. Rev. E 71, 065103 (2005)
@@ -89,7 +133,12 @@ def cc_onnela(net,node,undefReturn=0.0):
         return undefReturn
 
 def cc_barrat(net,node,undefReturn=0.0):
-    """
+    r"""Barrat's local clustering coefficient of a node in weighted monoplex network.
+
+    The clustering coefficient for node i is given by formula:
+
+    .. math:: c_{Ba,i} = \frac{1}{s_{i}(k_{i}-1)}\sum_{j,h}\frac{(W_{ij}+W_{ih})}{2} A_{ij}A_{ih}A_{jh}
+
     References
     ----------
     A. Barrat, M. Barthelemy, R. Pastor-Satorras, and A. Vespignani, Proc. Natl. Acad. Sci. (USA) 101, 3747 (2004)
@@ -139,11 +188,15 @@ def cc_barrett_optimized(net,node,anet,undefReturn=0.0):
         return undefReturn
 
 def cc_barrett(net,node,anet,undefReturn=0.0):
-    """Multiplex clustering coefficient defined by Barrett et al.
+    r"""Barrett's local clustering coefficient of a node in multiplex network.
 
+    The clustering coefficient for node i is given by formula:
+
+    .. math:: c_{Be,i} = \frac{\sum_j^n \sum_h^n \sum_k^b ( A_{ijk} \sum_l^b (A_{ihl} \sum_m^b A_{jhm} ) )} {\sum_j^n \sum_h^n \sum_k^b (A_{ijk} \sum_l^b \max(A_{ihl},A_{jhl}) )}
+
+    References
+    ----------
     See SI of "Taking sociality seriously: the structure of multi-dimensional social networks as a source of information for individuals.", Louise Barrett, S. Peter Henzi, David Lusseau, Phil. Trans. R. Soc. B 5 August 2012 vol. 367 no. 1599 2108-2118
-
-    \frac{\sum_j^n \sum_h^n \sum_k^b ( a_{ijk} \sum_l^b (a_{ihl} \sum_m^b a_{jhm} ) )} {\sum_j^n \sum_h^n \sum_k^b (a_{ijk} \sum_l^b \max(a_{ihl},a_{jhl}) )}
     """
     degree=anet[node].deg()
     if degree>=2:
