@@ -1,20 +1,52 @@
+"""Functions taking in networks and returning transformed versions of them.
+"""
 from net import *
 import math
 import itertools
 
 def aggregate(net,aspects,newNet=None,selfEdges=False):
-    """Returns a new network with reduced number of aspects. 
+    """Reduces the number of aspects by aggregating them.
+
+    This function aggregates edges from multilayer aspects together
+    by summing their weights. Any number of aspects is allowed, and the
+    network can have non-diagonal inter-layer links. The layers cannnot 
+    be weighted such that they would have different coefficients when 
+    the weights are summed together.
+
+    Note that no self-links are created and all the inter-layer links
+    are disregarded.
 
     Parameters
     ----------
-    net (MultilayerNetwork) : The original network
-    aspects (int,tuple) : The aspect which is aggregated over,
-                          or a tuple if many aspects
-    newNet (MultilayerNetwork) : Empty network to be filled and returned.
-                                 If None, a new one is created by this
-                                 function.
-    selfEdges (bool) : If true aggregates self-edges too
+    net : MultilayerNetwork
+       The original network.
+    aspects : int or tuple 
+       The aspect which is aggregated over,or a tuple if many aspects
+    newNet : MultilayerNetwork 
+       Empty network to be filled and returned. If None, a new one is 
+       created by this function.
+    selfEdges : bool 
+       If true aggregates self-edges too
 
+    Returns
+    -------
+    net : MultiplexNetwork
+       A new instance of multiplex network which is produced.
+
+    Examples
+    --------
+    Aggregating the network with a singe aspect can be done as follows:
+
+    >>> n=net.MultiplexNetwork([('categorical',1.0)])
+    >>> an=transforms.aggregate(n,1)
+
+    You need to choose which aspect(s) to aggregate over if the network 
+    has multiple aspects:
+
+    >>> n=MultiplexNetwork([2*('categorical',1.0)])
+    >>> an1=transforms.aggregate(n,1)
+    >>> an2=transforms.aggregate(n,2)
+    >>> an12=transforms.aggregate(n,(1,2))
     """
     try:
         aspects=int(aspects)
@@ -47,6 +79,11 @@ def aggregate(net,aspects,newNet=None,selfEdges=False):
 
 def overlay_network(net):
     """Returns the overlay network of a multilayer network with 1 aspect.
+
+    Returns
+    -------
+    net : MultiplexNetwork
+       A new instance of multiplex network which is produced.
     """
     assert net.aspects==1
     newnet=MultilayerNetwork()

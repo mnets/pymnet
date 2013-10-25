@@ -34,7 +34,6 @@ Transforming Networks
   :toctree: autogen
    
   aggregate
-  overlay_network
   subnet
 
 Reading and Writing Networks
