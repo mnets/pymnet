@@ -6,24 +6,71 @@ import networkx,math,itertools
 COLON=slice(None,None,None)
 
 
-class SparseTensor(object):
-    def __init__(self,dimensions):
-        self.dimensions=dimensions
-        self.items={}
-    def __getitem__(self,*item):
-        assert len(item)==self.dimensions
-        return self.items.get(item,0)
-    def __setitem__(self,item,value):
-        assert len(item)==self.dimensions
-        self.items[item]=value
-
 class MultilayerNetwork(object):
-    """Multilayer network with arbitrary number of aspects and a tensor-like interface.
+    """General multilayer network with a tensor-like interface.
+
+    See Reference [1] for background on the definition of this class.
+
+    There are several ways of accessing the edges and nodes of the network. If there 
+    is a single aspect, then the following notation can be used:
+
+    >>> net[i,s]                   #node i at layer s
+    >>> net[i,j,s,r]               #edge between nodes i and j and layers s and r
+    >>> net[i,j,s] == net[i,j,s,s] #edge between nodes i and j at layer s
+
+    Following slicing notation can also be used:
+
+    >>> net[i,:,s,:] == net[i,s]   #node i at layer s
+    >>> net[i,j,s,:]               #node i at layer s, but only links to j are visible
+    >>> net[i,:,s,r]               #node i at layer s, but only links to layer r are visible
+    >>> net[i,:,s] == net[i,:,s,s] 
+
+    Similar notation holds for two (or more) aspects:
+
+    >>> net[i,s,x]                 #node i at layer s in aspect 1 and at layer x in aspect 2
+    >>> net[i,j,s,x]               #link i,j at layer s in aspect 1 and layer x in aspect 2 = i,j,s,s,x,x
+    >>> net[i,j,s,r,x,y]           #link i,j between layers s and r in aspect 1 and between layers x and y in aspect 2
+    >>> net[i,:,s,:,x,:] == net[i,s,x]
+    >>> net[i,j,s,:,x,y]           #node i at layer s and y, but only links to j and y are visible
+    >>> net[i,:,s,x] == net[i,:,s,s,x,x]
+
+
+    Parameters
+    ----------
+    aspects : int
+       Number of aspects
+    noEdge : object
+       Any object signifying that there is no edge.
+    directed : bool
+       True if the network is directed, otherwise it's
+       undirected.
+    fullyInterconnected : bool
+       Determines if the network is fully interconnected, i.e. all nodes
+       are shared between all layers.
+
+    Notes
+    -----
+    The default data structure behind this class is a graph similar to the 
+    one described in Reference [1] implemented with nested dictionaries. 
+    The downside to this implementation is that, for example, iterating through
+    all the inter-layer links is not possible without inspecting also the
+    inter-layer links.
+
+    References
+    ----------
+    [1] Multilayer Networks. Mikko Kivela, Alexandre Arenas, Marc Barthelemy, 
+    James P. Gleeson, Yamir Moreno, Mason A. Porter, arXiv:1309.7233 [physics.soc-ph]
+
+    See also
+    --------
+    MultiplexNetwork : A class for multiplex networks
+
     """
     def __init__(self,
                  aspects=0,
                  noEdge=0,
-                 directed=False):
+                 directed=False,
+                 fullyInterconnected=True):
         assert aspects>=0
 
         self.aspects=aspects
@@ -272,20 +319,6 @@ class MultilayerNetwork(object):
                         yield link+(self[link],)            
                 iterated.add(node)
 
-    def deg(self,*args):
-        """
-        net.deg(i)
-        net.deg(i,s,x)
-        net.deg(i,s)==net.deg(i,s,:)
-        net.deg(i,None,x)
-        """
-        pass
-
-    def str(self,*args):
-        """Strenght, see deg.
-        """
-        pass
-
     def write_flattened(self,output):
         nodes=map(lambda x: tuple(reversed(x)),sorted(itertools.product(*map(lambda i:sorted(self.slices[i]),reversed(range(len(self.slices)))))))
         for i in nodes:
@@ -369,13 +402,35 @@ class MultilayerNetworkWithParent(MultilayerNetwork):
             self.parent._nodeToLayers[node].add(self._name)
 
 class MultiplexNetwork(MultilayerNetwork):
-    """
-    couplings - A list or tuple with lenght equal to number of aspects
-                Each coupling must be either a policy or a network
-                policy is a tuple: (type, weight)
-                policy types: 'ordinal', 'categorical', 'ordinal_warp', 'categorical_warp'
+    """Multiplex network as a special case of multilayer network.
+
+    Parameters
+    ----------
+    couplings : list
+       A list with lenght equal to number of aspects. Each coupling must be 
+       either a policy or a network. Policy is a tuple: (type, weight)
+       Policy types: 'ordinal', 'categorical'.
+    noEdge : object
+       Any object signifying that there is no edge.
+    directed : bool
+       True if the network is directed, otherwise it's
+       undirected.
+    fullyInterconnected : bool
+       Determines if the network is fully interconnected, i.e. all nodes
+       are shared between all layers.
     
-    policies by giving inter-slice couplings ??
+    Notes
+    -----
+    The default implementation for this type of networks is 'sequence of
+    graphs'. That is, each intra-layer network is stored separately and 
+    accessing and modifying the intra-layer networks is independent of the
+    other intra-layer networks. The couplings edges are not stored explicitely
+    but they are only generated when needed.
+
+    See also
+    --------
+    MultilayerNetwork : A class for more general type of multilayer networks
+
     """
 
     def __init__(self,couplings=None,directed=False,noEdge=0,fullyInterconnected=True):
