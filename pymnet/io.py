@@ -1,8 +1,10 @@
+"""Functions for reading and writing networks in different file formats.
+"""
 from net import MultilayerNetwork,MultiplexNetwork
 import math
 
 def write_ucinet(net,outputfile,outputType="edges"):
-    assert isinstance(net,MultiplexNetwork), "Multislice networks not supported by the UCINET file format."
+    assert isinstance(net,MultiplexNetwork), "Multilayer networks not supported by the UCINET file format."
     if isinstance(outputfile,str) or isinstance(outputfile,unicode):
         outputfile=open(outputfile,'w')
     
@@ -13,17 +15,17 @@ def read_ucinet(netinput,couplings=('categorical',1.0),fullyInterconnected=True)
     See http://www.analytictech.com/networks/dataentry.htm
     for informal definition of the format. This implemetation
     is based on the provided url and some example files at
-    the UCINET website. There might be different versions of
-    the file format?
+    the UCINET website.
 
     Parameters
     ----------
-    netinput : The input file name if string, otherwise
-               any iterable.
-    couplings : Passed for MultiplexNetwork when the
-               network object is created.
-    fullyInterconnected (bool) : If False, nodes having zero degree
-               on a layer are not added to that layer.
+    netinput : string, sequence
+       The input file name if string, otherwise any iterable.
+    couplings : tuple
+       Passed for MultiplexNetwork when the network object is created.
+    fullyInterconnected : bool 
+        If False, nodes having zero degree on a layer are not added 
+        to that layer.
                
     Notes
     -----
@@ -36,7 +38,6 @@ def read_ucinet(netinput,couplings=('categorical',1.0),fullyInterconnected=True)
     network is returned anyway. The directions are removed in a
     way that i and j are connected if there is either link 
     i->j or j->i (or both).
-
     """
 
     def read_labels(iterator,length):
