@@ -22,10 +22,10 @@ Network models
   conf
   single_layer_er
   single_layer_conf
-  er_nonoverlapping
+  er_partially_interconnected
   full
-  full_multislice
-  er_multislice
+  full_multilayer
+  er_multilayer
 
 Transforming Networks
 ---------------------

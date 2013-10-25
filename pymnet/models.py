@@ -1,3 +1,6 @@
+"""Functions for generating multilayer and multiplex networks using various network models.
+"""
+
 from net import MultilayerNetwork,MultiplexNetwork
 import math,random
 
@@ -206,62 +209,144 @@ def er(n,p):
 
     return net
 
-def er_nonoverlapping(nodes,ps):
-    """Non-overlapping multiplex Erdos-Renyi network.
+def er_partially_interconnected(nodes,ps,couplings=('categorical',1.0)):
+    """Generate multiplex Erdos-Renyi network which is not fully interconnected.
+
+    The produced multiplex network has a single aspect.
 
     Parameters
     ----------
-    nodes : List of list of nodes, where each list corresponds to
-            nodes in one layer.
-    ps : List of edge occupation probabilities for layers
+    nodes : list of lists 
+       List of lists of nodes, where each list corresponds to
+       nodes in one layer.
+    ps : list
+       List of edge occupation probabilities for layers
+    couplings : tuple
+       The coupling types of the multiplex network object.
+
+    Returns
+    -------
+    net : MultiplexNetwork
+       The multiplex network that is produced.    
     """
     assert len(nodes)==len(ps)
-    net=MultiplexNetwork(couplings=[('categorical',1.0)],fullyInterconnected=False)
+    net=MultiplexNetwork(couplings=[couplings],fullyInterconnected=False)
     for layer,lnodes in enumerate(nodes):
         net.add_node(layer,1)
         single_layer_er(net.A[layer],lnodes,ps[layer])
     return net
 
-def full(nodes,layers):
+def full(nodes,layers,couplings=('categorical',1.0)):
+    """Generate a full multiplex network.
+
+    The produced multiplex network has a single aspect and is fully
+    interconnected. Can also produce a full monoplex network.
+
+    Parameters
+    ----------
+    nodes : int
+       Number of nodes in the network
+    layers : int, sequence or None
+       Number of layers in the network, a sequence of layer names, or
+       None for monoplex networks.
+    couplings : tuple
+       The coupling types of the multiplex network object.
+
+    Returns
+    -------
+    net : MultiplexNetwork or MultilayerNetwork
+       The multiplex network that is produced, or the monoplex
+       network (which is of type MultilayerNetwork).
+    """
     if layers==None:
-        pass
+        n=MultilayerNetwork(aspects=0)
+        for node1 in range(nodes):
+            for node2 in range(nodes):
+                if node1!=node2:
+                    n[node1,node2,layer,layer]=1
     elif not hasattr(layers,'__iter__'): #is not sequence
-        n=MultiplexNetwork(couplings=[('categorical',1.0)])
+        n=MultiplexNetwork(couplings=[couplings])
         for layer in range(layers):
             for node1 in range(nodes):
                 for node2 in range(nodes):
                     if node1!=node2:
                         n[node1,node2,layer,layer]=1
-    else:
-        pass
+    else: #it's a sequence
+        n=MultiplexNetwork(couplings=[couplings])
+        for layer in layers:
+            for node1 in range(nodes):
+                for node2 in range(nodes):
+                    if node1!=node2:
+                        n[node1,node2,layer,layer]=1
+
     return n
 
-def full_multislice(nodes,layers):
+def full_multilayer(nodes,layers):
+    """Generate a full multilayer network.
+
+    The generated network has a single aspect, and all the inter-layer 
+    and intra-layer edges.
+
+    Parameters
+    ----------
+    nodes : int
+       Number of nodes in the network
+    layers : int or sequence
+       Number of layers in the network, or a sequence of layer names
+
+    Returns
+    -------
+    net : MultilayerNetwork
+       The multilayer network that is produced.
+    """
     if not hasattr(layers,'__iter__'): #is not sequence
-        n=MultilayerNetwork(aspects=1)
-        for layer1 in range(layers):
-            for layer2 in range(layers):
-                for node1 in range(nodes):
-                    for node2 in range(nodes):
-                        if node1!=node2 or layer1!=layer2:
-                            n[node1,node2,layer1,layer2]=1
-    else:
-        raise Exception("not implemented")
+        layers=range(layers)
+
+    n=MultilayerNetwork(aspects=1)
+    for layer1 in layers:
+        for layer2 in layers:
+            for node1 in range(nodes):
+                for node2 in range(nodes):
+                    if node1!=node2 or layer1!=layer2:
+                        n[node1,node2,layer1,layer2]=1
     return n
 
-def er_multislice(nodes,layers,p,randomWeights=False):
+def er_multilayer(nodes,layers,p,randomWeights=False):
+    """Generate multilayer Erdos-Renyi network.
+
+    The produced multilayer network has a single aspect.
+
+    Parameters
+    ----------
+    nodes : int
+       Number of nodes in the network
+    layers : int or sequence
+       Number of layers in the network, or a sequence of layer names
+    p : float
+       The edge probability
+    randomWeights : bool
+       If true the weights are uniformly random between (0,1].
+
+    Returns
+    -------
+    net : MultilayerNetwork
+       The multilayer network that is produced.
+    """
+
+
     if not hasattr(layers,'__iter__'): #is not sequence
-        n=MultilayerNetwork(aspects=1)
-        for layer1 in range(layers):
-            for layer2 in range(layers):
-                for node1 in range(nodes):
-                    for node2 in range(node1+1,nodes):
-                        if node1!=node2 or layer1!=layer2:
-                            if random.random()<p:
-                                if randomWeights:
-                                    n[node1,node2,layer1,layer2]=random.random()*10
-                                else:
-                                    n[node1,node2,layer1,layer2]=1
-    else:
-        raise Exception("not implemented")
+        layers=range(layers)
+
+    n=MultilayerNetwork(aspects=1)
+    for layer1 in layers:
+        for layer2 in layers:
+            for node1 in range(nodes):
+                for node2 in range(node1+1,nodes):
+                    if node1!=node2 or layer1!=layer2:
+                        if random.random()<p:
+                            if randomWeights:
+                                n[node1,node2,layer1,layer2]=random.random()
+                            else:
+                                n[node1,node2,layer1,layer2]=1
+
     return n
