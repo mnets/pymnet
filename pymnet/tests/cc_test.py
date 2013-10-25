@@ -289,20 +289,20 @@ class TestNet(unittest.TestCase):
 
 
     def test_consistency_mslice_er(self):
-        net=models.er_multislice(10,5,0.5,randomWeights=True)
+        net=models.er_multilayer(10,5,0.5,randomWeights=True)
         self.test_weighted_consistency_mslice(net)
 
-        net=models.er_multislice(10,5,0.1,randomWeights=True)
+        net=models.er_multilayer(10,5,0.1,randomWeights=True)
         self.test_weighted_consistency_mslice(net)
 
-        net=models.er_multislice(10,5,0.5,randomWeights=False)
+        net=models.er_multilayer(10,5,0.5,randomWeights=False)
         self.test_unweighted_consistency_mslice(net)
 
-        net=models.er_multislice(10,5,0.1,randomWeights=False)
+        net=models.er_multilayer(10,5,0.1,randomWeights=False)
         self.test_unweighted_consistency_mslice(net)
 
     def test_normalization_full_mslice(self):
-        net=models.full_multislice(5,5)
+        net=models.full_multilayer(5,5)
         self.assertEqual(cc.gcc_contraction_m(net),1.0)
         self.assertEqual(cc.gcc_contraction_m_ct(net),1.0)
         self.assertEqual(cc.gcc_contraction_m_full(net),1.0)
@@ -347,7 +347,7 @@ class TestNet(unittest.TestCase):
         net[2,3,1,1]=1
         self.test_unweighted_consistency(net)
 
-        #net=models.full_multislice(10,5)
+        #net=models.full_multilayer(10,5)
         #self.test_unweighted_consistency(net)
 
     def test_unweighted_nonglobalnodes_consistency(self,net):
@@ -365,7 +365,7 @@ class TestNet(unittest.TestCase):
 
 
     def test_unweighted_nonglobalnodes_consistency_er(self):
-        net=pymnet.models.er_nonoverlapping([range(10),range(5,15),range(10,20),range(15,25),range(0,25)],[0.5]*5)
+        net=pymnet.models.er_partially_interconnected([range(10),range(5,15),range(10,20),range(15,25),range(0,25)],[0.5]*5)
         self.test_unweighted_nonglobalnodes_consistency(net)
 
 def test_net():
