@@ -468,15 +468,14 @@ class MultiplexNetwork(MultilayerNetwork):
         #keys are not tuples if dimensions==2
         self.A={} 
 
-    def _get_link_dimension(self,link):
+    def _get_edge_inter_aspects(self,link):
+        r"""Returns list of aspects where the two nodes of $G_M$ differ.
+        """
         dims=[]
         for d in range(self.aspects+1):
             if link[2*d]!=link[2*d+1]:
                 dims.append(d)
-        if len(dims)==1:
-            return dims[0]
-        else:
-            return None
+        return dims
 
     def _get_A_with_tuple(self,layer):
         """Return self.A. Layer must be given as tuple.
@@ -535,11 +534,9 @@ class MultiplexNetwork(MultilayerNetwork):
     def _get_link(self,link):
         """Overrides parents method.
         """
-        #if len(reduce(map(lambda d:link[2*d]!=link[2*d+1],range(self.dimensions))))!=1:
-        #    return 0.0 
-        d=self._get_link_dimension(link)
-        if d!=None:
-            if d>0:
+        d=self._get_edge_inter_aspects(link)
+        if len(d)==1: #not a self-link, or link with multiple different cross-aspects
+            if d[0]>0:
                 assert link[0]==link[1]
                 if not link[0] in self.slices[0]:
                     return self.noEdge
@@ -547,11 +544,11 @@ class MultiplexNetwork(MultilayerNetwork):
                     supernode1, supernode2=self._link_to_nodes(link)
                     if not (link[0] in self._get_A_with_tuple(supernode1[1:]).slices[0] and link[0] in self._get_A_with_tuple(supernode2[1:]).slices[0]):
                         return self.noEdge
-                coupling=self.couplings[d-1]                
+                coupling=self.couplings[d[0]-1]                
                 if coupling[0]=="categorical":
-                        return coupling[1]                        
+                        return coupling[1] 
                 elif isinstance(coupling[0],MultilayerNetwork):
-                    return self.couplings[d-1][0][link[2*d],link[2*d+1]]
+                    return self.couplings[d[0]-1][0][link[2*d[0]],link[2*d[0]+1]]
                 else:
                     raise Exception("Coupling not implemented: "+str(coupling))
             else:
@@ -565,13 +562,11 @@ class MultiplexNetwork(MultilayerNetwork):
     def _set_link(self,link,value):
         """Overrides parents method.
         """
-        d=self._get_link_dimension(link)
-        if d==0:
+        d=self._get_edge_inter_aspects(link)
+        if len(d)==1 and d[0]==0:
             S=link[2::2]
-            #if not self._has_layer_with_tuple(S):
-            #    self._add_layer_with_tuple(S)
             self._get_A_with_tuple(S)[link[0],link[1]]=value
-        elif d==None:
+        elif len(d)==0:
             raise KeyError("No self-links.")
         else:
             raise KeyError("Can only set links in the node dimension.")
