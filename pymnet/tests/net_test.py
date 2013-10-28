@@ -4,6 +4,7 @@ from operator import itemgetter
 import sys
 sys.path.append("../../")
 from pymnet import net
+import pymnet
 #from .. import net
 
 
@@ -166,7 +167,8 @@ class TestNet(unittest.TestCase):
         testnet=net.MultiplexNetwork(couplings=[('categorical',1.0)])
         self.test_simple_couplings(testnet)
 
-    def test_2dim_categorical_couplings(self,net):
+
+    def add_intralayer_edges_2dim(self,net):
         net[1,2,'a','x']=3
         net[2,3,'a','x']=1
         net[1,2,'b','x']=1
@@ -183,6 +185,7 @@ class TestNet(unittest.TestCase):
         net[1,3,'a','y']=1
         net[2,3,'a','y']=1
 
+    def test_2dim_categorical_couplings(self,net):
         #Test existing edges
         self.assertEqual(net[1,2,'a','a','x','x'],3)
         self.assertEqual(net[1,1,'a','b','x','x'],1)
@@ -221,7 +224,7 @@ class TestNet(unittest.TestCase):
         self.assertEqual(net[1,1,'a',:,'x',:].str(),3)
 
         #Test edge iterator
-        self.assertEqual(len(list(net.edges)),38)
+        self.assertEqual(len(list(net.edges)),41)
 
 
 
@@ -254,10 +257,18 @@ class TestNet(unittest.TestCase):
         testnet[1,1,'b','b','x','y']=1
         testnet[2,2,'b','b','x','y']=1
         testnet[3,3,'b','b','x','y']=1
+
+        testnet[1,1,'c','c','x','y']=1
+        testnet[2,2,'c','c','x','y']=1
+        testnet[3,3,'c','c','x','y']=1
+
+        self.add_intralayer_edges_2dim(testnet)
+
         self.test_2dim_categorical_couplings(testnet)
 
     def test_2dim_categorical_couplings_cmnet(self):
         testnet=net.MultiplexNetwork(couplings=[('categorical',1.0),('categorical',1.0)])
+        self.add_intralayer_edges_2dim(testnet)
         self.test_2dim_categorical_couplings(testnet)
 
 
@@ -392,7 +403,7 @@ def test_net():
     suite.addTest(TestNet("test_simple_couplings_cmnet"))
     suite.addTest(TestNet("test_simple_couplings_cmnet_add_to_A"))
     suite.addTest(TestNet("test_2dim_categorical_couplings_mnet"))
-    #suite.addTest(TestNet("test_2dim_categorical_couplings_cmnet"))
+    suite.addTest(TestNet("test_2dim_categorical_couplings_cmnet"))
     suite.addTest(TestNet("test_network_coupling_mnet"))
     suite.addTest(TestNet("test_network_coupling_cmnet"))
     suite.addTest(TestNet("test_multiplex_diagonal_notation"))
