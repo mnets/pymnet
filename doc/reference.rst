@@ -1,10 +1,16 @@
 Reference
 =========
-  
+.. automodule:: pymnet
+.. autosummary::
+  :toctree: autogen
 
 Data structures
 ---------------
 .. automodule:: pymnet.net
+.. autosummary::
+  :toctree: autogen
+
+.. automodule:: pymnet
 .. autosummary::
   :toctree: autogen
 
@@ -15,6 +21,10 @@ Data structures
 Network models
 --------------
 .. automodule:: pymnet.models
+.. autosummary::
+  :toctree: autogen
+
+.. automodule:: pymnet
 .. autosummary::
   :toctree: autogen
 
@@ -32,6 +42,10 @@ Transforming Networks
 .. automodule:: pymnet.transforms
 .. autosummary::
   :toctree: autogen
+
+.. automodule:: pymnet
+.. autosummary::
+  :toctree: autogen
    
   aggregate
   subnet
@@ -39,6 +53,10 @@ Transforming Networks
 Reading and Writing Networks
 ----------------------------
 .. automodule:: pymnet.io
+.. autosummary::
+  :toctree: autogen
+
+.. automodule:: pymnet
 .. autosummary::
   :toctree: autogen
 
@@ -50,11 +68,19 @@ Basic Network Diagnostics
 .. autosummary::
   :toctree: autogen
 
+.. automodule:: pymnet
+.. autosummary::
+  :toctree: autogen
+
   monoplex_degs
 
 Clustering coefficients
 -----------------------
 .. automodule:: pymnet.cc
+.. autosummary::
+  :toctree: autogen
+
+.. automodule:: pymnet
 .. autosummary::
   :toctree: autogen
 
