@@ -3,4 +3,4 @@ from models import er,conf,single_layer_er,single_layer_conf,er_partially_interc
 from transforms import aggregate,subnet
 from io import read_ucinet
 from diagnostics import monoplex_degs
-from cc import   cc,cc_zhang,gcc_zhang,cc_onnela,cc_barrat,cc_barrett,cc_sequence,lcc_alternating_walks,avg_lcc_alternating_walks,gcc_alternating_walks_seplayers,sncc_alternating_walks,sncc_alternating_walks_seplayers
+from cc import   lcc,cc_zhang,gcc_zhang,cc_onnela,cc_barrat,cc_barrett,cc_sequence,lcc_alternating_walks,avg_lcc_alternating_walks,gcc_alternating_walks_seplayers,sncc_alternating_walks,sncc_alternating_walks_seplayers

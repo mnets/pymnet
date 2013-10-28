@@ -84,7 +84,7 @@ Clustering coefficients
 .. autosummary::
   :toctree: autogen
 
-  cc
+  lcc
   cc_zhang
   gcc_zhang
   cc_onnela

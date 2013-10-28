@@ -12,7 +12,7 @@ def cc_num_den(net,node):
             t+=1
     return t,(degree*(degree-1))/2
 
-def cc(net,node,undefReturn=0.0):
+def lcc(net,node,undefReturn=0.0):
     """The local clustering coefficient of a node in monoplex network.
 
     Parameters

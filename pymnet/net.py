@@ -1,7 +1,7 @@
 """Data structures for handling various forms of multilayer networks.
 """
 
-import networkx,math,itertools
+import math,itertools
 
 COLON=slice(None,None,None)
 
@@ -78,11 +78,7 @@ class MultilayerNetwork(object):
         self.noEdge=noEdge
         self._init_slices(aspects)
         
-
-        if directed:
-            self.net=networkx.DiGraph()
-        else:
-            self.net=networkx.Graph()        
+        self._net={}
 
         #should keep table of degs and strenghts
 
@@ -144,19 +140,30 @@ class MultilayerNetwork(object):
         link(tuple) : (i,j,s_1,r_1, ... ,s_d,r_d)
         """
         node1,node2=self._link_to_nodes(link)
-        if node1 in self.net:
-            if node2 in self.net[node1]:
-                return self.net[node1][node2]['weight']
+        if node1 in self._net:
+            if node2 in self._net[node1]:
+                return self._net[node1][node2]
         return self.noEdge
 
-    def _set_link(self,link,value):        
+    def _set_link(self,link,value):
+        #keep track of nodes and layers in net?
+        #remove nodes if they become empty?
         node1,node2=self._link_to_nodes(link)
         if value==self.noEdge:
-            if node1 in self.net:
-                if node2 in self.net[node1]:
-                    self.net.remove_edge(node1,node2)
+            if node1 in self._net:
+                if node2 in self._net[node1]:
+                    del self._net[node1][node2]
+                    if not self.directed:
+                        del self._net[node2][node1]
         else:
-            self.net.add_edge(node1,node2,weight=value)
+            if not node1 in self._net:
+                self._net[node1]={}
+            if not node2 in self._net:
+                self._net[node2]={}
+            
+            self._net[node1][node2]=value
+            if not self.directed:
+                self._net[node2][node1]=value
 
     def _get_degree(self,node, dims=None):
         """Private method returning nodes degree (number of neighbors).
@@ -166,11 +173,10 @@ class MultilayerNetwork(object):
         #TODO: lookuptables for intradimensional degrees
 
         if dims==None:
-            deg=self.net.degree(node)
-            if deg=={}:
-                return 0
+            if node in self._net:
+                return len(self._net[node])
             else:
-                return deg
+                return 0
         else:
             return len(list(self._iter_neighbors(node,dims)))
 
@@ -196,12 +202,12 @@ class MultilayerNetwork(object):
                'a' and in slice 'x' in the second dimension.
 
         """
-        if node in self.net:
+        if node in self._net:
             if dims==None:
-                for neigh in self.net[node]:
+                for neigh in self._net[node]:
                     yield neigh
             else:
-                for neigh in self.net[node]:
+                for neigh in self._net[node]:
                     if all(map(lambda i:dims[i]==None or neigh[i]==dims[i], range(len(dims)))):
                         yield neigh
 
