@@ -19,7 +19,7 @@ class TestNet(unittest.TestCase):
         n[2,3]=1
         n[3,1]=1
 
-        self.assertEqual(cc.cc(n,1),1.0)
+        self.assertEqual(cc.lcc(n,1),1.0)
         self.assertEqual(cc.cc_zhang(n,1),1.0)
         self.assertEqual(cc.cc_onnela(n,1),1.0)
         self.assertEqual(cc.cc_barrat(n,1),1.0)
@@ -32,7 +32,7 @@ class TestNet(unittest.TestCase):
         n[3,1]=1
         n[1,4]=1
 
-        self.assertEqual(cc.cc(n,1),1./3.)
+        self.assertEqual(cc.lcc(n,1),1./3.)
         self.assertEqual(cc.cc_zhang(n,1),1./3.)
         self.assertEqual(cc.cc_onnela(n,1),1./3.)
         self.assertEqual(cc.cc_barrat(n,1),1./3.)
