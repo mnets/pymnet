@@ -64,7 +64,7 @@ def aggregate(net,aspects,newNet=None,selfEdges=False):
 
 
     for node in net:
-        newNet.add_node(node,0)
+        newNet.add_node(node)
     
     edgeIndices=filter(lambda x:math.floor(x/2) not in aspects,range(2*(net.aspects+1)))
     for edge in net.edges:
@@ -130,7 +130,7 @@ def subnet(net,nodes,*layers):
                 degsum=0
                 for node in nodes:        
                     degsum += net[(node,)+layer].deg()
-                    newNet.add_node(node,0)
+                    newNet.add_node(node)
 
                 if degsum >= len(nodes)*(len(nodes)-1)/2:
                     othernodes=set(nodes)

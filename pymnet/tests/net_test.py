@@ -152,8 +152,8 @@ class TestNet(unittest.TestCase):
         """test_simple_couplings with links added to the net.A matrices directly.
         """
         n=net.MultiplexNetwork(couplings=[('categorical',1.0)])
-        n.add_node(1,1)
-        n.add_node(2,1)
+        n.add_layer(1,1)
+        n.add_layer(2,1)
         n.A[1][1][2]=1
         n.A[1][2,3]=1
         n.A[2][1,2]=1
@@ -366,7 +366,7 @@ class TestNet(unittest.TestCase):
 
     def test_multiplex_diagonal_notation(self):
         n=net.MultiplexNetwork(couplings=[('categorical',1.0)])
-        n.add_node(1,1)
+        n.add_layer(1,1)
         n[1,2,1]=1
         n[1,2,2]=1
         
@@ -387,9 +387,9 @@ class TestNet(unittest.TestCase):
         n=net.MultiplexNetwork(couplings=[('categorical',1.0)],fullyInterconnected=False)
 
         #Add three layers to the network
-        n.add_node('a',1)
-        n.add_node('b',1)
-        n.add_node('c',1)
+        n.add_layer('a',1)
+        n.add_layer('b',1)
+        n.add_layer('c',1)
 
         #Implicitely add nodes 1, 2 and 3 to the networks
         n.A['a'][1,2]=1
@@ -397,11 +397,11 @@ class TestNet(unittest.TestCase):
         n.A['c'][2,3]=1
         
         #Explicitely add nodes 4 and 5 to the networks
-        n.A['a'].add_node(4,0)
-        n.A['b'].add_node(4,0)
-        n.A['a'].add_node(5,0)
-        n.A['b'].add_node(5,0)
-        n.A['c'].add_node(5,0)
+        n.A['a'].add_node(4)
+        n.A['b'].add_node(4)
+        n.A['a'].add_node(5)
+        n.A['b'].add_node(5)
+        n.A['c'].add_node(5)
 
         #Tests for edge getters
         self.assertEqual(n[1,1,'a','b'],1)
