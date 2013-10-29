@@ -13,6 +13,8 @@ class TestNet(unittest.TestCase):
     def setUp(self):
         pass
 
+    ##### Test flat net
+
     def test_flat(self,net):
         net[1,2]=1
         net[2,3]=1
@@ -72,53 +74,146 @@ class TestNet(unittest.TestCase):
         testnet=net.MultilayerNetwork(aspects=0)
         self.test_flat(testnet)
 
+    ##### Test simple couplings
 
     def test_simple_couplings(self,net,hasDiagonalLinks=False):
         """Tests basic functionality of Multiplex networks with two layers.
 
         The input network must have connections between nodes i,i,s,s, where
-        i is in {1,2,3} and s is in {'a','b'}.
+        i is in {1,2,3} and s is in {1,2}.
         """
         #First, we add some links
         if not hasDiagonalLinks:
-            net[1,2,'a']=1
-            net[2,'a'][3,'a']=1#net[2,3,'a']=1
-            net[1,2,'b']=1
-            net[1,3,'b']=1
+            net[1,2,1]=1
+            net[2,1][3,1]=1#net[2,3,1]=1
+            net[1,2,2]=1
+            net[1,3,2]=1
 
         #Test the lattice
-        self.assertEqual(net[1,1,'a','b'],1)
-        self.assertEqual(net[1,1,'b','a'],1)
-        self.assertEqual(net[1,2,'a','b'],0)
+        self.assertEqual(net[1,1,1,2],1)
+        self.assertEqual(net[1,1,2,1],1)
+        self.assertEqual(net[1,2,1,2],0)
 
         #Tests for network structure
-        self.assertEqual(net[1,2,'a','a'],1)
-        self.assertEqual(net[2,1,'a','a'],1)
-        self.assertEqual(net[2,3,'a','a'],1)
-        self.assertEqual(net[3,2,'a','a'],1)
-        self.assertEqual(net[1,2,'b','b'],1)
-        self.assertEqual(net[2,1,'b','b'],1)
-        self.assertEqual(net[1,3,'b','b'],1)
-        self.assertEqual(net[3,1,'b','b'],1)
+        self.assertEqual(net[1,2,1,1],1)
+        self.assertEqual(net[2,1,1,1],1)
+        self.assertEqual(net[2,3,1,1],1)
+        self.assertEqual(net[3,2,1,1],1)
+        self.assertEqual(net[1,2,2,2],1)
+        self.assertEqual(net[2,1,2,2],1)
+        self.assertEqual(net[1,3,2,2],1)
+        self.assertEqual(net[3,1,2,2],1)
 
         #TODO: Tests for missing links, inside and outside network
 
         #TODO: Tests for alternative notations
 
         #Tests for node iterators
-        self.assertEqual(set(net[1,'a']),set([(1,'b'),(2,'a')]))
-        self.assertEqual(set(net[1,:,'a',:]),set([(1,'b'),(2,'a')]))
-        self.assertEqual(list(net[1,:,'a','a']),[(2,'a')])
-        self.assertEqual(list(net[1,1,'a',:]),[(1,'b')])
-        self.assertEqual(list(net[4,:,'a','a']),[])
+        self.assertEqual(set(net[1,1]),set([(1,2),(2,1)]))
+        self.assertEqual(set(net[1,:,1,:]),set([(1,2),(2,1)]))
+        self.assertEqual(list(net[1,:,1,1]),[(2,1)])
+        self.assertEqual(list(net[1,1,1,:]),[(1,2)])
+        self.assertEqual(list(net[4,:,1,1]),[])
 
         #TODO: Tests for degrees and strength
 
         #TODO: Tests for iterating over nodes and layers
         self.assertEqual(set(net.slices[0]),set([1,2,3]))
-        self.assertEqual(set(net.slices[1]),set(['a','b']))
+        self.assertEqual(set(net.slices[1]),set([1,2]))
 
         #TODO: Add tests for removing links by setting them to 0
+
+
+    def test_simple_couplings_mnet(self):
+        testnet=net.MultilayerNetwork(aspects=1)
+        testnet[1,1,1,2]=1
+        testnet[2,2,1,2]=1
+        testnet[3,3,1,2]=1
+        self.test_simple_couplings(testnet)
+
+    def test_simple_couplings_categorical_mplex(self):
+        testnet=net.MultiplexNetwork(couplings=[('categorical',1.0)])
+        self.test_simple_couplings(testnet)
+
+    def test_simple_couplings_ordinal_mplex(self):
+        testnet=net.MultiplexNetwork(couplings=[('ordinal',1.0)])
+        self.test_simple_couplings(testnet)
+
+    def test_simple_couplings_cmnet_add_to_A(self):
+        """test_simple_couplings with links added to the net.A matrices directly.
+        """
+        n=net.MultiplexNetwork(couplings=[('categorical',1.0)])
+        n.add_node(1,1)
+        n.add_node(2,1)
+        n.A[1][1][2]=1
+        n.A[1][2,3]=1
+        n.A[2][1,2]=1
+        n.A[2][1,3]=1
+        self.test_simple_couplings(n,hasDiagonalLinks=True)
+
+    ##### Test ordinal couplings
+
+    def test_ordinal_couplings(self,net):
+        """Run several tests to see if the network is ordinally coupled.
+        
+        The given net must be empty and nodes 1,2,3 ordinally coupled in layers
+        1,2,3.
+        """
+        #First, we add some links
+        net[1,2,1]=1
+        net[2,1][3,1]=1#net[2,3,1]=1
+        net[1,2,2]=1
+        net[1,3,2]=1
+        net[1,2,3]=1
+        
+        #Test the lattice
+        self.assertEqual(net[1,1,1,2],1)
+        self.assertEqual(net[1,1,2,1],1)
+        self.assertEqual(net[1,1,2,3],1)
+        self.assertEqual(net[1,1,1,3],0)
+        self.assertEqual(net[1,2,1,2],0)
+
+        #Tests for node iterators
+        self.assertEqual(set(net[1,1]),set([(1,2),(2,1)]))
+        self.assertEqual(set(net[1,2]),set([(1,1),(1,3),(2,2),(3,2)]))
+        self.assertEqual(set(net[1,3]),set([(1,2),(2,3)]))
+        self.assertEqual(set(net[1,:,1,:]),set([(1,2),(2,1)]))
+        self.assertEqual(list(net[1,:,1,1]),[(2,1)])
+        self.assertEqual(list(net[1,1,1,:]),[(1,2)])
+        self.assertEqual(set(net[1,1,2,:]),set([(1,1),(1,3)]))
+        self.assertEqual(list(net[4,:,1,1]),[])
+
+        #Tests for degs
+        self.assertEqual(net[1,1].deg(),2)
+        self.assertEqual(net[1,2].deg(),4)
+        self.assertEqual(net[1,3].deg(),2)
+        self.assertEqual(net[1,:,1,:].deg(),2)
+        self.assertEqual(net[1,:,1,1].deg(),1)
+        self.assertEqual(net[1,1,1,:].deg(),1)
+        self.assertEqual(net[1,1,2,:].deg(),2)
+        self.assertEqual(net[4,:,1,1].deg(),0)
+
+
+    def test_ordinal_couplings_mplex(self):
+        """Test the ordinal couplings in the MultiplexNetwork class.
+        """
+        testnet=net.MultiplexNetwork(couplings=[('ordinal',1.0)])
+        self.test_ordinal_couplings(testnet)
+
+    def test_ordinal_couplings_mlayer(self):
+        """Testing the ordinal couplings by explicitely constructing them
+        in MultilayerNetwork. This is more like a test of the test.
+        """
+        testnet=net.MultilayerNetwork(aspects=1)
+        testnet[1,1,1,2]=1
+        testnet[1,1,2,3]=1
+        testnet[2,2,1,2]=1
+        testnet[2,2,2,3]=1
+        testnet[3,3,1,2]=1
+        testnet[3,3,2,3]=1
+        self.test_ordinal_couplings(testnet)
+
+    ##### Test couplings
 
     def test_network_coupling(self,net):
         net[1,2,'a']=1
@@ -154,18 +249,6 @@ class TestNet(unittest.TestCase):
         couplingNet['b','c']=1
         testnet=net.MultiplexNetwork(couplings=[couplingNet])
         self.test_network_coupling(testnet)
-
-    def test_simple_couplings_mnet(self):
-        testnet=net.MultilayerNetwork(aspects=1)
-        testnet[1,1,'a','b']=1
-        testnet[2,2,'a','b']=1
-        testnet[3,3,'a','b']=1
-        self.test_simple_couplings(testnet)
-
-
-    def test_simple_couplings_cmnet(self):
-        testnet=net.MultiplexNetwork(couplings=[('categorical',1.0)])
-        self.test_simple_couplings(testnet)
 
 
     def add_intralayer_edges_2dim(self,net):
@@ -287,18 +370,6 @@ class TestNet(unittest.TestCase):
 
     #TODO: tests for noEdge parameter
 
-    def test_simple_couplings_cmnet_add_to_A(self):
-        """test_simple_couplings with links added to the net.A matrices directly.
-        """
-        n=net.MultiplexNetwork(couplings=[('categorical',1.0)])
-        n.add_node('a',1)
-        n.add_node('b',1)
-        n.A['a'][1][2]=1
-        n.A['a'][2,3]=1
-        n.A['b'][1,2]=1
-        n.A['b'][1,3]=1
-        #print n[3,'a'][2,'a']
-        self.test_simple_couplings(n,hasDiagonalLinks=True)
         
     def test_simple_couplings_cmnet_nonglobalnodes(self):
         """ Test that MultiplexNetwork fullyInterconnected parameter
@@ -400,7 +471,8 @@ def test_net():
     suite = unittest.TestSuite()    
     suite.addTest(TestNet("test_flat_mnet"))
     suite.addTest(TestNet("test_simple_couplings_mnet"))
-    suite.addTest(TestNet("test_simple_couplings_cmnet"))
+    suite.addTest(TestNet("test_simple_couplings_categorical_mplex"))
+    suite.addTest(TestNet("test_simple_couplings_ordinal_mplex"))
     suite.addTest(TestNet("test_simple_couplings_cmnet_add_to_A"))
     suite.addTest(TestNet("test_2dim_categorical_couplings_mnet"))
     suite.addTest(TestNet("test_2dim_categorical_couplings_cmnet"))
@@ -408,7 +480,8 @@ def test_net():
     suite.addTest(TestNet("test_network_coupling_cmnet"))
     suite.addTest(TestNet("test_multiplex_diagonal_notation"))
     suite.addTest(TestNet("test_simple_couplings_cmnet_nonglobalnodes"))
-
+    suite.addTest(TestNet("test_ordinal_couplings_mplex"))
+    suite.addTest(TestNet("test_ordinal_couplings_mlayer"))
     unittest.TextTestRunner().run(suite) 
 
 if __name__ == '__main__':
