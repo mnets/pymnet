@@ -199,8 +199,8 @@ def read_ucinet(netinput,couplings=('categorical',1.0),fullyInterconnected=True)
     if fullyInterconnected and nm!=1:
         for layer in llabels:
             for node in clabels:
-                net.A[layer].add_node(node,0)
+                net.A[layer].add_node(node)
             for node in rlabels:
-                net.A[layer].add_node(node,0)
+                net.A[layer].add_node(node)
 
     return net

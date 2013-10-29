@@ -121,7 +121,7 @@ def single_layer_er(net,nodes,p):
     """
     n=len(nodes)
     for node in nodes:
-        net.add_node(node,0)
+        net.add_node(node)
     v,w=1,-1
     while (v < n):
         r=random.random()
@@ -168,7 +168,7 @@ def conf(degs,aspects=0,couplings=("categorical",1.0)):
             nodes=sum(ldegs.values())
         net=MultiplexNetwork(couplings=aspects*[couplings])
         for l,ldegs in enumerate(degs):
-            net.add_node(l,1)
+            net.add_layer(l)
             single_layer_conf(net.A[l],ldegs)
     else:
         raise Exception("0 or 1 aspects, please.")
@@ -204,7 +204,7 @@ def er(n,p):
     else:
         net=MultiplexNetwork(couplings=[('categorical',1.0)])
         for l,lp in enumerate(p):
-            net.add_node(l,1)
+            net.add_layer(l)
             single_layer_er(net.A[l],range(n),lp)
 
     return net
@@ -232,7 +232,7 @@ def er_partially_interconnected(nodes,ps,couplings=('categorical',1.0)):
     assert len(nodes)==len(ps)
     net=MultiplexNetwork(couplings=[couplings],fullyInterconnected=False)
     for layer,lnodes in enumerate(nodes):
-        net.add_node(layer,1)
+        net.add_layer(layer)
         single_layer_er(net.A[layer],lnodes,ps[layer])
     return net
 

@@ -123,11 +123,22 @@ class MultilayerNetwork(object):
     def __len__(self):
         return len(self.slices[0])
 
-    def add_node(self,node,aspect):
-        """Adds an empty node to the aspect.
+    def add_node(self,node):
+        """Adds an empty node to the network.
+
         Does nothing if node already exists.
         """
-        self.slices[aspect].add(node)
+        self.slices[0].add(node)
+
+    def add_layer(self,layer,aspect=1):
+        """Adds an empty layer to the network.
+
+        Does nothing if node already exists.
+        """
+        if aspect==0:
+            self.add_node(layer)
+        else:
+            self.slices[aspect].add(layer)
 
     def _get_link(self,link):
         """Return link weight or 0 if no link.
@@ -289,7 +300,7 @@ class MultilayerNetwork(object):
 
         #There might be new nodes, add them to sets of nodes
         for i in range(2*d):
-            self.add_node(link[i],int(math.floor(i/2))) #just d/2 would work, but ugly
+            self.add_layer(link[i],int(math.floor(i/2))) #just d/2 would work, but ugly
 
         self._set_link(link,val)
 
@@ -399,9 +410,9 @@ class MultilayerNetworkWithParent(MultilayerNetwork):
         self.parent=parent
     def _set_name(self,name):
         self._name=name
-    def add_node(self,node,aspect):
-        self.parent.add_node(node,0)
-        MultilayerNetwork.add_node(self,node,aspect)
+    def add_node(self,node):
+        self.parent.add_node(node)
+        MultilayerNetwork.add_node(self,node)
         if not self.parent.fullyInterconnected:
             if node not in self.parent._nodeToLayers:
                  self.parent._nodeToLayers[node]=set()
@@ -517,31 +528,28 @@ class MultiplexNetwork(MultilayerNetwork):
                 net._set_name(node)
         self.A[node]=net
 
-    def add_node(self,node,aspect):
-        """ Adds node or a layer to given dimension.
-
-        Maybe we should have add_node and add_layer methods separately?
+    def add_layer(self,layer,aspect=1):
+        """ Adds node or a layer to given aspect in the network.
 
         Examples
         --------
-        >>> myNet.add_node('myNode',0) #Adds a new node with label 'myNode'
-        >>> myNet.add_node('myLayer',1) #Adds a new layer to the first dimension
+        >>> myNet.add_layer('myLayer',1) #Adds a new layer to the first aspect
         """
         #overrrides the parent method
 
         #check if new diagonal matrices needs to be added
-        if node not in self.slices[aspect]:
+        if layer not in self.slices[aspect]:
             if aspect>0:            
                 if self.aspects>1:
                     new_slices=list(self.slices[1:])
-                    new_slices[aspect-1]=[node]
+                    new_slices[aspect-1]=[layer]
                     for s in itertools.product(*new_slices):
                         self._add_A(s)
                 else:
-                    self._add_A(node)
+                    self._add_A(layer)
 
             #call parent method
-            MultilayerNetwork.add_node(self,node,aspect)
+            MultilayerNetwork.add_layer(self,layer,aspect)
 
 
     def _has_layer_with_tuple(self,layer):
