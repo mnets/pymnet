@@ -547,6 +547,11 @@ class MultiplexNetwork(MultilayerNetwork):
                 coupling=self.couplings[d[0]-1]                
                 if coupling[0]=="categorical":
                         return coupling[1] 
+                elif coupling[0]=="ordinal":
+                    if link[2*d[0]]+1==link[2*d[0]+1] or link[2*d[0]]==link[2*d[0]+1]+1:
+                        return coupling[1]
+                    else:
+                        return self.noEdge
                 elif isinstance(coupling[0],MultilayerNetwork):
                     return self.couplings[d[0]-1][0][link[2*d[0]],link[2*d[0]+1]]
                 else:
@@ -555,9 +560,9 @@ class MultiplexNetwork(MultilayerNetwork):
                 if self._has_layer_with_tuple(link[2::2]):
                     return self._get_A_with_tuple(link[2::2])[link[0],link[1]]
                 else:
-                    return 0.0
+                    return self.noEdge
         else:
-            return 0.0
+            return self.noEdge
                 
     def _set_link(self,link,value):
         """Overrides parents method.
@@ -579,9 +584,18 @@ class MultiplexNetwork(MultilayerNetwork):
                 return len(self.slices[aspect])-1
             else:
                 if supernode[1:] in self._nodeToLayers[supernode[0]]:
-                    return len(self._nodeToLayers[supernode[0]])-1
+                    if self.aspects==1:
+                        return len(self._nodeToLayers[supernode[0]])-1
+                    else:
+                        return len(filter(lambda x:x[aspect]==supernode[aspect],self._nodeToLayers[supernode[0]])) -1
                 else:
                     return 0
+        elif coupling_type=="ordinal":
+            up,down=supernode[aspect]+1,supernode[aspect]-1
+            if self.fullyInterconnected:
+                return int(up in self.slices[aspect])+int(down in self.slices[aspect])
+            else:
+                return int(supernode[:aspect]+(up,)+supernode[aspect+1:] in self._nodeToLayers[supernode[0]])+int(supernode[:aspect]+(down,)+supernode[aspect+1:] in self._nodeToLayers[supernode[0]])
         elif isinstance(coupling_type,MultilayerNetwork):
             return self.couplings[aspect-1][0][supernode[aspect]].deg()
         else:
@@ -606,11 +620,18 @@ class MultiplexNetwork(MultilayerNetwork):
                 for layers in self._nodeToLayers[supernode[0]]:
                     if layers!=supernode[1:]:                    
                         yield (supernode[0],)+layers
-                #for n in self.slices[dimension]:
-                #    if n!=supernode[dimension]:                    
-                #        candidate=supernode[:dimension]+(n,)+supernode[dimension+1:]
-                #        if supernode[0] in self._get_A_with_tuple(candidate[1:]).slices[0]:
-                #            yield candidate
+        elif coupling_type=="ordinal":
+            up,down=supernode[aspect]+1,supernode[aspect]-1
+            if self.fullyInterconnected:
+                if up in self.slices[aspect]:
+                    yield supernode[:aspect]+(up,)+supernode[aspect+1:]
+                if down in self.slices[aspect]:
+                    yield supernode[:aspect]+(down,)+supernode[aspect+1:]
+            else:
+                if supernode[1:aspect]+(up,)+supernode[aspect+1:] in self._nodeToLayers[supernode[0]]:
+                    yield supernode[:aspect]+(up,)+supernode[aspect+1:]
+                if supernode[1:aspect]+(down,)+supernode[aspect+1:] in self._nodeToLayers[supernode[0]]:
+                    yield supernode[:aspect]+(down,)+supernode[aspect+1:]
         else:
             raise NotImplemented()
         
