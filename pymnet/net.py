@@ -471,7 +471,7 @@ class MultiplexNetwork(MultilayerNetwork):
                         coupling=coupling+(1.0,)
                     self.couplings.append(coupling)
                 elif isinstance(coupling,MultilayerNetwork):
-                    assert couplings.aspects==0
+                    assert coupling.aspects==0
                     self.couplings.append((coupling,))
                 elif isinstance(coupling,str) or isinstance(coupling,unicode):
                     assert str(coupling) in coupling_types
