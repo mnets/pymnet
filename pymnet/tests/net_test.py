@@ -135,6 +135,15 @@ class TestNet(unittest.TestCase):
         testnet=net.MultiplexNetwork(couplings=[('categorical',1.0)])
         self.test_simple_couplings(testnet)
 
+        testnet=net.MultiplexNetwork(couplings=['categorical'])
+        self.test_simple_couplings(testnet)
+
+        testnet=net.MultiplexNetwork(couplings=('categorical',1.0))
+        self.test_simple_couplings(testnet)
+
+        testnet=net.MultiplexNetwork(couplings='categorical')
+        self.test_simple_couplings(testnet)
+
     def test_simple_couplings_ordinal_mplex(self):
         testnet=net.MultiplexNetwork(couplings=[('ordinal',1.0)])
         self.test_simple_couplings(testnet)

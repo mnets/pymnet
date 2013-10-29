@@ -412,10 +412,18 @@ class MultiplexNetwork(MultilayerNetwork):
 
     Parameters
     ----------
-    couplings : list
-       A list with lenght equal to number of aspects. Each coupling must be 
-       either a policy or a network. Policy is a tuple: (type, weight)
-       Policy types: 'ordinal', 'categorical'.
+    couplings : list, str, tuple, None, MultilayerNetwork
+       Parameter determining how the layers are coupled, i.e. what 
+       inter-layer edges are present.
+       If string, the parameter must be on of the  policy types: 
+       'ordinal', 'categorical', or 'none'. None is same as 'none'. Tuple
+       can be used to give parameters to the coupling types, e.g. 
+       ('categorical',1.0) is categorical coupling with inter-edge weights
+       equal to 1.0. If coupling is a network, it must be a monoplex one
+       with the nodes corresponding to layer names. If a list is given, then
+       the multiplex network will have aspects equal to the lenght of that
+       list with each element corresponding to a coupling given as described
+       above.
     noEdge : object
        Any object signifying that there is no edge.
     directed : bool
@@ -439,6 +447,7 @@ class MultiplexNetwork(MultilayerNetwork):
 
     """
 
+
     def __init__(self,couplings=None,directed=False,noEdge=0,fullyInterconnected=True):
         self.directed=directed
         self.noEdge=noEdge
@@ -447,20 +456,33 @@ class MultiplexNetwork(MultilayerNetwork):
         if not fullyInterconnected:
             self._nodeToLayers={}
 
-        if couplings!=None:
-            #assert len(couplings)==dimensions
-            self.couplings=[]
+        coupling_types=["categorical","ordinal","none"]
+        self.couplings=[]
+
+        if isinstance(couplings,tuple) or isinstance(couplings,str) or isinstance(couplings,unicode) or isinstance(couplings,MultilayerNetwork) or couplings==None:
+            couplings=[couplings]
+
+        if isinstance(couplings,list):
             for coupling in couplings:
                 if isinstance(coupling,tuple):
+                    assert len(coupling)!=0
+                    assert coupling[0] in coupling_types
+                    if coupling[0] in ["categorical","ordinal"] and len(coupling)==1:
+                        coupling=coupling+(1.0,)
                     self.couplings.append(coupling)
                 elif isinstance(coupling,MultilayerNetwork):
+                    assert couplings.aspects==0
                     self.couplings.append((coupling,))
+                elif isinstance(coupling,str) or isinstance(coupling,unicode):
+                    assert str(coupling) in coupling_types
+                    self.couplings.append((coupling,1.0))
+                elif coupling==None:
+                    self.couplings.append(("none",))
                 else:
                     raise ValueError("Invalid coupling type: "+str(type(coupling)))
             self.aspects=len(couplings)
         else:
-            #couplings=map(lambda x:None,range(dimensions))
-            self.aspects=0
+            raise ValueError("Invalid coupling type: "+str(type(couplings)))
 
         self._init_slices(self.aspects)
         
