@@ -65,6 +65,11 @@ You can use similar syntax to check if the edges exist and access their weights.
 >>> net[2,3]
 0
 
+The network is undirected by default which means that adding an edge in one direction adds it automatically to both directions.
+
+>>> net[2,1]
+1
+
 The node objects can be iterated, which will yield the list of neighbors of the node:
 
 >>> list(net[1])
@@ -131,9 +136,92 @@ You can again iterate over a node object, but this time tuples with both node an
 >>> list(mnet)
 [1, 2]
 
+You can create networks with arbitrary number of aspects. The syntax for this type of networks is straight forward extension of the one described above.
+
+>>> mnet2 = MultilayerNetwork(aspects=2)
+>>> mnet2[1,2,'a','b','x','y']=1
+>>> mnet2[1,'a','x'][2,'b','y']
+1
+
+Sometimes new syntax is needed. For example, the aspect must be specified when adding layers.
+
+>>> mnet2.add_layer('c',1)
+>>> mnet2.add_layer('z',2)
+
+.. more aspects
 .. next: Slicing notation
 
 
 Multiplex networks
 ------------------
+
+The multilayer networks can in theory be used to represented multiplex networks, but in practise it is often better to use a specialized class MultiplexNetwork to 
+when dealing with multiplex networks. There few reason for this. First, the MultiplexNetwork class offers an additional convinient interface for handling intra-layer networks.
+Second, the MultiplexNetwork class can take coupling rules as an input when it's constructed and use them to implicitely create the inter-layer edges when they are needed. This
+saves some memory and makes it easier to create networks with such coupling structures. Third, this will let the functions in the library to know that your multilayer network is
+a multiplex network. Some of the functions only work for multiplex networks, but even the ones that work for general multilayer networks can use the information to speed up the
+processing. 
+
+The simplest multiplex network is the one with no coupling edges. You would create such object with the following command:
+
+>>> mplex = MultiplexNetwork(couplings="none")
+
+The nodes and edges can be accessed and added as usual:
+
+>>> mplex[1,'a'][2,'a']=1
+
+The difference to the MultilayerNetwork object (in addition to not being able to add cross-layer links) is that you can now access the intra-layer networks as follows:
+
+>>> mplex.A['a'][1,2]
+1
+>>> mplex.A['a'][1,3] = 1
+
+You can construct MultiplexNetworks with given coupling rules and have categorical or ordinal multiplex networks, where the inter-layer edges are filled in automatically.
+In categorical networks all the diagonal inter-layer edges are present.
+
+>>> cnet = MultiplexNetwork(couplings='categorical')
+>>> cnet.add_node(1)
+>>> cnet.add_layer('a')
+>>> cnet.add_layer('b')
+>>> cnet[1,1,'a','b']
+1
+
+In ordinal networks only adjacent layers are connected to each other. In MultiplexNetwork object the layer in ordinal aspect must be integers.
+
+>>> onet = MultiplexNetwork(couplings='ordinal')
+>>> onet.add_node('node')
+>>> onet.add_layer(1)
+>>> onet.add_layer(2)
+>>> onet.add_layer(3)
+>>> onet['node','node',1,2]
+1
+>>> onet['node','node',1,3]
+0
+
+You can also give the coupling strength, i.e. the weight of the inter-layer edges as a paramter
+
+>>> cnet = MultiplexNetwork(couplings=('categorical',10))
+>>> cnet.add_node(1)
+>>> cnet.add_layer('a')
+>>> cnet.add_layer('b')
+>>> cnet[1,1,'a','b']
+10
+
+Multiplex networks with multiple aspects can be constructed by a list of coupling rules as the coupling paramter in the constructor. For example,
+the following code constructs a multiplex network where the first aspect is categorical and the second is ordinal
+
+>>> conet = MultiplexNetwork(couplings=['categorical','ordinal'])
+>>> conet.add_node('node')
+>>> conet.add_layer('a',1)
+>>> conet.add_layer('b',1)
+>>> conet.add_layer(1,2)
+>>> conet.add_layer(2,2)
+>>> conet.add_layer(3,3)
+>>> conet['node','node','a','a',1,2]
+1
+
+In this case the intra-layer network must be accessed by giving a combination of layers.
+
+>>> conet.A[('a',1)]['node','node2']=1
+
 
