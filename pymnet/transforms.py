@@ -147,3 +147,22 @@ def subnet(net,nodes,*layers):
                                 newNet[(node,neigh)+layer]=net[(node,neigh)+layer]
 
     return newNet
+
+
+def supra_adjacency_matrix(net,includeCouplings=True):
+    """Returns the supra-adjacency matrix and a list of node-layer pairs.
+
+    Parameters
+    ----------
+    includeCoupings : bool
+       If True, the inter-layer edges are included, if False, only intra-layer
+       edges are included.
+
+    Returns
+    -------
+    matrix, nodes : numpy.matrix, list
+       The supra-adjacency matrix and the list of node-layer pairs. The order
+       of the elements in the list and the supra-adjacency matrix are the same.
+    """
+
+    return net.get_supra_adjacency_matrix(includeCouplings=includeCouplings)
