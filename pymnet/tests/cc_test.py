@@ -132,17 +132,17 @@ class TestNet(unittest.TestCase):
         self.assertEqual(2*t,lt)
         self.assertEqual(2*d,ld)
 
-        cc.gcc_alternating_walks_vector_adj(net)
+        cc.gcc_aw_vector_adj(net)
 
-        self.assertAlmostEqual(cc.gcc_alternating_walks_seplayers(net,w1=0.3,w2=0.3,w3=0.3),cc.gcc_alternating_walks_seplayers_adj(net,w1=0.3,w2=0.3,w3=0.3))
+        self.assertAlmostEqual(cc.gcc_aw_seplayers(net,w1=0.3,w2=0.3,w3=0.3),cc.gcc_aw_seplayers_adj(net,w1=0.3,w2=0.3,w3=0.3))
 
         for supernode in net.slices[0]:
-            if abs(cc.sncc_alternating_walks(net,supernode,a=0.5,b=0.5)-wmax/float(b)*cc.cc_zhang(anet,supernode))>10**-6:
-                print wmax,b,cc.sncc_alternating_walks(net,supernode,a=0.5,b=0.5),cc.cc_zhang(anet,supernode)
+            if abs(cc.sncc_aw(net,supernode,a=0.5,b=0.5)-wmax/float(b)*cc.cc_zhang(anet,supernode))>10**-6:
+                print wmax,b,cc.sncc_aw(net,supernode,a=0.5,b=0.5),cc.cc_zhang(anet,supernode)
                 print supernode
                 print list(anet.edges)
                 print list(net.edges)
-            self.assertAlmostEqual(cc.sncc_alternating_walks(net,supernode,a=0.5,b=0.5),wmax/float(b)*cc.cc_zhang(anet,supernode))
+            self.assertAlmostEqual(cc.sncc_aw(net,supernode,a=0.5,b=0.5),wmax/float(b)*cc.cc_zhang(anet,supernode))
 
         #global cc
         tga=0
@@ -160,7 +160,7 @@ class TestNet(unittest.TestCase):
         print "gcc",cc.gcc_contraction_m(net),cc.gcc_contraction_m_ct(net),cc.gcc_super_graph(net),cc.gcc_contraction_o2(net),owmax*cc.gcc_zhang(onet)/float(b),cc.gcc_contraction_o(net)
         """
 
-    def test_symmetric_alternating_walkers(self,net):
+    def test_symmetric_aw(self,net):
             import numpy
             adj,nodes1=net.get_supra_adjacency_matrix()    
             a,nodes2=net.get_supra_adjacency_matrix(includeCouplings=False)
@@ -327,7 +327,7 @@ class TestNet(unittest.TestCase):
         for i in range(1):        
             net=models.er(10,map(lambda x:random.random(),range(5)))
             self.test_unweighted_consistency(net)
-            self.test_symmetric_alternating_walkers(net)
+            self.test_symmetric_aw(net)
 
         net=pymnet.net.MultiplexNetwork([('categorical',1.0)])
         net[1, 9, 1, 1]=1 
@@ -337,11 +337,11 @@ class TestNet(unittest.TestCase):
         self.test_unweighted_consistency(net)
 
         net=pymnet.net.MultiplexNetwork([('categorical',1.0)])
-        #net.add_node(1,0)
-        net.add_node(1,1)
-        net.add_node(2,1)
-        net.add_node(3,1)
-        net.add_node(4,1)
+        #net.add_node(1)
+        net.add_layer(1)
+        net.add_layer(2)
+        net.add_layer(3)
+        net.add_layer(4)
         net[1,2,1,1]=1
         net[1,3,1,1]=1
         net[2,3,1,1]=1
