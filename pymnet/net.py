@@ -127,13 +127,22 @@ class MultilayerNetwork(object):
         """Adds an empty node to the network.
 
         Does nothing if node already exists.
+
+        See also
+        --------
+        add_layer
         """
         self.slices[0].add(node)
 
     def add_layer(self,layer,aspect=1):
         """Adds an empty layer to the network.
 
-        Does nothing if node already exists.
+        Does nothing if node already exists. If aspect==0, then add_node
+        is called with add_node(layer).
+
+        See also
+        --------
+        add_node
         """
         if aspect==0:
             self.add_node(layer)
@@ -306,9 +315,10 @@ class MultilayerNetwork(object):
 
 
 
-    def iter_dimension(self,aspect):
-        for node in self.slices[aspect]:
-            yield node
+    def get_layers(self,aspect=1):
+        """Returns the set of layers (in a given aspect).
+        """
+        return self.slices[aspect]
 
     def __iter__(self):
         """Iterates over all nodes.
@@ -318,6 +328,8 @@ class MultilayerNetwork(object):
 
     @property
     def edges(self):
+        """Edge iterator.
+        """
         if self.directed:
             for node in itertools.product(*self.slices):
                 for neigh in self[node]:                
@@ -336,7 +348,7 @@ class MultilayerNetwork(object):
                         yield link+(self[link],)            
                 iterated.add(node)
 
-    def write_flattened(self,output):
+    def _write_flattened(self,output):
         nodes=map(lambda x: tuple(reversed(x)),sorted(itertools.product(*map(lambda i:sorted(self.slices[i]),reversed(range(len(self.slices)))))))
         for i in nodes:
             row=[str(self[i][j]) for j in nodes]
@@ -345,6 +357,20 @@ class MultilayerNetwork(object):
 
 
     def get_supra_adjacency_matrix(self,includeCouplings=True):
+        """Returns the supra-adjacency matrix and a list of node-layer pairs.
+
+        Parameters
+        ----------
+        includeCoupings : bool
+           If True, the inter-layer edges are included, if False, only intra-layer
+           edges are included.
+
+        Returns
+        -------
+        matrix, nodes : numpy.matrix, list
+           The supra-adjacency matrix and the list of node-layer pairs. The order
+           of the elements in the list and the supra-adjacency matrix are the same.
+        """
         import numpy
         if self.aspects>0:
             nodes=map(lambda x: tuple(reversed(x)),sorted(itertools.product(*map(lambda i:sorted(self.slices[i]),reversed(range(len(self.slices)))))))
@@ -364,6 +390,14 @@ class MultilayerNetwork(object):
         return numpy.matrix(matrix),nodes
 
 class MultilayerNode(object):
+    """A node in a MultilayerNetwork. 
+
+    The node objects are generated from the MultilayerNetwork objects with the
+    __getitem__ method. The nodes can be used to access their neighboring edges,
+    the neighboring edges can be iterated over by iterating the node, and the object
+    contains methods for asking degree and strength of the node.
+    """
+    #net[1,'a','x'][:,:,'y']=net[1,:,'a',:,'x','y']
     def __init__(self,node,mnet,layers=None):
         """A node in multilayer network. 
         """
@@ -386,11 +420,15 @@ class MultilayerNode(object):
         self.mnet[self.mnet._nodes_to_link(self.node,item)]=value
 
     def deg(self,*layers):
+        """Returns the degree of the node.
+        """
         assert len(layers)==0 or len(layers)==(self.mnet.aspects+1)
         if layers==():
             layers=self.layers
         return self.mnet._get_degree(self.node,layers)
     def str(self,*layers):
+        """Returns the weighted degree, i.e. the strength, of the node.
+        """
         assert len(layers)==0 or len(layers)==(self.mnet.aspects+1)
         if layers==():
             layers=self.layers
@@ -711,16 +749,6 @@ class MultiplexNetwork(MultilayerNetwork):
             else:
                 for n in self._iter_dim(node,d):
                     yield n
-
-
-    def get_couplings(self,aspect):
-        """Returns a view to a network of couplings between nodes and
-        their counterparts in other slices of the given dimension.        
-        """
-        pass
-
-    def set_connection_policy(self,aspect,policy):
-        pass
 
 class FlatMultilayerNetworkView(MultilayerNetwork):
     """
