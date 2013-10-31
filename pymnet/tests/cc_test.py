@@ -134,15 +134,15 @@ class TestNet(unittest.TestCase):
 
         cc.gcc_aw_vector_adj(net)
 
-        self.assertAlmostEqual(cc.gcc_aw_seplayers(net,w1=0.3,w2=0.3,w3=0.3),cc.gcc_aw_seplayers_adj(net,w1=0.3,w2=0.3,w3=0.3))
+        self.assertAlmostEqual(cc.gcc_aw(net,w1=0.3,w2=0.3,w3=0.3),cc.gcc_aw_seplayers_adj(net,w1=0.3,w2=0.3,w3=0.3))
 
         for supernode in net.slices[0]:
-            if abs(cc.sncc_aw(net,supernode,a=0.5,b=0.5)-wmax/float(b)*cc.cc_zhang(anet,supernode))>10**-6:
-                print wmax,b,cc.sncc_aw(net,supernode,a=0.5,b=0.5),cc.cc_zhang(anet,supernode)
+            if abs(cc.sncc_aw(net,supernode,w1=0.5,w2=0.5,w3=None)-wmax/float(b)*cc.cc_zhang(anet,supernode))>10**-6:
+                print wmax,b,cc.sncc_aw(net,supernode,w1=0.5,w2=0.5,w3=None),cc.cc_zhang(anet,supernode)
                 print supernode
                 print list(anet.edges)
                 print list(net.edges)
-            self.assertAlmostEqual(cc.sncc_aw(net,supernode,a=0.5,b=0.5),wmax/float(b)*cc.cc_zhang(anet,supernode))
+            self.assertAlmostEqual(cc.sncc_aw(net,supernode,w1=0.5,w2=0.5,w3=None),wmax/float(b)*cc.cc_zhang(anet,supernode))
 
         #global cc
         tga=0

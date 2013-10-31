@@ -93,6 +93,6 @@ Clustering coefficients
   cc_sequence  
   lcc_aw
   avg_lcc_aw
-  gcc_aw_seplayers
+  gcc_aw
   sncc_aw
-  sncc_aw_seplayers
+  elementary_cycles
