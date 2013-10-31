@@ -49,6 +49,7 @@ Transforming Networks
    
   aggregate
   subnet
+  supra_adjacency_matrix
 
 Reading and Writing Networks
 ----------------------------
