@@ -16,7 +16,7 @@ Data structures
 
   MultilayerNetwork
   MultiplexNetwork
-
+  MultilayerNode
 
 Network models
 --------------
