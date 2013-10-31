@@ -17,7 +17,7 @@ The library is free and available for download directly from our `repository <ht
 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
    overview
    tutorial
