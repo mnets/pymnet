@@ -494,7 +494,7 @@ def cc_cycle_vector_adj(net,node,layer):
 
     return aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac
 
-def gcc_alternating_walks_vector_adj(net):
+def gcc_aw_vector_adj(net):
     def get_nom_den(p,ph):
         nom=[]
         for i in range(len(p)):
@@ -534,8 +534,8 @@ def gcc_alternating_walks_vector_adj(net):
 
 
 
-def gcc_alternating_walks_seplayers_adj(net,w1=1./3.,w2=1./3.,w3=1./3.,returnCVector=False):
-    c1_nom,c1_den,c2_nom,c2_den,c3_nom,c3_den=gcc_alternating_walks_vector_adj(net)
+def gcc_aw_seplayers_adj(net,w1=1./3.,w2=1./3.,w3=1./3.,returnCVector=False):
+    c1_nom,c1_den,c2_nom,c2_den,c3_nom,c3_den=gcc_aw_vector_adj(net)
     if sum(c1_den)!=0:
         c1=sum(c1_nom)/float(sum(c1_den))
     else:
@@ -558,7 +558,7 @@ def gcc_alternating_walks_seplayers_adj(net,w1=1./3.,w2=1./3.,w3=1./3.,returnCVe
 
 
 
-def lcc_alternating_walks(net,node,layer,w1=1./3.,w2=1./3.,w3=1./3.,returnCVector=False):
+def lcc_aw(net,node,layer,w1=1./3.,w2=1./3.,w3=1./3.,returnCVector=False):
     """ If w3==None: w1 = \alpha and w2 =\beta
     """
     aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac=cc_cycle_vector_bf(net,node,layer,undefReturn=0.0)
@@ -596,17 +596,17 @@ def lcc_alternating_walks(net,node,layer,w1=1./3.,w2=1./3.,w3=1./3.,returnCVecto
         else:
             return 0
 
-def avg_lcc_alternating_walks(net,w1=1./3.,w2=1./3.,w3=1./3.,returnCVector=False):
+def avg_lcc_aw(net,w1=1./3.,w2=1./3.,w3=1./3.,returnCVector=False):
     c,c1,c2,c3=0,0,0,0
     n=0.
     for layer in net.slices[1]:
         for node in net.A[layer]:
             n+=1.
             if returnCVector:
-                tc1,tc2,tc3=lcc_alternating_walks(net,node,layer,returnCVector=True)
+                tc1,tc2,tc3=lcc_aw(net,node,layer,returnCVector=True)
                 c1,c2,c3=c1+tc1,c2+tc2,c3+tc3
             else:
-                c+=lcc_alternating_walks_seplayers(net,node,layer,w1=w1,w2=w2,w3=w3)
+                c+=lcc_aw_seplayers(net,node,layer,w1=w1,w2=w2,w3=w3)
                 
     if returnCVector:
         return c1/n,c2/n,c3/n
@@ -614,7 +614,7 @@ def avg_lcc_alternating_walks(net,w1=1./3.,w2=1./3.,w3=1./3.,returnCVector=False
         return c/n
 
 
-def gcc_alternating_walks_seplayers(net,w1=1./3.,w2=1./3.,w3=1./3.,returnCVector=False):
+def gcc_aw_seplayers(net,w1=1./3.,w2=1./3.,w3=1./3.,returnCVector=False):
     """ If w3==None: w1 = \alpha and w2 =\beta
     """
     t1,t2,t3,d1,d2,d3=0,0,0,0,0,0
@@ -698,7 +698,7 @@ def gcc_moreno2_seplayers(net,w1=1./3.,w2=1./3.,w3=1./3.):
             return 0
 
 
-def sncc_alternating_walks(net,supernode,a=0.5,b=0.5):
+def sncc_aw(net,supernode,a=0.5,b=0.5):
     t1,t2,t3,d1,d2,d3=0,0,0,0,0,0
     for layer in net.slices[1]:
         aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac=cc_cycle_vector_bf(net,supernode,layer,undefReturn=0.0)
@@ -714,7 +714,7 @@ def sncc_alternating_walks(net,supernode,a=0.5,b=0.5):
     else:
         return 0
 
-def sncc_alternating_walks_seplayers(net,supernode,w1=1./3.,w2=1./3.,w3=1./3.,undefined=None):
+def sncc_aw_seplayers(net,supernode,w1=1./3.,w2=1./3.,w3=1./3.,undefined=None):
     t1,t2,t3,d1,d2,d3=0,0,0,0,0,0
     for layer in net.slices[1]:
         aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac=cc_cycle_vector_bf(net,supernode,layer,undefReturn=0.0)
@@ -1030,31 +1030,3 @@ def gcc_contraction_o2(net):
     else:
         return None
 
-
-
-
-
-def cc_5cycles(net,node,anet,undefReturn=0.0):
-    nom,den=0,0
-    #First calculate cc inside the layers
-    tr,tu=cc_sequence(net,node)
-    tr_intra=sum(tr)
-    tu_intra=sum(tu)
-
-    #Then go through the cases where node is central
-    tr_central=0
-    tu_central=0
-    for layer in net.A:
-        intranet=net.A[layer]
-        t=0
-        degree=intranet[node].deg()
-        if degree>=2:
-            for i,j in itertools.combinations(intranet[node],2):
-                for layer2 in net[node,node,layer,:]:
-                    if net[i,layer2][j,layer2]!=net.noEdge:
-                        t+=1
-        tr_central+=t
-        tu_central+=(len(net.layers)-1)*((degree*(degree-1))/2)
-   
-    #Last, go through cases where node is not central
-    #to be done

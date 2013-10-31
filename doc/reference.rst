@@ -91,8 +91,8 @@ Clustering coefficients
   cc_barrat
   cc_barrett
   cc_sequence  
-  lcc_alternating_walks
-  avg_lcc_alternating_walks
-  gcc_alternating_walks_seplayers
-  sncc_alternating_walks
-  sncc_alternating_walks_seplayers
+  lcc_aw
+  avg_lcc_aw
+  gcc_aw_seplayers
+  sncc_aw
+  sncc_aw_seplayers
