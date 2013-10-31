@@ -308,6 +308,34 @@ def gcc_super_graph(net):
     else:
         return None
 
+def elementary_cycles(net,node,layer):
+    """Returns the elementary 3-cycle counts in a multiplex network.
+
+    Parameters
+    ----------
+    net : MultiplexNetwork with aspects=1
+       The input network.
+    node : any object
+       The focal node. Given as node index in the network.
+    layer : any object
+       The focal layer. Given as layer index in the network.
+
+    Returns
+    -------
+    cycles : tuple
+        Returns the elementary cycles around the node-layer pair in the
+        following order:
+        aaa,aacac,acaac,acaca,acacac,afa,afcac,acfac,acfca,acfcac
+    
+    References
+    ----------
+    "Clustering Coefficients in Multiplex Networks", E. Cozzo et al. , arXiv:1307.6780 [physics.soc-ph]
+
+    """
+    return cc_cycle_vector_bf(net,node,layer)
+
+
+
 def cc_cycle_vector_bf(net,node,layer,undefReturn=0.0):
     """Counts all the cycles.
 
@@ -558,8 +586,38 @@ def gcc_aw_seplayers_adj(net,w1=1./3.,w2=1./3.,w3=1./3.,returnCVector=False):
 
 
 
-def lcc_aw(net,node,layer,w1=1./3.,w2=1./3.,w3=1./3.,returnCVector=False):
-    """ If w3==None: w1 = \alpha and w2 =\beta
+def lcc_aw(net,node,layer,w1=1./2.,w2=1./2.,w3=None,returnCVector=False):
+    r"""The local version of the alternating walker clustering coefficient for multiplex networks.
+
+    Parameters
+    ----------
+    net : MultiplexNetwork with aspects=1
+       The input network.
+    node : any object
+       The focal node. Given as node index in the network.
+    layer : any object
+       The focal layer. Given as layer index in the network.
+    w1,w2,w3 : weights of the contributions of different layers.
+       If w3 is set to None then w1 and w2 correspond to the "costs" of staying at a layer and
+       changing the layer, i.e. w1 = :math:`\beta` and w2 = :math:`\gamma`
+    returnCVector : bool
+       If True, returns a vector containing the three different local clustering coefficients
+       :math:`c_1,c_2,c_3`. Otherwise, return just a single value.
+
+    Returns
+    -------
+    cc : float, or tuple
+       The value(s) of the clustering coefficient.
+    
+    References
+    ----------
+    "Clustering Coefficients in Multiplex Networks", E. Cozzo et al. , arXiv:1307.6780 [physics.soc-ph]
+
+    See also
+    --------
+    avg_lcc_aw : The local alternating walks clustering coefficient averaged over all node-layer pairs.
+    sncc_aw : The super-node version of the alternating walks clustering coefficient.
+    gcc_aw : The global version of the alternating walks clustering coeffient.
     """
     aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac=cc_cycle_vector_bf(net,node,layer,undefReturn=0.0)
     t1=aaa
@@ -596,7 +654,35 @@ def lcc_aw(net,node,layer,w1=1./3.,w2=1./3.,w3=1./3.,returnCVector=False):
         else:
             return 0
 
-def avg_lcc_aw(net,w1=1./3.,w2=1./3.,w3=1./3.,returnCVector=False):
+def avg_lcc_aw(net,w1=1./2.,w2=1./2.,w3=None,returnCVector=False):
+    r"""Average value of the local version of the alternating walker clustering coefficient for multiplex networks.
+
+    Parameters
+    ----------
+    net : MultiplexNetwork with aspects=1
+       The input network.
+    w1,w2,w3 : weights of the contributions of different layers.
+       If w3 is set to None then w1 and w2 correspond to the "costs" of staying at a layer and
+       changing the layer, i.e. w1 = :math:`\beta` and w2 = :math:`\gamma`
+    returnCVector : bool
+       If True, returns a vector containing the three different local clustering coefficients
+       :math:`c_1,c_2,c_3`. Otherwise, return just a single value.
+
+    Returns
+    -------
+    cc : float, or tuple
+       The value(s) of the clustering coefficient.
+    
+    References
+    ----------
+    "Clustering Coefficients in Multiplex Networks", E. Cozzo et al. , arXiv:1307.6780 [physics.soc-ph]
+
+    See also
+    --------
+    lcc_aw : The alternating walks clustering coefficient of a single node-layer pair.
+    sncc_aw : The super-node version of the alternating walks clustering coefficient.
+    gcc_aw : The global version of the alternating walks clustering coeffient.
+    """
     c,c1,c2,c3=0,0,0,0
     n=0.
     for layer in net.slices[1]:
@@ -606,7 +692,7 @@ def avg_lcc_aw(net,w1=1./3.,w2=1./3.,w3=1./3.,returnCVector=False):
                 tc1,tc2,tc3=lcc_aw(net,node,layer,returnCVector=True)
                 c1,c2,c3=c1+tc1,c2+tc2,c3+tc3
             else:
-                c+=lcc_aw_seplayers(net,node,layer,w1=w1,w2=w2,w3=w3)
+                c+=lcc_aw(net,node,layer,w1=w1,w2=w2,w3=w3)
                 
     if returnCVector:
         return c1/n,c2/n,c3/n
@@ -614,8 +700,120 @@ def avg_lcc_aw(net,w1=1./3.,w2=1./3.,w3=1./3.,returnCVector=False):
         return c/n
 
 
-def gcc_aw_seplayers(net,w1=1./3.,w2=1./3.,w3=1./3.,returnCVector=False):
-    """ If w3==None: w1 = \alpha and w2 =\beta
+def sncc_aw(net,node,w1=1./2.,w2=1./2.,w3=None,returnCVector=False):
+    r"""The super-node version of the alternating walker clustering coefficient for multiplex networks.
+
+    Parameters
+    ----------
+    net : MultiplexNetwork with aspects=1
+       The input network.
+    node : any object
+       The focal node. Given as node index in the network.
+    w1,w2,w3 : weights of the contributions of different layers.
+       If w3 is set to None then w1 and w2 correspond to the "costs" of staying at a layer and
+       changing the layer, i.e. w1 = :math:`\beta` and w2 = :math:`\gamma`
+    returnCVector : bool
+       If True, returns a vector containing the three different local clustering coefficients
+       :math:`c_1,c_2,c_3`. Otherwise, return just a single value.
+
+    Returns
+    -------
+    cc : float, or tuple
+       The value(s) of the clustering coefficient.
+    
+    References
+    ----------
+    "Clustering Coefficients in Multiplex Networks", E. Cozzo et al. , arXiv:1307.6780 [physics.soc-ph]
+
+    See also
+    --------
+    lcc_aw : The alternating walks clustering coefficient of a single node-layer pair.
+    avg_lcc_aw : The local alternating walks clustering coefficient averaged over all node-layer pairs.
+    gcc_aw : The global version of the alternating walks clustering coeffient.
+    """
+    t1,t2,t3,d1,d2,d3=0,0,0,0,0,0
+    for layer in net.slices[1]:
+        aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac=cc_cycle_vector_bf(net,node,layer,undefReturn=0.0)
+        t1+=aaa
+        d1+=afa
+        t2+=aacac+acaac+acaca
+        d2+=afcac+acfac+acfca
+        t3+=acacac
+        d3+=acfcac
+
+    if d3!=0:
+        c3=t3/float(d3)
+    else:
+        c3=0
+    if d2!=0:
+        c2=t2/float(d2)
+    else:
+        c2=0
+    if d1!=0:
+        c1=t1/float(d1)
+    else:
+        c1=0
+
+    if returnCVector:
+        return c1,c2,c3
+
+    if w3!=None:
+        return w1*c1+w2*c2+w3*c3
+    else:
+        a,b=w1,w2
+        t=t1*a**3 + t2*a*b*b + t3*b**3
+        d=d1*a**3 + d2*a*b*b + d3*b**3        
+        if d!=0:
+            return t/float(d)
+        else:
+            return 0
+
+def sncc_aw_layercost(net,supernode,a=0.5,b=0.5):
+    t1,t2,t3,d1,d2,d3=0,0,0,0,0,0
+    for layer in net.slices[1]:
+        aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac=cc_cycle_vector_bf(net,supernode,layer,undefReturn=0.0)
+        t1+=aaa
+        d1+=afa
+        t2+=aacac+acaac+acaca
+        d2+=afcac+acfac+acfca
+        t3+=acacac
+        d3+=acfcac
+
+    if float(a**3*d1+a*b**2*d2+b**3*d3)!=0:        
+        return (a**3*t1+a*b**2*t2+b**3*t3)/float(a**3*d1+a*b**2*d2+b**3*d3)
+    else:
+        return 0
+
+
+
+def gcc_aw(net,w1=1./2.,w2=1./2.,w3=None,returnCVector=False):
+    r"""The global version of the alternating walker clustering coefficient for multiplex networks.
+
+    Parameters
+    ----------
+    net : MultiplexNetwork with aspects=1
+       The input network.
+    w1,w2,w3 : weights of the contributions of different layers.
+       If w3 is set to None then w1 and w2 correspond to the "costs" of staying at a layer and
+       changing the layer, i.e. w1 = :math:`\beta` and w2 = :math:`\gamma`
+    returnCVector : bool
+       If True, returns a vector containing the three different global clustering coefficients
+       :math:`c_1,c_2,c_3`. Otherwise, return just a single value.
+
+    Returns
+    -------
+    cc : float, or tuple
+       The value(s) of the clustering coefficient.
+    
+    References
+    ----------
+    "Clustering Coefficients in Multiplex Networks", E. Cozzo et al. , arXiv:1307.6780 [physics.soc-ph]
+
+    See also
+    --------
+    lcc_aw : The alternating walks clustering coefficient of a single node-layer pair.
+    avg_lcc_aw : The local alternating walks clustering coefficient averaged over all node-layer pairs.
+    sncc_aw : The super-node version of the alternating walks clustering coefficient.
     """
     t1,t2,t3,d1,d2,d3=0,0,0,0,0,0
     for layer in net.slices[1]:
@@ -698,21 +896,6 @@ def gcc_moreno2_seplayers(net,w1=1./3.,w2=1./3.,w3=1./3.):
             return 0
 
 
-def sncc_aw(net,supernode,a=0.5,b=0.5):
-    t1,t2,t3,d1,d2,d3=0,0,0,0,0,0
-    for layer in net.slices[1]:
-        aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac=cc_cycle_vector_bf(net,supernode,layer,undefReturn=0.0)
-        t1+=aaa
-        d1+=afa
-        t2+=aacac+acaac+acaca
-        d2+=afcac+acfac+acfca
-        t3+=acacac
-        d3+=acfcac
-
-    if float(a**3*d1+a*b**2*d2+b**3*d3)!=0:        
-        return (a**3*t1+a*b**2*t2+b**3*t3)/float(a**3*d1+a*b**2*d2+b**3*d3)
-    else:
-        return 0
 
 def sncc_aw_seplayers(net,supernode,w1=1./3.,w2=1./3.,w3=1./3.,undefined=None):
     t1,t2,t3,d1,d2,d3=0,0,0,0,0,0
