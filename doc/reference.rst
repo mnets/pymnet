@@ -73,7 +73,10 @@ Basic Network Diagnostics
 .. autosummary::
   :toctree: autogen
 
-  monoplex_degs
+  degs
+  density
+  multiplex_degs
+  multiplex_density
 
 Clustering coefficients
 -----------------------

@@ -68,7 +68,83 @@ class TestNet(unittest.TestCase):
         self.assertTrue((1,3,1) or (3,1,1) in list(net.edges))
         self.assertTrue((2,3,1) or (3,2,1) in list(net.edges))
 
-        self.assertEqual(net['a'].deg(),0) #missing node
+        self.assertEqual(net[4].deg(),0) #missing node
+
+
+    def test_flat_directed(self,net):
+        net[1,2]=1
+        net[2,1]=1
+        net[2,3]=1
+
+        #Overall structure with getter.
+        self.assertEqual(net[1,2],1)
+        self.assertEqual(net[2,1],1)
+        self.assertEqual(net[2,3],1)
+        self.assertEqual(net[3,2],0)
+        self.assertEqual(net[1,3],0)
+        self.assertEqual(net[1,999],0)
+
+        #Iterators,degrees,strengths
+        self.assertEqual(list(net[1]),[2])
+        self.assertEqual(set(net[2]),set([1,3]))
+        self.assertEqual(list(net[3]),[])
+        self.assertEqual(net[1].deg(),1)
+        self.assertEqual(net[2].deg(),2)
+        self.assertEqual(net[1].str(),1)
+        self.assertEqual(net[2].str(),2)
+        self.assertEqual(list(net[4]),[])
+
+        #Test alternative notations
+        self.assertEqual(net[1][2],1)
+        self.assertEqual(net[2][1],1)
+        self.assertEqual(net[3][2],0)
+
+        #Test edge iterator
+        self.assertEqual(len(list(net.edges)),3)
+        self.assertTrue((1,2,1) in list(net.edges))
+        self.assertTrue((2,1,1) in list(net.edges))
+        self.assertTrue((2,3,1) in list(net.edges))
+
+        #Modify and repeat previous tests
+        net[1,2]=0 #Removes the edge
+        net[1,3]=1
+        # Network structure after this:
+        # net[1,2] == 0, net[2,1] == 1
+        # net[2,3] == 1, net[3,2] == 0
+        # net[1,3] == 1, net[3,1] == 0
+
+        self.assertEqual(net[1,2],0)
+        self.assertEqual(net[2,1],1)
+        self.assertEqual(net[2,3],1)
+        self.assertEqual(net[3,2],0)
+        self.assertEqual(net[1,3],1)
+        self.assertEqual(net[3,1],0)
+
+        self.assertEqual(list(net[1]),[3])
+        self.assertEqual(set(net[2]),set([1,3]))
+        self.assertEqual(list(net[3]),[])
+
+        self.assertEqual(net[1].deg(),2)
+        self.assertEqual(net[2].deg(),2)
+        self.assertEqual(net[3].deg(),2)
+        self.assertEqual(net[1].str(),2)
+        self.assertEqual(net[2].str(),2)
+        self.assertEqual(net[3].str(),2)
+        self.assertEqual(list(net[4]),[])
+
+        self.assertEqual(net[1][2],0)
+
+        self.assertEqual(len(list(net.edges)),3)
+        self.assertTrue((2,1,1) in list(net.edges))
+        self.assertTrue((2,3,1) in list(net.edges))
+        self.assertTrue((1,3,1) in list(net.edges))
+
+        self.assertEqual(net[4].deg(),0) #missing node
+
+
+    def test_flat_directed_mnet(self):
+        testnet=net.MultilayerNetwork(aspects=0,directed=True)
+        self.test_flat(testnet)
 
     def test_flat_mnet(self):
         testnet=net.MultilayerNetwork(aspects=0)
@@ -479,6 +555,7 @@ class TestNet(unittest.TestCase):
 def test_net():
     suite = unittest.TestSuite()    
     suite.addTest(TestNet("test_flat_mnet"))
+    #suite.addTest(TestNet("test_flat_directed_mnet"))
     suite.addTest(TestNet("test_simple_couplings_mnet"))
     suite.addTest(TestNet("test_simple_couplings_categorical_mplex"))
     suite.addTest(TestNet("test_simple_couplings_ordinal_mplex"))
