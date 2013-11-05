@@ -7,17 +7,11 @@ This the documentation for the Multilayer Networks Library. The library provides
 
 The library is free and available for download directly from our `repository <http://bitbucket.org/bolozna/multilayer-networks-library>`_.
 
+A `pdf version of this documentation <MultilayerNetworksLibrary.pdf>`_ is also available.
+
+
 .. toctree::
-   :hidden:
    :maxdepth: 5
-
-   overview
-   tutorial
-   reference
-
-
-.. toctree::
-   :maxdepth: 3
 
    overview
    tutorial

@@ -77,7 +77,8 @@ class MultilayerNetwork(object):
         self.directed=directed
         self.noEdge=noEdge
         self._init_slices(aspects)
-        
+        self.fullyInterconnected=fullyInterconnected
+
         self._net={}
 
         #should keep table of degs and strenghts
@@ -326,27 +327,24 @@ class MultilayerNetwork(object):
         for node in self.slices[0]:
             yield node
 
-    @property
-    def edges(self):
-        """Edge iterator.
+    def iter_node_layers(self):
+        """ Iterate over all node-layer pairs.
         """
-        if self.directed:
-            for node in itertools.product(*self.slices):
-                for neigh in self[node]:                
-                    if self.aspects==0:
-                        neigh=(neigh,)
-                    link=self._nodes_to_link(node,neigh)
-                    yield link+(self[link],)
-        else:
-            iterated=set()
-            for node in itertools.product(*self.slices):
-                for neigh in self[node]:                
-                    if self.aspects==0:
-                        neigh=(neigh,)
-                    if neigh not in iterated:
-                        link=self._nodes_to_link(node,neigh)
-                        yield link+(self[link],)            
-                iterated.add(node)
+        for nl in itertools.product(*map(lambda i:self.slices[i],range(len(self.slices)))):
+            yield nl
+
+    def iter_layers(self):
+        """ Iterate over all layers.
+
+        If network has multiple aspects, tuples of all layer combinations are iterated
+        over.
+        """
+        if self.aspects>1:
+            for l in itertools.product(*map(lambda i:self.slices[i],range(1,len(self.slices)))):
+                yield l
+        elif self.aspects==1:
+            for l in self.slices[1]:
+                yield l
 
     def _write_flattened(self,output):
         nodes=map(lambda x: tuple(reversed(x)),sorted(itertools.product(*map(lambda i:sorted(self.slices[i]),reversed(range(len(self.slices)))))))
@@ -442,6 +440,43 @@ class MultilayerNode(object):
                 yield node[0]
     def layers(self,*layers):
         return MultilayerNode(self.node,self.mnet,layers=layers)
+
+
+class MultilayerEdges:
+    def __init__(self,net):
+        self.net=net
+
+    def __iter__(self):
+        """Edge iterator.
+        """
+        if self.net.directed:
+            for node in itertools.product(*self.net.slices):
+                for neigh in self.net[node]:                
+                    if self.net.aspects==0:
+                        neigh=(neigh,)
+                    link=self.net._nodes_to_link(node,neigh)
+                    yield link+(self.net[link],)
+        else:
+            iterated=set()
+            for node in itertools.product(*self.net.slices):
+                for neigh in self.net[node]:                
+                    if self.net.aspects==0:
+                        neigh=(neigh,)
+                    if neigh not in iterated:
+                        link=self.net._nodes_to_link(node,neigh)
+                        yield link+(self.net[link],)            
+                iterated.add(node)
+
+    def __len__(self):
+        deg=0
+        for nl in self.net.iter_node_layers():
+            deg+=self.net[nl].deg()
+        if self.net.directed:
+            return deg
+        else:
+            return deg/2
+MultilayerNetwork.edges=property(MultilayerEdges)
+
 
 class MultilayerNetworkWithParent(MultilayerNetwork):
     def _set_parent(self,parent):
