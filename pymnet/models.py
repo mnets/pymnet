@@ -44,13 +44,13 @@ def single_layer_conf(net,degs):
     for s in range(len(stubs)/2):
         node1,node2=sorted([stubs[2*s],stubs[2*s+1]])
 
-        edgetoindex[(node1,node2)]=edgetoindex.get((node1,node2),[])+[s]
+        edgetoindex[(node1,node2)]=edgetoindex.get((node1,node2),[])+[2*s]
 
         if net[node1,node2]!=0:
             multiedges.add((node1,node2))
 
         if node1==node2:
-            selfedges[node1]=selfedges.get(node1,[])+[s]
+            selfedges[node1]=selfedges.get(node1,[])+[2*s]
         else:
             net[node1,node2]=1
 
@@ -71,13 +71,21 @@ def single_layer_conf(net,degs):
                             net[node,n2]=1
                             net[node,n4]=1
                             net[n3,n5]=1
-                            stubs[si],stubs[si+1]=n3,n5
-                            stubs[e1i],stubs[e1i+1]=node,n2
-                            stubs[e2i],stubs[e2i+1]=node,n4
+                            stubs[si],stubs[si+1]=sorted([n3,n5])
+                            stubs[e1i],stubs[e1i+1]=sorted([node,n2])
+                            stubs[e2i],stubs[e2i+1]=sorted([node,n4])
                             repeat=False
 
+    # Uncomment to check that everything ok so far:
+    #import diagnostics
+    #assert sum(map(lambda x:x[0]*x[1],diagnostics.degs(net).items()))/2.+sum(map(lambda x:len(edgetoindex[x[0],x[1]])-1,multiedges))==sum(map(lambda x:x[0]*x[1],degs.items()))/2.
+
+    #for s in range(len(stubs)/2):
+    #    n1,n2=stubs[2*s],stubs[2*s+1]
+    #    assert net[n1,n2]==1,str(2*s)
+
     for n1,n2 in multiedges:
-        for dummy in range(len(edgetoindex[(n1,n2)])/2):
+        for dummy in range(int(math.floor(len(edgetoindex[(n1,n2)])/2.))):
             repeat=True
             while repeat:
                 #select two edges at random
@@ -88,18 +96,21 @@ def single_layer_conf(net,degs):
                 if len(set(c))==len(c):
                     if (n3,n4) not in multiedges and (n5,n6) not in multiedges:
                         if net[n1,n3]==0 and net[n2,n4]==0 and net[n1,n5]==0 and net[n2,n6]==0:
-                            net[n1,n2]=0
+                            if len(edgetoindex[n1,n2])==2:
+                                net[n1,n2]=0
+                            assert net[n3,n4]==1
+                            assert net[n5,n6]==1
                             net[n3,n4]=0
                             net[n5,n6]=0
                             net[n1,n3]=1
                             net[n2,n4]=1
                             net[n1,n5]=1
                             net[n2,n6]=1
-                            si1,si2=edgetoindex[n1,n2].pop(),edgetoindex[n1,n2].pop()
-                            stubs[si1],stubs[si1+1]=n1,n3
-                            stubs[si1],stubs[si1+1]=n2,n4
-                            stubs[e1i],stubs[e1i+1]=n1,n5
-                            stubs[e2i],stubs[e2i+1]=n2,n6
+                            si1,si2=sorted([edgetoindex[n1,n2].pop(),edgetoindex[n1,n2].pop()])
+                            stubs[si1],stubs[si1+1]=sorted([n1,n3])
+                            stubs[si1],stubs[si1+1]=sorted([n2,n4])
+                            stubs[e1i],stubs[e1i+1]=sorted([n1,n5])
+                            stubs[e2i],stubs[e2i+1]=sorted([n2,n6])
                             repeat=False
 
 
