@@ -559,7 +559,18 @@ def gcc_aw_vector_adj(net):
 
     return c1_nom,c1_den,c2_nom,c2_den,c3_nom,c3_den
 
-
+def cc_aw_vector(net):
+    c1_nom,c1_den,c2_nom,c2_den,c3_nom,c3_den=[],[],[],[],[],[]
+    for node in net:
+        for layer in net.get_layers(1):
+            aaa,aacac,acaac,acaca,acacac,afa,afcac,acfac,acfca,acfcac=elementary_cycles(net,node,layer)
+            c1_nom.append(aaa)
+            c1_den.append(afa)
+            c2_nom.append(aacac+acaac+acaca)
+            c2_den.append(afcac+acfac+acfca)
+            c3_nom.append(acacac)
+            c3_den.append(acfcac)
+    return c1_nom,c1_den,c2_nom,c2_den,c3_nom,c3_den
 
 
 def gcc_aw_seplayers_adj(net,w1=1./3.,w2=1./3.,w3=1./3.,returnCVector=False):
