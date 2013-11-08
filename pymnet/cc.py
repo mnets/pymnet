@@ -174,9 +174,11 @@ def cc_barrett_optimized(net,node,anet,undefReturn=0.0):
             jneighs=set(anet[j])
             for h in ineighs | jneighs:
                 m=0
-                #for layer in net.slices[1]:
-                for layer in net._nodeToLayers[h]:
-                    layer=layer[0]
+                if net.fullyInterconnected:
+                    layers=net.slices[1]
+                else:
+                    layers=itertools.imap(lambda x:x[0],net._nodeToLayers[h])
+                for layer in layers:
                     m+=max(net[node,h,layer],net[j,h,layer])
                 den+=anet[node,j]*m
 
