@@ -133,15 +133,22 @@ def single_layer_er(net,nodes,p):
     n=len(nodes)
     for node in nodes:
         net.add_node(node)
-    v,w=1,-1
-    while (v < n):
-        r=random.random()
-        w=w+1+int(math.floor(math.log(1-r)/math.log(1-p)))
-        while ((w >= v) and (v < n)):
-            w = w-v
-            v = v+1
-        if (v < n):
-            net[nodes[v],nodes[w]]=1
+        
+    if p==1.0:
+        for node1 in nodes:
+            for node2 in nodes:
+                if node1!=node2:
+                    net[node1,node2]=1
+    else:
+        v,w=1,-1
+        while (v < n):
+            r=random.random()
+            w=w+1+int(math.floor(math.log(1-r)/math.log(1-p)))
+            while ((w >= v) and (v < n)):
+                w = w-v
+                v = v+1
+            if (v < n):
+                net[nodes[v],nodes[w]]=1
 
 def conf(degs,aspects=0,couplings=("categorical",1.0)):
     """Independent configuration models for fully interconnected multiplex networks.
