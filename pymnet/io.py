@@ -1,13 +1,45 @@
 """Functions for reading and writing networks in different file formats.
 """
 from net import MultilayerNetwork,MultiplexNetwork
-import math
+import math,json
 
 def write_ucinet(net,outputfile,outputType="edges"):
     assert isinstance(net,MultiplexNetwork), "Multilayer networks not supported by the UCINET file format."
     if isinstance(outputfile,str) or isinstance(outputfile,unicode):
         outputfile=open(outputfile,'w')
     
+def write_json(net,outputfile):
+    """Writes a multiplex network with a single aspect in a JSON format.
+    """
+    assert isinstance(net,MultiplexNetwork)
+    assert net.aspects==0 or net.aspects==1
+    nets={}
+    node2index={}
+    nets["nodes"]=[]    
+    for i,node in enumerate(net):
+        nets["nodes"].append({"name":node})
+        node2index[node]=i
+
+    layer2index={}
+    nets["layers"]=[]    
+    for i,layer in enumerate(net.get_layers()):
+        nets["layers"].append({"name":layer})
+        layer2index[layer]=i
+
+    nets["links"]=[]
+    for layer in net.get_layers():
+        for edge in net.A[layer].edges:
+            nets["links"].append({"source":node2index[edge[0]],
+                                  "target":node2index[edge[1]],
+                                  "value" :edge[2],
+                                  "layer" :layer2index[layer]})
+
+    if isinstance(outputfile,str) or isinstance(outputfile,unicode):
+        outputfile=open(outputfile,'w')
+
+    json.dump(nets,outputfile)
+    outputfile.close()
+
 
 def read_ucinet(netinput,couplings=('categorical',1.0),fullyInterconnected=True):
     """Reads network in UCINET DL format.
