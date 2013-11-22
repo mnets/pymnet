@@ -114,7 +114,7 @@ def single_layer_conf(net,degs):
                             repeat=False
 
 
-def single_layer_er(net,nodes,p):
+def single_layer_er(net,nodes,p=None,edges=None):
     """Generates a realization of a monoplex Erdos-Renyi network.
 
     Parameters
@@ -125,30 +125,42 @@ def single_layer_er(net,nodes,p):
        Sequence of node labels.       
     p : float
        Probability that edges is present.
+    edges : int
+       Number of edges that are present.
 
     References
     ----------
     Efficient generation of large random networks. PRE 71, 036113 (2005) 
     """
+
+    if (p==None and edges==None) or (p!=None and edges!=None):
+        raise Exception("Give one of the parameters: p or edges.")
+
     n=len(nodes)
     for node in nodes:
         net.add_node(node)
-        
-    if p==1.0:
-        for node1 in nodes:
-            for node2 in nodes:
-                if node1!=node2:
-                    net[node1,node2]=1
+
+    if p!=None:        
+        if p==1.0:
+            for node1 in nodes:
+                for node2 in nodes:
+                    if node1!=node2:
+                        net[node1,node2]=1
+        else:
+            v,w=1,-1
+            while (v < n):
+                r=random.random()
+                w=w+1+int(math.floor(math.log(1-r)/math.log(1-p)))
+                while ((w >= v) and (v < n)):
+                    w = w-v
+                    v = v+1
+                if (v < n):
+                    net[nodes[v],nodes[w]]=1
     else:
-        v,w=1,-1
-        while (v < n):
-            r=random.random()
-            w=w+1+int(math.floor(math.log(1-r)/math.log(1-p)))
-            while ((w >= v) and (v < n)):
-                w = w-v
-                v = v+1
-            if (v < n):
-                net[nodes[v],nodes[w]]=1
+        for edge_index in random.sample(xrange((n*(n-1))/2),edges):
+            v=int(1+math.floor(-0.5+math.sqrt(0.25+2*edge_index)))
+            w=edge_index-(v*(v-1))/2
+            net[nodes[v],nodes[w]]=1
 
 def conf(degs,aspects=0,couplings=("categorical",1.0)):
     """Independent configuration models for fully interconnected multiplex networks.
@@ -194,15 +206,17 @@ def conf(degs,aspects=0,couplings=("categorical",1.0)):
     return net
 
 
-def er(n,p):
+def er(n,p=None,edges=None):
     """Multiplex Erdos-Renyi model.
 
     Parameters
     ----------
     n : int 
        Number of nodes
-    p : int or list of ints
-       Connection probability.
+    p : float or list of floats
+       Connection probability, or list of connection probabilities for each layer.
+    edges : int or list of int
+       Number of edges, or list of number of edges in each layer.
 
     Returns
     -------
@@ -215,15 +229,28 @@ def er(n,p):
     single_layer_er : the function used to generate a network on each layer
     """
  
+    if (p==None and edges==None) or (p!=None and edges!=None):
+        raise Exception("Give one of the parameters: p or edges.")
 
-    if not hasattr(p,'__iter__'): #is some sequence
-        net=MultilayerNetwork(aspects=0)
-        single_layer_er(net,range(n),p)
+    if p!=None:
+        if not hasattr(p,'__iter__'): #is some sequence
+            net=MultilayerNetwork(aspects=0)
+            single_layer_er(net,range(n),p=p)
+        else:
+            net=MultiplexNetwork(couplings=[('categorical',1.0)])
+            for l,lp in enumerate(p):
+                net.add_layer(l)
+                single_layer_er(net.A[l],range(n),lp)
     else:
-        net=MultiplexNetwork(couplings=[('categorical',1.0)])
-        for l,lp in enumerate(p):
-            net.add_layer(l)
-            single_layer_er(net.A[l],range(n),lp)
+        if not hasattr(edges,'__iter__'):
+            net=MultilayerNetwork(aspects=0)
+            single_layer_er(net,range(n),edges=edges)
+        else:
+            net=MultiplexNetwork(couplings=[('categorical',1.0)])
+            for l,ledges in enumerate(edges):
+                net.add_layer(l)
+                single_layer_er(net.A[l],range(n),edges=ledges)
+        
 
     return net
 
