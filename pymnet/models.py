@@ -228,36 +228,56 @@ def er(n,p=None,edges=None):
     --------
     single_layer_er : the function used to generate a network on each layer
     """
+    # What kind of network?
+    fic = not hasattr(n,'__iter__') #fully interconnected
+    monoplex = (not hasattr(p,'__iter__')) and (not hasattr(edges,'__iter__')) and fic
  
+    # Sanity check for parameters
     if (p==None and edges==None) or (p!=None and edges!=None):
         raise Exception("Give one of the parameters: p or edges.")
+    if not fic:
+        if hasattr(p,'__iter__'):
+            assert len(n)==len(p)
+        elif hasattr(edges,'__iter__'):
+            assert len(n)==len(edges)
 
-    fic = not hasattr(n,'__iter__')
+    
+    # Create the network
+    if monoplex:
+        net=MultilayerNetwork(aspects=0)
+    else:
+        net=MultiplexNetwork(couplings=[('categorical',1.0)],fullyInterconnected=fic)
+        if not hasattr(n,'__iter__'):
+            if p!=None:
+                nodes=map(lambda x:xrange(n),p)
+                layers=xrange(len(p))
+            else:
+                nodes=map(lambda x:xrange(n),edges)
+                layers=xrange(len(edges))
+        else:
+            nodes=n
+            layers=xrange(len(n))
+            if p!=None and (not hasattr(p,'__iter__')):
+                p=map(lambda x:p,layers)
+            if edges!=None and (not hasattr(edges,'__iter__')):
+                edges=map(lambda x:edges,layers)
+                
 
+    # Fill in the edges
     if p!=None:
-        if not hasattr(p,'__iter__'): #is some sequence
-            net=MultilayerNetwork(aspects=0)
+        if monoplex:
             single_layer_er(net,range(n),p=p)
         else:
-            net=MultiplexNetwork(couplings=[('categorical',1.0)],fullyInterconnected=fic)
-            for l,lp in enumerate(p):
+            for l,lp,lnodes in zip(layers,p,nodes):
                 net.add_layer(l)
-                if fic:
-                    single_layer_er(net.A[l],range(n),lp)
-                else:
-                    single_layer_er(net.A[l],n[l],lp)
+                single_layer_er(net.A[l],lnodes,p=lp)
     else:
-        if not hasattr(edges,'__iter__'):
-            net=MultilayerNetwork(aspects=0)
+        if monoplex:
             single_layer_er(net,range(n),edges=edges)
         else:
-            net=MultiplexNetwork(couplings=[('categorical',1.0)],fullyInterconnected=fic)
-            for l,ledges in enumerate(edges):
+            for l,ledges,lnodes in zip(layers,edges,nodes):
                 net.add_layer(l)
-                if fic:
-                    single_layer_er(net.A[l],range(n),edges=ledges)
-                else:
-                    single_layer_er(net.A[l],n[l],edges=ledges)
+                single_layer_er(net.A[l],lnodes,edges=ledges)
 
     return net
 
