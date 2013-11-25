@@ -211,8 +211,9 @@ def er(n,p=None,edges=None):
 
     Parameters
     ----------
-    n : int 
-       Number of nodes
+    n : int, list of lists of nodes
+       Number of nodes, or lists of nodes in each layer if network is not fully 
+       interconnected.
     p : float or list of floats
        Connection probability, or list of connection probabilities for each layer.
     edges : int or list of int
@@ -223,7 +224,6 @@ def er(n,p=None,edges=None):
     net : MultiplexNetwork
        The (multiplex) network produced.
 
-
     See also
     --------
     single_layer_er : the function used to generate a network on each layer
@@ -232,25 +232,32 @@ def er(n,p=None,edges=None):
     if (p==None and edges==None) or (p!=None and edges!=None):
         raise Exception("Give one of the parameters: p or edges.")
 
+    fic = not hasattr(n,'__iter__')
+
     if p!=None:
         if not hasattr(p,'__iter__'): #is some sequence
             net=MultilayerNetwork(aspects=0)
             single_layer_er(net,range(n),p=p)
         else:
-            net=MultiplexNetwork(couplings=[('categorical',1.0)])
+            net=MultiplexNetwork(couplings=[('categorical',1.0)],fullyInterconnected=fic)
             for l,lp in enumerate(p):
                 net.add_layer(l)
-                single_layer_er(net.A[l],range(n),lp)
+                if fic:
+                    single_layer_er(net.A[l],range(n),lp)
+                else:
+                    single_layer_er(net.A[l],n[l],lp)
     else:
         if not hasattr(edges,'__iter__'):
             net=MultilayerNetwork(aspects=0)
             single_layer_er(net,range(n),edges=edges)
         else:
-            net=MultiplexNetwork(couplings=[('categorical',1.0)])
+            net=MultiplexNetwork(couplings=[('categorical',1.0)],fullyInterconnected=fic)
             for l,ledges in enumerate(edges):
                 net.add_layer(l)
-                single_layer_er(net.A[l],range(n),edges=ledges)
-        
+                if fic:
+                    single_layer_er(net.A[l],range(n),edges=ledges)
+                else:
+                    single_layer_er(net.A[l],n[l],edges=ledges)
 
     return net
 
