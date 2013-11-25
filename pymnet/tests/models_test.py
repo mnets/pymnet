@@ -38,6 +38,13 @@ class TestNet(unittest.TestCase):
         self.assertEqual(len(net3.A[0].edges),30)
         self.assertEqual(len(net3.A[1].edges),45)
 
+        net4=models.er([range(10),range(5,15)],edges=[30,45])
+        self.assertEqual(len(net4.A[0].edges),30)
+        self.assertEqual(len(net4.A[1].edges),45)
+        self.assertEqual(set(net4.A[0]),set(range(10)))
+        self.assertEqual(set(net4.A[1]),set(range(5,15)))
+
+
     def test_monoplex_configuration_model(self):
         net=models.conf({5:1000}) #maxdeg << sqrt(number of nodes)
         self.assertEqual(diagnostics.degs(net),{5:1000})
