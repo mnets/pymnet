@@ -8,7 +8,7 @@ import itertools
 import random
 import pymnet.net
 
-class TestNet(unittest.TestCase):
+class TestCC(unittest.TestCase):
     
     def setUp(self):
         pass
@@ -343,18 +343,20 @@ class TestNet(unittest.TestCase):
         net=pymnet.models.er_partially_interconnected([range(10),range(5,15),range(10,20),range(15,25),range(0,25)],[0.5]*5)
         self.test_unweighted_nonglobalnodes_consistency(net)
 
-def test_net():
+def test_cc(consistency_tests=False):
     suite = unittest.TestSuite()    
-    suite.addTest(TestNet("test_unweighted_flat_triangle"))
-    suite.addTest(TestNet("test_unweighted_flat_simple"))
-    suite.addTest(TestNet("test_unweighted_mplex_triangle"))
-    suite.addTest(TestNet("test_unweighted_mplex_simple"))
-    suite.addTest(TestNet("test_unweighted_consistency_er"))
-    #suite.addTest(TestNet("test_consistency_mslice_er"))
-    suite.addTest(TestNet("test_normalization_full_mslice"))
-    #suite.addTest(TestNet("test_unweighted_nonglobalnodes_consistency_er"))
+    suite.addTest(TestCC("test_unweighted_flat_triangle"))
+    suite.addTest(TestCC("test_unweighted_flat_simple"))
+    suite.addTest(TestCC("test_unweighted_mplex_triangle"))
+    suite.addTest(TestCC("test_unweighted_mplex_simple"))
+    suite.addTest(TestCC("test_unweighted_consistency_er"))
+    suite.addTest(TestCC("test_normalization_full_mslice"))
+    if consistency_tests:
+        suite.addTest(TestCC("test_consistency_mslice_er"))
+        suite.addTest(TestCC("test_unweighted_nonglobalnodes_consistency_er"))
     unittest.TextTestRunner().run(suite) 
 
+
 if __name__ == '__main__':
-    test_net()
+    test_cc()
 
