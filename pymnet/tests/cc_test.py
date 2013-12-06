@@ -64,14 +64,6 @@ class TestNet(unittest.TestCase):
         #cc seq
         self.assertEqual(cc.cc_sequence(n,1),([1,1,1,1],[1,1,1,1]))
 
-        #cc moreno
-        print "m ",
-        print cc.gcc_moreno(n)
-        print "m2 ",
-        print cc.gcc_moreno2(n)
-
-        print cc.cc_cycle_vector_bf(n,1,1)
-        print cc.cc_cycle_vector_adj(n,1,1)
 
     def test_unweighted_mplex_simple(self):
         n=net.MultiplexNetwork([('categorical',1.0)])
@@ -107,9 +99,6 @@ class TestNet(unittest.TestCase):
         owmax=max(map(lambda x:x[2],onet.edges))
         b=len(net.slices[1])
 
-        if cc.cc_cycle_vector_bf(net,1,1)!=cc.cc_cycle_vector_adj(net,1,1):
-            print list(anet.edges)
-            print list(net.edges)
         self.assertEqual(cc.cc_cycle_vector_bf(net,1,1),cc.cc_cycle_vector_adj(net,1,1))
 
         #----
@@ -120,7 +109,6 @@ class TestNet(unittest.TestCase):
         d=0
         for i,j in itertools.combinations(anet[node],2):
             d+=anet[node][i]*anet[node][j]*len(net.slices[1])
-        #print 2*t,2*d
 
         lt=0
         ld=0
@@ -128,7 +116,6 @@ class TestNet(unittest.TestCase):
             aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac=cc.cc_cycle_vector_bf(net,1,l)
             lt+= aaa+aacac+acaac+acaca+acacac
             ld+= afa+afcac+acfac+acfca+acfcac            
-        #print lt,ld
         self.assertEqual(2*t,lt)
         self.assertEqual(2*d,ld)
 
@@ -137,11 +124,6 @@ class TestNet(unittest.TestCase):
         self.assertAlmostEqual(cc.gcc_aw(net,w1=0.3,w2=0.3,w3=0.3),cc.gcc_aw_seplayers_adj(net,w1=0.3,w2=0.3,w3=0.3))
 
         for supernode in net.slices[0]:
-            if abs(cc.sncc_aw(net,supernode,w1=0.5,w2=0.5,w3=None)-wmax/float(b)*cc.cc_zhang(anet,supernode))>10**-6:
-                print wmax,b,cc.sncc_aw(net,supernode,w1=0.5,w2=0.5,w3=None),cc.cc_zhang(anet,supernode)
-                print supernode
-                print list(anet.edges)
-                print list(net.edges)
             self.assertAlmostEqual(cc.sncc_aw(net,supernode,w1=0.5,w2=0.5,w3=None),wmax/float(b)*cc.cc_zhang(anet,supernode))
 
         #global cc
@@ -155,7 +137,6 @@ class TestNet(unittest.TestCase):
                 aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac=cc.cc_cycle_vector_bf(net,node,l)
                 tgaw+=aaa+aacac+acaac+acaca+acacac
                 tgmoreno+=aaa+2*aacac+2*acaac+acaca+2*acacac
-        print "gcc_t",tga,tgaw,tgmoreno
         """
         print "gcc",cc.gcc_contraction_m(net),cc.gcc_contraction_m_ct(net),cc.gcc_super_graph(net),cc.gcc_contraction_o2(net),owmax*cc.gcc_zhang(onet)/float(b),cc.gcc_contraction_o(net)
         """
@@ -212,9 +193,6 @@ class TestNet(unittest.TestCase):
             for node in range(len(a)):
                 cac_sum+=t[node,node]
                 assert t[node,node]==t_simple[node,node]
-                #print nodes2[node],t[node,node]/b/b,(a**3 + (2*a*c*a**2*c + 2*a**2*c*a*c +a*c*a*c*a) + (2*a*c*a*c*a*c))[node,node],(c*a**3*c + c*a**2*c*a*c+c*a*c*a**2*c + c*a*c*a*c*a*c)[node,node]
-                #aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac=cc.cc_cycle_vector_bf(net,nodes2[node][0],nodes2[node][1])
-                #print aaa+2*aacac+2*acaac+acaca+2*acacac
 
             anet=transforms.aggregate(net,1)
             w,nodes1=anet.get_supra_adjacency_matrix()
@@ -232,13 +210,11 @@ class TestNet(unittest.TestCase):
                     moreno_sum+=aaa+2*aacac+2*acaac+acaca+2*acacac
                     aw_sum+=aaa+aacac+acaac+acaca+acacac
                     
-                #print aw_sum,moreno_sum,(w*w*w)[snode,snode],saw[snode+len(w),snode+len(w)]/b/b
                 self.assertEqual(aw_sum,saw[snode+len(w),snode+len(w)]/b/b)
                 self.assertEqual(aw_sum,(w*w*w)[snode,snode])
                 moreno_tot+=moreno_sum
                 aw_tot+=aw_sum
                 w_tot+=(w*w*w)[snode,snode]
-            #print "totals",aw_tot,moreno_tot,w_tot
             self.assertEqual(aw_tot,w_tot)
 
             """
@@ -280,7 +256,6 @@ class TestNet(unittest.TestCase):
         self.assertAlmostEqual(cc.gcc_contraction_o2(net),owmax*cc.gcc_zhang(onet)/float(b))
         self.assertAlmostEqual(cc.gcc_contraction_o2(net),cc.gcc_contraction_o_full(net))
 
-        print "gcc_0,02,Oz,b,wmax:",cc.gcc_contraction_o(net),cc.gcc_contraction_o2(net),cc.gcc_zhang(onet),b,owmax
 
         #print "gcc",cc.gcc_contraction_m(net),cc.gcc_contraction_m_ct(net),cc.gcc_contraction_m_full(net),cc.gcc_super_graph(net),cc.gcc_contraction_o2(net),owmax*cc.gcc_zhang(onet)/float(b),cc.gcc_contraction_o(net)
 
