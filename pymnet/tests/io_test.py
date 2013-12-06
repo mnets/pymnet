@@ -7,7 +7,7 @@ from pymnet import net,io
 #from .. import net
 
 
-class TestNet(unittest.TestCase):
+class TestIO(unittest.TestCase):
     
     def setUp(self):
         pass
@@ -121,14 +121,14 @@ Data:
         self.assertEqual(set(net[1,1]),set([(2,1),(1,0)]))
         self.assertEqual(set(net[2,1]),set([(1,1),(2,0)]))
 
-def test_net():
+def test_io():
     suite = unittest.TestSuite()    
-    suite.addTest(TestNet("test_read_ucinet_flat_fullnet"))
-    suite.addTest(TestNet("test_read_ucinet_mplex_fullnet"))
-    suite.addTest(TestNet("test_read_ucinet_mplex_nonglobalnodes"))
+    suite.addTest(TestIO("test_read_ucinet_flat_fullnet"))
+    suite.addTest(TestIO("test_read_ucinet_mplex_fullnet"))
+    suite.addTest(TestIO("test_read_ucinet_mplex_nonglobalnodes"))
 
     unittest.TextTestRunner().run(suite) 
 
 if __name__ == '__main__':
-    test_net()
+    test_io()
 
