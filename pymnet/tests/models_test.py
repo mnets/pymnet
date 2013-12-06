@@ -7,7 +7,7 @@ from pymnet import net,models,diagnostics
 #from .. import net
 
 
-class TestNet(unittest.TestCase):
+class TestModels(unittest.TestCase):
     
     def setUp(self):
         pass
@@ -58,14 +58,14 @@ class TestNet(unittest.TestCase):
         net=models.conf({50:100})
         self.assertEqual(diagnostics.degs(net),{50:100})
 
-def test_net():
+def test_models():
     suite = unittest.TestSuite()    
-    suite.addTest(TestNet("test_monoplex_erdosrenyi"))
-    suite.addTest(TestNet("test_multiplex_erdosrenyi"))
-    suite.addTest(TestNet("test_monoplex_configuration_model"))
+    suite.addTest(TestModels("test_monoplex_erdosrenyi"))
+    suite.addTest(TestModels("test_multiplex_erdosrenyi"))
+    suite.addTest(TestModels("test_monoplex_configuration_model"))
 
     unittest.TextTestRunner().run(suite) 
 
 if __name__ == '__main__':
-    test_net()
+    test_models()
 

@@ -7,7 +7,7 @@ from pymnet import net,transforms
 
 
 
-class TestNet(unittest.TestCase):
+class TestTransforms(unittest.TestCase):
     
     def setUp(self):
         pass
@@ -75,13 +75,13 @@ class TestNet(unittest.TestCase):
         self.assertEqual(an2[1,3,'c'],2)
         self.assertEqual(an2[2,3,'c'],1)
 
-def test_net():
+def test_transforms():
     suite = unittest.TestSuite()    
-    suite.addTest(TestNet("test_aggregate_unweighted_mplex_simple"))
-    suite.addTest(TestNet("test_aggregate_2dim_mplex"))
+    suite.addTest(TestTransforms("test_aggregate_unweighted_mplex_simple"))
+    suite.addTest(TestTransforms("test_aggregate_2dim_mplex"))
 
     unittest.TextTestRunner().run(suite) 
 
 if __name__ == '__main__':
-    test_net()
+    test_transforms()
 

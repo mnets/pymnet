@@ -356,7 +356,6 @@ def test_cc(consistency_tests=False):
         suite.addTest(TestCC("test_unweighted_nonglobalnodes_consistency_er"))
     unittest.TextTestRunner().run(suite) 
 
-
 if __name__ == '__main__':
     test_cc()
 
