@@ -81,6 +81,26 @@ class MultilayerNetwork(object):
 
         self._net={}
 
+        self._init_directions()
+
+    def _init_directions(self):
+        if self.directed:
+            self._rnet={} #reversed network
+            self._totalDegree={}
+            self._get_degree=self._get_degree_total
+            self._get_strength=self._get_strength_total
+            self._iter_neighbors=self._iter_neighbors_total
+        else:
+            self._get_degree=self._get_degree_out
+            self._get_degree_total=self._get_degree_out
+            self._get_degree_in=self._get_degree_out
+            self._get_strength=self._get_strength_out
+            self._get_strength_total=self._get_strength_out
+            self._get_strength_in=self._get_strength_out
+            self._iter_neighbors=self._iter_neighbors_out
+            self._iter_neighbors_total=self._iter_neighbors_out
+            self._iter_neighbors_in=self._iter_neighbors_out
+
         #should keep table of degs and strenghts
 
     def _init_slices(self,aspects):
@@ -168,25 +188,40 @@ class MultilayerNetwork(object):
 
     def _set_link(self,link,value):
         #keep track of nodes and layers in net?
-        #remove nodes if they become empty?
         node1,node2=self._link_to_nodes(link)
         if value==self.noEdge:
             if node1 in self._net:
                 if node2 in self._net[node1]:
-                    del self._net[node1][node2]
-                    if not self.directed:
+                    if self.directed:
+                        if node1 not in self._rnet or node2 not in self._rnet[node1]:
+                            self._totalDegree[node1]=self._totalDegree[node1]-1
+                        if node2 not in self._rnet or node1 not in self._rnet[node2]:
+                            self._totalDegree[node2]=self._totalDegree[node2]-1
+                        del self._rnet[node2][node1]
+                    else:
                         del self._net[node2][node1]
+                    del self._net[node1][node2]
         else:
             if not node1 in self._net:
                 self._net[node1]={}
+                if self.directed:
+                    self._rnet[node1]={}
             if not node2 in self._net:
                 self._net[node2]={}
-            
-            self._net[node1][node2]=value
-            if not self.directed:
-                self._net[node2][node1]=value
+                if self.directed:
+                    self._rnet[node2]={}            
 
-    def _get_degree(self,node, dims=None):
+            if self.directed:
+                if node2 not in self._net[node1] and node2 not in self._rnet[node1]:
+                    self._totalDegree[node1]=self._totalDegree.get(node1,0)+1
+                if node1 not in self._net[node2] and node1 not in self._rnet[node2]:
+                    self._totalDegree[node2]=self._totalDegree.get(node2,0)+1
+                self._rnet[node2][node1]=value
+            else:
+                self._net[node2][node1]=value
+            self._net[node1][node2]=value
+
+    def _get_degree_out(self,node, dims=None):
         """Private method returning nodes degree (number of neighbors).
 
         See _iter_neighbors for description of the parameters.
@@ -199,18 +234,44 @@ class MultilayerNetwork(object):
             else:
                 return 0
         else:
-            return len(list(self._iter_neighbors(node,dims)))
+            return len(list(self._iter_neighbors_out(node,dims)))
 
-    def _get_strength(self,node, dims=None):
-        """Private method returning nodes strenght (sum of weights).
-
-        See _iter_neighbors for description of the parameters.
+    def _get_degree_total(self,node,dims=None):
+        """Returns the total degree of a _directed_ multilayer network.
         """
-        #TODO: lookuptables for intradimensional strengths        
-        return sum(map(lambda n:self._get_link(self._nodes_to_link(node,n)),self._iter_neighbors(node,dims)))
+        assert self.directed
+        if dims==None:
+            return self._totalDegree.get(node,0)
+        else:
+            return len(list(self._iter_neighbors_total(node,dims)))
+
+    def _get_degree_in(self,node,dims=None):
+        """Returns the in-degree of a _directed_ multilayer network.
+        """
+        assert self.directed
+        if dims==None:
+            if node in self._rnet:
+                return len(self._rnet[node])
+            else:
+                return 0
+        else:
+            return len(list(self._iter_neighbors_in(node,dims)))
 
 
-    def _iter_neighbors(self,node,dims):
+    def _get_strength_in(self,node, dims=None):
+        """Private method returning nodes in-strenght."""
+        return sum(map(lambda n:self._get_link(self._nodes_to_link(n,node)),self._iter_neighbors_in(node,dims)))
+
+    def _get_strength_out(self,node, dims=None):
+        """Private method returning nodes out-strenght."""
+        return sum(map(lambda n:self._get_link(self._nodes_to_link(node,n)),self._iter_neighbors_out(node,dims)))
+
+    def _get_strength_total(self,node, dims=None):
+        """Private method returning nodes total strenght (sum of in- and out-strength)."""
+        return self._get_strength_in(node,dims)+self._get_strength_out(node,dims)
+
+
+    def _iter_neighbors_out(self,node,dims=None):
         """Private method to iterate over neighbors of a node.
 
         Parameters
@@ -231,6 +292,27 @@ class MultilayerNetwork(object):
                 for neigh in self._net[node]:
                     if all(map(lambda i:dims[i]==None or neigh[i]==dims[i], range(len(dims)))):
                         yield neigh
+
+    def _iter_neighbors_in(self,node,dims=None):
+        """Iterate over out-neighbors of a node in a directed network."""
+        if node in self._rnet:
+            if dims==None:
+                for neigh in self._rnet[node]:
+                    yield neigh
+            else:
+                for neigh in self._rnet[node]:
+                    if all(map(lambda i:dims[i]==None or neigh[i]==dims[i], range(len(dims)))):
+                        yield neigh
+
+    def _iter_neighbors_total(self,node,dims=None):
+        """Iterate over in- and out-neighbors of a node in a directed network."""
+        iterated=set()
+        for neigh in self._iter_neighbors_out(node,dims):
+            iterated.add(neigh)
+            yield neigh
+        for neigh in self._iter_neighbors_in(node,dims):
+            if neigh not in iterated:
+                yield neigh
 
     def __getitem__(self,item):
         """
@@ -424,6 +506,31 @@ class MultilayerNode(object):
         if layers==():
             layers=self.layers
         return self.mnet._get_degree(self.node,layers)
+
+    def deg_total(self,*layers):
+        """Returns the total degree of the node.
+        """
+        assert len(layers)==0 or len(layers)==(self.mnet.aspects+1)
+        if layers==():
+            layers=self.layers
+        return self.mnet._get_degree_total(self.node,layers)
+
+    def deg_in(self,*layers):
+        """Returns the in-degree of the node.
+        """
+        assert len(layers)==0 or len(layers)==(self.mnet.aspects+1)
+        if layers==():
+            layers=self.layers
+        return self.mnet._get_degree_in(self.node,layers)
+
+    def deg_out(self,*layers):
+        """Returns the out-degree of the node.
+        """
+        assert len(layers)==0 or len(layers)==(self.mnet.aspects+1)
+        if layers==():
+            layers=self.layers
+        return self.mnet._get_degree_out(self.node,layers)
+
     def str(self,*layers):
         """Returns the weighted degree, i.e. the strength, of the node.
         """
@@ -431,15 +538,57 @@ class MultilayerNode(object):
         if layers==():
             layers=self.layers
         return self.mnet._get_strength(self.node,layers)
+
+    def str_total(self,*layers):
+        """Returns the weighted totaldegree, i.e. the strength, of the node.
+        """
+        assert len(layers)==0 or len(layers)==(self.mnet.aspects+1)
+        if layers==():
+            layers=self.layers
+        return self.mnet._get_strength_total(self.node,layers)
+
+    def str_in(self,*layers):
+        """Returns the weighted in-degree, i.e. the strength, of the node.
+        """
+        assert len(layers)==0 or len(layers)==(self.mnet.aspects+1)
+        if layers==():
+            layers=self.layers
+        return self.mnet._get_strength_in(self.node,layers)
+
+    def str_out(self,*layers):
+        """Returns the weighted out-degree, i.e. the strength, of the node.
+        """
+        assert len(layers)==0 or len(layers)==(self.mnet.aspects+1)
+        if layers==():
+            layers=self.layers
+        return self.mnet._get_strength_out(self.node,layers)
+
     def __iter__(self):
-        if self.mnet.aspects>0:
-            for node in self.mnet._iter_neighbors(self.node,self.layers):
-                yield node #maybe should only return the indices that can change?
-        else:
-            for node in self.mnet._iter_neighbors(self.node,self.layers):
-                yield node[0]
+        return self.iter_total()
+
     def layers(self,*layers):
         return MultilayerNode(self.node,self.mnet,layers=layers)
+
+    def iter_total(self):
+        for node in self._iter_nodes(self.mnet._iter_neighbors_total):
+            yield node
+
+    def iter_out(self):
+        for node in self._iter_nodes(self.mnet._iter_neighbors_out):
+            yield node
+
+    def iter_in(self):
+        for node in self._iter_nodes(self.mnet._iter_neighbors_in):
+            yield node
+
+    def _iter_nodes(self,iterf):
+        if self.mnet.aspects>0:
+            for node in iterf(self.node,self.layers):
+                yield node #maybe should only return the indices that can change?
+        else:
+            for node in iterf(self.node,self.layers):
+                yield node[0]
+
 
 
 class MultilayerEdges:
@@ -451,7 +600,7 @@ class MultilayerEdges:
         """
         if self.net.directed:
             for node in itertools.product(*self.net.slices):
-                for neigh in self.net[node]:                
+                for neigh in self.net[node].iter_out():                
                     if self.net.aspects==0:
                         neigh=(neigh,)
                     link=self.net._nodes_to_link(node,neigh)
@@ -574,6 +723,8 @@ class MultiplexNetwork(MultilayerNetwork):
         #keys are not tuples if dimensions==2
         self.A={} 
 
+        self._init_directions()
+
     def _get_edge_inter_aspects(self,link):
         r"""Returns list of aspects where the two nodes of $G_M$ differ.
         """
@@ -592,7 +743,7 @@ class MultiplexNetwork(MultilayerNetwork):
             return self.A[layer]
 
     def _add_A(self,node):
-        net=MultilayerNetworkWithParent(aspects=0)
+        net=MultilayerNetworkWithParent(aspects=0,directed=self.directed)
         net._set_parent(self)
         if not self.fullyInterconnected:
             if self.aspects==1:
@@ -680,7 +831,7 @@ class MultiplexNetwork(MultilayerNetwork):
             raise KeyError("Can only set links in the node dimension.")
 
 
-    def _get_dim_degree(self,supernode,aspect):
+    def _get_dim_degree(self,supernode,aspect,direction="tot"):
         coupling_type=self.couplings[aspect-1][0]
         if coupling_type=="categorical":
             if self.fullyInterconnected:
@@ -700,19 +851,24 @@ class MultiplexNetwork(MultilayerNetwork):
             else:
                 return int(supernode[:aspect]+(up,)+supernode[aspect+1:] in self._nodeToLayers[supernode[0]])+int(supernode[:aspect]+(down,)+supernode[aspect+1:] in self._nodeToLayers[supernode[0]])
         elif isinstance(coupling_type,MultilayerNetwork):
-            return self.couplings[aspect-1][0][supernode[aspect]].deg()
+            if direction=="tot":
+                return self.couplings[aspect-1][0][supernode[aspect]].deg_total()
+            elif direction=="in":
+                return self.couplings[aspect-1][0][supernode[aspect]].deg_in()
+            elif direction=="out":
+                return self.couplings[aspect-1][0][supernode[aspect]].deg_out()
         else:
             raise NotImplemented()
 
-    def _get_dim_strength(self,node,aspect):
+    def _get_dim_strength(self,node,aspect,direction="tot"):
         coupling_str=self.couplings[aspect-1][1]
         coupling_type=self.couplings[aspect-1][0]
         if isinstance(coupling_type,MultilayerNetwork):
             raise Exception() #please implement this
-        return self._get_dim_degree(node,aspect)*coupling_str
+        return self._get_dim_degree(node,aspect,direction=direction)*coupling_str
 
 
-    def _iter_dim(self,supernode,aspect):
+    def _iter_dim(self,supernode,aspect,direction="tot"):
         coupling_type=self.couplings[aspect-1][0]
         if coupling_type=="categorical":            
             if self.fullyInterconnected:
@@ -752,37 +908,108 @@ class MultiplexNetwork(MultilayerNetwork):
             for d in l:
                 yield d
 
-    def _get_degree(self,node, dims):
+    def _get_degree_total(self,node, dims):
         """Overrides parents method.
         """
         k=0
         for d in self._select_dimensions(node,dims):
             if d==0:
-                k+=self._get_A_with_tuple(node[1:])[node[0]].deg()
+                k+=self._get_A_with_tuple(node[1:])[node[0]].deg_total()
             else:
-                k+=self._get_dim_degree(node,d)
+                k+=self._get_dim_degree(node,d,direction="tot")
         return k
 
-    def _get_strength(self,node, dims):
+    def _get_degree_in(self,node, dims):
+        """Overrides parents method.
+        """
+        k=0
+        for d in self._select_dimensions(node,dims):
+            if d==0:
+                k+=self._get_A_with_tuple(node[1:])[node[0]].deg_in()
+            else:
+                k+=self._get_dim_degree(node,d,direction="in")
+        return k
+
+    def _get_degree_out(self,node, dims):
+        """Overrides parents method.
+        """
+        k=0
+        for d in self._select_dimensions(node,dims):
+            if d==0:
+                k+=self._get_A_with_tuple(node[1:])[node[0]].deg_out()
+            else:
+                k+=self._get_dim_degree(node,d,direction="out")
+        return k
+
+
+    def _get_strength_total(self,node, dims):
         """Overrides parents method.
         """
         s=0
         for d in self._select_dimensions(node,dims):
             if d==0:
-                s+=self._get_A_with_tuple(node[1:])[node[0]].str()
+                s+=self._get_A_with_tuple(node[1:])[node[0]].str_total()
             else:
-                s+=self._get_dim_strength(node,d)
+                s+=self._get_dim_strength(node,d,direction="tot")
         return s
 
-    def _iter_neighbors(self,node,dims):
+
+    def _get_strength_in(self,node, dims):
+        """Overrides parents method.
+        """
+        s=0
+        for d in self._select_dimensions(node,dims):
+            if d==0:
+                s+=self._get_A_with_tuple(node[1:])[node[0]].str_in()
+            else:
+                s+=self._get_dim_strength(node,d,direction="in")
+        return s
+
+
+    def _get_strength_out(self,node, dims):
+        """Overrides parents method.
+        """
+        s=0
+        for d in self._select_dimensions(node,dims):
+            if d==0:
+                s+=self._get_A_with_tuple(node[1:])[node[0]].str_out()
+            else:
+                s+=self._get_dim_strength(node,d,direction="out")
+        return s
+
+
+
+    def _iter_neighbors_total(self,node,dims):
         """Overrides parents method.
         """
         for d in self._select_dimensions(node,dims):
             if d==0:                
-                for n in self._get_A_with_tuple(node[1:])[node[0]]:
-                    yield (n,)+node[1:]
+                for n in self._get_A_with_tuple(node[1:])._iter_neighbors_total((node[0],)):
+                    yield (n[0],)+node[1:]
             else:
-                for n in self._iter_dim(node,d):
+                for n in self._iter_dim(node,d,direction="tot"):
+                    yield n
+
+    def _iter_neighbors_in(self,node,dims):
+        """Overrides parents method.
+        """
+        for d in self._select_dimensions(node,dims):
+            if d==0:                
+                for n in self._get_A_with_tuple(node[1:])._iter_neighbors_in((node[0],)):
+                    yield (n[0],)+node[1:]
+            else:
+                for n in self._iter_dim(node,d,direction="in"):
+                    yield n
+
+    def _iter_neighbors_out(self,node,dims):
+        """Overrides parents method.
+        """
+        for d in self._select_dimensions(node,dims):
+            if d==0:                
+                for n in self._get_A_with_tuple(node[1:])._iter_neighbors_out((node[0],)):
+                    yield (n[0],)+node[1:]
+            else:
+                for n in self._iter_dim(node,d,direction="out"):
                     yield n
 
 class FlatMultilayerNetworkView(MultilayerNetwork):

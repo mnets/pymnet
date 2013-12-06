@@ -32,8 +32,10 @@ class TestNet(unittest.TestCase):
         self.assertEqual(list(net[3]),[2])
         self.assertEqual(net[1].deg(),1)
         self.assertEqual(net[2].deg(),2)
+        self.assertEqual(net[3].deg(),1)
         self.assertEqual(net[1].str(),1)
         self.assertEqual(net[2].str(),2)
+        self.assertEqual(net[3].str(),1)
         self.assertEqual(list(net[4]),[])
 
         #Test alternative notations
@@ -70,6 +72,31 @@ class TestNet(unittest.TestCase):
 
         self.assertEqual(net[4].deg(),0) #missing node
 
+        #Test that net works as directed net too
+        self.assertEqual(list(net[1].iter_out()),[3])
+        self.assertEqual(set(net[3].iter_out()),set([1,2]))
+        self.assertEqual(net[1].deg_out(),1)
+        self.assertEqual(net[2].deg_out(),1)
+        self.assertEqual(net[1].str_out(),1)
+        self.assertEqual(net[2].str_out(),1)
+        self.assertEqual(list(net[4].iter_out()),[])
+
+        self.assertEqual(list(net[1].iter_in()),[3])
+        self.assertEqual(set(net[3].iter_in()),set([1,2]))
+        self.assertEqual(net[1].deg_in(),1)
+        self.assertEqual(net[2].deg_in(),1)
+        self.assertEqual(net[1].str_in(),1)
+        self.assertEqual(net[2].str_in(),1)
+        self.assertEqual(list(net[4].iter_in()),[])
+
+        self.assertEqual(list(net[1].iter_total()),[3])
+        self.assertEqual(set(net[3].iter_total()),set([1,2]))
+        self.assertEqual(net[1].deg_total(),1)
+        self.assertEqual(net[2].deg_total(),1)
+        self.assertEqual(net[1].str_total(),1)
+        self.assertEqual(net[2].str_total(),1)
+        self.assertEqual(list(net[4].iter_total()),[])
+        
 
     def test_flat_directed(self,net):
         net[1,2]=1
@@ -87,12 +114,47 @@ class TestNet(unittest.TestCase):
         #Iterators,degrees,strengths
         self.assertEqual(list(net[1]),[2])
         self.assertEqual(set(net[2]),set([1,3]))
-        self.assertEqual(list(net[3]),[])
+        self.assertEqual(list(net[3]),[2])
         self.assertEqual(net[1].deg(),1)
         self.assertEqual(net[2].deg(),2)
-        self.assertEqual(net[1].str(),1)
-        self.assertEqual(net[2].str(),2)
+        self.assertEqual(net[3].deg(),1)
+        self.assertEqual(net[1].str(),2)
+        self.assertEqual(net[2].str(),3)
+        self.assertEqual(net[3].str(),1)
         self.assertEqual(list(net[4]),[])
+
+        self.assertEqual(list(net[1].iter_total()),[2])
+        self.assertEqual(set(net[2].iter_total()),set([1,3]))
+        self.assertEqual(list(net[3].iter_total()),[2])
+        self.assertEqual(net[1].deg_total(),1)
+        self.assertEqual(net[2].deg_total(),2)
+        self.assertEqual(net[3].deg_total(),1)
+        self.assertEqual(net[1].str_total(),2)
+        self.assertEqual(net[2].str_total(),3)
+        self.assertEqual(net[3].str_total(),1)
+        self.assertEqual(list(net[4].iter_total()),[])
+
+        self.assertEqual(list(net[1].iter_in()),[2])
+        self.assertEqual(set(net[2].iter_in()),set([1]))
+        self.assertEqual(list(net[3].iter_in()),[2])
+        self.assertEqual(net[1].deg_in(),1)
+        self.assertEqual(net[2].deg_in(),1)
+        self.assertEqual(net[3].deg_in(),1)
+        self.assertEqual(net[1].str_in(),1)
+        self.assertEqual(net[2].str_in(),1)
+        self.assertEqual(net[3].str_in(),1)
+        self.assertEqual(list(net[4].iter_in()),[])
+
+        self.assertEqual(list(net[1].iter_out()),[2])
+        self.assertEqual(set(net[2].iter_out()),set([1,3]))
+        self.assertEqual(list(net[3].iter_out()),[])
+        self.assertEqual(net[1].deg_out(),1)
+        self.assertEqual(net[2].deg_out(),2)
+        self.assertEqual(net[3].deg_out(),0)
+        self.assertEqual(net[1].str_out(),1)
+        self.assertEqual(net[2].str_out(),2)
+        self.assertEqual(net[3].str_out(),0)
+        self.assertEqual(list(net[4].iter_out()),[])
 
         #Test alternative notations
         self.assertEqual(net[1][2],1)
@@ -120,9 +182,10 @@ class TestNet(unittest.TestCase):
         self.assertEqual(net[1,3],1)
         self.assertEqual(net[3,1],0)
 
-        self.assertEqual(list(net[1]),[3])
+        self.assertEqual(set(net[1]),set([2,3]))
         self.assertEqual(set(net[2]),set([1,3]))
-        self.assertEqual(list(net[3]),[])
+        self.assertEqual(set(net[3]),set([1,2]))
+        self.assertEqual(list(net[4]),[])
 
         self.assertEqual(net[1].deg(),2)
         self.assertEqual(net[2].deg(),2)
@@ -130,7 +193,42 @@ class TestNet(unittest.TestCase):
         self.assertEqual(net[1].str(),2)
         self.assertEqual(net[2].str(),2)
         self.assertEqual(net[3].str(),2)
-        self.assertEqual(list(net[4]),[])
+
+        self.assertEqual(set(net[1].iter_total()),set([2,3]))
+        self.assertEqual(set(net[2].iter_total()),set([1,3]))
+        self.assertEqual(set(net[3].iter_total()),set([1,2]))
+        self.assertEqual(list(net[4].iter_total()),[])
+
+        self.assertEqual(net[1].deg_total(),2)
+        self.assertEqual(net[2].deg_total(),2)
+        self.assertEqual(net[3].deg_total(),2)
+        self.assertEqual(net[1].str_total(),2)
+        self.assertEqual(net[2].str_total(),2)
+        self.assertEqual(net[3].str_total(),2)
+
+        self.assertEqual(set(net[1].iter_in()),set([2]))
+        self.assertEqual(set(net[2].iter_in()),set([]))
+        self.assertEqual(set(net[3].iter_in()),set([1,2]))
+        self.assertEqual(list(net[4].iter_in()),[])
+
+        self.assertEqual(net[1].deg_in(),1)
+        self.assertEqual(net[2].deg_in(),0)
+        self.assertEqual(net[3].deg_in(),2)
+        self.assertEqual(net[1].str_in(),1)
+        self.assertEqual(net[2].str_in(),0)
+        self.assertEqual(net[3].str_in(),2)
+
+        self.assertEqual(set(net[1].iter_out()),set([3]))
+        self.assertEqual(set(net[2].iter_out()),set([1,3]))
+        self.assertEqual(set(net[3].iter_out()),set([]))
+        self.assertEqual(list(net[4].iter_out()),[])
+
+        self.assertEqual(net[1].deg_out(),1)
+        self.assertEqual(net[2].deg_out(),2)
+        self.assertEqual(net[3].deg_out(),0)
+        self.assertEqual(net[1].str_out(),1)
+        self.assertEqual(net[2].str_out(),2)
+        self.assertEqual(net[3].str_out(),0)
 
         self.assertEqual(net[1][2],0)
 
@@ -144,7 +242,7 @@ class TestNet(unittest.TestCase):
 
     def test_flat_directed_mnet(self):
         testnet=net.MultilayerNetwork(aspects=0,directed=True)
-        self.test_flat(testnet)
+        self.test_flat_directed(testnet)
 
     def test_flat_mnet(self):
         testnet=net.MultilayerNetwork(aspects=0)
@@ -555,7 +653,7 @@ class TestNet(unittest.TestCase):
 def test_net():
     suite = unittest.TestSuite()    
     suite.addTest(TestNet("test_flat_mnet"))
-    #suite.addTest(TestNet("test_flat_directed_mnet"))
+    suite.addTest(TestNet("test_flat_directed_mnet"))
     suite.addTest(TestNet("test_simple_couplings_mnet"))
     suite.addTest(TestNet("test_simple_couplings_categorical_mplex"))
     suite.addTest(TestNet("test_simple_couplings_ordinal_mplex"))
