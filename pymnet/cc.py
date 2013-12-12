@@ -1226,3 +1226,70 @@ def gcc_contraction_o2(net):
     else:
         return None
 
+
+def lcc_brodka_en(net,node,anet=None,threshold=1):
+    r"""The "multi-layered clustering coefficient in the extended neighborhood" defined
+    by Brodka et al.
+
+    The clustering coefficient for node :math:`u` is given by the formula:
+    
+    .. math:: c_{Br_{EN},u} = \frac{\sum_{\alpha \in L} \sum_{v \in EN(u)} \sum_{h \in EN(u)}( \mathcal{W}_{hv\alpha} + \mathcal{W}_{vh\alpha})}{2 |EN(u)| |L|},
+
+    where :math:`EN(u) = \cup_{\alpha \in L} N_\alpha(u)`, :math:`N_\alpha(i)` is the set of (in and out) neighbors of node :math:`u`
+    in the intra-layer network of layer :math:`\alpha`, and :math:`\mathcal{W}` is the rank-3 weighted adjacency tensor 
+    of the multiplex network.
+       
+
+    Parameters
+    ----------
+    net : MultiplexNetwork with aspects=1
+       The input network.
+    node : any object
+       The focal node. Given as the node index in the network.
+    anet : MultilayerNetwork with aspects=0
+       The aggregated network. If given, it is used to speed up the calculation.
+    threshold : int
+       Threshold for number of layers, see Ref. [2]
+
+    Returns
+    -------
+    float or object
+       The clustering coefficient value, or the undefReturn value if the clustering
+       coefficient is not defined for the node.
+
+    References
+    ----------
+    [1] "A Method for Group Extraction in Complex Social Networks", Piotr Brodka, Katarzyna Musial, Przemyslaw Kazienko,In
+    M. D. Lytras, P. Ordonez De Pablos, A. Ziderman, A. Roulstone, H. Maurer, and J. B. Imber, editors,
+    Knowledge Management, Information Systems, E-Learning, and Sustainability Research, volume 111
+    of Communications in Computer and Information Science, pages 238-247. Springer Berlin Heidelberg, 2010.
+
+    [2] P. Brodka, P. Kazienko, K. Musial, and K. Skibicki. Analysis of Neighbourhoods in Multi-layered
+    Dynamic Social Networks. International Journal of Computational Intelligence Systems, 5(3):582-596,
+    2012.
+
+    See also
+    --------
+    lcc_aw : Local multiplex clustering coefficient defined by Cozzo et al.
+    cc_barrett : Local multiplex clustering coefficient defined by Barrett et al.
+    """
+    assert threshold==1, "This is still not implemented, sorry."
+
+    if anet==None:
+        en=set()
+        for layer in net.get_layers():
+            for neigh in net.A[layer][node]:
+                en.add(neigh)            
+    else:
+        en=anet[node]
+    
+    s=0
+    for layer in net.get_layers():
+        for v in en:
+            for h in en:
+                s+=net[h,v,layer]+net[v,h,layer]
+    return s/float(2*len(en)*len(net.get_layers()))
+
+
+
+
