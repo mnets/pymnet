@@ -1,7 +1,7 @@
 """Functions for reading and writing networks in different file formats.
 """
 from net import MultilayerNetwork,MultiplexNetwork
-import math,json
+import math,json,os
 
 def write_ucinet(net,outputfile,outputType="edges"):
     assert isinstance(net,MultiplexNetwork), "Multilayer networks not supported by the UCINET file format."
@@ -40,6 +40,33 @@ def write_json(net,outputfile):
     json.dump(nets,outputfile)
     outputfile.close()
 
+def write_edge_files(net,outputfiles,columnSeparator="\t",rowSeparator="\n",weights=True,masterFile=False,numericNodes=False):
+    assert isinstance(net,MultiplexNetwork)
+    assert net.aspects==1
+    if masterFile:
+        mofile=open(outputfiles+".txt",'w')
+
+    if numericNodes:
+        nodetonumber={}
+        for i,node in enumerate(net):
+            nodetonumber[node]=i
+
+    for layer in net.get_layers():
+        ofilename=outputfiles+str(layer)+".edg"
+        ofile=open(ofilename,'w')
+        if masterFile:
+            mofile.write(os.path.basename(ofilename)+";"+str(layer)+";\n")
+        for edge in net.A[layer].edges:
+            n1,n2=edge[0],edge[1]
+            if numericNodes:
+                n1,n2=nodetonumber[n1],nodetonumber[n2]
+            if weights:
+                ofile.write(str(n1)+columnSeparator+str(n2)+columnSeparator+str(edge[2])+rowSeparator)
+            else:
+                ofile.write(str(n1)+columnSeparator+str(n2)+rowSeparator)
+        ofile.close()
+    if masterFile:
+        mofile.close()
 
 def read_ucinet(netinput,couplings=('categorical',1.0),fullyInterconnected=True):
     """Reads network in UCINET DL format.
