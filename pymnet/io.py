@@ -8,7 +8,7 @@ def write_ucinet(net,outputfile,outputType="edges"):
     if isinstance(outputfile,str) or isinstance(outputfile,unicode):
         outputfile=open(outputfile,'w')
     
-def write_json(net,outputfile):
+def write_json(net,outputfile=None):
     """Writes a multiplex network with a single aspect in a JSON format.
     """
     assert isinstance(net,MultiplexNetwork)
@@ -34,11 +34,14 @@ def write_json(net,outputfile):
                                   "value" :edge[2],
                                   "layer" :layer2index[layer]})
 
-    if isinstance(outputfile,str) or isinstance(outputfile,unicode):
-        outputfile=open(outputfile,'w')
+    if outputfile!=None:
+        if isinstance(outputfile,str) or isinstance(outputfile,unicode):
+            outputfile=open(outputfile,'w')
 
-    json.dump(nets,outputfile)
-    outputfile.close()
+        json.dump(nets,outputfile)
+        outputfile.close()
+    else:
+        return json.dumps(nets)
 
 def write_edge_files(net,outputfiles,columnSeparator="\t",rowSeparator="\n",weights=True,masterFile=False,numericNodes=False):
     assert isinstance(net,MultiplexNetwork)
