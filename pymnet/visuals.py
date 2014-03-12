@@ -91,6 +91,24 @@ webplot_template="""
 
 def webplot(net,outputfile=None):
     """Create a 3D visualization of a multiplex network for web using D3.
+
+    Creates a webpage that contains a visualization of the input multiplex
+    network. The network must have only a single aspect. 
+
+    Parameters
+    ----------
+    net : MultiplexNetwork with aspects=1
+       The input network.
+    outputfile : None, string, or file object
+       Returns the output as a string if outputfile is None. If outputfile
+       is string, then uses it as a file name and tries to open it for 
+       writing. Finally, if outputfile is a file object then writes to that
+       file.
+
+    Returns
+    -------
+    String or None
+       Returns the output as a string if outputfile is None.
     """
     assert isinstance(net,MultiplexNetwork)
     assert net.aspects==1
