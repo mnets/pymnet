@@ -101,3 +101,16 @@ Clustering coefficients
   gcc_aw
   sncc_aw
   elementary_cycles
+
+
+Visualization
+-------------
+.. automodule:: pymnet.visuals
+.. autosummary::
+  :toctree: autogen
+
+.. automodule:: pymnet
+.. autosummary::
+  :toctree: autogen
+
+  webplot
