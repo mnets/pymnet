@@ -1259,8 +1259,7 @@ def lcc_brodka(net,node,anet=None,threshold=1):
     Returns
     -------
     float or object
-       The clustering coefficient value, or the undefReturn value if the clustering
-       coefficient is not defined for the node.
+       The clustering coefficient value.
 
     References
     ----------
@@ -1276,9 +1275,9 @@ def lcc_brodka(net,node,anet=None,threshold=1):
     Notes
     -----
     This clustering coefficient doesn't return to the typical unweighted clustering coefficient when the edge weights
-    are binary. Further, it is not normalized in a way that it's values would be between 0 an 1. For example, consider
-    a full multiplex network with n nodes and arbitrary number of layers. In this case this clustering cofficient will
-    take value n-2 for all the nodes.
+    are binary and there is only a single layer. Further, it is not normalized in a way that it's values would be 
+    between 0 an 1. For example, consider a full multiplex network with n nodes and arbitrary number of layers. 
+    In this case this clustering cofficient will take value n-2 for all the nodes.
 
     Multiplying all the weights by a constant c will cause the clustering coefficient values to be multiplied by c.
 
@@ -1326,3 +1325,133 @@ def lcc_brodka(net,node,anet=None,threshold=1):
 
 
 
+def lcc_battiston1(net,node,undefReturn=0.0):
+    r"""The first local clustering coefficient defined by Battiston et al.
+
+    The clustering coefficient for node :math:`u` is given by the formula (see Ref. [1]):
+    
+    .. math:: c_{Bat1,u} = \frac{\sum_{\alpha \in L} \sum_{\beta \in L,\beta \neq \alpha } \sum_{v,h \in V, v \neq u, h \neq u} \mathcal{A}_{uv\alpha} \mathcal{A}_{vh\beta} \mathcal{A}_{hu\alpha}}{\sum_{\alpha \in L}\sum_{v,h \in V, v \neq u, h \neq u} \mathcal{A}_{uv\alpha} \mathcal{A}_{hu\alpha}},
+
+    where :math:`V` is the set of nodes, :math:`L` is the set of layers and :math:`\mathcal{A}` is the rank-3 unweighted adjacency tensor of the multiplex network.
+
+    lcc_battiston1 is only defined for single-aspect node-aligned multiplex networks with 2 or more layers.
+       
+    Parameters
+    ----------
+    net : MultiplexNetwork with aspects=1
+       The input network.
+    node : any object
+       The focal node. Given as the node index in the network.
+
+    Returns
+    -------
+    float or object
+       The clustering coefficient value, or the undefReturn value if the clustering
+       coefficient is not defined for the node.
+
+    References
+    ----------
+    [1] "Metrics for the analysis of multiplex networks", Federico Battiston, Vincenzo Nicosia, Vito Latora,
+    arXiv:1308.3182v2 (2013)
+
+    See also
+    --------
+    lcc_aw : Local multiplex clustering coefficient defined by Cozzo et al.
+    cc_barrett : Local multiplex clustering coefficient defined by Barrett et al.
+    """
+
+    assert net.aspects==1
+    assert len(net.get_layers())>=2
+
+    d=0
+    for alpha in net.get_layers():
+        for v in net:
+            if v!=node:
+                for h in net:
+                    if h!=node:
+                        if net[node,v,alpha] != net.noEdge and net[h,node,alpha] != net.noEdge:
+                            d+=1
+    if d==0:
+        return undefReturn
+
+    s=0
+
+    for alpha in net.get_layers():
+        for beta in net.get_layers():
+            if beta!=alpha:
+                for v in net:
+                    if v!=node:
+                        for h in net:
+                            if h!=node:
+                                if net[node,v,alpha] != net.noEdge and net[v,h,beta] != net.noEdge and net[h,node,alpha] != net.noEdge:
+                                    s+=1
+    return s/float(d)
+
+
+
+
+def lcc_battiston2(net,node,undefReturn=0.0):
+    r"""The second local clustering coefficient defined by Battiston et al.
+
+    The clustering coefficient for node :math:`u` is given by the formula (see Ref. [1]):
+    
+    .. math:: c_{Bat2,u} = \frac{\sum_{\alpha \in L} \sum_{\beta \in L,\beta \neq \alpha } \sum_{\gamma \in L,\gamma \neq \alpha, \beta } \sum_{v,h \in V, v \neq u, h \neq u} \mathcal{A}_{uv\alpha} \mathcal{A}_{vh\gamma} \mathcal{A}_{hu\beta}}{\sum_{\alpha \in L} \sum_{\beta \in L,\beta \neq \alpha }\sum_{v,h \in V, v \neq u, h \neq u} \mathcal{A}_{uv\alpha} \mathcal{A}_{hu\beta}},
+
+    where :math:`V` is the set of nodes, :math:`L` is the set of layers and :math:`\mathcal{A}` is the rank-3 unweighted adjacency tensor of the multiplex network.
+
+    lcc_battiston2 is only defined for single-aspect node-aligned multiplex networks with 3 or more layers.
+       
+    Parameters
+    ----------
+    net : MultiplexNetwork with aspects=1
+       The input network.
+    node : any object
+       The focal node. Given as the node index in the network.
+
+    Returns
+    -------
+    float or object
+       The clustering coefficient value, or the undefReturn value if the clustering
+       coefficient is not defined for the node.
+
+    References
+    ----------
+    [1] "Metrics for the analysis of multiplex networks", Federico Battiston, Vincenzo Nicosia, Vito Latora,
+    arXiv:1308.3182v2 (2013)
+
+    See also
+    --------
+    lcc_aw : Local multiplex clustering coefficient defined by Cozzo et al.
+    cc_barrett : Local multiplex clustering coefficient defined by Barrett et al.
+    """
+
+    assert net.aspects==1
+    assert len(net.get_layers())>=3
+
+    d=0
+    for alpha in net.get_layers():
+        for beta in net.get_layers():
+            if beta!=alpha:
+                for v in net:
+                    if v!=node:
+                        for h in net:
+                            if h!=node:
+                                if net[node,v,alpha] != net.noEdge and net[h,node,beta] != net.noEdge:
+                                    d+=1
+    if d==0:
+        return undefReturn
+
+    s=0
+
+    for alpha in net.get_layers():
+        for beta in net.get_layers():
+            if beta!=alpha:
+                for gamma in net.get_layers():
+                    if gamma != alpha and gamma != beta:
+                        for v in net:
+                            if v!=node:
+                                for h in net:
+                                    if h!=node:
+                                        if net[node,v,alpha] != net.noEdge and net[v,h,gamma] != net.noEdge and net[h,node,beta] != net.noEdge:
+                                            s+=1
+    return s/float(d)
