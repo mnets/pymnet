@@ -40,22 +40,20 @@ class TestCC(unittest.TestCase):
     def test_weighted_flat_simple(self):
         pass #TODO
 
-    def test_unweighted_mplex_triangle(self):
-        def add_clique(net,level):
-            net[1,2,level]=1
-            net[1,3,level]=1
-            net[2,3,level]=1
+    def test_unweighted_mplex_clique(self):
+        def clique_net(nodes,levels):
+            n=net.MultiplexNetwork([('categorical',1.0)],directed=False)
+            for level in range(levels):
+                for i,j in itertools.combinations(range(nodes),2):
+                    n[i,j,level]=1
 
-        n=net.MultiplexNetwork([('categorical',1.0)])
-        add_clique(n,1)
-        add_clique(n,2)
-        add_clique(n,3)
-        add_clique(n,4)
+            an=net.MultilayerNetwork(aspects=0,directed=False)
+            for i,j in itertools.combinations(range(nodes),2):
+                an[i,j]=levels
 
-        an=net.MultilayerNetwork(aspects=0)
-        an[1,2]=4
-        an[1,3]=4
-        an[2,3]=4
+            return n,an
+        
+        n,an=clique_net(3,4) # 3 nodes, 4 layers
 
         #barrett
         self.assertEqual(cc.cc_barrett(n,1,an),128./96.)
@@ -63,6 +61,27 @@ class TestCC(unittest.TestCase):
 
         #cc seq
         self.assertEqual(cc.cc_sequence(n,1),([1,1,1,1],[1,1,1,1]))
+
+        #Brodka et al.
+        self.assertEqual(cc.lcc_brodka(n,1,threshold=1),1.0)
+        self.assertEqual(cc.lcc_brodka(n,1,threshold=3),1.0)
+        self.assertEqual(cc.lcc_brodka(n,1,threshold='all'),1.0)
+
+        self.assertEqual(cc.lcc_brodka(n,1,threshold=1,anet=an),1.0)
+        self.assertEqual(cc.lcc_brodka(n,1,threshold=3,anet=an),1.0)
+        self.assertEqual(cc.lcc_brodka(n,1,threshold='all',anet=an),1.0)
+
+        n,an=clique_net(7,4) # 7 nodes, 4 layers
+
+        #Brodka et al.
+        self.assertEqual(cc.lcc_brodka(n,1,threshold=1),5.0) #nodes - 2
+        self.assertEqual(cc.lcc_brodka(n,1,threshold=3),5.0)
+        self.assertEqual(cc.lcc_brodka(n,1,threshold='all'),5.0)
+
+        self.assertEqual(cc.lcc_brodka(n,1,threshold=1,anet=an),5.0) 
+        self.assertEqual(cc.lcc_brodka(n,1,threshold=3,anet=an),5.0)
+        self.assertEqual(cc.lcc_brodka(n,1,threshold='all',anet=an),5.0)
+
 
 
     def test_unweighted_mplex_simple(self):
@@ -90,7 +109,115 @@ class TestCC(unittest.TestCase):
         an[3,4]=1
         an[2,4]=1
 
-        self.assertEqual(cc.cc_barrett(n,1,an),cc.cc_barrett_explicit(n,1))
+        for i in range(4):
+            self.assertEqual(cc.cc_barrett(n,i,an),cc.cc_barrett_explicit(n,i))
+
+        self.assertEqual(cc.lcc_brodka(n,1,anet=None,threshold=1),2./3.)
+        self.assertEqual(cc.lcc_brodka(n,2,anet=None,threshold=1),4./3.)
+        self.assertEqual(cc.lcc_brodka(n,3,anet=None,threshold=1),4./3.)
+        self.assertEqual(cc.lcc_brodka(n,4,anet=None,threshold=1),14./9.)
+        self.assertEqual(cc.lcc_brodka(n,1,anet=an,threshold=1),2./3.)
+        self.assertEqual(cc.lcc_brodka(n,2,anet=an,threshold=1),4./3.)
+        self.assertEqual(cc.lcc_brodka(n,3,anet=an,threshold=1),4./3.)
+        self.assertEqual(cc.lcc_brodka(n,4,anet=an,threshold=1),14./9.)
+
+        self.assertEqual(cc.lcc_brodka(n,1,anet=None,threshold=2),2./3.)
+        self.assertEqual(cc.lcc_brodka(n,2,anet=None,threshold=2),0.)
+        self.assertEqual(cc.lcc_brodka(n,3,anet=None,threshold=2),0.)
+        self.assertEqual(cc.lcc_brodka(n,4,anet=None,threshold=2),0.)
+        self.assertEqual(cc.lcc_brodka(n,1,anet=an,threshold=2),2./3.)
+        self.assertEqual(cc.lcc_brodka(n,2,anet=an,threshold=2),0.)
+        self.assertEqual(cc.lcc_brodka(n,3,anet=an,threshold=2),0.)
+        self.assertEqual(cc.lcc_brodka(n,4,anet=an,threshold=2),0.)
+
+        self.assertEqual(cc.lcc_brodka(n,1,anet=None,threshold=3),1./3.)
+        self.assertEqual(cc.lcc_brodka(n,2,anet=None,threshold=3),0.)
+        self.assertEqual(cc.lcc_brodka(n,3,anet=None,threshold=3),0.)
+        self.assertEqual(cc.lcc_brodka(n,4,anet=None,threshold=3),0.)
+        self.assertEqual(cc.lcc_brodka(n,1,anet=an,threshold=3),1./3.)
+        self.assertEqual(cc.lcc_brodka(n,2,anet=an,threshold=3),0.)
+        self.assertEqual(cc.lcc_brodka(n,3,anet=an,threshold=3),0.)
+        self.assertEqual(cc.lcc_brodka(n,4,anet=an,threshold=3),0.)
+
+    def test_directed_unweighted(self):
+        """The 3-layer multiplex networks example from Brodka et al. 'Analysis of Neighborhoods of in Multi-layered
+        Dynamic Social Networks', 2012"""
+        n=net.MultiplexNetwork(['categorical'],directed=True)
+
+        n['x','z',1]=1
+        n['x','y',1]=1
+        n['y','x',1]=1
+        n['y','z',1]=1
+        n['z','x',1]=1
+        n['z','t',1]=1
+        n['u','x',1]=1
+        n['u','z',1]=1
+        n['u','v',1]=1
+        n['v','u',1]=1
+        n['v','t',1]=1
+        n['t','z',1]=1
+        n['t','v',1]=1
+
+        n['x','u',2]=1
+        n['x','z',2]=1
+        n['x','v',2]=1
+        n['x','y',2]=1
+        n['z','x',2]=1
+        n['u','v',2]=1
+        n['v','u',2]=1
+        n['v','x',2]=1
+        n['v','y',2]=1
+
+        n['x','u',3]=1
+        n['x','z',3]=1
+        n['x','v',3]=1
+        n['x','y',3]=1
+        n['y','z',3]=1
+        n['y','v',3]=1
+        n['z','x',3]=1
+        n['z','y',3]=1
+        n['z','t',3]=1
+        n['u','x',3]=1
+        n['v','x',3]=1
+        n['v','t',3]=1
+        n['t','z',3]=1
+        n['t','v',3]=1
+
+        an=net.MultilayerNetwork(aspects=0,directed=True)
+
+        an['x','z']=3
+        an['x','u']=2
+        an['x','v']=2
+        an['x','y']=3
+        an['y','x']=1
+        an['y','z']=2
+        an['y','v']=1
+        an['z','x']=3
+        an['z','y']=1
+        an['z','t']=2
+        an['u','x']=2
+        an['u','z']=1
+        an['u','v']=2
+        an['v','x']=2
+        an['v','y']=1
+        an['v','u']=2
+        an['v','t']=2
+        an['t','z']=2
+        an['t','v']=2
+
+        self.assertEqual(cc.lcc_brodka(n,'t',threshold=1),0.0)
+        self.assertEqual(cc.lcc_brodka(n,'t',threshold=2),0.0)
+        self.assertEqual(cc.lcc_brodka(n,'t',threshold=3),0.0)
+        self.assertEqual(cc.lcc_brodka(n,'z',threshold=1),2./3.)
+        self.assertEqual(cc.lcc_brodka(n,'z',threshold=2),4./9.)
+        self.assertEqual(cc.lcc_brodka(n,'z',threshold=3),0.0)
+
+        self.assertEqual(cc.lcc_brodka(n,'t',anet=an,threshold=1),0.0)
+        self.assertEqual(cc.lcc_brodka(n,'t',anet=an,threshold=2),0.0)
+        self.assertEqual(cc.lcc_brodka(n,'t',anet=an,threshold=3),0.0)
+        self.assertEqual(cc.lcc_brodka(n,'z',anet=an,threshold=1),2./3.)
+        self.assertEqual(cc.lcc_brodka(n,'z',anet=an,threshold=2),4./9.)
+        self.assertEqual(cc.lcc_brodka(n,'z',anet=an,threshold=3),0.0)
 
     def test_unweighted_consistency(self,net):
         anet=transforms.aggregate(net,1)
@@ -347,8 +474,9 @@ def test_cc(consistency_tests=False):
     suite = unittest.TestSuite()    
     suite.addTest(TestCC("test_unweighted_flat_triangle"))
     suite.addTest(TestCC("test_unweighted_flat_simple"))
-    suite.addTest(TestCC("test_unweighted_mplex_triangle"))
+    suite.addTest(TestCC("test_unweighted_mplex_clique"))
     suite.addTest(TestCC("test_unweighted_mplex_simple"))
+    suite.addTest(TestCC("test_directed_unweighted"))
     suite.addTest(TestCC("test_unweighted_consistency_er"))
     suite.addTest(TestCC("test_normalization_full_mslice"))
     if consistency_tests:

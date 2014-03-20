@@ -1227,18 +1227,20 @@ def gcc_contraction_o2(net):
         return None
 
 
-def lcc_brodka_en(net,node,anet=None,threshold=1):
-    r"""The "multi-layered clustering coefficient in the extended neighborhood" defined
-    by Brodka et al.
+def lcc_brodka(net,node,anet=None,threshold=1):
+    r"""The "cross-layer clustering coefficient" defined by Brodka et al. 
 
-    The clustering coefficient for node :math:`u` is given by the formula:
+    The clustering coefficient for node :math:`u` is given by the formula (see Ref. [2]):
     
-    .. math:: c_{Br_{EN},u} = \frac{\sum_{\alpha \in L} \sum_{v \in EN(u)} \sum_{h \in EN(u)}( \mathcal{W}_{hv\alpha} + \mathcal{W}_{vh\alpha})}{2 |EN(u)| |L|},
+    .. math:: c_{Br,u,t} = \frac{\sum_{\alpha \in L} \sum_{v \in N(u,t)} \sum_{h \in N(u,t)}( \mathcal{W}_{hv\alpha} + \mathcal{W}_{vh\alpha})}{2 |N(u,t)| |L|},
 
-    where :math:`EN(u) = \cup_{\alpha \in L} N_\alpha(u)`, :math:`N_\alpha(i)` is the set of (in and out) neighbors of node :math:`u`
-    in the intra-layer network of layer :math:`\alpha`, and :math:`\mathcal{W}` is the rank-3 weighted adjacency tensor 
-    of the multiplex network.
+    where :math:`N(u,t) = \{ v : | \{\alpha : \mathcal{A}_{uv\alpha}=1 \wedge \mathcal{A}_{vu\alpha}=1 \}| \leq t \} `,  
+    :math:`L` is the set of layers,  :math:`\mathcal{W}` is the rank-3 weighted adjacency tensor of the multiplex network, 
+    and :math:`\mathcal{A}` is the rank-3 unweighted adjacency tensor of the multiplex network.
        
+    One can get the "multi-layered clustering coefficient in extendend neighborhood" by setting the threshold to one :math:`t=1`, and 
+    the "multi-layered clustering coefficient in reduced neighborhood" by setting the threshold to the total number of layers 
+    :math:`t=|L|`.
 
     Parameters
     ----------
@@ -1247,9 +1249,12 @@ def lcc_brodka_en(net,node,anet=None,threshold=1):
     node : any object
        The focal node. Given as the node index in the network.
     anet : MultilayerNetwork with aspects=0
-       The aggregated network. If given, it is used to speed up the calculation.
-    threshold : int
-       Threshold for number of layers, see Ref. [2]
+       The aggregated network. If given, it is used to speed up the calculation. NOTE: for undirected networks the
+       "normal" aggregation strategy (produced for example by the aggregate function in this library) is suitable,
+       but for directed networks the network needs to be aggregated such that thresholding it will produce the 
+       neighborhood sets :math:`N(u,t)`.
+    threshold : int, string
+       Threshold for number of layers, see Ref. [2]. If 'all', then the threshold is the total number of layers.
 
     Returns
     -------
@@ -1268,27 +1273,55 @@ def lcc_brodka_en(net,node,anet=None,threshold=1):
     Dynamic Social Networks. International Journal of Computational Intelligence Systems, 5(3):582-596,
     2012.
 
+    Notes
+    -----
+    This clustering coefficient doesn't return to the typical unweighted clustering coefficient when the edge weights
+    are binary. Further, it is not normalized in a way that it's values would be between 0 an 1. For example, consider
+    a full multiplex network with n nodes and arbitrary number of layers. In this case this clustering cofficient will
+    take value n-2 for all the nodes.
+
+    Multiplying all the weights by a constant c will cause the clustering coefficient values to be multiplied by c.
+
     See also
     --------
     lcc_aw : Local multiplex clustering coefficient defined by Cozzo et al.
     cc_barrett : Local multiplex clustering coefficient defined by Barrett et al.
     """
-    assert threshold==1, "This is still not implemented, sorry."
+    assert net.aspects==1
 
-    if anet==None:
-        en=set()
+    if threshold=='all':
+        threshold=len(net.get_layers())
+
+    thneighborhood=[]
+    if anet==None or net.directed:
+        neighborcount={}
         for layer in net.get_layers():
-            for neigh in net.A[layer][node]:
-                en.add(neigh)            
+            for neigh in net.A[layer][node].iter_total():
+                neighborcount[neigh]=neighborcount.get(neigh,0)+1            
+                thneighborhood=[]
+        for neighbor,count in neighborcount.iteritems():
+            if count >= threshold:
+                thneighborhood.append(neighbor)
     else:
-        en=anet[node]
-    
+        for neighbor in anet[node]:
+            if anet[node,neighbor]>=threshold:
+                thneighborhood.append(neighbor)
+
+    if len(thneighborhood)==0:
+        return 0.0
+
     s=0
-    for layer in net.get_layers():
-        for v in en:
-            for h in en:
-                s+=net[h,v,layer]+net[v,h,layer]
-    return s/float(2*len(en)*len(net.get_layers()))
+    if anet==None:
+        for layer in net.get_layers():
+            for v in thneighborhood:
+                for h in thneighborhood:
+                    s+=net[h,v,layer]+net[v,h,layer]
+    else:
+        for v in thneighborhood:
+            for h in thneighborhood:
+                s+=anet[h,v]+anet[v,h]
+
+    return s/float(2*len(thneighborhood)*len(net.get_layers()))
 
 
 
