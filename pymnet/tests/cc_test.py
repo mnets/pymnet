@@ -71,6 +71,10 @@ class TestCC(unittest.TestCase):
         self.assertEqual(cc.lcc_brodka(n,1,threshold=3,anet=an),1.0)
         self.assertEqual(cc.lcc_brodka(n,1,threshold='all',anet=an),1.0)
 
+        #Battiston et al.
+        self.assertEqual(cc.lcc_battiston1(n,1),3./2.) #(b-1)(n-1)/(n-2)
+        self.assertEqual(cc.lcc_battiston2(n,1),2./2.) #(b-2)(n-1)/(n-2)
+
         n,an=clique_net(7,4) # 7 nodes, 4 layers
 
         #Brodka et al.
@@ -82,6 +86,9 @@ class TestCC(unittest.TestCase):
         self.assertEqual(cc.lcc_brodka(n,1,threshold=3,anet=an),5.0)
         self.assertEqual(cc.lcc_brodka(n,1,threshold='all',anet=an),5.0)
 
+        #Battiston et al.
+        self.assertEqual(cc.lcc_battiston1(n,1),3.*5./6.) #(b-1)(n-1)/(n-2)
+        self.assertEqual(cc.lcc_battiston2(n,1),2.*5./6.) #(b-2)(n-1)/(n-2)
 
 
     def test_unweighted_mplex_simple(self):
@@ -477,11 +484,13 @@ def test_cc(consistency_tests=False):
     suite.addTest(TestCC("test_unweighted_mplex_clique"))
     suite.addTest(TestCC("test_unweighted_mplex_simple"))
     suite.addTest(TestCC("test_directed_unweighted"))
+
     suite.addTest(TestCC("test_unweighted_consistency_er"))
     suite.addTest(TestCC("test_normalization_full_mslice"))
     if consistency_tests:
         suite.addTest(TestCC("test_consistency_mslice_er"))
         suite.addTest(TestCC("test_unweighted_nonglobalnodes_consistency_er"))
+
     unittest.TextTestRunner().run(suite) 
 
 if __name__ == '__main__':
