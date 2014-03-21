@@ -1455,3 +1455,66 @@ def lcc_battiston2(net,node,undefReturn=0.0):
                                         if net[node,v,alpha] != net.noEdge and net[v,h,gamma] != net.noEdge and net[h,node,beta] != net.noEdge:
                                             s+=1
     return s/float(d)
+
+
+
+def lcc_criado(net,node,undefReturn=0.0,anet=None):
+    r"""The local clustering coefficient defined by Criado et al.
+
+    The clustering coefficient for node :math:`u` is given by the formula (see Ref. [1]):
+    
+    .. math:: c_{Cr,u} = \frac{2 \sum_{\alpha \in L} | \bar{E_\alpha}(u) | }{\sum_{\alpha \in L} |\Gamma_\alpha (u)| (|\Gamma_\alpha (u) -1|)}
+
+    where :math:`L` is the set of layers, :math:`\Gamma_\alpha (u)=\Gamma (u) \cap V_\alpha`, where :math:`\Gamma (u)` is the set of neighbors
+    of node :math:`u` in the aggregated network and :math:`V_\alpha` is the set of nodes in layer :math:`\alpha`, and \bar{E_\alpha}(u) is the
+    set of edges in the subgraph of the aggregated network spanned by :math:`\Gamma_\alpha (u)`.
+
+    lcc_criado is only defined for a single-aspect multiplex network. The network doesn't need to be node-aligned.
+       
+    Parameters
+    ----------
+    net : MultiplexNetwork with aspects=1
+       The input network.
+    node : any object
+       The focal node. Given as the node index in the network.
+
+    Returns
+    -------
+    float or object
+       The clustering coefficient value, or the undefReturn value if the clustering
+       coefficient is not defined for the node.
+
+    References
+    ----------
+    [1] "A mathematical model for networks with structures in the mesoscale", R. Criado, J. Flores, A. Garcia del Amo,
+    J. Gomez-Gardenes, and M. Romance, Int. J. Comp. Math., 89(3):291-309 (2011)
+
+    See also
+    --------
+    lcc_aw : Local multiplex clustering coefficient defined by Cozzo et al.
+    cc_barrett : Local multiplex clustering coefficient defined by Barrett et al.
+    """
+    s,d=0,0
+    
+    if anet==None:
+        nu=set()
+        for alpha in net.get_layers():
+            for neigh in net.A[alpha][node]:
+                nu.add(neigh)
+    else:
+        nu=set(anet[node])
+
+    for alpha in net.get_layers():
+        nalphau=nu.intersection(set(net.A[alpha]))
+        for neighbor1 in nalphau:
+            for neighbor2 in net.A[alpha][neighbor1]:
+                if neighbor2 in nalphau:
+                    s+=1
+        d+=len(nalphau)*(len(nalphau)-1)
+    
+    if d==0:
+        return undefReturn
+    else:
+        return s/float(d)
+        
+
