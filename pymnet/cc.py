@@ -1354,6 +1354,11 @@ def lcc_battiston1(net,node,undefReturn=0.0):
     [1] "Metrics for the analysis of multiplex networks", Federico Battiston, Vincenzo Nicosia, Vito Latora,
     arXiv:1308.3182v2 (2013)
 
+    Notes
+    -----
+    lcc_battiston1 is not normalized such that it would take values between 0 and 1. For example, for full multiplex
+    networks with n nodes and b layers it takes values (b-1)(n-1)/(n-2).
+
     See also
     --------
     lcc_aw : Local multiplex clustering coefficient defined by Cozzo et al.
@@ -1418,6 +1423,11 @@ def lcc_battiston2(net,node,undefReturn=0.0):
     ----------
     [1] "Metrics for the analysis of multiplex networks", Federico Battiston, Vincenzo Nicosia, Vito Latora,
     arXiv:1308.3182v2 (2013)
+
+    Notes
+    -----
+    lcc_battiston2 is not normalized such that it would take values between 0 and 1. For example, for full multiplex
+    networks with n nodes and b layers it takes values (b-2)(n-1)/(n-2).
 
     See also
     --------

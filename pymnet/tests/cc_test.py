@@ -491,13 +491,11 @@ def test_cc(consistency_tests=False):
     suite.addTest(TestCC("test_unweighted_mplex_clique"))
     suite.addTest(TestCC("test_unweighted_mplex_simple"))
     suite.addTest(TestCC("test_directed_unweighted"))
-    """
     suite.addTest(TestCC("test_unweighted_consistency_er"))
     suite.addTest(TestCC("test_normalization_full_mslice"))
     if consistency_tests:
         suite.addTest(TestCC("test_consistency_mslice_er"))
         suite.addTest(TestCC("test_unweighted_nonglobalnodes_consistency_er"))
-    """
     unittest.TextTestRunner().run(suite) 
 
 if __name__ == '__main__':
