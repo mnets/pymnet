@@ -94,7 +94,7 @@ Clustering coefficients
   cc_onnela
   cc_barrat
   cc_barrett
-  lcc_brodka_en
+  lcc_brodka
   cc_sequence  
   lcc_aw
   avg_lcc_aw
