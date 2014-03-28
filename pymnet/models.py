@@ -59,9 +59,9 @@ def single_layer_conf(net,degs,degstype="distribution"):
     else:
         raise Exception("Invalid degstype: '"+str(degstype)+"'")
     
-    # Check that the degree distribution is valid
+    # Here we should do the Erdos-Gallai test
     assert nstubs%2==0
-    assert nodes <= nstubs
+    assert (nodes*(nodes-1)) >= nstubs
 
     random.shuffle(stubs)
 
