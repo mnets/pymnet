@@ -1,5 +1,6 @@
 import unittest
 from operator import itemgetter
+import math
 
 import sys
 sys.path.append("../../")
@@ -58,11 +59,39 @@ class TestModels(unittest.TestCase):
         net=models.conf({50:100})
         self.assertEqual(diagnostics.degs(net),{50:100})
 
+        #zero degrees
+        net=models.conf({50:100,0:10})
+        self.assertEqual(diagnostics.degs(net),{50:100,0:10})
+
+        net=models.conf(dict(map(lambda x:(x,int(math.sqrt(x)+1)),range(101))),degstype="nodes")
+        for i in range(101):
+            self.assertEqual(net[i].deg(),int(math.sqrt(i)+1))
+
+        #zero degrees
+        net=models.conf(dict(map(lambda x:(x,int(math.sqrt(x))),range(99))),degstype="nodes")
+        for i in range(99):
+            self.assertEqual(net[i].deg(),int(math.sqrt(i)))
+
+        net=models.conf(net)
+        for i in range(99):
+            self.assertEqual(net[i].deg(),int(math.sqrt(i)))
+
+    def test_multiplex_configuration_model(self):
+        net=models.conf([{50:100},{50:100}])
+        self.assertEqual(diagnostics.multiplex_degs(net),{0:{50:100},1:{50:100}})
+
+        net=models.conf({"l1":{50:100},"l2":{50:100}})
+        self.assertEqual(diagnostics.multiplex_degs(net),{"l1":{50:100},"l2":{50:100}})
+
+        net=models.conf(net)
+        self.assertEqual(diagnostics.multiplex_degs(net),{"l1":{50:100},"l2":{50:100}})
+
 def test_models():
     suite = unittest.TestSuite()    
     suite.addTest(TestModels("test_monoplex_erdosrenyi"))
     suite.addTest(TestModels("test_multiplex_erdosrenyi"))
     suite.addTest(TestModels("test_monoplex_configuration_model"))
+    suite.addTest(TestModels("test_multiplex_configuration_model"))
 
     unittest.TextTestRunner().run(suite) 
 

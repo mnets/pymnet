@@ -4,16 +4,20 @@
 from net import MultilayerNetwork,MultiplexNetwork
 import math,random
 
-def single_layer_conf(net,degs):
+def single_layer_conf(net,degs,degstype="distribution"):
     """Generates a realization of configuration model network.
 
     Parameters
     ----------
     net : MultilayerNetwork with aspects=0
        Empty network object that is to be filled.
-    deg : dict 
-       The degree distribution. Keys are degrees, and corresponding
-       values are number of nodes with the given degree.
+    degs : dict 
+       Degrees of the network. See degstype parameter.
+    degstype : string
+       If 'distribution', then degs parameter gives the degree distribution. I.e.,
+       keys are degrees, and corresponding values are number of nodes with the given degree.
+       If 'nodes', then degs paramater gives node degres. I.e, keys are node names and
+       corresponding values are degrees of those nodes.
 
     Notes
     -----
@@ -26,19 +30,39 @@ def single_layer_conf(net,degs):
     sampled networks are not exactly statistically uniform. However, if the degrees 
     are small compared to the number of nodes the error is likely to be small.
     """
-    assert sum(map(lambda x:x[0]*x[1],degs.items()))%2==0
     stubs=[]
     selfedges={}
     multiedges=set()
     edgetoindex={}
-    nodes=sum(degs.values())
 
-    node=0
-    for k,num in degs.items():
-        for i in range(num):
-            for j in range(k):
+    if degstype=="distribution":
+        nstubs=sum(map(lambda x:x[0]*x[1],degs.items()))
+        nodes=sum(degs.values())
+        node=0
+        for k,num in degs.items():
+            for i in range(num):
+                for j in range(k):
+                    stubs.append(node)
+                node+=1
+            if k==0:
+                for i in range(num):
+                    net.add_node(node)
+                    node+=1
+    elif degstype=="nodes":
+        nstubs=sum(degs.values())
+        nodes=len(degs)
+        for node,k in degs.iteritems():
+            for i in range(k):
                 stubs.append(node)
-            node+=1
+            if k==0:
+                net.add_node(node)
+    else:
+        raise Exception("Invalid degstype: '"+str(degstype)+"'")
+    
+    # Check that the degree distribution is valid
+    assert nstubs%2==0
+    assert nodes <= nstubs
+
     random.shuffle(stubs)
 
     for s in range(len(stubs)/2):
@@ -162,17 +186,25 @@ def single_layer_er(net,nodes,p=None,edges=None):
             w=edge_index-(v*(v-1))/2
             net[nodes[v],nodes[w]]=1
 
-def conf(degs,aspects=0,couplings=("categorical",1.0)):
-    """Independent configuration models for fully interconnected multiplex networks.
+def conf(degs,degstype="distribution",couplings=("categorical",1.0)):
+    """Independent configuration model for multiplex networks.
 
     Parameters
     ----------
-    degs : dict or sequence of dicts
-      If a monoplex network, then a single dict where keys are the
-      degrees and values give the number of nodes. If more aspects,
-      then degs is a sequence of same type of dictionaries.
-    aspectes : int 
-       Number of aspects in the network, 0 or 1.
+    degs : dict, dict of dicts, list of dicts, MultiplexNetwork, MultilayerNetwork
+       Degrees. If dict, a monoplex network is returned. If dict of dicts, a multiplex network with
+       keys as layer names is returned. If list of dicts, then a multiplex network with a layer for
+       each element in the list is returned. See degstype parameter for the decscription of the dict
+       used for describing intra-layer networks. If MultiplexNetwork (with 1 aspect) or MultilayerNetwork 
+       (with 0 aspects) object is given then a copy of that network is produced with configuration
+       model.
+
+    degstype : string
+       If 'distribution', then degs dicts give the degree distributions. I.e.,
+       keys are degrees, and corresponding values are number of nodes with the given degree.
+       If 'nodes', then degs dicts give node degrees. I.e, keys are node names and
+       corresponding values are degrees of those nodes.
+
     couplings : tuple
        The coupling types of the multiplex network object.
 
@@ -188,20 +220,56 @@ def conf(degs,aspects=0,couplings=("categorical",1.0)):
 
 
     """
-    if aspects==0:
-        net=MultilayerNetwork(aspects=aspects)
-        single_layer_conf(net,degs)
-    elif aspects==1:
-        nodes=None
-        for ldegs in degs:
-            assert nodes==None or sum(ldegs.values())==nodes, "Number of nodes in layers differ."
-            nodes=sum(ldegs.values())
-        net=MultiplexNetwork(couplings=aspects*[couplings])
-        for l,ldegs in enumerate(degs):
+    if isinstance(degs,MultiplexNetwork):
+        assert degs.aspects==1
+        d={}
+        for layer in degs.iter_layers():
+            dd={}
+            d[layer]=dd
+            for node in degs.A[layer]:
+                dd[node]=degs.A[layer][node].deg()
+        return conf(d,degstype="nodes")
+    elif isinstance(degs,MultilayerNetwork):
+        assert degs.aspects==0
+        d={}
+        for node in degs:
+            d[node]=degs[node].deg()
+        return conf(d,degstype="nodes")
+    elif isinstance(degs,dict) and not isinstance(degs.itervalues().next(),dict):
+        net=MultilayerNetwork(aspects=0)
+        single_layer_conf(net,degs,degstype=degstype)
+    else:        
+        #check if the network is going to be node-aligned
+        namedlayers=isinstance(degs,dict)
+        if namedlayers:
+            degslist=degs.values()
+        else:
+            degslist=degs
+        nnodes=None
+        nodeAligned=True
+        if degstype=="distribution":
+            for ldegs in degslist:
+                lnnodes=sum(ldegs.values())
+                if nnodes!=None and lnnodes!=nnodes:
+                    nodeAligned=False
+                nnodes=lnnodes
+        elif degstype=="nodes":
+            for ldegs in degslist:
+                lnnodes=set(ldegs.keys())
+                if nnodes!=None and lnnodes!=nnodes:
+                    nodeAligned=False
+                nnodes=lnnodes
+        else:
+            raise Exception()
+
+        net=MultiplexNetwork(couplings=[couplings],fullyInterconnected=nodeAligned)
+        if namedlayers:
+            layers=degs.iteritems()
+        else:
+            layers=enumerate(degs)
+        for l,ldegs in layers:
             net.add_layer(l)
-            single_layer_conf(net.A[l],ldegs)
-    else:
-        raise Exception("0 or 1 aspects, please.")
+            single_layer_conf(net.A[l],ldegs,degstype=degstype)
 
     return net
 
