@@ -648,12 +648,48 @@ class TestNet(unittest.TestCase):
         self.assertEqual(n[4,4,'c',:].str(),0)
         self.assertEqual(n[5,5,'c',:].str(),2)
 
+    def test_flat_equal(self):
+        n1=net.MultilayerNetwork(aspects=0)
+        n2=net.MultilayerNetwork(aspects=0)
+        self.assertTrue(n1==n2)
+        n1[1,2]=1
+        self.assertTrue(n1!=n2)
+        n2[1,2]=1.0
+        self.assertTrue(n1==n2)
+        n1.add_node(3)
+        self.assertTrue(n1!=n2)
 
+    def test_2dim_equal(self):
+        n1=net.MultilayerNetwork(aspects=2)
+        n2=net.MultilayerNetwork(aspects=2)
+        self.assertTrue(n1==n2)
+        n1[1,2,'a','x']=1
+        self.assertTrue(n1!=n2)
+        n2[1,2,'a','x']=1
+        self.assertTrue(n1==n2)
+        n1.add_node(3)
+        self.assertTrue(n1!=n2)
+
+    def test_mplex_equal(self):
+        n1=net.MultiplexNetwork(couplings=["categorical","categorical"])
+        n2=net.MultiplexNetwork(couplings=["categorical","categorical"])
+        n3=net.MultiplexNetwork(couplings=["categorical","none"])
+        self.assertTrue(n1==n2)
+        self.assertTrue(n1!=n3)
+        n1[1,2,'a','x']=1
+        self.assertTrue(n1!=n2)
+        n2[1,2,'a','x']=1
+        self.assertTrue(n1==n2)
+        n1.add_node(3)
+        self.assertTrue(n1!=n2)
 
 def test_net():
     suite = unittest.TestSuite()    
     suite.addTest(TestNet("test_flat_mnet"))
     suite.addTest(TestNet("test_flat_directed_mnet"))
+    suite.addTest(TestNet("test_flat_equal"))
+    suite.addTest(TestNet("test_2dim_equal"))
+    suite.addTest(TestNet("test_mplex_equal"))
     suite.addTest(TestNet("test_simple_couplings_mnet"))
     suite.addTest(TestNet("test_simple_couplings_categorical_mplex"))
     suite.addTest(TestNet("test_simple_couplings_ordinal_mplex"))

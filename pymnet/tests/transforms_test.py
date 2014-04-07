@@ -10,10 +10,6 @@ from pymnet import net,transforms
 class TestTransforms(unittest.TestCase):
     
     def setUp(self):
-        pass
-
-
-    def test_aggregate_unweighted_mplex_simple(self):
         n=net.MultiplexNetwork([('categorical',1.0)])
 
         n[1,2,1]=1
@@ -30,7 +26,11 @@ class TestTransforms(unittest.TestCase):
         n[1,4,3]=1
         n[2,4,3]=1
 
-        an=transforms.aggregate(n,1)
+        self.mplex_simple=n
+
+
+    def test_aggregate_unweighted_mplex_simple(self):
+        an=transforms.aggregate(self.mplex_simple,1)
         self.assertEqual(an[1,2],3)
         self.assertEqual(an[1,3],3)
         self.assertEqual(an[1,4],2)
@@ -75,10 +75,19 @@ class TestTransforms(unittest.TestCase):
         self.assertEqual(an2[1,3,'c'],2)
         self.assertEqual(an2[2,3,'c'],1)
 
+
+    def test_subnet_mplex_simple(self):
+        copynet=transforms.subnet(self.mplex_simple,[1,2,3,4],[1,2,3])
+        self.assertEqual(copynet,self.mplex_simple)
+        import copy
+        copynet2=copy.deepcopy(self.mplex_simple)
+        self.assertEqual(copynet2,self.mplex_simple)
+
 def test_transforms():
     suite = unittest.TestSuite()    
     suite.addTest(TestTransforms("test_aggregate_unweighted_mplex_simple"))
     suite.addTest(TestTransforms("test_aggregate_2dim_mplex"))
+    suite.addTest(TestTransforms("test_subnet_mplex_simple"))
 
     unittest.TextTestRunner().run(suite) 
 
