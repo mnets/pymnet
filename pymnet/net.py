@@ -144,6 +144,20 @@ class MultilayerNetwork(object):
     def __len__(self):
         return len(self.slices[0])
 
+    def __eq__(self,other):
+        if not self.fullyInterconnected:
+            raise NotImplemented()
+        if type(self) is type(other):
+            if self.directed == other.directed and self.directed==other.directed and self.aspects==other.aspects and self.fullyInterconnected == other.fullyInterconnected and self.noEdge == other.noEdge and self.slices==other.slices:
+                if len(self.edges) ==len(other.edges):
+                    for edge in self.edges:
+                        if self[edge[:-1]]!=other[edge[:-1]]:
+                            return False
+                    return True
+        return False
+    def __ne__(self,other):
+        return not self.__eq__(other)
+
     def add_node(self,node):
         """Adds an empty node to the network.
 
@@ -1011,6 +1025,17 @@ class MultiplexNetwork(MultilayerNetwork):
             else:
                 for n in self._iter_dim(node,d,direction="out"):
                     yield n
+
+    def __eq__(self,other):
+        if not self.fullyInterconnected:
+            raise NotImplemented()
+        if type(self) is type(other):
+            if self.directed == other.directed and self.directed==other.directed and self.aspects==other.aspects and self.fullyInterconnected == other.fullyInterconnected and self.noEdge == other.noEdge and self.slices==other.slices and self.couplings == other.couplings:
+                for layer in self.iter_layers():
+                    if self.A[layer]!=other.A[layer]:
+                        return False
+                return True
+        return False
 
 class FlatMultilayerNetworkView(MultilayerNetwork):
     """
