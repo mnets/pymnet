@@ -86,6 +86,12 @@ class TestModels(unittest.TestCase):
         net=models.conf(net)
         self.assertEqual(diagnostics.multiplex_degs(net),{"l1":{50:100},"l2":{50:100}})
 
+        degs={"l1":dict(map(lambda x:(x,2*int(math.sqrt(x))),range(100))),"l2":dict(map(lambda x:(x,2*int(math.sqrt(x))),range(20,120)))}
+        net=models.conf(degs,degstype="nodes")
+        self.assertEqual(diagnostics.multiplex_degs(net,degstype="nodes"),degs)
+        self.assertEqual(set(net.A["l1"]),set(range(100)))
+        self.assertEqual(set(net.A["l2"]),set(range(20,120)))
+
 def test_models():
     suite = unittest.TestSuite()    
     suite.addTest(TestModels("test_monoplex_erdosrenyi"))

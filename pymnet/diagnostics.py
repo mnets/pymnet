@@ -1,12 +1,30 @@
 from net import *
 
-def degs(net):
+def degs(net,degstype="distribution"):
     """Returns the degree distribution of a multilayer network.
+
+    Parameters
+    ----------
+    net : MultilayerNetwork
+       A multilayer network object.
+
+    degstype : string
+       If 'distribution', then degs dicts give the degree distributions. I.e.,
+       keys are degrees, and corresponding values are number of nodes with the given degree.
+       If 'nodes', then degs dicts give node degrees. I.e, keys are node names and
+       corresponding values are degrees of those nodes.
+
     """
     degs={}
-    for node in net:
-        d=net[node].deg()
-        degs[d]=degs.get(d,0)+1
+    if degstype=="distribution":
+        for node in net:
+            d=net[node].deg()
+            degs[d]=degs.get(d,0)+1
+    elif degstype=="nodes":
+        for node in net:
+            degs[node]=net[node].deg()
+    else:
+        raise Exception("Invalid degstype parameter.")
     return degs
 
 def density(net):
@@ -40,12 +58,24 @@ def multiplex_density(net):
         d[layer]=density(net.A[layer])
     return d
 
-def multiplex_degs(net):
+def multiplex_degs(net,degstype="distribution"):
     """Returns a dictionary of degree distributions of each intra-layer network of a multiplex network.
+    
+    Parameters
+    ----------
+    net : MultiplexNetwork
+       A multiplex network object.
+
+    degstype : string
+       If 'distribution', then degs dicts give the degree distributions. I.e.,
+       keys are degrees, and corresponding values are number of nodes with the given degree.
+       If 'nodes', then degs dicts give node degrees. I.e, keys are node names and
+       corresponding values are degrees of those nodes.
+
     """
     assert isinstance(net,MultiplexNetwork)
     
     d={}
     for layer in net.iter_layers():
-        d[layer]=degs(net.A[layer])
+        d[layer]=degs(net.A[layer],degstype=degstype)
     return d
