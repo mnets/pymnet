@@ -683,6 +683,61 @@ class TestNet(unittest.TestCase):
         n1.add_node(3)
         self.assertTrue(n1!=n2)
 
+    def test_node_iterators_mlayer(self,empty_net,net_type="mlayer"):
+        """ Tests node iterators (iter_nodes, iter_node_layers). 
+
+        Empty network with 0, 1 or 2 aspects must be given as an input. The 
+        network can be node-aligned or not.
+        """
+        n=empty_net
+        if n.aspects==0:
+            n.add_node(1)
+            n.add_node(2)
+            n[3,4]=1
+            self.assertEqual(set(n.iter_nodes()),set([1,2,3,4]))
+        elif n.aspects==1:
+            n.add_layer(1)
+            n.add_layer(2)
+            n.add_node(4,layer=1)
+            n.add_node(5,layer=1)
+            n.add_node(6,layer=2)
+            n.add_node(7,layer=2)
+            n[4,7,1]=1
+            n[7,8,3]=1
+            if net_type=="mlayer":
+                n[9,10,1,2]=1
+            elif net_type=="mplex":
+                n.A[1].add_node(9)
+                n.A[2][10,7]=1
+
+            if n.fullyInterconnected:
+                for l in range(1,4):
+                    self.assertEqual(set(n.iter_nodes(layer=l)),set([4,5,6,7,8,9,10]))
+            else:
+                self.assertEqual(set(n.iter_nodes(layer=1)),set([4,5,7,9]))
+                self.assertEqual(set(n.iter_nodes(layer=2)),set([6,7,10]))
+                self.assertEqual(set(n.iter_nodes(layer=3)),set([7,8]))
+
+        elif n.aspects==2:
+            pass
+        else:
+            raise Exception()
+
+    def test_node_iterators_all(self):
+        """ Tests node iterators (iter_nodes, iter_node_layers) for all network types. """
+        self.test_node_iterators_mlayer(net.MultilayerNetwork(aspects=0))
+        self.test_node_iterators_mlayer(net.MultilayerNetwork(aspects=1,fullyInterconnected=True))
+        self.test_node_iterators_mlayer(net.MultilayerNetwork(aspects=1,fullyInterconnected=False))
+        self.test_node_iterators_mlayer(net.MultilayerNetwork(aspects=2,fullyInterconnected=True))
+        self.test_node_iterators_mlayer(net.MultilayerNetwork(aspects=2,fullyInterconnected=False))
+
+        """
+        self.test_node_iterators(net.MultiplexNetwork(couplings='none',fullyInterconnected=True),net_type="mplex")
+        self.test_node_iterators(net.MultiplexNetwork(couplings='none',fullyInterconnected=False),net_type="mplex")
+        self.test_node_iterators(net.MultiplexNetwork(couplings=['none','none'],fullyInterconnected=True),net_type="mplex")
+        self.test_node_iterators(net.MultiplexNetwork(couplings=['none','none'],fullyInterconnected=False),net_type="mplex")
+        """
+
 def test_net():
     suite = unittest.TestSuite()    
     suite.addTest(TestNet("test_flat_mnet"))
@@ -702,6 +757,7 @@ def test_net():
     suite.addTest(TestNet("test_simple_couplings_cmnet_nonglobalnodes"))
     suite.addTest(TestNet("test_ordinal_couplings_mplex"))
     suite.addTest(TestNet("test_ordinal_couplings_mlayer"))
+    suite.addTest(TestNet("test_node_iterators_all"))
     unittest.TextTestRunner().run(suite) 
 
 if __name__ == '__main__':
