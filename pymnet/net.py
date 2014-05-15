@@ -715,6 +715,8 @@ MultilayerNetwork.edges=property(MultilayerEdges)
 class MultilayerNetworkWithParent(MultilayerNetwork):
     def _set_parent(self,parent):
         self.parent=parent
+        if parent.fullyInterconnected:
+            self.slices[0]=parent.slices[0]
     def _set_name(self,name):
         self._name=name
         if len(name)==1:

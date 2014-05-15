@@ -577,6 +577,11 @@ class TestNet(unittest.TestCase):
         n.A['b'].add_node(5)
         n.A['c'].add_node(5)
 
+        #Test the listing the nodes in intra-layer networks
+        self.assertEqual(set(n.A['a']),set([1,2,4,5]))
+        self.assertEqual(set(n.A['b']),set([1,2,4,5]))
+        self.assertEqual(set(n.A['c']),set([2,3,5]))
+
         #Tests for edge getters
         self.assertEqual(n[1,1,'a','b'],1)
         self.assertEqual(n[1,1,'a','c'],0)
@@ -738,6 +743,17 @@ class TestNet(unittest.TestCase):
         self.test_node_iterators(net.MultiplexNetwork(couplings=['none','none'],fullyInterconnected=False),net_type="mplex")
         """
 
+    def test_mplex_intralayer_nets(self):
+        n=net.MultiplexNetwork(fullyInterconnected=True)
+        n[1,2,"a"]=1
+        n.A["a"].add_node(3)
+        n[4,5,"b"]=1
+        n.A["b"].add_node(6)
+
+        self.assertEqual(set(n.A["a"]),set([1,2,3,4,5,6]))
+        self.assertEqual(set(n.A["b"]),set([1,2,3,4,5,6]))
+
+
 def test_net():
     suite = unittest.TestSuite()    
     suite.addTest(TestNet("test_flat_mnet"))
@@ -758,6 +774,7 @@ def test_net():
     suite.addTest(TestNet("test_ordinal_couplings_mplex"))
     suite.addTest(TestNet("test_ordinal_couplings_mlayer"))
     suite.addTest(TestNet("test_node_iterators_all"))
+    suite.addTest(TestNet("test_mplex_intralayer_nets"))
     unittest.TextTestRunner().run(suite) 
 
 if __name__ == '__main__':
