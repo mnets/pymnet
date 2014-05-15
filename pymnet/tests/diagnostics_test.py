@@ -38,12 +38,17 @@ class TestDiagnostics(unittest.TestCase):
         self.create_chain(net.A[3])
 
         self.assertEqual(diagnostics.multiplex_density(net),{1:0.5,2:0,3:0.5})
-        self.assertEqual(diagnostics.multiplex_degs(net),{1:{1:2,2:2},2:{},3:{1:2,2:2}})
+        if net.fullyInterconnected:
+            self.assertEqual(diagnostics.multiplex_degs(net),{1:{1:2,2:2},2:{0:4},3:{1:2,2:2}})
+        else:
+            self.assertEqual(diagnostics.multiplex_degs(net),{1:{1:2,2:2},2:{},3:{1:2,2:2}})
 
     def test_multiplex_density_degs_mnet(self):
         n=net.MultiplexNetwork(couplings='none',directed=False)        
         self.test_multiplex_density_degs(n)
         n=net.MultiplexNetwork(couplings='categorical',directed=False)        
+        self.test_multiplex_density_degs(n)
+        n=net.MultiplexNetwork(couplings='none',directed=False,fullyInterconnected=False)        
         self.test_multiplex_density_degs(n)
 
 def test_diagnostics():
