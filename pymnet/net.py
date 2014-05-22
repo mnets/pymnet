@@ -491,11 +491,11 @@ class MultilayerNetwork(object):
                 yield nl
         else:
             if self.aspects==1:
-                for layer in self.iter_layers(self):
+                for layer in self.iter_layers():
                     for node in self.iter_nodes(layer=layer):
                         yield (node,layer)
             else:
-                for layer in self.iter_layers(self):
+                for layer in self.iter_layers():
                     for node in self.iter_nodes(layer=layer):
                         yield (node,)+layer
 
@@ -961,8 +961,10 @@ class MultiplexNetwork(MultilayerNetwork):
                 return self.couplings[aspect-1][0][supernode[aspect]].deg_in()
             elif direction=="out":
                 return self.couplings[aspect-1][0][supernode[aspect]].deg_out()
+        elif coupling_type=="none":
+            return 0
         else:
-            raise NotImplemented()
+            raise Exception("Coupling '"+str(coupling_type)+"' not implemented.")
 
     def _get_dim_strength(self,node,aspect,direction="tot"):
         coupling_str=self.couplings[aspect-1][1]
@@ -1136,7 +1138,7 @@ class MultiplexNetwork(MultilayerNetwork):
 
         If a layer is given then returns nodes in that layer.
         """
-        if self.fullyInterconnected or layers==None:
+        if self.fullyInterconnected or layer==None:
             for node in self.slices[0]:
                 yield node
         else:
