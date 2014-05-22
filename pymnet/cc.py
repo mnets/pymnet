@@ -1359,7 +1359,7 @@ def lcc_battiston1(net,node,undefReturn=0.0):
     Notes
     -----
     lcc_battiston1 is not normalized such that it would take values between 0 and 1. For example, for full multiplex
-    networks with n nodes and b layers it takes values (b-1)(n-1)/(n-2).
+    networks with n nodes and b layers it takes values (n-1)/(n-2).
 
     See also
     --------
@@ -1392,7 +1392,8 @@ def lcc_battiston1(net,node,undefReturn=0.0):
                             if h!=node:
                                 if net[node,v,alpha] != net.noEdge and net[v,h,beta] != net.noEdge and net[h,node,alpha] != net.noEdge:
                                     s+=1
-    return s/float(d)
+    b=len(net.get_layers())
+    return s/float(d)/float(b-1)
 
 
 
@@ -1429,7 +1430,7 @@ def lcc_battiston2(net,node,undefReturn=0.0):
     Notes
     -----
     lcc_battiston2 is not normalized such that it would take values between 0 and 1. For example, for full multiplex
-    networks with n nodes and b layers it takes values (b-2)(n-1)/(n-2).
+    networks with n nodes and b layers it takes values (n-1)/(n-2).
 
     See also
     --------
@@ -1468,7 +1469,8 @@ def lcc_battiston2(net,node,undefReturn=0.0):
                                     if h!=node:
                                         if net[node,v,alpha] != net.noEdge and net[v,h,gamma] != net.noEdge and net[h,node,beta] != net.noEdge:
                                             s+=1
-    return s/float(d)
+    b=len(net.get_layers())                                       
+    return s/float(d)/float(b-2)
 
 
 
