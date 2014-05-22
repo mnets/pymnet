@@ -1438,7 +1438,9 @@ def lcc_battiston2(net,node,undefReturn=0.0):
     """
 
     assert net.aspects==1
-    assert len(net.get_layers())>=3
+
+    if len(net.get_layers())<3:
+        return undefReturn
 
     d=0
     for alpha in net.get_layers():
