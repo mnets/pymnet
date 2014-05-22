@@ -72,8 +72,10 @@ class TestCC(unittest.TestCase):
         self.assertEqual(cc.lcc_brodka(n,1,threshold='all',anet=an),1.0)
 
         #Battiston et al.
-        self.assertEqual(cc.lcc_battiston1(n,1),3./2.) #(b-1)(n-1)/(n-2)
-        self.assertEqual(cc.lcc_battiston2(n,1),2./2.) #(b-2)(n-1)/(n-2)
+        #self.assertEqual(cc.lcc_battiston1(n,1),3./2.) #(b-1)(n-1)/(n-2)
+        #self.assertEqual(cc.lcc_battiston2(n,1),2./2.) #(b-2)(n-1)/(n-2)
+        self.assertEqual(cc.lcc_battiston1(n,1),3./6.) #(n-1)/(n-2)
+        self.assertEqual(cc.lcc_battiston2(n,1),2./4.) #(n-1)/(n-2)
 
         #Criado et al.
         self.assertEqual(cc.lcc_criado(n,1),1.)
@@ -91,8 +93,10 @@ class TestCC(unittest.TestCase):
         self.assertEqual(cc.lcc_brodka(n,1,threshold='all',anet=an),5.0)
 
         #Battiston et al.
-        self.assertEqual(cc.lcc_battiston1(n,1),3.*5./6.) #(b-1)(n-1)/(n-2)
-        self.assertEqual(cc.lcc_battiston2(n,1),2.*5./6.) #(b-2)(n-1)/(n-2)
+        #self.assertEqual(cc.lcc_battiston1(n,1),3.*5./6.) #(b-1)(n-1)/(n-2)
+        #self.assertEqual(cc.lcc_battiston2(n,1),2.*5./6.) #(b-2)(n-1)/(n-2)
+        self.assertEqual(cc.lcc_battiston1(n,1),3.*5./18.) #(n-1)/(n-2)
+        self.assertEqual(cc.lcc_battiston2(n,1),2.*5./12.) #(n-1)/(n-2)
 
         #Criado et al.
         self.assertEqual(cc.lcc_criado(n,1),1.)
