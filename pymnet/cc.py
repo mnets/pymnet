@@ -1227,7 +1227,7 @@ def gcc_contraction_o2(net):
         return None
 
 
-def lcc_brodka(net,node,anet=None,threshold=1):
+def lcc_brodka(net,node,anet=None,threshold=1,undefReturn=0.0):
     r"""The "cross-layer clustering coefficient" defined by Brodka et al. 
 
     The clustering coefficient for node :math:`u` is given by the formula (see Ref. [2]):
@@ -1320,8 +1320,10 @@ def lcc_brodka(net,node,anet=None,threshold=1):
             for h in thneighborhood:
                 s+=anet[h,v]+anet[v,h]
 
-    return s/float(2*len(thneighborhood)*len(net.get_layers()))
-
+    if len(thneighborhood)*len(net.get_layers())==0:
+        return undefReturn
+    else:
+        return s/float(2*len(thneighborhood)*len(net.get_layers()))
 
 
 
