@@ -3,6 +3,9 @@ from net import *
 def degs(net,degstype="distribution"):
     """Returns the degree distribution of a multilayer network.
 
+    If the network has more than 1 aspect the degree distribution is returned for
+    node-layer tuples.
+
     Parameters
     ----------
     net : MultilayerNetwork
@@ -15,13 +18,17 @@ def degs(net,degstype="distribution"):
        corresponding values are degrees of those nodes.
 
     """
+    if net.aspects==0:
+        the_iterator=net
+    else:
+        the_iterator=net.iter_node_layers()
     degs={}
     if degstype=="distribution":
-        for node in net:
+        for node in the_iterator:
             d=net[node].deg()
             degs[d]=degs.get(d,0)+1
     elif degstype=="nodes":
-        for node in net:
+        for node in the_iterator:
             degs[node]=net[node].deg()
     else:
         raise Exception("Invalid degstype parameter.")
