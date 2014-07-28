@@ -121,11 +121,31 @@ Data:
         self.assertEqual(set(net[1,1]),set([(2,1),(1,0)]))
         self.assertEqual(set(net[2,1]),set([(1,1),(2,0)]))
 
+
+    def test_pickle(self):
+        import pickle
+        n=net.MultilayerNetwork(aspects=1)
+        n[1,2,3,4]=1
+        self.assertEqual(pickle.loads(pickle.dumps(n)),n)
+        n=net.MultilayerNetwork(aspects=1,directed=True)
+        n[1,2,3,4]=1
+        self.assertEqual(pickle.loads(pickle.dumps(n)),n)
+
+        n=net.MultiplexNetwork(couplings=[('categorical',1)])
+        n[1,2,3,3]=1
+        self.assertEqual(pickle.loads(pickle.dumps(n)),n)
+        n=net.MultiplexNetwork(couplings=[('categorical',1)],directed=True)
+        n[1,2,3,3]=1
+        self.assertEqual(pickle.loads(pickle.dumps(n)),n)
+
+
+
 def test_io():
     suite = unittest.TestSuite()    
     suite.addTest(TestIO("test_read_ucinet_flat_fullnet"))
     suite.addTest(TestIO("test_read_ucinet_mplex_fullnet"))
     suite.addTest(TestIO("test_read_ucinet_mplex_nonglobalnodes"))
+    suite.addTest(TestIO("test_pickle"))
 
     unittest.TextTestRunner().run(suite) 
 
