@@ -753,6 +753,20 @@ class TestNet(unittest.TestCase):
         self.assertEqual(set(n.A["a"]),set([1,2,3,4,5,6]))
         self.assertEqual(set(n.A["b"]),set([1,2,3,4,5,6]))
 
+    def test_mlayer_2dim_nonglobalnodes(self):
+        n=net.MultilayerNetwork(aspects=2,directed=True,fullyInterconnected=False)
+        n[1,2,'a','b','t1','t2']=1
+        self.assertEqual(n[1,2,'a','b','t2','t1'],0)
+        self.assertEqual(n[1,2,'a','b','t1','t2'],1)
+        self.assertEqual(n[1,'a','t1'].deg(),1)
+        self.assertEqual(list(n[1,'a','t1']),[(2,'b','t2')])
+        self.assertEqual(set(n.iter_nodes()),set([1,2]))
+        self.assertEqual(set(n.iter_nodes(layer=('a','t1'))),set([1]))
+        self.assertEqual(set(n.iter_nodes(layer=('b','t2'))),set([2]))
+        self.assertEqual(set(n.iter_nodes(layer=('a','t2'))),set([]))
+        self.assertEqual(set(n.iter_node_layers()),set([(1, 'a', 't1'), (2, 'b', 't2')]))
+
+
 
 def test_net():
     suite = unittest.TestSuite()    
@@ -775,6 +789,7 @@ def test_net():
     suite.addTest(TestNet("test_ordinal_couplings_mlayer"))
     suite.addTest(TestNet("test_node_iterators_all"))
     suite.addTest(TestNet("test_mplex_intralayer_nets"))
+    suite.addTest(TestNet("test_mlayer_2dim_nonglobalnodes"))
     unittest.TextTestRunner().run(suite) 
 
 if __name__ == '__main__':
