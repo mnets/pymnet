@@ -195,17 +195,18 @@ class MultilayerNetwork(object):
             self._add_node_to_layer(node,layer)
 
     def _add_node_to_layer(self,node,layer):
-        """ Add node to layer. Network must not be node-aligned and the layer
-        must exist.
+        """ Add node to layer. Network must not be node-aligned.
         """
         if node not in self._nodeToLayers:
             self._nodeToLayers[node]=set()
         self._nodeToLayers[node].add(layer)
+        if layer not in self._layerToNodes:
+            self._layerToNodes[layer]=set()
         self._layerToNodes[layer].add(node)
 
 
     def add_layer(self,layer,aspect=1):
-        """Adds an empty layer to the network.
+        """Adds an empty layer to the network. If aspects>1, adds an elementary layer.
 
         Does nothing if node already exists. If aspect==0, then add_node
         is called with add_node(layer).
@@ -218,9 +219,10 @@ class MultilayerNetwork(object):
             self.add_node(layer)
         else:
             self.slices[aspect].add(layer)
-            if not self.fullyInterconnected:
-                if layer not in self._layerToNodes:
-                    self._layerToNodes[layer]=set()
+            #The layers are added to self._layerToNodes in a lazy way.
+            #if not self.fullyInterconnected:
+            #    if layer not in self._layerToNodes:
+            #        self._layerToNodes[layer]=set()
 
     def _get_link(self,link):
         """Return link weight or 0 if no link.
@@ -531,8 +533,9 @@ class MultilayerNetwork(object):
             for node in self.slices[0]:
                 yield node
         else:
-            for node in self._layerToNodes[layer]:
-                yield node
+            if layer in self._layerToNodes:
+                for node in self._layerToNodes[layer]:
+                    yield node
 
     def __iter__(self):
         """Iterates over all nodes.
