@@ -46,7 +46,7 @@ class MultilayerNetwork(object):
        undirected.
     fullyInterconnected : bool
        Determines if the network is fully interconnected, i.e. all nodes
-       are shared between all layers.
+       are shared between all layers. Ignored if aspects==0.
 
     Notes
     -----
@@ -77,6 +77,8 @@ class MultilayerNetwork(object):
         self.directed=directed
         self.noEdge=noEdge
         self._init_slices(aspects)
+        if aspects==0:
+            fullyInterconnected=True
         self.fullyInterconnected=fullyInterconnected
 
         self._init_directions()
@@ -560,18 +562,25 @@ class MultilayerNetwork(object):
                         yield (node,)+layer
 
 
-    def iter_layers(self):
+    def iter_layers(self,aspect=None):
         """ Iterate over all layers.
 
         If network has multiple aspects, tuples of all layer combinations are iterated
-        over.
+        over. If aspect is specified and there are more than a single aspect, then elementary
+        layers are iterated instead.
         """
-        if self.aspects>1:
-            for l in itertools.product(*map(lambda i:self.slices[i],range(1,len(self.slices)))):
+        if aspect!=None:
+            assert isinstance(aspect,int)
+            assert 1<=aspect<=self.aspects
+            for l in self.slices[aspect]:
                 yield l
-        elif self.aspects==1:
-            for l in self.slices[1]:
-                yield l
+        else:
+            if self.aspects>1:
+                for l in itertools.product(*map(lambda i:self.slices[i],range(1,len(self.slices)))):
+                    yield l
+            elif self.aspects==1:
+                for l in self.slices[1]:
+                    yield l
 
     def _write_flattened(self,output):
         nodes=map(lambda x: tuple(reversed(x)),sorted(itertools.product(*map(lambda i:sorted(self.slices[i]),reversed(range(len(self.slices)))))))

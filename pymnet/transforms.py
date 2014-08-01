@@ -56,16 +56,18 @@ def aggregate(net,aspects,newNet=None,selfEdges=False):
     
     if newNet==None:
         newNet=MultilayerNetwork(aspects=net.aspects-len(aspects),
-                                  noEdge=net.noEdge,
-                                  directed=net.directed)
+                                 noEdge=net.noEdge,
+                                 directed=net.directed,
+                                 fullyInterconnected=net.fullyInterconnected)
     assert newNet.aspects==net.aspects-len(aspects)
     for d in aspects:
         assert 0<d<=(net.aspects+1)
 
-
+    #Add nodes
     for node in net:
         newNet.add_node(node)
     
+    #Add edges
     edgeIndices=filter(lambda x:math.floor(x/2) not in aspects,range(2*(net.aspects+1)))
     for edge in net.edges:
         newEdge=[]
@@ -73,6 +75,20 @@ def aggregate(net,aspects,newNet=None,selfEdges=False):
             newEdge.append(edge[index])
         if selfEdges or not newEdge[0::2]==newEdge[1::2]:
             newNet[tuple(newEdge)]=newNet[tuple(newEdge)]+edge[-1]
+
+    #Add node-layer tuples (if not node-aligned)
+    if not net.fullyInterconnected and newNet.aspects>0:
+        nodeIndices=filter(lambda x:x not in aspects,range(1,net.aspects+1))
+        for nlt in net.iter_node_layers():
+            newlayer=[]
+            for a in nodeIndices:
+                newlayer.append(nlt[a])
+            #we need to use the public interface for adding nodes which means that
+            #layers are only given as tuples for multi-aspect networks
+            if len(newlayer)==1: 
+                newNet.add_node(nlt[0],layer=newlayer[0])
+            else:
+                newNet.add_node(nlt[0],layer=newlayer)
 
     return newNet
 
