@@ -756,16 +756,20 @@ class TestNet(unittest.TestCase):
     def test_mlayer_2dim_nonglobalnodes(self):
         n=net.MultilayerNetwork(aspects=2,directed=True,fullyInterconnected=False)
         n[1,2,'a','b','t1','t2']=1
+        n.add_node(3,('b','t1'))
+        n.add_node(3,('b','t2'))
         self.assertEqual(n[1,2,'a','b','t2','t1'],0)
         self.assertEqual(n[1,2,'a','b','t1','t2'],1)
         self.assertEqual(n[1,'a','t1'].deg(),1)
         self.assertEqual(list(n[1,'a','t1']),[(2,'b','t2')])
-        self.assertEqual(set(n.iter_nodes()),set([1,2]))
+        self.assertEqual(set(n.iter_nodes()),set([1,2,3]))
         self.assertEqual(set(n.iter_nodes(layer=('a','t1'))),set([1]))
-        self.assertEqual(set(n.iter_nodes(layer=('b','t2'))),set([2]))
+        self.assertEqual(set(n.iter_nodes(layer=('b','t1'))),set([3]))
+        self.assertEqual(set(n.iter_nodes(layer=('b','t2'))),set([2,3]))
         self.assertEqual(set(n.iter_nodes(layer=('a','t2'))),set([]))
-        self.assertEqual(set(n.iter_node_layers()),set([(1, 'a', 't1'), (2, 'b', 't2')]))
-
+        self.assertEqual(set(n.iter_node_layers()),set([(1, 'a', 't1'), (2, 'b', 't2'),(3, 'b', 't2'),(3, 'b', 't1')]))
+        self.assertEqual(set(n.iter_layers(aspect=1)),set(['a','b']))
+        self.assertEqual(set(n.iter_layers(aspect=2)),set(['t1','t2']))
 
 
 def test_net():
