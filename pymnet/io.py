@@ -43,6 +43,23 @@ def write_json(net,outputfile=None):
     else:
         return json.dumps(nets)
 
+def read_edge_files(edgeinput,layerinput=None,nodeinput=None,couplings='categorical',fullyInterconnected=True,directed=False,ignoreSelfLink=True):
+    """A multiplex file separed into files for layers, edge and nodes.
+    """
+    net=MultiplexNetwork(couplings=[couplings],fullyInterconnected=fullyInterconnected,directed=directed)
+    layerfile=open(layerinput,'r') if isinstance(layerinput,str) else layerinput
+    edgefile=open(edgeinput,'r') if isinstance(edgeinput,str) else edgeinput
+    nodefile=open(nodeinput,'r') if isinstance(nodeinput,str) else nodeinput
+
+    for line in edgefile:
+        li,fi,ti,w=line.split()
+        li,fi,ti,w=int(li),int(fi),int(ti),float(w)
+        if fi!=ti or not ignoreSelfLink:
+            net[fi,ti,li]=w
+    return net
+
+
+
 def write_edge_files(net,outputfiles,columnSeparator="\t",rowSeparator="\n",weights=True,masterFile=False,numericNodes=False):
     assert isinstance(net,MultiplexNetwork)
     assert net.aspects==1
