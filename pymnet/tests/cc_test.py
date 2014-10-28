@@ -257,10 +257,14 @@ class TestCC(unittest.TestCase):
 
         lt=0
         ld=0
+        sums=[0 for i in range(10)]
         for l in net.slices[1]:
             aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac=cc.cc_cycle_vector_bf(net,1,l)
+            self.assertEqual((aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac),cc.cc_cycle_vector_anet(net,1,l,anet))            
+            sums=map(lambda x,y:x+y,sums,[aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac])
             lt+= aaa+aacac+acaac+acaca+acacac
-            ld+= afa+afcac+acfac+acfca+acfcac            
+            ld+= afa+afcac+acfac+acfca+acfcac      
+        self.assertEqual(tuple(sums), cc.cc_cycle_vector_anet(net,1,None,anet))
         self.assertEqual(2*t,lt)
         self.assertEqual(2*d,ld)
 

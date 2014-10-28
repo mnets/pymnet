@@ -3,6 +3,7 @@
 
 import itertools
 from net import MultiplexNetwork
+import transforms
 
 def cc_num_den(net,node):
     degree=net[node].deg()
@@ -310,7 +311,7 @@ def gcc_super_graph(net):
     else:
         return None
 
-def elementary_cycles(net,node,layer):
+def elementary_cycles(net,node=None,layer=None,anet=None):
     """Returns the elementary 3-cycle counts in a multiplex network.
 
     Parameters
@@ -334,8 +335,21 @@ def elementary_cycles(net,node,layer):
     "Clustering Coefficients in Multiplex Networks", E. Cozzo et al. , arXiv:1307.6780 [physics.soc-ph]
 
     """
-    return cc_cycle_vector_bf(net,node,layer)
-
+    if node!=None and layer!=None:
+        return cc_cycle_vector_bf(net,node,layer)
+    sums=[0 for i in range(10)]
+    nodes=list(net) if node==None else [node]
+    if net.fullyInterconnected and (anet!=None or node==None):
+        if anet==None:
+            anet=transforms.aggregate(net,1)
+        for n in nodes:
+            sums=map(lambda x,y:x+y,sums,cc_cycle_vector_anet(net,n,layer=layer,anet=anet))
+    else:
+        layers=net.iter_layers() if layer==None else [layer]
+        for l in layers:
+            for n in nodes:
+                sums=map(lambda x,y:x+y,sums,cc_cycle_vector_bf(net,n,l))
+    return tuple(sums)
 
 
 def cc_cycle_vector_bf(net,node,layer,undefReturn=0.0):
@@ -471,6 +485,147 @@ def cc_cycle_vector_bf(net,node,layer,undefReturn=0.0):
 
     return aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac
 
+
+def cc_cycle_vector_anet(net,node,layer=None,anet=None,undefReturn=0.0):
+    """Counts all the cycles.
+
+    Optimized using aggregated network. Works only for a fully-interconnected
+    networks.
+
+    If layer is None then the cycle vectors are calculate as sums over all
+    node-layer pairs. In this case the computational complexity is O(b*k^2).
+    """
+    assert isinstance(net,MultiplexNetwork)
+    assert net.aspects==1
+    assert net.fullyInterconnected
+
+    aaa=0
+    aacac=0 # == cacaa
+    acaac=0 # == caaca
+    acaca=0
+    acacac=0
+
+    if layer!=None:
+        intranet=net.A[layer]
+        degree=intranet[node].deg()
+        other_layers=map(lambda x:x[1],net[node,node,layer,:])
+
+        #aaa
+        if degree>=2:
+            for i,j in itertools.combinations(intranet[node],2):
+                if intranet[i][j]!=intranet.noEdge:
+                    aaa+=1    
+        aaa=aaa*2
+
+        #aacac
+        for i in intranet[node]:
+            for j in intranet[i]:
+                aacac+=int(anet[j,node])
+                if net[j,node,layer]!=net.noEdge:
+                    aacac+= -1
+
+        #acaac
+        for i in intranet[node]:
+            for dummy,layer2 in net[i,i,layer,:]:
+                for j,dummy in net[i,:,layer2,layer2]:
+                    if net[j,layer2][node,layer2]!=net.noEdge:
+                        acaac+=1
+
+        #acaca
+        if degree>=2:
+            for i,j in itertools.combinations(intranet[node],2):
+                acaca+=int(anet[i,j])
+                if net[i,j,layer]!=net.noEdge:
+                    acaca+= -1            
+        acaca=acaca*2
+
+        #acacac
+        for i in intranet[node]:
+            for dummy,layer2 in net[i,i,layer,:]:
+                for j,dummy in net[i,:,layer2,layer2]:
+                    acacac+=int(anet[j,node])
+                    if net[j,node,layer]!=net.noEdge:
+                        acacac+= -1
+                    if net[j,node,layer2]!=net.noEdge:
+                        acacac+= -1
+
+
+        #afa
+        afa=(intranet[node].deg()*(intranet[node].deg()-1))
+
+        afcac=0
+        neighbors=set(intranet[node])
+        for i in anet[node]:
+            ledges=int(anet[i,node])-1 if net[i,node,layer]!=net.noEdge else int(anet[i,node])
+            if i in neighbors:
+                afcac+=(len(neighbors)-1)*ledges
+            else:
+                afcac+=len(neighbors)*ledges
+
+        acfca=afa*(len(net.slices[1])-1)        
+        acfac=afcac
+        acfcac=afcac*(len(net.slices[1])-2)
+    else:
+        #aaa
+        for layer in net.iter_layers():
+            if net.A[layer][node].deg()>=2:
+                for i,j in itertools.combinations(net.A[layer][node],2):
+                    if net.A[layer][i][j]!=net.noEdge:
+                        aaa+=1    
+        aaa=aaa*2
+
+        #aacac
+        for layer in net.iter_layers():
+            for i in net.A[layer][node]:
+                for j in net.A[layer][i]:
+                    aacac+=int(anet[j,node])
+                    if net[j,node,layer]!=net.noEdge:
+                        aacac+= -1
+
+        #acaac
+        acaac=aacac
+
+        #acaca
+        for layer in net.iter_layers():
+            if net.A[layer][node].deg()>=2:
+                for i,j in itertools.combinations(net.A[layer][node],2):
+                    acaca+=int(anet[i,j])
+                    if net[i,j,layer]!=net.noEdge:
+                        acaca+= -1            
+        acaca=acaca*2
+
+        #acacac
+        tot=0
+        if anet[node].deg()>=2:
+            for i,j in itertools.combinations(anet[node],2):
+                    if anet[i,j]!=net.noEdge:
+                        tot+=int(anet[node,i])*int(anet[i,j])*int(anet[j,node])
+        acacac=2*tot-aaa-aacac-acaac-acaca
+
+        #afa
+        afa=0
+        for layer in net.iter_layers():
+            afa+=(net.A[layer][node].deg()*(net.A[layer][node].deg()-1))
+
+        afcac=0
+        for layer in net.iter_layers():
+            neighbors=set(net.A[layer][node])
+            for i in anet[node]:
+                ledges=int(anet[i,node])-1 if net[i,node,layer]!=net.noEdge else int(anet[i,node])
+                if i in neighbors:
+                    afcac+=(len(neighbors)-1)*ledges
+                else:
+                    afcac+=len(neighbors)*ledges
+
+        acfca=afa*(len(net.slices[1])-1)       
+        acfac=afcac
+        acfcac=afcac*(len(net.slices[1])-2)
+        
+
+    return aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac
+
+
+
 def cc_cycle_vector_adj(net,node,layer):
     import numpy
     adj,nodes1=net.get_supra_adjacency_matrix()
@@ -599,7 +754,7 @@ def gcc_aw_seplayers_adj(net,w1=1./3.,w2=1./3.,w3=1./3.,returnCVector=False):
 
 
 
-def lcc_aw(net,node,layer,w1=1./2.,w2=1./2.,w3=None,returnCVector=False):
+def lcc_aw(net,node,layer,w1=1./2.,w2=1./2.,w3=None,returnCVector=False,anet=None):
     r"""The local version of the alternating walker clustering coefficient for multiplex networks.
 
     Parameters
@@ -632,7 +787,7 @@ def lcc_aw(net,node,layer,w1=1./2.,w2=1./2.,w3=None,returnCVector=False):
     sncc_aw : The super-node version of the alternating walks clustering coefficient.
     gcc_aw : The global version of the alternating walks clustering coeffient.
     """
-    aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac=cc_cycle_vector_bf(net,node,layer,undefReturn=0.0)
+    aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac=elementary_cycles(net,node,layer,anet=anet)
     t1=aaa
     d1=afa
     t2=aacac+acaac+acaca
@@ -667,7 +822,7 @@ def lcc_aw(net,node,layer,w1=1./2.,w2=1./2.,w3=None,returnCVector=False):
         else:
             return 0
 
-def avg_lcc_aw(net,w1=1./2.,w2=1./2.,w3=None,returnCVector=False):
+def avg_lcc_aw(net,w1=1./2.,w2=1./2.,w3=None,returnCVector=False,anet=None):
     r"""Average value of the local version of the alternating walker clustering coefficient for multiplex networks.
 
     Parameters
@@ -702,7 +857,7 @@ def avg_lcc_aw(net,w1=1./2.,w2=1./2.,w3=None,returnCVector=False):
         for node in net.A[layer]:
             n+=1.
             if returnCVector:
-                tc1,tc2,tc3=lcc_aw(net,node,layer,returnCVector=True)
+                tc1,tc2,tc3=lcc_aw(net,node,layer,returnCVector=True,anet=anet)
                 c1,c2,c3=c1+tc1,c2+tc2,c3+tc3
             else:
                 c+=lcc_aw(net,node,layer,w1=w1,w2=w2,w3=w3)
@@ -713,7 +868,7 @@ def avg_lcc_aw(net,w1=1./2.,w2=1./2.,w3=None,returnCVector=False):
         return c/n
 
 
-def sncc_aw(net,node,w1=1./2.,w2=1./2.,w3=None,returnCVector=False):
+def sncc_aw(net,node,w1=1./2.,w2=1./2.,w3=None,returnCVector=False,anet=None):
     r"""The super-node version of the alternating walker clustering coefficient for multiplex networks.
 
     Parameters
@@ -744,15 +899,23 @@ def sncc_aw(net,node,w1=1./2.,w2=1./2.,w3=None,returnCVector=False):
     avg_lcc_aw : The local alternating walks clustering coefficient averaged over all node-layer pairs.
     gcc_aw : The global version of the alternating walks clustering coeffient.
     """
-    t1,t2,t3,d1,d2,d3=0,0,0,0,0,0
-    for layer in net.slices[1]:
-        aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac=cc_cycle_vector_bf(net,node,layer,undefReturn=0.0)
-        t1+=aaa
-        d1+=afa
-        t2+=aacac+acaac+acaca
-        d2+=afcac+acfac+acfca
-        t3+=acacac
-        d3+=acfcac
+    #t1,t2,t3,d1,d2,d3=0,0,0,0,0,0
+    #for layer in net.slices[1]:
+    #    aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac=elementary_cycles(net,node,layer,anet=anet)
+    #    t1+=aaa
+    #    d1+=afa
+    #    t2+=aacac+acaac+acaca
+    #    d2+=afcac+acfac+acfca
+    #    t3+=acacac
+    #    d3+=acfcac
+
+    aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac=elementary_cycles(net,node,None,anet=anet)
+    t1=aaa
+    d1=afa
+    t2=aacac+acaac+acaca
+    d2=afcac+acfac+acfca
+    t3=acacac
+    d3=acfcac
 
     if d3!=0:
         c3=t3/float(d3)
@@ -829,17 +992,24 @@ def gcc_aw(net,w1=1./2.,w2=1./2.,w3=None,returnCVector=False):
     sncc_aw : The super-node version of the alternating walks clustering coefficient.
     """
     t1,t2,t3,d1,d2,d3=0,0,0,0,0,0
-    for layer in net.slices[1]:
-        for node in net.A[layer]:#net.slices[0]:
-            aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac=cc_cycle_vector_bf(net,node,layer,undefReturn=0.0)
-            t1+=aaa
-            d1+=afa
-            t2+=aacac+acaac+acaca
-            d2+=afcac+acfac+acfca
-            t3+=acacac
-            d3+=acfcac
-            #print node,layer,aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac
+    #for layer in net.slices[1]:
+    #    for node in net.A[layer]:#net.slices[0]:
+    #        aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac=cc_cycle_vector_bf(net,node,layer,undefReturn=0.0)
+    #        t1+=aaa
+    #        d1+=afa
+    #        t2+=aacac+acaac+acaca
+    #        d2+=afcac+acfac+acfca
+    #        t3+=acacac
+    #        d3+=acfcac
+    #        #print node,layer,aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac
 
+    aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac=elementary_cycles(net)
+    t1=aaa
+    d1=afa
+    t2=aacac+acaac+acaca
+    d2=afcac+acfac+acfca
+    t3=acacac
+    d3=acfcac
 
     if d3!=0:
         c3=t3/float(d3)
