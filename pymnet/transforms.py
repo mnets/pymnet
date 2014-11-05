@@ -211,6 +211,11 @@ def relabel(net,nodeNames=None,layerNames=None):
 
     if nodeNames==None:
         nodeNames={}
+
+    if net.aspects==1:
+        if isinstance(layerNames,dict):
+            layerNames=[layerNames]
+
     for aspect in range(net.aspects):
         if len(layerNames)<aspect+1:
             layerNames.append({})
