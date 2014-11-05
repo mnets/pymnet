@@ -175,9 +175,17 @@ class TestTransforms(unittest.TestCase):
         nmap={1:0,2:1,3:2,4:3}
         lmap={1:0,2:1,3:2}
         self.assertEqual(transforms.normalize(self.mplex_simple),n)
-        self.assertEqual(transforms.normalize(self.mplex_simple,returnNodes=True),(n,nmap))
-        self.assertEqual(transforms.normalize(self.mplex_simple,returnLayers=True),(n,lmap))
-        self.assertEqual(transforms.normalize(self.mplex_simple,returnNodes=True,returnLayers=True),(n,nmap,lmap))
+        self.assertEqual(transforms.normalize(self.mplex_simple,nodesToIndices=True),(n,nmap))
+        self.assertEqual(transforms.normalize(self.mplex_simple,layersToIndices=True),(n,lmap))
+        self.assertEqual(transforms.normalize(self.mplex_simple,nodesToIndices=True,layersToIndices=True),(n,nmap,lmap))
+
+        nmapr={0:1,1:2,2:3,3:4}
+        lmapr={0:1,1:2,2:3}
+        self.assertEqual(transforms.normalize(self.mplex_simple,nodesToIndices=False),(n,nmapr))
+        self.assertEqual(transforms.normalize(self.mplex_simple,layersToIndices=False),(n,lmapr))
+        self.assertEqual(transforms.normalize(self.mplex_simple,nodesToIndices=False,layersToIndices=False),(n,nmapr,lmapr))
+
+
 
         n=net.MultiplexNetwork([('categorical',1.0)],fullyInterconnected=False)
 
