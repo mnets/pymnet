@@ -172,7 +172,12 @@ class TestTransforms(unittest.TestCase):
         n[0,3,2]=1
         n[1,3,2]=1
 
+        nmap={1:0,2:1,3:2,4:3}
+        lmap={1:0,2:1,3:2}
         self.assertEqual(transforms.normalize(self.mplex_simple),n)
+        self.assertEqual(transforms.normalize(self.mplex_simple,returnNodes=True),(n,nmap))
+        self.assertEqual(transforms.normalize(self.mplex_simple,returnLayers=True),(n,lmap))
+        self.assertEqual(transforms.normalize(self.mplex_simple,returnNodes=True,returnLayers=True),(n,nmap,lmap))
 
         n=net.MultiplexNetwork([('categorical',1.0)],fullyInterconnected=False)
 
