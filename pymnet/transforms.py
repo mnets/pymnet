@@ -254,7 +254,7 @@ def relabel(net,nodeNames=None,layerNames=None):
                             
     return newNet
 
-def normalize(net,nodesToIndices=None,layersToIndices=None):
+def normalize(net,nodesToIndices=None,layersToIndices=None,nodeStart=0,layerStart=0):
     """Returns a copy of the network with layer and node indices as integers.
 
     In network with n nodes the nodes are renamed so that they run from 0 to n-1.
@@ -272,6 +272,10 @@ def normalize(net,nodesToIndices=None,layersToIndices=None):
        True returns the map(s) from (elementary) layer names to (elementary) layer indices,
        False returns the map(s) from (elementary) layer indices to (elementary) layer names,
        and None doesn't return anything.
+    nodeStart : int
+       The indexing for nodes starts from this value.
+    layerStart : int
+       The indexing for layers starts from this value.
 
     Return
     ------
@@ -288,10 +292,10 @@ def normalize(net,nodesToIndices=None,layersToIndices=None):
     layerNames=[{} for aspect in range(net.aspects)]
 
     for i,node in enumerate(sorted(net)):
-        nodeNames[node]=i
+        nodeNames[node]=i+nodeStart
     for aspect in range(net.aspects):
         for i,layer in enumerate(sorted(net.slices[aspect+1])):
-            layerNames[aspect][layer]=i
+            layerNames[aspect][layer]=i+layerStart
 
     newNet=relabel(net,nodeNames=nodeNames,layerNames=layerNames)
 
