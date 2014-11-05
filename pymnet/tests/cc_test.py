@@ -254,7 +254,7 @@ class TestCC(unittest.TestCase):
         d=0
         for i,j in itertools.combinations(anet[node],2):
             d+=anet[node][i]*anet[node][j]*len(net.slices[1])
-
+        
         lt=0
         ld=0
         sums=[0 for i in range(10)]

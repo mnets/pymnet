@@ -1070,6 +1070,8 @@ class MultiplexNetwork(MultilayerNetwork):
                     yield supernode[:aspect]+(up,)+supernode[aspect+1:]
                 if supernode[1:aspect]+(down,)+supernode[aspect+1:] in self._nodeToLayers[supernode[0]]:
                     yield supernode[:aspect]+(down,)+supernode[aspect+1:]
+        elif coupling_type=="none":
+            pass
         else:
             raise NotImplemented()
         
