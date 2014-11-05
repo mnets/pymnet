@@ -182,3 +182,106 @@ def supra_adjacency_matrix(net,includeCouplings=True):
     """
 
     return net.get_supra_adjacency_matrix(includeCouplings=includeCouplings)
+
+
+
+def normalize(net,returnNodes=False,returnLayers=False):
+    """Returns a copy of the network with layer and node indices as integers.
+
+    In network with n nodes the nodes are renamed so that they run from 0 to n-1.
+    In network has b_a elementary layers in aspect a, the layers are renamed so 
+    that they run from 0 to b_a-1.
+
+    Parameters
+    ----------
+    net : MultilayerNetwork, or MultiplexNetwork 
+       The original network.
+    returnNodes : bool
+       Return the map from node names to node indices.
+    returnLayers : bool
+       Return the map(s) from (elementary) layer names to (elementary) layer indices.
+
+    Return
+    ------
+    newnet : type(net)
+        The normalized network.
+    (optional) nodeNames : dict
+        The map from node names to node indices.
+    (optional) layerNames : dict, or list of dicts
+        The map(s) from (elementary) layer names to (elementary) layer indices. One
+        map for each aspect.
+    """
+  
+    def layer_to_indexlayer(layer,layerNames):
+        return tuple([layerNames[i][elayer] for i,elayer in enumerate(layer)])
+
+
+    nodeNames={}
+    layerNames=[{} for aspect in range(net.aspects)]
+
+
+    if type(net)==MultilayerNetwork:
+        newNet=MultilayerNetwork(aspects=net.aspects,
+                                 noEdge=net.noEdge,
+                                 directed=net.directed,
+                                 fullyInterconnected=net.fullyInterconnected)
+        raise Exception("Not implemented yet.")
+    elif type(net)==MultiplexNetwork:
+            newNet=MultiplexNetwork(couplings=net.couplings,
+                                    directed=net.directed,
+                                    noEdge=net.noEdge,
+                                    fullyInterconnected=net.fullyInterconnected)
+
+    for i,node in enumerate(sorted(net)):
+        nodeNames[node]=i
+        newNet.add_node(i)
+    for aspect in range(net.aspects):
+        for i,layer in enumerate(sorted(net.slices[aspect+1])):
+            layerNames[aspect][layer]=i
+            newNet.add_layer(i,aspect=aspect+1) 
+
+    if not net.fullyInterconnected:
+        for nodelayer in net.iter_node_layers():
+            #newNet._add_node_to_layer(nodeNames[nodelayer[0]],layer_to_indexlayer(nodelayer[1:],layerNames))
+            layer=layer_to_indexlayer(nodelayer[1:],layerNames)
+            if net.aspects==1:
+                layer=layer[0]
+            newNet.add_node(nodeNames[nodelayer[0]],layer=layer)
+
+    if type(net)==MultilayerNetwork:
+        raise Exception("Not implemented yet.")
+    elif type(net)==MultiplexNetwork:
+            for layer in net.iter_layers():
+                if net.aspects==1:
+                    layertuple=(layer,)
+                else:
+                    layertuple=layer
+                degsum=0
+                for node in net.A[layer]:        
+                    degsum += net.A[layer][node].deg()
+
+                if degsum >= len(net.A[layer])*(len(net.A[layer])-1)/2:
+                    othernodes=set(net.A[layer])
+                    for node in net.A[layer]:
+                        if not net.directed:
+                            othernodes.remove(node)
+                        for othernode in othernodes:
+                            if net[(node,othernode)+layertuple]!=net.noEdge:
+                                newNet[(nodeNames[node],nodeNames[othernode])+layer_to_indexlayer(layertuple,layerNames)]=net[(node,othernode)+layertuple]
+                else:
+                    for node in net.A[layer]:
+                        for neigh in itertools.imap(lambda x:x[0],net[(node,COLON)+layertuple]):
+                            newNet[(nodeNames[node],nodeNames[neigh])+layer_to_indexlayer(layertuple)]=net[(node,neigh)+layertuple]
+
+
+    if net.aspects==1:
+        layerNames=layerNames[0]
+
+    if returnNodes==False and returnLayers==False:
+        return newNet
+    elif returnNodes==True and returnLayers==False:
+        return newNet,nodeNames
+    elif returnNodes==False and returnLayers==True:
+        return newNet,layerNames
+    elif returnNodes==True and returnLayers==True:
+        return newNet,nodeNames,layerNames
