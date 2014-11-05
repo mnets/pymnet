@@ -159,7 +159,7 @@ class MultilayerNetwork(object):
 
     def __eq__(self,other):
         if not self.fullyInterconnected:
-            raise NotImplemented()
+            raise Exception("Not implemented.")
         if type(self) is type(other):
             if self.directed == other.directed and self.directed==other.directed and self.aspects==other.aspects and self.fullyInterconnected == other.fullyInterconnected and self.noEdge == other.noEdge and self.slices==other.slices:
                 if len(self.edges) ==len(other.edges):
@@ -480,7 +480,7 @@ class MultilayerNetwork(object):
             if COLON not in item[2:]: #check if colons are in the slice indices
                 return self[self._short_link_to_link(item)]
             else:
-                raise NotImplemented("yet.")
+                raise Exception("Not implemented.")
         else:
             if d>1:
                 raise KeyError("%d, %d, or %d indices please."%(d,d+1,2*d))
@@ -1195,7 +1195,7 @@ class MultiplexNetwork(MultilayerNetwork):
 
     def __eq__(self,other):
         if not self.fullyInterconnected:
-            raise NotImplemented()
+            raise Exception("Not implemented.")
         if type(self) is type(other):
             if self.directed == other.directed and self.directed==other.directed and self.aspects==other.aspects and self.fullyInterconnected == other.fullyInterconnected and self.noEdge == other.noEdge and self.slices==other.slices and self.couplings == other.couplings:
                 for layer in self.iter_layers():

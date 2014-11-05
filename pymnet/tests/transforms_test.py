@@ -28,6 +28,23 @@ class TestTransforms(unittest.TestCase):
 
         self.mplex_simple=n
 
+        n=net.MultiplexNetwork([('categorical',1.0)],fullyInterconnected=False)
+
+        n[1,2,1]=1
+        n[1,3,1]=1
+        n[2,3,1]=1
+
+        n[1,2,2]=1
+        n[1,3,2]=1
+        n[1,4,2]=1
+        n[3,4,2]=1
+
+        n[1,2,3]=1
+        n[1,3,3]=1
+        n[1,4,3]=1
+        n[2,4,3]=1
+
+        self.mplex_nonaligned_simple=n
 
     def test_aggregate_unweighted_mplex_simple(self):
         an=transforms.aggregate(self.mplex_simple,1)
@@ -137,6 +154,47 @@ class TestTransforms(unittest.TestCase):
         self.assertEqual(an3,transforms.aggregate(an1,1))
         self.assertEqual(an3,transforms.aggregate(an2,1))
 
+
+    def test_normalize_mplex_simple(self):
+        n=net.MultiplexNetwork([('categorical',1.0)])
+
+        n[0,1,0]=1
+        n[0,2,0]=1
+        n[1,2,0]=1
+
+        n[0,1,1]=1
+        n[0,2,1]=1
+        n[0,3,1]=1
+        n[2,3,1]=1
+
+        n[0,1,2]=1
+        n[0,2,2]=1
+        n[0,3,2]=1
+        n[1,3,2]=1
+
+        self.assertEqual(transforms.normalize(self.mplex_simple),n)
+
+        n=net.MultiplexNetwork([('categorical',1.0)],fullyInterconnected=False)
+
+        n[0,1,0]=1
+        n[0,2,0]=1
+        n[1,2,0]=1
+
+        n[0,1,1]=1
+        n[0,2,1]=1
+        n[0,3,1]=1
+        n[2,3,1]=1
+
+        n[0,1,2]=1
+        n[0,2,2]=1
+        n[0,3,2]=1
+        n[1,3,2]=1
+
+        try:
+            self.assertEqual(transforms.normalize(self.mplex_nonaligned_simple),n)
+        except Exception,e:
+            self.assertEqual(str(e),"Not implemented.")
+
 def test_transforms():
     suite = unittest.TestSuite()    
     suite.addTest(TestTransforms("test_aggregate_unweighted_mplex_simple"))
@@ -145,6 +203,7 @@ def test_transforms():
     suite.addTest(TestTransforms("test_aggregate_1dim_mlayer_nonglobal_nodes"))
     suite.addTest(TestTransforms("test_aggregate_2dim_mlayer_interlayeredges"))
     suite.addTest(TestTransforms("test_subnet_mplex_simple"))
+    suite.addTest(TestTransforms("test_normalize_mplex_simple"))
     unittest.TextTestRunner().run(suite) 
 
 if __name__ == '__main__':
