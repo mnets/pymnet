@@ -1,7 +1,7 @@
 """Data structures for handling various forms of multilayer networks.
 """
 
-import math,itertools
+import math,itertools,pickle
 
 COLON=slice(None,None,None)
 
@@ -589,6 +589,9 @@ class MultilayerNetwork(object):
             output.write(" ".join(row)+"\n")
         output.close()
 
+
+    def __hash__(self):
+        return pickle.dumps(self).__hash__()
 
     def get_supra_adjacency_matrix(self,includeCouplings=True):
         """Returns the supra-adjacency matrix and a list of node-layer pairs.
