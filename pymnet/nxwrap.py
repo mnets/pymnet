@@ -91,7 +91,7 @@ class MonoplexGraphWrapper_node(collections.MutableMapping):
         else:
             raise KeyError(key)
     def __iter__(self):
-        for node in net:
+        for node in self.net:
             yield node
     def __len__(self):
         return len(self.net)
