@@ -113,4 +113,5 @@ Visualization
 .. autosummary::
   :toctree: autogen
 
+  draw
   webplot
