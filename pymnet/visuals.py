@@ -256,10 +256,12 @@ try:
             assert self.z!=None
             if self.shape=="rectangle":
                 self.layer=Rectangle((0,0),1,1,alpha=self.alpha,color=self.color)
-                self.labelObject=self.net.ax.text(1,1,self.z,str(self.label))
+                if self.label!=None:
+                    self.labelObject=self.net.ax.text(1,1,self.z,str(self.label))
             elif self.shape=="circle":
                 self.layer=Circle((0.5,0.5),0.5,alpha=self.alpha,color=self.color)
-                self.labelObject=self.net.ax.text(1,1,self.z,str(self.label))
+                if self.label!=None:
+                    self.labelObject=self.net.ax.text(1,1,self.z,str(self.label))
             self.net.ax.add_patch(self.layer)
             art3d.pathpatch_2d_to_3d(self.layer, z=self.z, zdir="z")
             fix_attr(self.layer,"zorder",self.z)
@@ -342,7 +344,11 @@ try:
         pass
 
     class NodePropertyAssigner(PropertyAssigner):
-        pass
+        rules=PropertyAssigner.rules.union(set(["degree"]))
+        def get_by_rule(self,item,rule):
+            if rule=="degree":
+                return self.net[item].deg()
+            return super(NodePropertyAssigner,self).get_by_rule(item,rule)
 
     class NodeLabelAssigner(NodePropertyAssigner):
         rules=NodePropertyAssigner.rules.union(set(["nodename"]))
@@ -361,7 +367,15 @@ try:
                 coeff=self.propRule["scalecoeff"] if "scalecoeff" in self.propRule else 1.0
                 n=len(self.net)     
                 return coeff/float(math.sqrt(n))
-            return super(NodeLabelAssigner,self).get_by_rule(item,rule)
+            return super(NodeSizeAssigner,self).get_by_rule(item,rule)
+
+        def apply_modify_rules(self,item):
+            if "propscale" in self.propRule:
+                coeff=self.propRule["propscale"]
+                n=len(self.net)     
+                item=item*coeff/float(math.sqrt(n))
+            return super(NodeSizeAssigner,self).apply_modify_rules(item)
+
 
     #nodes todo: marker
 
@@ -452,6 +466,7 @@ try:
         nf.draw()
         nf.ax.azim=azim
         nf.ax.elev=elev
+        nf.fig.tight_layout()
         if show:
             plt.show()
         return nf.fig
