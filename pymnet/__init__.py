@@ -7,6 +7,11 @@ from cc import   lcc,cc_zhang,gcc_zhang,cc_onnela,cc_barrat,cc_barrett,cc_sequen
 from visuals import webplot
 
 try:
+    from visuals import draw
+except ImportError:
+    pass
+
+try:
     import nxwrap as nx
 except ImportError: #in case networkx is not installed
     pass
