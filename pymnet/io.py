@@ -251,24 +251,27 @@ def read_ucinet(netinput,couplings=('categorical',1.0),fullyInterconnected=True)
             assert len(clabels)==n,"Invalid number of labels."
             row=0
             while True:
-                line=ii.next()
-                if len(line.strip())!=0: #skip empty lines 
-                    fields=line.split()
-                    if labels_embedded:
-                        rlabels.append(fields[0].lower())
-                        fields=fields[1:]
-                    assert len(fields)==n,"Invalid number of columns: %d"%len(fields)
-                    for column,field in enumerate(fields):
-                        if nm==1:
-                            if clabels[column]!=rlabels[row]:
-                                if float(field)!=0.0:
-                                    net[clabels[column]][rlabels[row]]=float(field)
-                        else:
-                            level=int(math.floor(row/n))
-                            if clabels[column]!=rlabels[row%n]:
-                                if float(field)!=0.0:
-                                    net[clabels[column],rlabels[row%n],llabels[level],llabels[level]]=float(field)
-                    row+=1
+                line=ii.next().strip()
+                fields=line.split()
+                while len(fields)<n:
+                    line=ii.next().strip()
+                    fields.extend(line.split())
+
+                if labels_embedded:
+                    rlabels.append(fields[0].lower())
+                    fields=fields[1:]
+                assert len(fields)==n,"Invalid number of columns: %d"%len(fields)
+                for column,field in enumerate(fields):
+                    if nm==1:
+                        if clabels[column]!=rlabels[row]:
+                            if float(field)!=0.0:
+                                net[clabels[column]][rlabels[row]]=float(field)
+                    else:
+                        level=int(math.floor(row/n))
+                        if clabels[column]!=rlabels[row%n]:
+                            if float(field)!=0.0:
+                                net[clabels[column],rlabels[row%n],llabels[level],llabels[level]]=float(field)
+                row+=1
         except StopIteration:
             assert row==n*nm, "Invalid number of rows in the data"
     else:
