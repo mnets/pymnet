@@ -328,3 +328,60 @@ def normalize(net,nodesToIndices=None,layersToIndices=None,nodeStart=0,layerStar
         return newNet,layerNames
     elif nodesToIndices!=None and layersToIndices!=None:
         return newNet,nodeNames,layerNames
+
+
+def threshold(net,threshold,method=">=",ignoreCouplingEdges=False):
+    def accept_edge(weight,threshold,rule):
+        if rule==">=":
+            return weight>=threshold
+        elif rule=="<=":
+            return weight<=threshold
+        elif rule==">":
+            return weight>threshold
+        elif rule=="<":
+            return weight<threshold
+        else:
+            raise Exception("Invalid method for thresholding: "+str(rule))
+
+    mplex=(type(net)==MultiplexNetwork)
+    if mplex:
+        for coupling in net.couplings:
+            if coupling[0]!="none":
+                mplex=False
+            
+
+    if mplex:
+        newNet=MultiplexNetwork(couplings=net.couplings,
+                                directed=net.directed,
+                                noEdge=net.noEdge,
+                                fullyInterconnected=net.fullyInterconnected)
+    else:
+        newNet=MultilayerNetwork(aspects=net.aspects,
+                                 noEdge=net.noEdge,
+                                 directed=net.directed,
+                                 fullyInterconnected=net.fullyInterconnected)
+
+    #copy nodes,layers,node-layers
+    for node in net:
+        newNet.add_node(node)
+    for aspect in range(net.aspects):
+        for layer in net.slices[aspect+1]:
+            newNet.add_layer(layer,aspect=aspect+1) 
+    if not net.fullyInterconnected:
+        for nodelayer in net.iter_node_layers():
+            layer=lnodelayer[1:]
+            if net.aspects==1:
+                layer=layer[0]
+            newNet.add_node(nodelayer[0],layer=layer)
+
+    if mplex:
+        for layer in net.iter_layers():
+            for edge in net.A[layer].edges:
+                if accept_edge(edge[-1],threshold,rule=method):
+                    newNet.A[layer][edge[0]][edge[1]]=edge[-1]
+    else:
+        for edge in net.edges:
+            if accept_edge(edge[-1],threshold,rule=method):
+                newNet[edge[:-1]]=edge[-1]
+    return newNet
+
