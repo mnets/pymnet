@@ -47,3 +47,21 @@ produces a following figure:
 
 .. figure:: ermplex2.png
    :align:   center
+
+If the network is large, then it is often desirable not to plot the coupling edges. Simply create a network without coupling edges and plot it. For example, the `Bernard & Killworth fraternity network <http://vlado.fmf.uni-lj.si/pub/networks/data/ucinet/ucidata.htm#bkfrat>`_ might be plotted like this:
+
+>>> net=read_ucinet("bkfrat.dat",couplings="none")
+>>> net=pymnet.transforms.threshold(net,4)
+>>> fig=draw(net,
+             show=True,
+             layout="spring",
+             layerColorRule={},
+             defaultLayerColor="gray",
+             nodeLabelRule={},
+             edgeColorRule={"rule":"edgeweight","colormap":"jet","scaleby":0.1}
+             )
+
+Which then produces the following figure:
+
+.. figure:: bkfrat.png
+   :align:   center
