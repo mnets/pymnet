@@ -400,7 +400,7 @@ try:
         pass
 
 
-    def draw(net,layout="random",layershape="rectangle",azim=-51,elev=22,show=False,
+    def draw(net,layout="random",layershape="rectangle",azim=-51,elev=22,show=False,layergap=1.0,camera_dist=None,autoscale=True,
              layerColorDict={},layerColorRule={"rule":"order","sequence":defaultLayerColors},defaultLayerColor="gray",
              layerLabelDict={},layerLabelRule={"rule":"name"},defaultLayerLabel=None,
              nodeLabelDict={},nodeLabelRule={"rule":"nodename"},defaultNodeLabel=None,
@@ -446,7 +446,7 @@ try:
         #Build the network
         layers={}
         nodes={}
-        nf=NetFigure()
+        nf=NetFigure(layergap=layergap)
         for layer in net.iter_layers():
             layers[layer]=Layer(nf,shape=layershape,color=layerColor[layer],label=layerLabel[layer])
 
@@ -466,7 +466,10 @@ try:
         nf.draw()
         nf.ax.azim=azim
         nf.ax.elev=elev
-        nf.fig.tight_layout()
+        if camera_dist!=None:
+            nf.ax.dist=camera_dist
+        if autoscale and len(layers)*layergap>3:
+            nf.ax.autoscale_view()
         if show:
             plt.show()
         return nf.fig
