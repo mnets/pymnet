@@ -192,7 +192,7 @@ def relabel(net,nodeNames=None,layerNames=None):
         The original network.
      nodeNames : None, or dict
         The map from node names to node indices.
-     layersNames : dict, or sequence of dicts
+     layerNames : None, dict, or sequence of dicts
         The map(s) from (elementary) layer names to (elementary) layer indices.
 
      Return
@@ -212,6 +212,9 @@ def relabel(net,nodeNames=None,layerNames=None):
     if nodeNames==None:
         nodeNames={}
 
+    if layerNames==None:
+        layerNames=[]
+
     if net.aspects==1:
         if isinstance(layerNames,dict):
             layerNames=[layerNames]
@@ -226,10 +229,12 @@ def relabel(net,nodeNames=None,layerNames=None):
                                  directed=net.directed,
                                  fullyInterconnected=net.fullyInterconnected)
     elif type(net)==MultiplexNetwork:
-            newNet=MultiplexNetwork(couplings=net.couplings,
-                                    directed=net.directed,
-                                    noEdge=net.noEdge,
-                                    fullyInterconnected=net.fullyInterconnected)
+        newNet=MultiplexNetwork(couplings=net.couplings,
+                                directed=net.directed,
+                                noEdge=net.noEdge,
+                                fullyInterconnected=net.fullyInterconnected)
+    else:
+        raise Exception("Invalid type of net",type(net))
 
     for node in net:
         newNet.add_node(dget(nodeNames,node))
@@ -245,7 +250,12 @@ def relabel(net,nodeNames=None,layerNames=None):
             newNet.add_node(dget(nodeNames,nodelayer[0]),layer=layer)
 
     if type(net)==MultilayerNetwork:
-        raise Exception("Not implemented yet.")
+        for edge in net.edges:
+            newedge=[dget(nodeNames,edge[0]),dget(nodeNames,edge[1])]
+            for aspect in range(net.aspects):
+                newedge.append(dget(layerNames[aspect],edge[2+aspect*2]))
+                newedge.append(dget(layerNames[aspect],edge[2+aspect*2+1]))
+            newNet[tuple(newedge)]=edge[-1]
     elif type(net)==MultiplexNetwork:
             for layer in net.iter_layers():
                 if net.aspects==1:
