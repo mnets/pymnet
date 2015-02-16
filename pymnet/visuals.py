@@ -403,6 +403,7 @@ try:
 
 
     def draw(net,layout="random",layershape="rectangle",azim=-51,elev=22,show=False,layergap=1.0,camera_dist=None,autoscale=True,
+             layerPadding=0.05,alignedNodes=None,
              layerColorDict={},layerColorRule={"rule":"order","sequence":defaultLayerColors},defaultLayerColor="gray",
              layerLabelDict={},layerLabelRule={"rule":"name"},defaultLayerLabel=None,
              nodeLabelDict={},nodeLabelRule={"rule":"nodename"},defaultNodeLabel=None,
@@ -410,7 +411,7 @@ try:
              nodeColorDict={},nodeColorRule={},defaultNodeColor="black",
              edgeColorDict={},edgeColorRule={},defaultEdgeColor="gray",
              edgeWidthDict={},edgeWidthRule={},defaultEdgeWidth="1.0",
-             edgeStyleDict={},edgeStyleRule={"rule":"edgetype","intra":"-","inter":"--"},defaultEdgeStyle="-",alignedNodes=None):
+             edgeStyleDict={},edgeStyleRule={"rule":"edgetype","intra":"-","inter":"--"},defaultEdgeStyle="-"):
         """Visualize a multilayer network.
 
         Creates a 3D pictures of multilayer networks are drawn using Matplotlib. The network can be any type of multilayer
@@ -439,6 +440,8 @@ try:
            This is done if the layergap times 3 is larger than 3.
         alignedNodes : bool, None
            Should each node have the same coordinate in each layer. If None, then True for multiplex networks and False for multilayer networks.
+        layerPadding : float
+           Space between nodes and the edge of each layer.
         [property]Dict : dict
            Dictionary giving each element a property value. Keys are the elements and values are the property values.
         [property]Rule : dict
@@ -539,7 +542,7 @@ try:
         #Build the network
         layers={}
         nodes={}
-        nf=NetFigure(layergap=layergap)
+        nf=NetFigure(layergap=layergap,padding=layerPadding)
         for layer in net.iter_layers():
             layers[layer]=Layer(nf,shape=layershape,color=layerColor[layer],label=layerLabel[layer])
 
