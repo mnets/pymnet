@@ -410,7 +410,7 @@ try:
              nodeColorDict={},nodeColorRule={},defaultNodeColor="black",
              edgeColorDict={},edgeColorRule={},defaultEdgeColor="gray",
              edgeWidthDict={},edgeWidthRule={},defaultEdgeWidth="1.0",
-             edgeStyleDict={},edgeStyleRule={"rule":"edgetype","intra":"-","inter":"--"},defaultEdgeStyle="-"):
+             edgeStyleDict={},edgeStyleRule={"rule":"edgetype","intra":"-","inter":"--"},defaultEdgeStyle="-",alignedNodes=None):
         """Visualize a multilayer network.
 
         Creates a 3D pictures of multilayer networks are drawn using Matplotlib. The network can be any type of multilayer
@@ -437,6 +437,8 @@ try:
         autoscale : bool
            If true, the layergap and camera distance is scaled automatically such that the whole drawing fits the figure.
            This is done if the layergap times 3 is larger than 3.
+        alignedNodes : bool, None
+           Should each node have the same coordinate in each layer. If None, then True for multiplex networks and False for multilayer networks.
         [property]Dict : dict
            Dictionary giving each element a property value. Keys are the elements and values are the property values.
         [property]Rule : dict
@@ -505,7 +507,7 @@ try:
 
         #Get coordinates
         ncoords,nlcoords={},{}
-        if isinstance(net,pymnet.net.MultiplexNetwork):
+        if alignedNodes==True or (isinstance(net,pymnet.net.MultiplexNetwork) and alignedNodes!=False):
             if layout in ["circular","shell","spring","spectral"]: #nx layout
                 if hasattr(pymnet,"nx"):
                     la=getattr(pymnet.nx,layout+"_layout")
@@ -518,7 +520,7 @@ try:
                     ncoords[node]=(random.random(),random.random())
             else:
                 raise Exception("Invalid layout: "+layout)
-        elif isinstance(net,pymnet.net.MultilayerNetwork):
+        elif isinstance(net,pymnet.net.MultilayerNetwork) or alignedNodes==False:
             if layout=="random":
                 for nl in net.iter_node_layers():
                     nlcoords[nl]=(random.random(),random.random())
