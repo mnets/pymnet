@@ -216,7 +216,7 @@ try:
             fix_attr_range(self.ax,"elev",[0,179])
 
         def register_layer(self,layer):
-            self.layers.append(layer)
+            self.layers.insert(0,layer) #First to top
         def register_node(self,node):
             self.nodes.append(node)
         def register_edge(self,edge):
