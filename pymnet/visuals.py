@@ -342,6 +342,9 @@ try:
     class LayerColorAssigner(PropertyAssigner):
         pass
 
+    class LayerAlphaAssigner(PropertyAssigner):
+        pass
+
     class LayerLabelAssigner(PropertyAssigner):
         pass
 
@@ -404,14 +407,15 @@ try:
 
     def draw(net,layout="random",layershape="rectangle",azim=-51,elev=22,show=False,layergap=1.0,camera_dist=None,autoscale=True,
              layerPadding=0.05,alignedNodes=None,
-             layerColorDict={},layerColorRule={"rule":"order","sequence":defaultLayerColors},defaultLayerColor="gray",
+             layerColorDict={},layerColorRule={},defaultLayerColor="#29b7c1",
+             layerAlphaDict={},layerAlphaRule={},defaultLayerAlpha=0.75,
              layerLabelDict={},layerLabelRule={"rule":"name"},defaultLayerLabel=None,
              nodeLabelDict={},nodeLabelRule={"rule":"nodename"},defaultNodeLabel=None,
              nodeSizeDict={},nodeSizeRule={"rule":"scaled","scalecoeff":0.2},defaultNodeSize=None,
              nodeColorDict={},nodeColorRule={},defaultNodeColor="black",
              edgeColorDict={},edgeColorRule={},defaultEdgeColor="gray",
-             edgeWidthDict={},edgeWidthRule={},defaultEdgeWidth="1.0",
-             edgeStyleDict={},edgeStyleRule={"rule":"edgetype","intra":"-","inter":"--"},defaultEdgeStyle="-"):
+             edgeWidthDict={},edgeWidthRule={},defaultEdgeWidth="1.5",
+             edgeStyleDict={},edgeStyleRule={"rule":"edgetype","intra":"-","inter":":"},defaultEdgeStyle="-"):
         """Visualize a multilayer network.
 
         Creates a 3D pictures of multilayer networks are drawn using Matplotlib. The network can be any type of multilayer
@@ -530,6 +534,7 @@ try:
 
         #Initialize assigners
         layerColor=LayerColorAssigner(layerColorDict,layerColorRule,defaultLayerColor,net)
+        layerAlpha=LayerAlphaAssigner(layerAlphaDict,layerAlphaRule,defaultLayerAlpha,net)
         layerLabel=LayerLabelAssigner(layerLabelDict,layerLabelRule,defaultLayerLabel,net)
         nodeLabel=NodeLabelAssigner(nodeLabelDict,nodeLabelRule,defaultNodeLabel,net)
         nodeSize=NodeSizeAssigner(nodeSizeDict,nodeSizeRule,defaultNodeSize,net)
@@ -544,7 +549,7 @@ try:
         nodes={}
         nf=NetFigure(layergap=layergap,padding=layerPadding)
         for layer in net.iter_layers():
-            layers[layer]=Layer(nf,shape=layershape,color=layerColor[layer],label=layerLabel[layer])
+            layers[layer]=Layer(nf,shape=layershape,color=layerColor[layer],label=layerLabel[layer],alpha=layerAlpha[layer])
 
         for nl in net.iter_node_layers():
             if nl in nlcoords:
