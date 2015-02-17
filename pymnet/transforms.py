@@ -110,57 +110,100 @@ def overlay_network(net):
                     newnet[node1,node2]=newnet[node1,node2]+net[node1,node2,layer,layer]
     return newnet
 
-def subnet(net,nodes,*layers):
+def subnet(net,nodes,*layers,**kwargs):
     """Returns an induced subgraph with given set of nodes and layers.
 
     Parameters
     ----------
-    net: The original network.
+    net : MultilayerNetwork, MultiplexNetwork 
+        The original network.
     nodes : sequence
         The nodes that span the induces subgraph.
     *layers : *sequence
-        Layers included in the subgraph. One parameter for each aspect.
+        (Elementary) layers included in the subgraph. One parameter for each aspect.
+    newNet : None, MultilayerNetwork, MultiplexNetwork    
+        An empty new network or None. If None, the new network is created as a
+        an empty copy of the net. The edges and nodes are copied to this network.
 
     Return
     ------
-    subnet : type(net)
+    subnet : type(net), or type(newNet)
         The induced subgraph that contains only nodes given in
         `nodes` and the edges between those nodes that are
         present in `net`. Node properties etc are left untouched.
     """
-    newNet=None
+    if "newNet" in kwargs:
+        newNet=kwargs["newNet"]
+    else:
+        newNet=None
+
+    assert len(layers)==net.aspects, "Please give layers for each aspect."
+    nodelayers=[]
+    for a,elayers in enumerate(itertools.chain([nodes],layers)):
+        if elayers==None:
+            nodelayers.append(set(net.get_layers(a)))
+        else:
+            nodelayers.append(set(elayers))
+
     if newNet==None:
-        if type(net)==MultilayerNetwork:
+        if isinstance(net,MultiplexNetwork):
+            newNet=MultiplexNetwork(couplings=net.couplings,
+                                    directed=net.directed,
+                                    noEdge=net.noEdge,
+                                    fullyInterconnected=net.fullyInterconnected)
+        elif isinstance(net,MultilayerNetwork):
             newNet=MultilayerNetwork(aspects=net.aspects,
                                      noEdge=net.noEdge,
-                                     directed=net.directed)
-            raise Exception("Not implemented yet.")
-        elif type(net)==MultiplexNetwork:
-            newNet=MultiplexNetwork(couplings=net.couplings,
-                                           directed=net.directed,
-                                           noEdge=net.noEdge,
-                                           fullyInterconnected=net.fullyInterconnected)
+                                     directed=net.directed,
+                                     fullyInterconnected=net.fullyInterconnected)
+        else:
+            raise Exception("Invalid net type: "+str(type(net)))
 
-            #Go through all the combinations of new layers
-            for layer in itertools.product(*layers):
-                degsum=0
-                for node in nodes:        
-                    degsum += net[(node,)+layer].deg()
-                    newNet.add_node(node)
+    addedElementaryLayers=[]
+    for a,elayers in enumerate(nodelayers):#enumerate(itertools.chain((nodes,),layers)):
+        addedElementaryLayers.append(0)
+        oldElementaryLayers=net.get_layers(a)
+        for elayer in elayers:
+            if elayer in oldElementaryLayers:
+                newNet.add_layer(elayer,a)
+                addedElementaryLayers[-1]+=1
 
-                if degsum >= len(nodes)*(len(nodes)-1)/2:
-                    othernodes=set(nodes)
-                    for node in nodes:
-                        if not net.directed:
-                            othernodes.remove(node)
-                        for othernode in othernodes:
-                            if net[(node,othernode)+layer]!=net.noEdge:
-                                newNet[(node,othernode)+layer]=net[(node,othernode)+layer]
+    if not net.fullyInterconnected:
+        totalNodeLayers=0
+        for nl in net.iter_node_layers():
+            if reduce(lambda x,y:x and y, (e in nodelayers[a] for a,e in enumerate(nl))):
+                if net.aspects==1:
+                    newNet.add_node(nl[0],layer=nl[1])
                 else:
-                    for node in nodes:
-                        for neigh in itertools.imap(lambda x:x[0],net[(node,COLON)+layer]):
-                            if neigh in nodes:
-                                newNet[(node,neigh)+layer]=net[(node,neigh)+layer]
+                    newNet.add_node(nl[0],layer=nl[1:])
+                totalNodeLayers+=1
+    else:
+        totalNodeLayers=reduce(lambda x,y:x*y,addedElementaryLayers)
+
+
+    if isinstance(net,MultiplexNetwork):
+        #Go through all the combinations of new layers
+        for layer in itertools.product(*nodelayers[1:]):
+            layer=layer[0] if net.aspects==1 else layer
+            subnet(net.A[layer],nodelayers[0],newNet=newNet.A[layer])
+    elif isinstance(net,MultilayerNetwork):
+        for nl1 in itertools.product(*nodelayers):
+            nl1 = nl1[0] if net.aspects==0 else nl1
+            if net[nl1].deg()>=totalNodeLayers:
+                for nl2 in itertools.product(*nodelayers):
+                    nl2 = nl2[0] if net.aspects==0 else nl2
+                    newNet[nl1][nl2]=net[nl1][nl2]
+            else:
+                if net.aspects==0:
+                    for nl2 in net[nl1]:
+                        if nl2 in nodelayers[0]:
+                            newNet[nl1][nl2]=net[nl1][nl2]
+                else:
+                    for nl2 in net[nl1]:
+                        if reduce(lambda x,y:x and y, (e in nodelayers[a] for a,e in enumerate(nl2))):
+                            newNet[nl1][nl2]=net[nl1][nl2]
+    else:
+        raise Exception("Invalid net type: "+str(type(net)))
 
     return newNet
 

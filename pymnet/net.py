@@ -159,15 +159,15 @@ class MultilayerNetwork(object):
 
     def __eq__(self,other):
         if not self.fullyInterconnected:
-            raise Exception("Not implemented.")
-        if type(self) is type(other):
-            if self.directed == other.directed and self.directed==other.directed and self.aspects==other.aspects and self.fullyInterconnected == other.fullyInterconnected and self.noEdge == other.noEdge and self.slices==other.slices:
-                if len(self.edges) ==len(other.edges):
-                    for edge in self.edges:
-                        if self[edge[:-1]]!=other[edge[:-1]]:
-                            return False
-                    return True
-        return False
+            if self._nodeToLayers!=other._nodeToLayers:
+                return False
+        if type(self) is type(other) and self.directed == other.directed and self.directed==other.directed and self.aspects==other.aspects and self.fullyInterconnected == other.fullyInterconnected and self.noEdge == other.noEdge and self.slices==other.slices and len(self.edges) ==len(other.edges):            
+            for edge in self.edges:
+                if self[edge[:-1]]!=other[edge[:-1]]:
+                    return False
+        else:
+            return False
+        return True
     def __ne__(self,other):
         return not self.__eq__(other)
 

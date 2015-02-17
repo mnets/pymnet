@@ -46,6 +46,39 @@ class TestTransforms(unittest.TestCase):
 
         self.mplex_nonaligned_simple=n
 
+        #The 2-aspect example network for the review article
+        n=net.MultilayerNetwork(aspects=2,fullyInterconnected=False)
+        n[1,2,'A','A','X','X']=1
+        n[2,3,'A','A','Y','Y']=1
+        n[1,3,'B','B','X','X']=1
+        n[1,4,'B','B','X','X']=1
+        n[3,4,'B','B','X','X']=1
+        n[1,1,'A','B','X','X']=1
+        n[1,4,'A','B','X','X']=1
+        n[1,1,'B','B','X','Y']=1
+        n[3,3,'A','A','X','Y']=1
+        n[3,4,'A','B','X','Y']=1
+        self.mlayer_example_2d=n
+
+        n=net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        n[1,2,'A','A']=1
+        n[2,3,'A','A']=1
+        n[1,3,'B','B']=1
+        n[1,4,'B','B']=1
+        n[3,4,'B','B']=1
+        n[1,1,'A','B']=1
+        n[1,4,'A','B']=1
+        n[3,4,'A','B']=1
+        self.mlayer_example_1d=n
+
+        n=net.MultilayerNetwork(aspects=0,fullyInterconnected=True)
+        n[1,2]=1
+        n[2,3]=1
+        n[1,3]=1
+        n[1,4]=2
+        n[3,4]=2
+        self.mlayer_example_monoplex=n
+
     def test_aggregate_unweighted_mplex_simple(self):
         an=transforms.aggregate(self.mplex_simple,1)
         self.assertEqual(an[1,2],3)
@@ -106,6 +139,55 @@ class TestTransforms(unittest.TestCase):
         import copy
         copynet2=copy.deepcopy(self.mplex_simple)
         self.assertEqual(copynet2,self.mplex_simple)
+
+    def test_subnet_mlayer_example(self):
+        #monoplex
+        copynet=transforms.subnet(self.mlayer_example_monoplex,[1,2,3,4])
+        self.assertEqual(copynet,self.mlayer_example_monoplex)
+        copynet=transforms.subnet(self.mlayer_example_monoplex,None)
+        self.assertEqual(copynet,self.mlayer_example_monoplex)
+        import copy
+        copynet2=copy.deepcopy(self.mlayer_example_monoplex)
+        self.assertEqual(copynet2,self.mlayer_example_monoplex)
+
+        n=net.MultilayerNetwork(aspects=0,fullyInterconnected=True)
+        n[2,3]=1
+        n[3,4]=2
+        self.assertEqual(n,transforms.subnet(self.mlayer_example_monoplex,[2,3,4]))
+
+
+        #1-aspect
+        copynet=transforms.subnet(self.mlayer_example_1d,[1,2,3,4],['A','B'])
+        self.assertEqual(copynet,self.mlayer_example_1d)
+        copynet=transforms.subnet(self.mlayer_example_1d,None,['A','B'])
+        self.assertEqual(copynet,self.mlayer_example_1d)
+        copynet=transforms.subnet(self.mlayer_example_1d,None,None)
+        self.assertEqual(copynet,self.mlayer_example_1d)
+        copynet=transforms.subnet(self.mlayer_example_1d,[1,2,3,4],None)
+        self.assertEqual(copynet,self.mlayer_example_1d)
+        import copy
+        copynet2=copy.deepcopy(self.mlayer_example_1d)
+        self.assertEqual(copynet2,self.mlayer_example_1d)
+
+        n=net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        n.add_node(4,layer='A')
+        n[2,3,'A','A']=1
+        self.assertEqual(n,transforms.subnet(self.mlayer_example_1d,[2,3,4],['A']))
+
+        #2-aspect
+        copynet=transforms.subnet(self.mlayer_example_2d,[1,2,3,4],['A','B'],['X','Y'])
+        self.assertEqual(copynet,self.mlayer_example_2d)
+        import copy
+        copynet2=copy.deepcopy(self.mlayer_example_2d)
+        self.assertEqual(copynet2,self.mlayer_example_2d)
+
+        n=net.MultilayerNetwork(aspects=2,fullyInterconnected=False)
+        n[3,4,'B','B','X','X']=1
+        n.add_node(2,layer=('A','X'))
+        n.add_node(3,layer=('A','X'))
+        self.assertEqual(n,transforms.subnet(self.mlayer_example_2d,[2,3,4],None,['X','dummy']))
+
+
 
     def test_aggregate_2dim_mlayer_nonglobal_nodes(self):
         def test_net(n):
@@ -215,6 +297,7 @@ def test_transforms():
     suite.addTest(TestTransforms("test_aggregate_2dim_mlayer_nonglobal_nodes"))
     suite.addTest(TestTransforms("test_aggregate_1dim_mlayer_nonglobal_nodes"))
     suite.addTest(TestTransforms("test_aggregate_2dim_mlayer_interlayeredges"))
+    suite.addTest(TestTransforms("test_subnet_mlayer_example"))
     suite.addTest(TestTransforms("test_subnet_mplex_simple"))
     suite.addTest(TestTransforms("test_normalize_mplex_simple"))
     unittest.TextTestRunner().run(suite) 
