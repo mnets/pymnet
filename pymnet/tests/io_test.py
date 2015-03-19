@@ -3,7 +3,7 @@ from operator import itemgetter
 
 import sys
 sys.path.append("../../")
-from pymnet import net,io
+from pymnet import net,netio
 #from .. import net
 
 
@@ -20,7 +20,7 @@ Data:
 1 1 0 0 1
 1 0 0 0 0
 1 0 1 0 0"""
-        net=io.read_ucinet(netfile.split("\n"))
+        net=netio.read_ucinet(netfile.split("\n"))
         self.assertEqual(net.aspects,0)
         self.assertEqual(set(net),set([0,1,2,3,4]))
         self.assertEqual(set(net[0]),set([1,2,3,4]))
@@ -30,7 +30,7 @@ Data:
         self.assertEqual(set(net[4]),set([0,2]))
 
         def test_labeled(netfile):
-            net=io.read_ucinet(netfile.split("\n"))
+            net=netio.read_ucinet(netfile.split("\n"))
             self.assertEqual(net.aspects,0)
             self.assertEqual(set(net),set(["barry","david","lin","pat","russ"]))
             self.assertEqual(set(net["barry"]),set(["david","lin","pat"]))
@@ -90,7 +90,7 @@ Data:
 1 0 0 1 0
 1 0 1 0 1
 0 1 0 1 0"""
-        net=io.read_ucinet(netfile.split("\n"))
+        net=netio.read_ucinet(netfile.split("\n"))
         self.assertEqual(net.aspects,1)
         self.assertEqual(set(net),set([0,1,2,3,4]))
         self.assertEqual(set(net.A[0][0]),set([1,2,3,4]))
@@ -113,7 +113,7 @@ Data:
 0 0 0
 0 0 1
 0 1 0"""
-        net=io.read_ucinet(netfile.split("\n"),fullyInterconnected=False)
+        net=netio.read_ucinet(netfile.split("\n"),fullyInterconnected=False)
         self.assertEqual(set(net[0,0]),set([(1,0),(2,0)]))
         self.assertEqual(set(net[1,0]),set([(0,0),(2,0),(1,1)]))
         self.assertEqual(set(net[2,0]),set([(0,0),(1,0),(2,1)]))
