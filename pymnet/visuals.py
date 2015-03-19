@@ -4,7 +4,7 @@ import pymnet
 import random,math
 
 from net import MultiplexNetwork
-import io
+import netio
 
 webplot_template="""
 <script src="http://d3js.org/d3.v3.min.js"></script>
@@ -116,7 +116,7 @@ def webplot(net,outputfile=None):
     assert net.aspects==1
 
     script=webplot_template
-    netdatastr=io.write_json(net)
+    netdatastr=netio.write_json(net)
 
     replace={"@netjson" : netdatastr}
     for key,val in replace.items():
