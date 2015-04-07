@@ -3,7 +3,7 @@ from operator import itemgetter
 
 import sys
 sys.path.append("../../")
-from pymnet import net,transforms
+from pymnet import net,transforms,diagnostics
 
 
 
@@ -290,6 +290,11 @@ class TestTransforms(unittest.TestCase):
         except Exception,e:
             self.assertEqual(str(e),"Not implemented.")
 
+    def test_randomize_nodes_by_layer(self):
+        n=transforms.randomize_nodes_by_layer(self.mplex_nonaligned_simple)
+        self.assertNotEqual(n,self.mplex_nonaligned_simple)
+        self.assertEqual(diagnostics.multiplex_degs(n),diagnostics.multiplex_degs(self.mplex_nonaligned_simple))
+
 def test_transforms():
     suite = unittest.TestSuite()    
     suite.addTest(TestTransforms("test_aggregate_unweighted_mplex_simple"))
@@ -300,6 +305,7 @@ def test_transforms():
     suite.addTest(TestTransforms("test_subnet_mlayer_example"))
     suite.addTest(TestTransforms("test_subnet_mplex_simple"))
     suite.addTest(TestTransforms("test_normalize_mplex_simple"))
+    suite.addTest(TestTransforms("test_randomize_nodes_by_layer"))
     unittest.TextTestRunner().run(suite) 
 
 if __name__ == '__main__':
