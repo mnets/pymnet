@@ -3,6 +3,7 @@
 from net import *
 import math
 import itertools
+import random
 
 def aggregate(net,aspects,newNet=None,selfEdges=False):
     """Reduces the number of aspects by aggregating them.
@@ -438,3 +439,18 @@ def threshold(net,threshold,method=">=",ignoreCouplingEdges=False):
                 newNet[edge[:-1]]=edge[-1]
     return newNet
 
+def randomize_nodes_by_layer(net):
+    assert isinstance(net,MultiplexNetwork)
+    assert net.aspects==1
+    newnet=subnet(net,set(),net.iter_layers())
+    for layer,inet in net.A.iteritems():
+        newinet=newnet.A[layer]
+        nodes=list(inet)
+        random.shuffle(nodes)
+        nodemap={}
+        for i,node in enumerate(inet):
+            nodemap[node]=nodes[i]
+            newinet.add_node(node)
+        for e in inet.edges:
+            newinet[nodemap[e[0]],nodemap[e[1]]]=e[2]
+    return newnet

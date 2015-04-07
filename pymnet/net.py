@@ -1197,8 +1197,6 @@ class MultiplexNetwork(MultilayerNetwork):
                     yield n
 
     def __eq__(self,other):
-        if not self.fullyInterconnected:
-            raise Exception("Not implemented.")
         if type(self) is type(other):
             if self.directed == other.directed and self.directed==other.directed and self.aspects==other.aspects and self.fullyInterconnected == other.fullyInterconnected and self.noEdge == other.noEdge and self.slices==other.slices and self.couplings == other.couplings:
                 for layer in self.iter_layers():
