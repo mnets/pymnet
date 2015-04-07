@@ -406,6 +406,7 @@ try:
 
 
     def draw(net,layout="random",layershape="rectangle",azim=-51,elev=22,show=False,layergap=1.0,camera_dist=None,autoscale=True,
+             nodeCoords={},nodelayerCoords={},
              layerPadding=0.05,alignedNodes=None,
              layerColorDict={},layerColorRule={},defaultLayerColor="#29b7c1",
              layerAlphaDict={},layerAlphaRule={},defaultLayerAlpha=0.75,
@@ -531,6 +532,11 @@ try:
             if layout=="random":
                 for nl in net.iter_node_layers():
                     nlcoords[nl]=(random.random(),random.random())
+
+        for node,coord in nodeCoords.items():
+             ncoords[node]=coord
+        for nl,coord in nodelayerCoords.items():
+             nlcoords[nl]=coord
 
         #Initialize assigners
         layerColor=LayerColorAssigner(layerColorDict,layerColorRule,defaultLayerColor,net)
