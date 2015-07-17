@@ -1,4 +1,5 @@
 from net import *
+import heapq,itertools
 
 def degs(net,degstype="distribution"):
     """Returns the degree distribution of a multilayer network.
@@ -86,3 +87,86 @@ def multiplex_degs(net,degstype="distribution"):
     for layer in net.iter_layers():
         d[layer]=degs(net.A[layer],degstype=degstype)
     return d
+
+def dijkstra(net,sources):
+    """Return the forest giving shortest paths from a set of source nodes.
+
+    Parameters
+    ----------
+    net : MultilayerNetwork
+    sources : iterable
+    """
+    forest=MultilayerNetwork(aspects=net.aspects,
+                             fullyInterconnected=False,
+                             directed=True,
+                             noEdge=-1)
+    d=dict([(s,0) for s in sources])
+
+    queue=[]
+    for s in sources:
+        heapq.heappush(queue,(0,s,s)) #distance, source, dest
+    
+    while len(queue)>0:
+        dist,source,dest=heapq.heappop(queue)
+        if d[dest]>=dist: #could be ==
+            assert d[dest]==dist, " ".join(map(str,[dist,source,dest,d[dest]]))
+            forest[source][dest]=net[source][dest]
+            for neigh in net[dest].iter_out():
+                ndist=dist+net[dest][neigh]
+                if neigh not in d or d[neigh]>=ndist:
+                    d[neigh]=ndist      
+                    heapq.heappush(queue,(ndist,dest,neigh))
+
+
+    return d,forest
+
+def dijkstra_mlayer_prune(net,sources,aaspects):
+    nsources=[]
+    for s in sources:    
+        layers=[]
+        for a in range(net.aspects+1):
+            if a in aaspects:
+                assert s[a]==None
+                layers.append(list(net.slices[a]))                
+            else:
+                layers.append([s[a]])
+        for nl in itertools.product(*layers):
+            if net[nl].deg()>0:
+                nsources.append(nl)
+                
+    d,forest=dijkstra(net,nsources)
+
+    def select_aspects(nl,aaspects):
+        nnl=[]
+        for a in range(len(nl)):
+            if a not in aaspects:
+                nnl.append(nl[a])
+        return tuple(nnl)
+
+    nd={}
+    for nl,dist in d.iteritems():
+        nnl=select_aspects(nl,aaspects)
+        if nnl not in nd or nd[nnl]>dist:
+            nd[nnl]=dist
+
+
+    def build_path(otree,ntree,node):
+        for neigh in otree[node].iter_in():
+            ntree[neigh][node]=otree[neigh][node]
+            if ntree[neigh].deg_in()==0:
+                build_path(otree,ntree,neigh)
+
+    nforest=MultilayerNetwork(aspects=net.aspects,
+                             fullyInterconnected=False,
+                             directed=True,
+                             noEdge=-1)
+
+    for nl,dist in d.iteritems():
+        nnl=select_aspects(nl,aaspects)
+        if nd[nnl]==d[nl]:
+            build_path(forest,nforest,nl)
+
+                        
+    return nd,nforest
+
+

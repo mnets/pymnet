@@ -27,13 +27,15 @@ class MonoplexGraphWrapper_singleedge(collections.MutableMapping):
     def __delitem__(self,key):
         if key=="weight":
             self.net[self.node1,self.node2]=self.net.noEdge
-
+    def copy(self):
+        return dict(self.iteritems())
 
 class MonoplexGraphWrapper_adjlist(collections.MutableMapping):
     def __init__(self,net,node):
         self.net=net
         self.node=node
     def __getitem__(self,key):
+        key in {} #this is to raise TypeError if key is unhashable
         if key in self.net[self.node]:
             return MonoplexGraphWrapper_singleedge(self.net,self.node,key)
         else:
@@ -61,6 +63,7 @@ class MonoplexGraphWrapper_adj(collections.MutableMapping):
     def __init__(self,net):
         self.net=net
     def __getitem__(self,key):
+        key in {} #this is to raise TypeError if key is unhashable
         if key in self.net:
             return MonoplexGraphWrapper_adjlist(self.net,key)
         else:
@@ -86,6 +89,7 @@ class MonoplexGraphWrapper_node(collections.MutableMapping):
     def __init__(self,net):
         self.net=net
     def __getitem__(self,key):
+        key in {} #this is to raise TypeError if key is unhashable
         if key in self.net:
             return {}
         else:
