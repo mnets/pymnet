@@ -447,7 +447,7 @@ try:
     class EdgeZAssigner(EdgePropertyAssigner):
         pass
 
-    def get_layout(layout,net,alignedNodes=None):
+    def get_layout(layout,net,alignedNodes=True):
         """Function for calculating a layout for a network. For parameter values see documentation
         of the draw function.
 
