@@ -539,6 +539,9 @@ try:
         to set a value for property of an element, and the parameters are gone through in the order [property]Dict, [property]Rule,
         and default[property] until a property value is found. 
 
+        The format for defining edges in property dictionaries is tuples with two node-layer names. For example, and edges between node
+        1 in layer 'a' and node 2 in layer 'b' is specified with tuple ((1,'a'),(2,'b')).
+
         **Property rules**  
      
         The [property]Rule parameter can be used to set property values by giving a rule for determining the property value. The rules
