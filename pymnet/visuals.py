@@ -432,6 +432,36 @@ try:
     class EdgeStyleAssigner(EdgePropertyAssigner):
         pass
 
+    def get_layout(layout,net,alignedNodes=None):
+        """Function for calculating a layout for a network. For parameter values see documentation
+        of the draw function.
+
+        Returns
+        -------
+        nodeCoords, nodelayerCoords : dict, dict
+           Node coordinates and node-layer coordinates that are generated. These can be given to the
+           draw function as parameters.
+        """
+        ncoords,nlcoords={},{}
+        if alignedNodes==True or (isinstance(net,pymnet.MultiplexNetwork) and alignedNodes!=False):
+            if layout in ["circular","shell","spring","spectral"]: #nx layout
+                if hasattr(pymnet,"nx"):
+                    la=getattr(pymnet.nx,layout+"_layout")
+                    na=pymnet.transforms.aggregate(net,1)
+                    ncoords=la(na)
+                else:
+                    raise Exception("Networkx needs to be installed to use layout: "+layout)
+            elif layout=="random":
+                for node in net:
+                    ncoords[node]=(random.random(),random.random())
+            else:
+                raise Exception("Invalid layout: "+layout)
+        elif isinstance(net,pymnet.net.MultilayerNetwork) or alignedNodes==False:
+            if layout=="random":
+                for nl in net.iter_node_layers():
+                    nlcoords[nl]=(random.random(),random.random())
+        return ncoords,nlcoords         
+
 
     def draw(net,layout="random",layershape="rectangle",azim=-51,elev=22,show=False,layergap=1.0,camera_dist=None,autoscale=True,
              nodeCoords={},nodelayerCoords={},
@@ -542,24 +572,7 @@ try:
         assert net.aspects==1
 
         #Get coordinates
-        ncoords,nlcoords={},{}
-        if alignedNodes==True or (isinstance(net,pymnet.net.MultiplexNetwork) and alignedNodes!=False):
-            if layout in ["circular","shell","spring","spectral"]: #nx layout
-                if hasattr(pymnet,"nx"):
-                    la=getattr(pymnet.nx,layout+"_layout")
-                    na=pymnet.transforms.aggregate(net,1)
-                    ncoords=la(na)
-                else:
-                    raise Exception("Networkx needs to be installed to use layout: "+layout)
-            elif layout=="random":
-                for node in net:
-                    ncoords[node]=(random.random(),random.random())
-            else:
-                raise Exception("Invalid layout: "+layout)
-        elif isinstance(net,pymnet.net.MultilayerNetwork) or alignedNodes==False:
-            if layout=="random":
-                for nl in net.iter_node_layers():
-                    nlcoords[nl]=(random.random(),random.random())
+        ncoords,nlcoords=get_layout(layout,net,alignedNodes=alignedNodes)
 
         for node,coord in nodeCoords.items():
              ncoords[node]=coord
