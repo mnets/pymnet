@@ -307,9 +307,16 @@ try:
             self.defaultProp=defaultProp
             self.net=net
 
-        def __getitem__(self,item):
+        def _get_from_property_dict(self,item):
             if item in self.propDict:
                 return self.propDict[item]
+            else:
+                return None
+
+        def __getitem__(self,item):
+            pdictval=self._get_from_property_dict(item)
+            if pdictval!=None:
+                return pdictval
             elif len(self.propRule)>0:
                 assert "rule" in self.propRule
                 if self.propRule["rule"] in self.rules:
@@ -386,6 +393,27 @@ try:
 
     class EdgePropertyAssigner(PropertyAssigner):
         rules=NodePropertyAssigner.rules.union(set(["edgetype","edgeweight"]))
+
+        def _get_from_property_dict(self,item):
+            """Return the edge property from the property dict given by the user.
+
+            For directed networks this is same as the parent classes method. For 
+            undirected networks both directions for edges are accepted.
+            """
+            if self.net.directed:
+                return super(EdgePropertyAssigner,self)._get_from_property_dict(item)
+            else:
+                if item in self.propDict:
+                    return self.propDict[item]
+                else:
+                    try:
+                        item=(item[1],item[0])
+                        if item in self.propDict:
+                            return self.propDict[item]
+                    except Exception:
+                        return None                    
+                return None
+
         def get_by_rule(self,item,rule):
             if rule=="edgetype":
                 if "intra" in self.propRule and item[0][1]==item[1][1]:
