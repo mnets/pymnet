@@ -268,10 +268,12 @@ try:
             fix_attr(self.layer,"zorder",self.z)
 
     class Edge(object):
-        def __init__(self,node1,node2,color="gray",width=1.0,directed=False,style="-"):
+        def __init__(self,node1,node2,color="gray",width=1.0,directed=False,style="-",z=0):
             self.node1=node1
             self.node2=node2
             self.net=node1.net
+            assert 0<=z<=1
+            self.z=z
 
             self.net.register_edge(self)
 
@@ -294,7 +296,7 @@ try:
                 ys=[self.node1.y,self.node2.y]
                 zs=[self.node1.layer.z,self.node2.layer.z]
             for i in range(len(zs)-1):
-                z=(zs[i]+zs[i+1])/2.
+                z=(zs[i]+zs[i+1])/2.+self.z/10.
                 line=self.net.ax.plot(xs[i:i+2],ys[i:i+2],zs=zs[i:i+2],linestyle=self.style,zdir="z",color=self.color,linewidth=self.width)[0]
                 fix_attr(line,"zorder",z)
                 self.lines.append(line)
@@ -442,6 +444,9 @@ try:
     class EdgeStyleAssigner(EdgePropertyAssigner):
         pass
 
+    class EdgeZAssigner(EdgePropertyAssigner):
+        pass
+
     def get_layout(layout,net,alignedNodes=None):
         """Function for calculating a layout for a network. For parameter values see documentation
         of the draw function.
@@ -488,6 +493,7 @@ try:
              nodeColorDict={},nodeColorRule={},defaultNodeColor="black",
              edgeColorDict={},edgeColorRule={},defaultEdgeColor="gray",
              edgeWidthDict={},edgeWidthRule={},defaultEdgeWidth="1.5",
+             edgeZDict={},edgeZRule={},defaultEdgeZ=0,
              edgeStyleDict={},edgeStyleRule={"rule":"edgetype","intra":"-","inter":":"},defaultEdgeStyle="-"):
         """Visualize a multilayer network.
 
@@ -541,6 +547,8 @@ try:
 
         The format for defining edges in property dictionaries is tuples with two node-layer names. For example, and edges between node
         1 in layer 'a' and node 2 in layer 'b' is specified with tuple ((1,'a'),(2,'b')).
+
+        All z-coordinate modifiers (e.g., edgeZ) must lie between 0 and 1.
 
         **Property rules**  
      
@@ -610,6 +618,7 @@ try:
         edgeColor=EdgeColorAssigner(edgeColorDict,edgeColorRule,defaultEdgeColor,net)
         edgeWidth=EdgeWidthAssigner(edgeWidthDict,edgeWidthRule,defaultEdgeWidth,net)
         edgeStyle=EdgeStyleAssigner(edgeStyleDict,edgeStyleRule,defaultEdgeStyle,net)
+        edgeZ=EdgeZAssigner(edgeZDict,edgeZRule,defaultEdgeZ,net)
 
 
         #Build the network
@@ -631,7 +640,7 @@ try:
 
         for nl1 in net.iter_node_layers():
             for nl2 in net[nl1]:
-                Edge(nodes[nl1],nodes[nl2],color=edgeColor[(nl1,nl2)],width=edgeWidth[(nl1,nl2)],style=edgeStyle[(nl1,nl2)])
+                Edge(nodes[nl1],nodes[nl2],color=edgeColor[(nl1,nl2)],width=edgeWidth[(nl1,nl2)],style=edgeStyle[(nl1,nl2)],z=edgeZ[(nl1,nl2)])
 
         nf.draw()
         nf.ax.azim=azim
