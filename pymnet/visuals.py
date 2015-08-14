@@ -223,11 +223,12 @@ try:
             self.edges.append(edge)
 
     class Node(object):
-        def __init__(self,layer,x,y,label=None,size=0.04,color="black"):
+        def __init__(self,layer,x,y,label=None,size=0.04,color="black",labelArgs={}):
             self.x,self.y,self.size,self.color,self.label=x,y,size,color,label
             self.layer=layer
             self.net=layer.net
             self.label=label
+            self.labelArgs=labelArgs 
 
             self.net.register_node(self)        
 
@@ -238,7 +239,7 @@ try:
             fix_attr(self.circle,"zorder",self.layer.z+self.net.eps)
 
             if self.label!=None:
-                self.labelObject=self.net.ax.text(self.x+self.size/2.,self.y+self.size/2.,self.layer.z+self.net.eps,str(self.label))
+                self.labelObject=self.net.ax.text(self.x+self.size/2.,self.y+self.size/2.,self.layer.z+self.net.eps,str(self.label),**self.labelArgs)
                 fix_attr(self.labelObject,"zorder",self.layer.z+self.net.eps)
 
     class Layer(object):
@@ -362,6 +363,15 @@ try:
                 return self.net[item].deg()
             return super(NodePropertyAssigner,self).get_by_rule(item,rule)
 
+    class NodeLabelSizeAssigner(NodePropertyAssigner):
+        pass
+    class NodeLabelColorAssigner(NodePropertyAssigner):
+        pass
+    class NodeLabelStyleAssigner(NodePropertyAssigner):
+        pass
+    class NodeLabelAlphaAssigner(NodePropertyAssigner):
+        pass
+
     class NodeLabelAssigner(NodePropertyAssigner):
         rules=NodePropertyAssigner.rules.union(set(["nodename"]))
         def get_by_rule(self,item,rule):
@@ -470,6 +480,10 @@ try:
              layerAlphaDict={},layerAlphaRule={},defaultLayerAlpha=0.75,
              layerLabelDict={},layerLabelRule={"rule":"name"},defaultLayerLabel=None,
              nodeLabelDict={},nodeLabelRule={"rule":"nodename"},defaultNodeLabel=None,
+             nodeLabelSizeDict={},nodeLabelSizeRule={},defaultNodeLabelSize=None,
+             nodeLabelColorDict={},nodeLabelColorRule={},defaultNodeLabelColor='k',
+             nodeLabelStyleDict={},nodeLabelStyleRule={},defaultNodeLabelStyle="normal",
+             nodeLabelAlphaDict={},nodeLabelAlphaRule={},defaultNodeLabelAlpha=1.0,
              nodeSizeDict={},nodeSizeRule={"rule":"scaled","scalecoeff":0.2},defaultNodeSize=None,
              nodeColorDict={},nodeColorRule={},defaultNodeColor="black",
              edgeColorDict={},edgeColorRule={},defaultEdgeColor="gray",
@@ -584,6 +598,10 @@ try:
         layerAlpha=LayerAlphaAssigner(layerAlphaDict,layerAlphaRule,defaultLayerAlpha,net)
         layerLabel=LayerLabelAssigner(layerLabelDict,layerLabelRule,defaultLayerLabel,net)
         nodeLabel=NodeLabelAssigner(nodeLabelDict,nodeLabelRule,defaultNodeLabel,net)
+        nodeLabelSize=NodeLabelSizeAssigner(nodeLabelSizeDict,nodeLabelSizeRule,defaultNodeLabelSize,net)
+        nodeLabelColor=NodeLabelColorAssigner(nodeLabelColorDict,nodeLabelColorRule,defaultNodeLabelColor,net)
+        nodeLabelStyle=NodeLabelStyleAssigner(nodeLabelStyleDict,nodeLabelStyleRule,defaultNodeLabelStyle,net)
+        nodeLabelAlpha=NodeLabelAlphaAssigner(nodeLabelAlphaDict,nodeLabelAlphaRule,defaultNodeLabelAlpha,net)
         nodeSize=NodeSizeAssigner(nodeSizeDict,nodeSizeRule,defaultNodeSize,net)
         nodeColor=NodeColorAssigner(nodeColorDict,nodeColorRule,defaultNodeColor,net)
         edgeColor=EdgeColorAssigner(edgeColorDict,edgeColorRule,defaultEdgeColor,net)
@@ -605,7 +623,8 @@ try:
                 xy=ncoords[nl[0]]
             else:
                 xy=(random.random(),random.random())
-            nodes[nl]=Node(layers[nl[1]],xy[0],xy[1],label=nodeLabel[nl],color=nodeColor[nl],size=nodeSize[nl])
+            nodeLabelArgs={"size":nodeLabelSize[nl],"color":nodeLabelColor[nl],"style":nodeLabelStyle[nl],"alpha":nodeLabelAlpha[nl]}
+            nodes[nl]=Node(layers[nl[1]],xy[0],xy[1],label=nodeLabel[nl],color=nodeColor[nl],size=nodeSize[nl],labelArgs=nodeLabelArgs)
 
         for nl1 in net.iter_node_layers():
             for nl2 in net[nl1]:
