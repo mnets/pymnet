@@ -50,6 +50,19 @@ class TestNxwrap(unittest.TestCase):
 
         self.assertEqual(nxwrap.connected_components(n),[[1, 2, 3], [4, 5]])
 
+    def test_mst(self):
+        n=net.MultilayerNetwork(aspects=0)
+        n[1,2]=1
+        n[2,3]=1
+        n[1,3]=10
+
+        mst=nxwrap.minimum_spanning_tree(n)
+
+        self.assertEqual(mst[1,2],1)
+        self.assertEqual(mst[2,3],1)
+        self.assertEqual(mst[1,3],mst.noEdge)
+
+
     def test_monoplex_load_karate(self):
         knet=nxwrap.karate_club_graph()
         self.assertEqual(knet.__class__,net.MultilayerNetwork)
@@ -65,6 +78,7 @@ def test_nxwrap():
     suite.addTest(TestNxwrap("test_monoplex_basics_writing_nx"))
     suite.addTest(TestNxwrap("test_monoplex_load_karate")) 
     suite.addTest(TestNxwrap("test_autowrapping"))
+    suite.addTest(TestNxwrap("test_mst"))
     unittest.TextTestRunner().run(suite) 
 
 if __name__ == '__main__':

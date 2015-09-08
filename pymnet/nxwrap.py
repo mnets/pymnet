@@ -107,7 +107,7 @@ class MonoplexGraphWrapper_node(collections.MutableMapping):
 
 
 class MonoplexGraphNetworkxView(networkx.Graph):
-    def __init__(self,net,**kwargs):
+    def __init__(self,net,data=None,**kwargs):
         super(MonoplexGraphNetworkxView, self).__init__(**kwargs)
 
         self.net=net
@@ -116,10 +116,15 @@ class MonoplexGraphNetworkxView(networkx.Graph):
         self.node=MonoplexGraphWrapper_node(net)
         self.graph={}
 
+        if data is not None:
+            networkx.convert.to_networkx_graph(data,create_using=self)
+
+
+
 class MonoplexGraphNetworkxNew(MonoplexGraphNetworkxView):
-    def __init__(self,**kwargs):
+    def __init__(self,data=None,**kwargs):
         net=MultilayerNetwork(aspects=0) #new empty pymnet object
-        super(MonoplexGraphNetworkxNew, self).__init__(net,**kwargs)
+        super(MonoplexGraphNetworkxNew, self).__init__(net,data=data,**kwargs)
 
 def autowrap(net):
     assert net.aspects==0, "Only monoplex networks."
