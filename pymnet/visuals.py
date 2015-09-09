@@ -358,6 +358,9 @@ try:
     class LayerLabelAssigner(PropertyAssigner):
         pass
 
+    class LayerOrderAssigner(PropertyAssigner):
+        pass
+
     class NodePropertyAssigner(PropertyAssigner):
         rules=PropertyAssigner.rules.union(set(["degree"]))
         def get_by_rule(self,item,rule):
@@ -484,6 +487,7 @@ try:
              layerColorDict={},layerColorRule={},defaultLayerColor="#29b7c1",
              layerAlphaDict={},layerAlphaRule={},defaultLayerAlpha=0.75,
              layerLabelDict={},layerLabelRule={"rule":"name"},defaultLayerLabel=None,
+             layerOrderDict={},layerOrderRule={"rule":"name"},defaultLayerOrder=0,
              nodeLabelDict={},nodeLabelRule={"rule":"nodename"},defaultNodeLabel=None,
              nodeLabelSizeDict={},nodeLabelSizeRule={},defaultNodeLabelSize=None,
              nodeLabelColorDict={},nodeLabelColorRule={},defaultNodeLabelColor='k',
@@ -608,6 +612,7 @@ try:
         layerColor=LayerColorAssigner(layerColorDict,layerColorRule,defaultLayerColor,net)
         layerAlpha=LayerAlphaAssigner(layerAlphaDict,layerAlphaRule,defaultLayerAlpha,net)
         layerLabel=LayerLabelAssigner(layerLabelDict,layerLabelRule,defaultLayerLabel,net)
+        layerOrder=LayerOrderAssigner(layerOrderDict,layerOrderRule,defaultLayerOrder,net)
         nodeLabel=NodeLabelAssigner(nodeLabelDict,nodeLabelRule,defaultNodeLabel,net)
         nodeLabelSize=NodeLabelSizeAssigner(nodeLabelSizeDict,nodeLabelSizeRule,defaultNodeLabelSize,net)
         nodeLabelColor=NodeLabelColorAssigner(nodeLabelColorDict,nodeLabelColorRule,defaultNodeLabelColor,net)
@@ -625,7 +630,7 @@ try:
         layers={}
         nodes={}
         nf=NetFigure(layergap=layergap,padding=layerPadding)
-        for layer in net.iter_layers():
+        for layer in sorted(net.iter_layers(),key=lambda l:layerOrder[l]):
             layers[layer]=Layer(nf,shape=layershape,color=layerColor[layer],label=layerLabel[layer],alpha=layerAlpha[layer])
 
         for nl in net.iter_node_layers():
