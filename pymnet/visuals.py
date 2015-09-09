@@ -168,7 +168,7 @@ try:
 
 
     class NetFigure(object):    
-        def __init__(self,layergap=1,eps=0.001,padding=0.05):
+        def __init__(self,figsize=None,layergap=1,eps=0.001,padding=0.05):
             self.nodes=[]
             self.layers=[]
             self.edges=[]
@@ -176,6 +176,7 @@ try:
             self.padding=padding
             self.eps=eps        
             self.layergap=layergap
+            self.figsize=figsize
 
         def normalize_coords(self):
             maxx,maxy,minx,miny=0,0,0,0
@@ -195,7 +196,7 @@ try:
         def draw(self):
             self.normalize_coords()
 
-            self.fig=plt.figure()
+            self.fig=plt.figure(figsize=self.figsize)
             self.ax=self.fig.gca(projection='3d')
 
             for i,layer in enumerate(self.layers):
@@ -482,7 +483,7 @@ try:
 
 
     def draw(net,layout="random",layershape="rectangle",azim=-51,elev=22,show=False,layergap=1.0,camera_dist=None,autoscale=True,
-             nodeCoords={},nodelayerCoords={},
+             figsize=None,nodeCoords={},nodelayerCoords={},
              layerPadding=0.05,alignedNodes=None,
              layerColorDict={},layerColorRule={},defaultLayerColor="#29b7c1",
              layerAlphaDict={},layerAlphaRule={},defaultLayerAlpha=0.75,
@@ -525,6 +526,8 @@ try:
         autoscale : bool
            If true, the layergap and camera distance is scaled automatically such that the whole drawing fits the figure.
            This is done if the layergap times 3 is larger than 3.
+        figsize : tuple of integers, None
+           The figsize argument is forwarded to pyplot.figure when a new figure is created.
         alignedNodes : bool, None
            Should each node have the same coordinate in each layer. If None, then True for multiplex networks and False for multilayer networks.
         layerPadding : float
@@ -629,7 +632,7 @@ try:
         #Build the network
         layers={}
         nodes={}
-        nf=NetFigure(layergap=layergap,padding=layerPadding)
+        nf=NetFigure(figsize=figsize,layergap=layergap,padding=layerPadding)
         for layer in sorted(net.iter_layers(),key=lambda l:layerOrder[l]):
             layers[layer]=Layer(nf,shape=layershape,color=layerColor[layer],label=layerLabel[layer],alpha=layerAlpha[layer])
 
