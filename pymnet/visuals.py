@@ -241,7 +241,7 @@ try:
 
             if self.label!=None:
                 self.labelObject=self.net.ax.text(self.x+self.size/2.,self.y+self.size/2.,self.layer.z+self.net.eps,str(self.label),**self.labelArgs)
-                fix_attr(self.labelObject,"zorder",self.layer.z+self.net.eps)
+                fix_attr(self.labelObject,"zorder",self.layer.z+2*self.net.eps)
 
     class Layer(object):
         def __init__(self,net,color="gray",alpha=0.3,shape="rectangle",label=None):
@@ -297,7 +297,7 @@ try:
                 ys=[self.node1.y,self.node2.y]
                 zs=[self.node1.layer.z,self.node2.layer.z]
             for i in range(len(zs)-1):
-                z=(zs[i]+zs[i+1])/2.+self.z/10.
+                z=(zs[i]+zs[i+1])/2.+self.z*self.net.eps
                 line=self.net.ax.plot(xs[i:i+2],ys[i:i+2],zs=zs[i:i+2],linestyle=self.style,zdir="z",color=self.color,linewidth=self.width)[0]
                 fix_attr(line,"zorder",z)
                 self.lines.append(line)
