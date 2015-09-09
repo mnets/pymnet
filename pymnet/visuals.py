@@ -447,7 +447,7 @@ try:
     class EdgeZAssigner(EdgePropertyAssigner):
         pass
 
-    def get_layout(layout,net,alignedNodes=True):
+    def get_layout(layout,net,alignedNodes=True,**kwargs):
         """Function for calculating a layout for a network. For parameter values see documentation
         of the draw function.
 
@@ -463,7 +463,7 @@ try:
                 if hasattr(pymnet,"nx"):
                     la=getattr(pymnet.nx,layout+"_layout")
                     na=pymnet.transforms.aggregate(net,1)
-                    ncoords=la(na)
+                    ncoords=la(na,**kwargs)
                 else:
                     raise Exception("Networkx needs to be installed to use layout: "+layout)
             elif layout=="random":
