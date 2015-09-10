@@ -244,12 +244,13 @@ try:
                 fix_attr(self.labelObject,"zorder",self.layer.z+2*self.net.eps)
 
     class Layer(object):
-        def __init__(self,net,color="gray",alpha=0.3,shape="rectangle",label=None):
+        def __init__(self,net,color="gray",alpha=0.3,shape="rectangle",label=None,labelloc=(1,1)):
             assert shape in ["rectangle","circle"]
             self.shape=shape
             self.color=color
             self.alpha=alpha
             self.label=label
+            self.labelloc=labelloc
             self.z=None
             self.net=net
             self.net.register_layer(self)
@@ -259,11 +260,11 @@ try:
             if self.shape=="rectangle":
                 self.layer=Rectangle((0,0),1,1,alpha=self.alpha,color=self.color)
                 if self.label!=None:
-                    self.labelObject=self.net.ax.text(1,1,self.z,str(self.label))
+                    self.labelObject=self.net.ax.text(self.labelloc[0],self.labelloc[1],self.z,str(self.label))
             elif self.shape=="circle":
                 self.layer=Circle((0.5,0.5),0.5,alpha=self.alpha,color=self.color)
                 if self.label!=None:
-                    self.labelObject=self.net.ax.text(1,1,self.z,str(self.label))
+                    self.labelObject=self.net.ax.text(self.labelloc[0],self.labelloc[1],self.z,str(self.label))
             self.net.ax.add_patch(self.layer)
             art3d.pathpatch_2d_to_3d(self.layer, z=self.z, zdir="z")
             fix_attr(self.layer,"zorder",self.z)
@@ -357,6 +358,9 @@ try:
         pass
 
     class LayerLabelAssigner(PropertyAssigner):
+        pass
+
+    class LayerLabelLocAssigner(PropertyAssigner):
         pass
 
     class LayerOrderAssigner(PropertyAssigner):
@@ -488,6 +492,7 @@ try:
              layerColorDict={},layerColorRule={},defaultLayerColor="#29b7c1",
              layerAlphaDict={},layerAlphaRule={},defaultLayerAlpha=0.75,
              layerLabelDict={},layerLabelRule={"rule":"name"},defaultLayerLabel=None,
+             layerLabelLocDict={},layerLabelLocRule={},defaultLayerLabelLoc=(1,1),
              layerOrderDict={},layerOrderRule={"rule":"name"},defaultLayerOrder=0,
              nodeLabelDict={},nodeLabelRule={"rule":"nodename"},defaultNodeLabel=None,
              nodeLabelSizeDict={},nodeLabelSizeRule={},defaultNodeLabelSize=None,
@@ -615,6 +620,7 @@ try:
         layerColor=LayerColorAssigner(layerColorDict,layerColorRule,defaultLayerColor,net)
         layerAlpha=LayerAlphaAssigner(layerAlphaDict,layerAlphaRule,defaultLayerAlpha,net)
         layerLabel=LayerLabelAssigner(layerLabelDict,layerLabelRule,defaultLayerLabel,net)
+        layerLabelLoc=LayerLabelLocAssigner(layerLabelLocDict,layerLabelLocRule,defaultLayerLabelLoc,net)
         layerOrder=LayerOrderAssigner(layerOrderDict,layerOrderRule,defaultLayerOrder,net)
         nodeLabel=NodeLabelAssigner(nodeLabelDict,nodeLabelRule,defaultNodeLabel,net)
         nodeLabelSize=NodeLabelSizeAssigner(nodeLabelSizeDict,nodeLabelSizeRule,defaultNodeLabelSize,net)
@@ -634,7 +640,7 @@ try:
         nodes={}
         nf=NetFigure(figsize=figsize,layergap=layergap,padding=layerPadding)
         for layer in sorted(net.iter_layers(),key=lambda l:layerOrder[l]):
-            layers[layer]=Layer(nf,shape=layershape,color=layerColor[layer],label=layerLabel[layer],alpha=layerAlpha[layer])
+            layers[layer]=Layer(nf,shape=layershape,color=layerColor[layer],label=layerLabel[layer],alpha=layerAlpha[layer],labelloc=layerLabelLoc[layer])
 
         for nl in net.iter_node_layers():
             if nl in nlcoords:
