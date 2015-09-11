@@ -170,7 +170,6 @@ class TestTransforms(unittest.TestCase):
         self.assertEqual(copynet2,self.mlayer_example_1d)
 
         n=net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
-        n.add_node(4,layer='A')
         n[2,3,'A','A']=1
         self.assertEqual(n,transforms.subnet(self.mlayer_example_1d,[2,3,4],['A']))
 
