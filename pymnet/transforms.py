@@ -162,12 +162,13 @@ def subnet(net,nodes,*layers,**kwargs):
 
     addedElementaryLayers=[]
     for a,elayers in enumerate(nodelayers):#enumerate(itertools.chain((nodes,),layers)):
-        addedElementaryLayers.append(0)
-        oldElementaryLayers=net.get_layers(a)
-        for elayer in elayers:
-            if elayer in oldElementaryLayers:
-                newNet.add_layer(elayer,a)
-                addedElementaryLayers[-1]+=1
+        if net.fullyInterconnected or a!=0:
+            addedElementaryLayers.append(0)
+            oldElementaryLayers=net.get_layers(a)
+            for elayer in elayers:
+                if elayer in oldElementaryLayers:
+                    newNet.add_layer(elayer,a)
+                    addedElementaryLayers[-1]+=1
 
     if not net.fullyInterconnected:
         totalNodeLayers=0
@@ -193,7 +194,8 @@ def subnet(net,nodes,*layers,**kwargs):
             if net[nl1].deg()>=totalNodeLayers:
                 for nl2 in itertools.product(*nodelayers):
                     nl2 = nl2[0] if net.aspects==0 else nl2
-                    newNet[nl1][nl2]=net[nl1][nl2]
+                    if net[nl1][nl2]!=net.noEdge:
+                        newNet[nl1][nl2]=net[nl1][nl2]
             else:
                 if net.aspects==0:
                     for nl2 in net[nl1]:
