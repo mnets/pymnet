@@ -1,3 +1,5 @@
+.. _reference:
+
 Reference
 =========
 .. automodule:: pymnet

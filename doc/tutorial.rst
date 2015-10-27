@@ -1,7 +1,9 @@
-Tutorial
-========
+.. _tutorial:
 
-Welcome to the Multilayer Networks Library tutorial. This tutorial will help you with to get started with using the library. 
+Tutorials
+=========
+
+The following tutorial will help you with to get started with using the library. 
 
 .. toctree::
    :maxdepth: 5
@@ -9,3 +11,4 @@ Welcome to the Multilayer Networks Library tutorial. This tutorial will help you
    installing
    networktypes
    visualizing
+   nx
