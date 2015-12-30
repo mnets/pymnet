@@ -656,6 +656,9 @@ class MultilayerNode(object):
             item=(item,)
         self.mnet[self.mnet._nodes_to_link(self.node,item)]=value
 
+    def __len__(self):
+        return self.deg()
+
     def deg(self,*layers):
         """Returns the degree of the node.
         """
