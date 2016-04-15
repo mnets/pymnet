@@ -163,6 +163,7 @@ class TestNet(unittest.TestCase):
 
         #Test edge iterator
         self.assertEqual(len(list(net.edges)),3)
+        self.assertEqual(len(net.edges),3)
         self.assertTrue((1,2,1) in list(net.edges))
         self.assertTrue((2,1,1) in list(net.edges))
         self.assertTrue((2,3,1) in list(net.edges))

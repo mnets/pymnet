@@ -778,12 +778,17 @@ class MultilayerEdges:
 
     def __len__(self):
         deg=0
-        for nl in self.net.iter_node_layers():
-            deg+=self.net[nl].deg()
         if self.net.directed:
+            for nl in self.net.iter_node_layers():
+                deg+=self.net[nl].deg_out()
             return deg
         else:
+            for nl in self.net.iter_node_layers():
+                deg+=self.net[nl].deg()
             return deg/2
+
+
+
 MultilayerNetwork.edges=property(MultilayerEdges)
 
 
