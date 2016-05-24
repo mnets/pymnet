@@ -146,7 +146,7 @@ class TestDiagnostics(unittest.TestCase):
         ftrue=net.MultilayerNetwork(aspects=2,fullyInterconnected=False,directed=True,noEdge=-1)
         ftrue[1,'a',1][1,'a',1]=0; ftrue[1,'b',1.5][1,'b',1.5]=0;ftrue[1,'b',1.25][1,'b',1.25]=0; ftrue[1,'a',1.75][1,'a',1.75];ftrue[1,'a',2][1,'a',2]
 
-        print d,list(f.edges)
+        #print d,list(f.edges)
 
 def test_diagnostics():
     suite = unittest.TestSuite()    
