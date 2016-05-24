@@ -465,8 +465,16 @@ try:
            Node coordinates and node-layer coordinates that are generated. These can be given to the
            draw function as parameters.
         """
+        if alignedNodes==None:
+             if isinstance(net,pymnet.net.MultiplexNetwork):
+                  alignedNodes=True
+             elif isinstance(net,pymnet.net.MultilayerNetwork):
+                  alignedNodes=False
+             else:
+                  raise ValueError("The argument net must be a MultilayerNetwork or Multiplex network.")
+
         ncoords,nlcoords={},{}
-        if alignedNodes==True or (isinstance(net,pymnet.MultiplexNetwork) and alignedNodes!=False):
+        if alignedNodes:
             if layout in ["circular","shell","spring","spectral"]: #nx layout
                 if hasattr(pymnet,"nx"):
                     la=getattr(pymnet.nx,layout+"_layout")
@@ -479,16 +487,18 @@ try:
                     ncoords[node]=(random.random(),random.random())
             else:
                 raise Exception("Invalid layout: "+layout)
-        elif isinstance(net,pymnet.net.MultilayerNetwork) or alignedNodes==False:
+        else:
             if layout=="random":
                 for nl in net.iter_node_layers():
                     nlcoords[nl]=(random.random(),random.random())
+            else:
+                raise Exception("Invalid layout: "+layout)
         return ncoords,nlcoords         
 
 
-    def draw(net,layout="random",layershape="rectangle",azim=-51,elev=22,show=False,layergap=1.0,camera_dist=None,autoscale=True,
+    def draw(net,layout="spring",layershape="rectangle",azim=-51,elev=22,show=False,layergap=1.0,camera_dist=None,autoscale=True,
              figsize=None,nodeCoords={},nodelayerCoords={},
-             layerPadding=0.05,alignedNodes=None,
+             layerPadding=0.05,alignedNodes=True,
              layerColorDict={},layerColorRule={},defaultLayerColor="#29b7c1",
              layerAlphaDict={},layerAlphaRule={},defaultLayerAlpha=0.75,
              layerLabelDict={},layerLabelRule={"rule":"name"},defaultLayerLabel=None,
