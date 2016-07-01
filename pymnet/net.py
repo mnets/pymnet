@@ -1,7 +1,8 @@
 """Data structures for handling various forms of multilayer networks.
 """
 
-import math,itertools,pickle
+import math,itertools,pickle,collections
+import transforms
 
 COLON=slice(None,None,None)
 
@@ -792,6 +793,42 @@ class MultilayerEdges:
 MultilayerNetwork.edges=property(MultilayerEdges)
 
 
+class MultiplexIntraNetDict(collections.MutableMapping):
+    def __init__(self,net):
+        self._net=net
+        self._dict={}
+    def __getitem__(self,key):
+        return self._dict[key]
+    def __iter__(self):
+        return self._dict.__iter__()
+    def __len__(self):
+        return len(self._dict)
+    
+    def __setitem__(self,key,val):
+        assert isinstance(val,MultilayerNetwork), "Invalid type of intra-layer network."
+        assert val.aspects==0, "Intra-layer networks need to be monoplex networks."
+        
+        if key in self._dict:
+            self._add_empty_network(key)
+            transforms.subnet(val,val,newNet=self[key]) #copy the val to the layer
+        else:
+            raise Exception("No layer: "+str(key))
+        
+    def __delitem__(self,key):
+        pass
+
+    def _add_empty_network(self,layer):
+        net=MultilayerNetworkWithParent(aspects=0,directed=self._net.directed)
+        net._set_parent(self._net)
+        if not self._net.fullyInterconnected:
+            if self._net.aspects==1:
+                net._set_name((layer,))
+            else:
+                net._set_name(layer)
+        self._dict[layer]=net
+
+
+
 class MultilayerNetworkWithParent(MultilayerNetwork):
     def _set_parent(self,parent):
         self.parent=parent
@@ -897,7 +934,8 @@ class MultiplexNetwork(MultilayerNetwork):
         
         #diagonal elements, map with keys as tuples of slices and vals as MultiSliceNetwork objects
         #keys are not tuples if dimensions==2
-        self.A={} 
+        self.intranets=MultiplexIntraNetDict(self)
+        self.A=self.intranets
 
         self._init_directions()
 
@@ -918,16 +956,6 @@ class MultiplexNetwork(MultilayerNetwork):
         else:
             return self.A[layer]
 
-    def _add_A(self,node):
-        net=MultilayerNetworkWithParent(aspects=0,directed=self.directed)
-        net._set_parent(self)
-        if not self.fullyInterconnected:
-            if self.aspects==1:
-                net._set_name((node,))
-            else:
-                net._set_name(node)
-        self.A[node]=net
-
     def add_layer(self,layer,aspect=1):
         """ Adds node or a layer to given aspect in the network.
 
@@ -944,9 +972,9 @@ class MultiplexNetwork(MultilayerNetwork):
                     new_slices=list(self.slices[1:])
                     new_slices[aspect-1]=[layer]
                     for s in itertools.product(*new_slices):
-                        self._add_A(s)
+                        self.A._add_empty_network(s)
                 else:
-                    self._add_A(layer)
+                    self.A._add_empty_network(layer)
 
             if aspect==0:
                 self.add_node(layer)
