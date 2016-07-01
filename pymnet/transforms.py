@@ -1,6 +1,6 @@
 """Functions taking in networks and returning transformed versions of them.
 """
-from net import *
+import net as netmodule
 import math
 import itertools
 import random
@@ -56,7 +56,7 @@ def aggregate(net,aspects,newNet=None,selfEdges=False):
         pass
     
     if newNet==None:
-        newNet=MultilayerNetwork(aspects=net.aspects-len(aspects),
+        newNet=netmodule.MultilayerNetwork(aspects=net.aspects-len(aspects),
                                  noEdge=net.noEdge,
                                  directed=net.directed,
                                  fullyInterconnected=net.fullyInterconnected)
@@ -103,7 +103,7 @@ def overlay_network(net):
        A new instance of multiplex network which is produced.
     """
     assert net.aspects==1
-    newnet=MultilayerNetwork()
+    newnet=netmodule.MultilayerNetwork()
     for layer in net.slices[1]:
         for node1 in net.slices[0]:
             for node2 in net.slices[0]:
@@ -147,13 +147,13 @@ def subnet(net,nodes,*layers,**kwargs):
             nodelayers.append(set(elayers))
 
     if newNet==None:
-        if isinstance(net,MultiplexNetwork):
-            newNet=MultiplexNetwork(couplings=net.couplings,
+        if isinstance(net,netmodule.MultiplexNetwork):
+            newNet=netmodule.MultiplexNetwork(couplings=net.couplings,
                                     directed=net.directed,
                                     noEdge=net.noEdge,
                                     fullyInterconnected=net.fullyInterconnected)
-        elif isinstance(net,MultilayerNetwork):
-            newNet=MultilayerNetwork(aspects=net.aspects,
+        elif isinstance(net,netmodule.MultilayerNetwork):
+            newNet=netmodule.MultilayerNetwork(aspects=net.aspects,
                                      noEdge=net.noEdge,
                                      directed=net.directed,
                                      fullyInterconnected=net.fullyInterconnected)
@@ -183,12 +183,12 @@ def subnet(net,nodes,*layers,**kwargs):
         totalNodeLayers=reduce(lambda x,y:x*y,addedElementaryLayers)
 
 
-    if isinstance(net,MultiplexNetwork):
+    if isinstance(net,netmodule.MultiplexNetwork):
         #Go through all the combinations of new layers
         for layer in itertools.product(*nodelayers[1:]):
             layer=layer[0] if net.aspects==1 else layer
             subnet(net.A[layer],nodelayers[0],newNet=newNet.A[layer])
-    elif isinstance(net,MultilayerNetwork):
+    elif isinstance(net,netmodule.MultilayerNetwork):
         for nl1 in itertools.product(*nodelayers):
             nl1 = nl1[0] if net.aspects==0 else nl1
             if net[nl1].deg()>=totalNodeLayers:
@@ -269,13 +269,13 @@ def relabel(net,nodeNames=None,layerNames=None):
         if len(layerNames)<aspect+1:
             layerNames.append({})
      
-    if type(net)==MultilayerNetwork:
-        newNet=MultilayerNetwork(aspects=net.aspects,
+    if type(net)==netmodule.MultilayerNetwork:
+        newNet=netmodule.MultilayerNetwork(aspects=net.aspects,
                                  noEdge=net.noEdge,
                                  directed=net.directed,
                                  fullyInterconnected=net.fullyInterconnected)
-    elif type(net)==MultiplexNetwork:
-        newNet=MultiplexNetwork(couplings=net.couplings,
+    elif type(net)==netmodule.MultiplexNetwork:
+        newNet=netmodule.MultiplexNetwork(couplings=net.couplings,
                                 directed=net.directed,
                                 noEdge=net.noEdge,
                                 fullyInterconnected=net.fullyInterconnected)
@@ -295,14 +295,14 @@ def relabel(net,nodeNames=None,layerNames=None):
                 layer=layer[0]
             newNet.add_node(dget(nodeNames,nodelayer[0]),layer=layer)
 
-    if type(net)==MultilayerNetwork:
+    if type(net)==netmodule.MultilayerNetwork:
         for edge in net.edges:
             newedge=[dget(nodeNames,edge[0]),dget(nodeNames,edge[1])]
             for aspect in range(net.aspects):
                 newedge.append(dget(layerNames[aspect],edge[2+aspect*2]))
                 newedge.append(dget(layerNames[aspect],edge[2+aspect*2+1]))
             newNet[tuple(newedge)]=edge[-1]
-    elif type(net)==MultiplexNetwork:
+    elif type(net)==netmodule.MultiplexNetwork:
             for layer in net.iter_layers():
                 if net.aspects==1:
                     layertuple=(layer,)
@@ -399,7 +399,7 @@ def threshold(net,threshold,method=">=",ignoreCouplingEdges=False):
         else:
             raise Exception("Invalid method for thresholding: "+str(rule))
 
-    mplex=(type(net)==MultiplexNetwork)
+    mplex=(type(net)==netmodule.MultiplexNetwork)
     if mplex:
         for coupling in net.couplings:
             if coupling[0]!="none":
@@ -407,12 +407,12 @@ def threshold(net,threshold,method=">=",ignoreCouplingEdges=False):
             
 
     if mplex:
-        newNet=MultiplexNetwork(couplings=net.couplings,
+        newNet=netmodule.MultiplexNetwork(couplings=net.couplings,
                                 directed=net.directed,
                                 noEdge=net.noEdge,
                                 fullyInterconnected=net.fullyInterconnected)
     else:
-        newNet=MultilayerNetwork(aspects=net.aspects,
+        newNet=netmodule.MultilayerNetwork(aspects=net.aspects,
                                  noEdge=net.noEdge,
                                  directed=net.directed,
                                  fullyInterconnected=net.fullyInterconnected)
@@ -442,7 +442,7 @@ def threshold(net,threshold,method=">=",ignoreCouplingEdges=False):
     return newNet
 
 def randomize_nodes_by_layer(net):
-    assert isinstance(net,MultiplexNetwork)
+    assert isinstance(net,netmodule.MultiplexNetwork)
     assert net.aspects==1
     newnet=subnet(net,set(),net.iter_layers())
     for layer,inet in net.A.iteritems():

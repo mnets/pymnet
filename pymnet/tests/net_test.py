@@ -772,6 +772,77 @@ class TestNet(unittest.TestCase):
         self.assertEqual(set(n.iter_layers(aspect=1)),set(['a','b']))
         self.assertEqual(set(n.iter_layers(aspect=2)),set(['t1','t2']))
 
+    def test_mplex_adding_intralayer_nets(self):
+        #some monoplex networks
+        mono1=net.MultilayerNetwork(aspects=0)
+        mono1[1,2]=1
+        mono1[2,3]=1
+
+        mono2=net.MultilayerNetwork(aspects=0)
+        mono2[3,4]=1
+        mono2[4,5]=1
+
+        #single aspect, not fully interconnected.
+        mnet=net.MultiplexNetwork(directed=False,fullyInterconnected=False)
+        mnet.add_layer("a")
+        mnet.add_layer("b")
+        mnet.intranets["a"]=mono1
+        self.assertEqual(sorted(mnet.intranets["a"].edges),sorted(mono1.edges))
+        self.assertEqual(set(mnet.intranets["a"]),set([1,2,3]))
+        
+        mnet.intranets["b"]=mono2
+        self.assertEqual(sorted(mnet.intranets["b"].edges),sorted(mono2.edges))
+        self.assertEqual(set(mnet.intranets["b"]),set([3,4,5]))
+        self.assertEqual(sorted(mnet.intranets["a"].edges),sorted(mono1.edges))
+        self.assertEqual(set(mnet.intranets["a"]),set([1,2,3]))
+ 
+        #single aspect, fully interconnected.
+        mnet=net.MultiplexNetwork(directed=False,fullyInterconnected=True)
+        mnet.add_layer("a")
+        mnet.add_layer("b")
+        mnet.intranets["a"]=mono1
+        self.assertEqual(sorted(mnet.intranets["a"].edges),sorted(mono1.edges))
+        self.assertEqual(set(mnet.intranets["a"]),set([1,2,3]))
+        
+        mnet.intranets["b"]=mono2
+        self.assertEqual(sorted(mnet.intranets["b"].edges),sorted(mono2.edges))
+        self.assertEqual(set(mnet.intranets["b"]),set([1,2,3,4,5]))
+        self.assertEqual(sorted(mnet.intranets["a"].edges),sorted(mono1.edges))
+        self.assertEqual(set(mnet.intranets["a"]),set([1,2,3,4,5]))
+
+ 
+        #two aspects, not fully interconnected.
+        mnet=net.MultiplexNetwork([None,None],directed=False,fullyInterconnected=False)
+        mnet.add_layer("a",1)
+        mnet.add_layer("b",1)
+        mnet.add_layer("x",2)
+        mnet.intranets["a","x"]=mono1
+        self.assertEqual(sorted(mnet.intranets["a","x"].edges),sorted(mono1.edges))
+        self.assertEqual(set(mnet.intranets["a","x"]),set([1,2,3]))
+        
+        mnet.intranets["b","x"]=mono2
+        self.assertEqual(sorted(mnet.intranets["b","x"].edges),sorted(mono2.edges))
+        self.assertEqual(set(mnet.intranets["b","x"]),set([3,4,5]))
+        self.assertEqual(sorted(mnet.intranets["a","x"].edges),sorted(mono1.edges))
+        self.assertEqual(set(mnet.intranets["a","x"]),set([1,2,3]))
+ 
+        #two aspects, fully interconnected.
+        mnet=net.MultiplexNetwork([None,None],directed=False,fullyInterconnected=True)
+        mnet.add_layer("a",1)
+        mnet.add_layer("b",1)
+        mnet.add_layer("x",2)
+        mnet.intranets["a","x"]=mono1
+        self.assertEqual(sorted(mnet.intranets["a","x"].edges),sorted(mono1.edges))
+        self.assertEqual(set(mnet.intranets["a","x"]),set([1,2,3]))
+        
+        mnet.intranets["b","x"]=mono2
+        self.assertEqual(sorted(mnet.intranets["b","x"].edges),sorted(mono2.edges))
+        self.assertEqual(set(mnet.intranets["b","x"]),set([1,2,3,4,5]))
+        self.assertEqual(sorted(mnet.intranets["a","x"].edges),sorted(mono1.edges))
+        self.assertEqual(set(mnet.intranets["a","x"]),set([1,2,3,4,5]))
+        
+
+       
 
 def test_net():
     suite = unittest.TestSuite()    
@@ -795,6 +866,7 @@ def test_net():
     suite.addTest(TestNet("test_node_iterators_all"))
     suite.addTest(TestNet("test_mplex_intralayer_nets"))
     suite.addTest(TestNet("test_mlayer_2dim_nonglobalnodes"))
+    suite.addTest(TestNet("test_mplex_adding_intralayer_nets"))
     unittest.TextTestRunner().run(suite) 
 
 if __name__ == '__main__':
