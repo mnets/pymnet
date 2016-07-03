@@ -6,6 +6,13 @@ from models_test import test_models
 from transforms_test import test_transforms
 from visuals_test import test_visuals
 
+try:
+    import networkx
+    from nxwrap_test import test_nxwrap
+    nximported=True
+except ImportError:
+    nximported=False
+
 def test_all():
     test_net()
     test_cc()
@@ -14,3 +21,4 @@ def test_all():
     test_models()
     test_transforms()
     test_visuals()
+    if nximported: test_nxwrap()
