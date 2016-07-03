@@ -6,6 +6,12 @@ import collections
 from functools import wraps
 from net import MultilayerNetwork
 
+#NetworkX supports tuples as node names, but pymnet doesn't (because in Python there is no way of distinguishing between net[1,2] and net[(1,2)] ). 
+#In order to make some of the NetworkX functions that use tuples and node names to work, we define a new class "ntuple" which is a tuple that is
+#used to store node names. 
+class ntuple(tuple):
+    pass
+
 class MonoplexGraphWrapper_singleedge(collections.MutableMapping):
     def __init__(self,net,node1,node2):
         self.net=net
@@ -35,6 +41,7 @@ class MonoplexGraphWrapper_adjlist(collections.MutableMapping):
         self.net=net
         self.node=node
     def __getitem__(self,key):
+        if key.__class__==tuple: key=ntuple(key) 
         key in {} #this is to raise TypeError if key is unhashable
         if key in self.net[self.node]:
             return MonoplexGraphWrapper_singleedge(self.net,self.node,key)
@@ -48,6 +55,7 @@ class MonoplexGraphWrapper_adjlist(collections.MutableMapping):
 
 
     def __setitem__(self,key,val):
+        if key.__class__==tuple: key=ntuple(key) 
         if isinstance(val,dict) or isinstance(val,MonoplexGraphWrapper_singleedge):
             if len(val)>0:
                 self.net[self.node,key]=list(val.itervalues())[0]
@@ -63,6 +71,7 @@ class MonoplexGraphWrapper_adj(collections.MutableMapping):
     def __init__(self,net):
         self.net=net
     def __getitem__(self,key):
+        if key.__class__==tuple: key=ntuple(key) 
         key in {} #this is to raise TypeError if key is unhashable
         if key in self.net:
             return MonoplexGraphWrapper_adjlist(self.net,key)
@@ -75,6 +84,7 @@ class MonoplexGraphWrapper_adj(collections.MutableMapping):
         return len(self.net)
 
     def __setitem__(self,key,val):
+        if key.__class__==tuple: key=ntuple(key) 
         if isinstance(val,dict):
             self.net.add_node(key)
             for key2,val2 in val.iteritems():
@@ -89,6 +99,7 @@ class MonoplexGraphWrapper_node(collections.MutableMapping):
     def __init__(self,net):
         self.net=net
     def __getitem__(self,key):
+        if key.__class__==tuple: key=ntuple(key) 
         key in {} #this is to raise TypeError if key is unhashable
         if key in self.net:
             return {}
@@ -146,6 +157,8 @@ def networkxdecorator(f):
         for key,val in kwargs.iteritems():
             if isinstance(val,MultilayerNetwork):
                 kwargs[key]=autowrap(val)
+            if val.__class__==tuple: 
+                kwargs[key]=ntuple(val) 
 
         #Modify the NetworkX library such that new graphs are wrapped pymnet objects
         networkx_Graph_original=networkx.Graph

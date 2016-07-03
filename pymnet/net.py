@@ -186,7 +186,7 @@ class MultilayerNetwork(object):
         self.slices[0].add(node)
         if layer!=None and not self.fullyInterconnected:
             #check that the layer exists, if not add it.
-            if isinstance(layer,tuple): #two or more aspects
+            if layer.__class__==tuple: #two or more aspects
                 assert self.aspects>=2,layer
                 for aspect_minus_one,elementary_layer in enumerate(layer):
                     if elementary_layer not in self.slices[aspect_minus_one+1]:
@@ -460,7 +460,7 @@ class MultilayerNetwork(object):
 
         """        
         d=self.aspects+1
-        if not isinstance(item,tuple):
+        if not item.__class__==tuple:
             item=(item,)
         if len(item)==d: #node
             return MultilayerNode(item,self)
@@ -491,7 +491,7 @@ class MultilayerNetwork(object):
     def __setitem__(self,item,val):
         d=self.aspects+1
 
-        if not isinstance(item,tuple):
+        if not item.__class__==tuple:
             item=(item,)
         if len(item)==2*d:
             link=item
