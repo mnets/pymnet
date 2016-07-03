@@ -4,6 +4,7 @@ sys.path.append("../../")
 
 from pymnet import net,nxwrap
 import networkx
+import itertools
 
 class TestNxwrap(unittest.TestCase):    
     def setUp(self):
@@ -18,7 +19,7 @@ class TestNxwrap(unittest.TestCase):
         self.assertEqual(nnx[3][2]['weight'],3)
         self.assertEqual(nnx[5][4]['weight'],4)
 
-        self.assertEqual(networkx.connected_components(nnx),[[1, 2, 3], [4, 5]])
+        self.assertEqual(list(networkx.connected_components(nnx)),[set([1, 2, 3]), set([4, 5])])
 
     def test_monoplex_basics_writing_pymnet(self):
         n=net.MultilayerNetwork(aspects=0)
@@ -48,7 +49,7 @@ class TestNxwrap(unittest.TestCase):
         n[2,3]=1
         n[4,5]=1        
 
-        self.assertEqual(nxwrap.connected_components(n),[[1, 2, 3], [4, 5]])
+        self.assertEqual(list(nxwrap.connected_components(n)),[set([1, 2, 3]), set([4, 5])])
 
     def test_mst(self):
         n=net.MultilayerNetwork(aspects=0)
@@ -72,11 +73,38 @@ class TestNxwrap(unittest.TestCase):
         self.assertNotEqual(networkx.Graph,nxwrap.MonoplexGraphNetworkxNew)
 
 
+    def test_monoplex_tuples(self):
+        n=net.MultilayerNetwork(aspects=0)
+        nnx=nxwrap.MonoplexGraphNetworkxView(n)
+        nnx.add_node((1,'a'))
+        nnx.add_nodes_from([(2,'a'),(3,'a'),(4,'a'),(5,'a')])
+        nnx.add_edge((1,'a'),(2,'a'))
+        nnx[(2,'a')][(3,'a')]=3
+        nnx.add_edge((4,'a'),(5,'a'))
+        nnx[(4,'a')][(5,'a')]=1
+        nnx[(4,'a')][(5,'a')]=4
+        
+        self.assertEqual(nnx[(1,'a')][(2,'a')]['weight'],1)
+        self.assertEqual(nnx[(2,'a')][(3,'a')]['weight'],3)
+        self.assertEqual(nnx[(4,'a')][(5,'a')]['weight'],4)
+
+        self.assertEqual(nnx[(2,'a')][(1,'a')]['weight'],1)
+        self.assertEqual(nnx[(3,'a')][(2,'a')]['weight'],3)
+        self.assertEqual(nnx[(5,'a')][(4,'a')]['weight'],4)
+
+        self.assertEqual(list(networkx.connected_components(nnx)),[set([(1,'a'), (2,'a'), (3,'a')]), set([(4,'a'), (5,'a')])])
+
+    def test_grid_graph(self):
+        gg=nxwrap.grid_graph([2,3])
+        self.assertEqual(set(gg),set(itertools.product(range(2),range(3))))
+
 def test_nxwrap():
     suite = unittest.TestSuite()    
     suite.addTest(TestNxwrap("test_monoplex_basics_writing_pymnet"))
     suite.addTest(TestNxwrap("test_monoplex_basics_writing_nx"))
     suite.addTest(TestNxwrap("test_monoplex_load_karate")) 
+    suite.addTest(TestNxwrap("test_monoplex_tuples")) 
+    suite.addTest(TestNxwrap("test_grid_graph")) 
     suite.addTest(TestNxwrap("test_autowrapping"))
     suite.addTest(TestNxwrap("test_mst"))
     unittest.TextTestRunner().run(suite) 
