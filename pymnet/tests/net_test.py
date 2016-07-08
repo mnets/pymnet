@@ -841,8 +841,59 @@ class TestNet(unittest.TestCase):
         self.assertEqual(sorted(mnet.intranets["a","x"].edges),sorted(mono1.edges))
         self.assertEqual(set(mnet.intranets["a","x"]),set([1,2,3,4,5]))
         
+    def test_selfedges(self):
+        """Testing that self-edges work as expected.
+        """
 
-       
+        #monoplex undirected
+        mnet=net.MultilayerNetwork(aspects=0)
+        mnet[1,1]=2
+        mnet[1,2]=3
+        mnet[3,3]=4
+
+        self.assertEqual(mnet[1,1],2)
+        self.assertEqual(mnet[1][1],2)
+        self.assertEqual(mnet[2,2],mnet.noEdge)
+        self.assertEqual(mnet[2][2],mnet.noEdge)
+        self.assertEqual(mnet[3,3],4)
+        self.assertEqual(mnet[3][3],4)
+
+
+        self.assertEqual(mnet[1].deg(),2) #self-edges is only counted once in degree
+        self.assertEqual(mnet[1].deg(),len(list(mnet[1])))
+        self.assertEqual(mnet[3].deg(),1) #self-edges is only counted once in degree1
+        self.assertEqual(mnet[3].deg(),len(list(mnet[3])))
+
+        self.assertEqual(len(mnet.edges),len(list(mnet.edges))) #this should always be true
+        self.assertEqual(len(list(mnet.edges)),3) #self-edges only once in the edge list
+
+
+        #monoplex directed
+        mnet=net.MultilayerNetwork(aspects=0,directed=True)
+        mnet[1,1]=2
+        mnet[1,1]=0
+        mnet[1,1]=0
+        mnet[1,2]=3
+        mnet[3,3]=4
+        mnet[1,1]=2
+
+        self.assertEqual(mnet[1,1],2)
+        self.assertEqual(mnet[1][1],2)
+        self.assertEqual(mnet[2,2],mnet.noEdge)
+        self.assertEqual(mnet[2][2],mnet.noEdge)
+        self.assertEqual(mnet[3,3],4)
+        self.assertEqual(mnet[3][3],4)
+
+
+        self.assertEqual(mnet[1].deg(),2) #self-edges is only counted once in degree
+        self.assertEqual(mnet[1].deg(),len(list(mnet[1])))
+        self.assertEqual(mnet[3].deg(),1) #self-edges is only counted once in degree
+        self.assertEqual(mnet[3].deg(),len(list(mnet[3])))
+
+        self.assertEqual(len(mnet.edges),len(list(mnet.edges))) #this should always be true
+        self.assertEqual(len(list(mnet.edges)),3) #self-edges only once in the edge list
+        
+
 
 def test_net():
     suite = unittest.TestSuite()    
@@ -867,6 +918,8 @@ def test_net():
     suite.addTest(TestNet("test_mplex_intralayer_nets"))
     suite.addTest(TestNet("test_mlayer_2dim_nonglobalnodes"))
     suite.addTest(TestNet("test_mplex_adding_intralayer_nets"))
+    suite.addTest(TestNet("test_selfedges"))
+    
     unittest.TextTestRunner().run(suite) 
 
 if __name__ == '__main__':

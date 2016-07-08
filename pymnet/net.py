@@ -250,10 +250,13 @@ class MultilayerNetwork(object):
             if node1 in self._net:
                 if node2 in self._net[node1]:
                     if self.directed:
-                        if node1 not in self._rnet or node2 not in self._rnet[node1]:
-                            self._totalDegree[node1]=self._totalDegree[node1]-1
-                        if node2 not in self._rnet or node1 not in self._rnet[node2]:
-                            self._totalDegree[node2]=self._totalDegree[node2]-1
+                        if node1==node2 and node2 in self._net[node1]:
+                            self._totalDegree[node1]=self._totalDegree.get(node1,0)-1
+                        else:
+                            if node1 not in self._rnet or node2 not in self._rnet[node1]:
+                                self._totalDegree[node1]=self._totalDegree[node1]-1
+                            if node2 not in self._rnet or node1 not in self._rnet[node2]:
+                                self._totalDegree[node2]=self._totalDegree[node2]-1
                         del self._rnet[node2][node1]
                     else:
                         del self._net[node2][node1]
@@ -269,10 +272,13 @@ class MultilayerNetwork(object):
                     self._rnet[node2]={}            
 
             if self.directed:
-                if node2 not in self._net[node1] and node2 not in self._rnet[node1]:
+                if node1==node2 and node2 not in self._net[node1]:
                     self._totalDegree[node1]=self._totalDegree.get(node1,0)+1
-                if node1 not in self._net[node2] and node1 not in self._rnet[node2]:
-                    self._totalDegree[node2]=self._totalDegree.get(node2,0)+1
+                else:
+                    if node2 not in self._net[node1] and node2 not in self._rnet[node1]:
+                        self._totalDegree[node1]=self._totalDegree.get(node1,0)+1
+                    if node1 not in self._net[node2] and node1 not in self._rnet[node2]:
+                        self._totalDegree[node2]=self._totalDegree.get(node2,0)+1
                 self._rnet[node2][node1]=value
             else:
                 self._net[node2][node1]=value
@@ -786,6 +792,8 @@ class MultilayerEdges:
         else:
             for nl in self.net.iter_node_layers():
                 deg+=self.net[nl].deg()
+                if self.net[self.net._nodes_to_link(nl,nl)]!=self.net.noEdge:
+                    deg+=1 #self-edges should also be counted twice
             return deg/2
 
 
