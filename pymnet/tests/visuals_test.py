@@ -96,11 +96,17 @@ class TestVisuals(unittest.TestCase):
         fig=visuals.draw(self.mlayer_example_1d)
         fig.savefig(os.path.join(self.figdirpath,"mlayer_example_1d_defaults.png"))
 
+    def test_draw_mplex_simple_layer_labels(self):
+        fig=visuals.draw(self.mplex_simple,layerLabelColorDict={1:"blue",2:"green"},layerLabelSizeRule={"rule":"name","scaleby":10},layerLabelAlphaDict={3:0.5},layerLabelStyleDict={2:"italic"})
+        fig.savefig(os.path.join(self.figdirpath,"mlayer_example_1d_layer_labels.png"))
+
+
 def test_visuals():
     suite = unittest.TestSuite()    
     suite.addTest(TestVisuals("test_draw_mplex_simple_defaults"))
     suite.addTest(TestVisuals("test_draw_mplex_nonaligned_simple_defaults"))
     suite.addTest(TestVisuals("test_draw_mlayer_example_1d_defaults"))
+    suite.addTest(TestVisuals("test_draw_mplex_simple_layer_labels"))
     unittest.TextTestRunner().run(suite) 
 
 if __name__ == '__main__':
