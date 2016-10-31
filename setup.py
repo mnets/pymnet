@@ -11,5 +11,5 @@ setup(
     url="https://bitbucket.org/bolozna/multilayer-networks-library",
     author="Mikko Kivelä",
     author_email="mikko.kivela@iki.fi",
-    py_modules=["pymnet", "pymnet.tests"]
+    packages=["pymnet", "pymnet.tests"]
 )
