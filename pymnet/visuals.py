@@ -179,7 +179,7 @@ try:
             self.figsize=figsize
 
         def normalize_coords(self):
-            maxx,maxy,minx,miny=0,0,0,0
+            maxx,maxy,minx,miny=float("-inf"),float("-inf"),float("inf"),float("inf")
             for node in self.nodes:
                 if maxx<node.x+node.size/2.: maxx=node.x+node.size/2.
                 if maxy<node.y+node.size/2.: maxy=node.y+node.size/2.
