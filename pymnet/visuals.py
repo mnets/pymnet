@@ -271,12 +271,14 @@ try:
             fix_attr(self.layer,"zorder",self.z)
 
     class Edge(object):
-        def __init__(self,node1,node2,color="gray",width=1.0,directed=False,style="-",z=0):
+        def __init__(self,node1,node2,color="gray",width=1.0,directed=False,style="-",z=0,alpha=1):
             self.node1=node1
             self.node2=node2
             self.net=node1.net
             assert 0<=z<=1
             self.z=z
+            assert 0<=alpha<=1
+            self.alpha=alpha
 
             self.net.register_edge(self)
 
@@ -300,7 +302,7 @@ try:
                 zs=[self.node1.layer.z,self.node2.layer.z]
             for i in range(len(zs)-1):
                 z=(zs[i]+zs[i+1])/2.+self.z*self.net.eps
-                line=self.net.ax.plot(xs[i:i+2],ys[i:i+2],zs=zs[i:i+2],linestyle=self.style,zdir="z",color=self.color,linewidth=self.width)[0]
+                line=self.net.ax.plot(xs[i:i+2],ys[i:i+2],zs=zs[i:i+2],linestyle=self.style,zdir="z",color=self.color,linewidth=self.width,alpha=self.alpha)[0]
                 fix_attr(line,"zorder",z)
                 self.lines.append(line)
 
@@ -461,6 +463,9 @@ try:
     class EdgeStyleAssigner(EdgePropertyAssigner):
         pass
 
+    class EdgeAlphaAssigner(EdgePropertyAssigner):
+        pass
+
     class EdgeZAssigner(EdgePropertyAssigner):
         pass
 
@@ -526,6 +531,7 @@ try:
              nodeColorDict={},nodeColorRule={},defaultNodeColor="black",
              edgeColorDict={},edgeColorRule={},defaultEdgeColor="gray",
              edgeWidthDict={},edgeWidthRule={},defaultEdgeWidth="1.5",
+             edgeAlphaDict={},edgeAlphaRule={},defaultEdgeAlpha=1,
              edgeZDict={},edgeZRule={},defaultEdgeZ=0,
              edgeStyleDict={},edgeStyleRule={"rule":"edgetype","intra":"-","inter":":"},defaultEdgeStyle="-"):
         """Visualize a multilayer network.
@@ -659,6 +665,7 @@ try:
         edgeColor=EdgeColorAssigner(edgeColorDict,edgeColorRule,defaultEdgeColor,net)
         edgeWidth=EdgeWidthAssigner(edgeWidthDict,edgeWidthRule,defaultEdgeWidth,net)
         edgeStyle=EdgeStyleAssigner(edgeStyleDict,edgeStyleRule,defaultEdgeStyle,net)
+        edgeAlpha=EdgeAlphaAssigner(edgeAlphaDict,edgeAlphaRule,defaultEdgeAlpha,net)
         edgeZ=EdgeZAssigner(edgeZDict,edgeZRule,defaultEdgeZ,net)
 
 
@@ -682,7 +689,7 @@ try:
 
         for nl1 in net.iter_node_layers():
             for nl2 in net[nl1]:
-                Edge(nodes[nl1],nodes[nl2],color=edgeColor[(nl1,nl2)],width=edgeWidth[(nl1,nl2)],style=edgeStyle[(nl1,nl2)],z=edgeZ[(nl1,nl2)])
+                Edge(nodes[nl1],nodes[nl2],color=edgeColor[(nl1,nl2)],width=edgeWidth[(nl1,nl2)],style=edgeStyle[(nl1,nl2)],z=edgeZ[(nl1,nl2)],alpha=edgeAlpha[(nl1,nl2)])
 
         nf.draw()
         nf.ax.azim=azim
