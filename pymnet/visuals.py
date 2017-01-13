@@ -201,10 +201,12 @@ try:
 
             for i,layer in enumerate(self.layers):
                 layer.z=i*self.layergap
-                layer.draw()
+                if layer.alpha!=0:
+                    layer.draw()
 
             for node in self.nodes:
-                node.draw()
+                if node.size>0:
+                    node.draw()
 
             for edge in self.edges:
                 edge.draw()
