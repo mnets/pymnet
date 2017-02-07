@@ -193,12 +193,8 @@ try:
                 node.x=xtrans(node.x)
                 node.y=ytrans(node.y)
 
-        def draw(self):
-            self.normalize_coords()
 
-            self.fig=plt.figure(figsize=self.figsize)
-            self.ax=self.fig.gca(projection='3d')
-
+        def draw_elements(self):
             for i,layer in enumerate(self.layers):
                 layer.z=i*self.layergap
                 if layer.alpha!=0:
@@ -211,12 +207,10 @@ try:
             for edge in self.edges:
                 edge.draw()
 
-            self.ax.set_xlim3d(0, 1)
-            self.ax.set_ylim3d(0, 1)
-            self.ax.set_zlim3d(0, 2)
-            self.ax.set_axis_off()
 
-            fix_attr_range(self.ax,"elev",[0,179])
+        def draw(self):
+            #Override this method
+            raise NotImplemented()
 
         def register_layer(self,layer):
             self.layers.insert(0,layer) #First to top
@@ -236,14 +230,9 @@ try:
             self.net.register_node(self)        
 
         def draw(self):
-            self.circle = Circle((self.x, self.y), self.size/2.,color=self.color)        
-            self.net.ax.add_patch(self.circle)
-            art3d.pathpatch_2d_to_3d(self.circle, z=self.layer.z, zdir="z")
-            fix_attr(self.circle,"zorder",self.layer.z+self.net.eps)
+            #Override this method
+            raise NotImplemented()
 
-            if self.label!=None:
-                self.labelObject=self.net.ax.text(self.x+self.size/2.,self.y+self.size/2.,self.layer.z+self.net.eps,str(self.label),**self.labelArgs)
-                fix_attr(self.labelObject,"zorder",self.layer.z+2*self.net.eps)
 
     class Layer(object):
         def __init__(self,net,color="gray",alpha=0.3,shape="rectangle",label=None,labelloc=(1,1),labelArgs={}):
@@ -259,18 +248,9 @@ try:
             self.net.register_layer(self)
 
         def draw(self):
-            assert self.z!=None
-            if self.shape=="rectangle":
-                self.layer=Rectangle((0,0),1,1,alpha=self.alpha,color=self.color)
-                if self.label!=None:
-                    self.labelObject=self.net.ax.text(self.labelloc[0],self.labelloc[1],self.z,str(self.label),**self.labelArgs)
-            elif self.shape=="circle":
-                self.layer=Circle((0.5,0.5),0.5,alpha=self.alpha,color=self.color)
-                if self.label!=None:
-                    self.labelObject=self.net.ax.text(self.labelloc[0],self.labelloc[1],self.z,str(self.label),**self.labelArgs)
-            self.net.ax.add_patch(self.layer)
-            art3d.pathpatch_2d_to_3d(self.layer, z=self.z, zdir="z")
-            fix_attr(self.layer,"zorder",self.z)
+            #Override this method
+            raise NotImplemented()
+
 
     class Edge(object):
         def __init__(self,node1,node2,color="gray",width=1.0,directed=False,style="-",z=0,alpha=1):
@@ -286,6 +266,53 @@ try:
 
             self.color,self.width,self.directed,self.style=color,width,directed,style
 
+
+    # Backends for drawing -->
+
+    class NetFigureMPL(NetFigure):
+        def draw(self):
+            self.normalize_coords()
+
+            self.fig=plt.figure(figsize=self.figsize)
+            self.ax=self.fig.gca(projection='3d')
+
+            self.draw_elements()
+
+            self.ax.set_xlim3d(0, 1)
+            self.ax.set_ylim3d(0, 1)
+            self.ax.set_zlim3d(0, 2)
+            self.ax.set_axis_off()
+
+            fix_attr_range(self.ax,"elev",[0,179])
+
+            
+    class NodeMPL(Node):
+         def draw(self):
+            self.circle = Circle((self.x, self.y), self.size/2.,color=self.color)        
+            self.net.ax.add_patch(self.circle)
+            art3d.pathpatch_2d_to_3d(self.circle, z=self.layer.z, zdir="z")
+            fix_attr(self.circle,"zorder",self.layer.z+self.net.eps)
+
+            if self.label!=None:
+                self.labelObject=self.net.ax.text(self.x+self.size/2.,self.y+self.size/2.,self.layer.z+self.net.eps,str(self.label),**self.labelArgs)
+                fix_attr(self.labelObject,"zorder",self.layer.z+2*self.net.eps)
+       
+    class LayerMPL(Layer):
+        def draw(self):
+            assert self.z!=None
+            if self.shape=="rectangle":
+                self.layer=Rectangle((0,0),1,1,alpha=self.alpha,color=self.color)
+                if self.label!=None:
+                    self.labelObject=self.net.ax.text(self.labelloc[0],self.labelloc[1],self.z,str(self.label),**self.labelArgs)
+            elif self.shape=="circle":
+                self.layer=Circle((0.5,0.5),0.5,alpha=self.alpha,color=self.color)
+                if self.label!=None:
+                    self.labelObject=self.net.ax.text(self.labelloc[0],self.labelloc[1],self.z,str(self.label),**self.labelArgs)
+            self.net.ax.add_patch(self.layer)
+            art3d.pathpatch_2d_to_3d(self.layer, z=self.z, zdir="z")
+            fix_attr(self.layer,"zorder",self.z)
+
+    class EdgeMPL(Edge):
         def draw(self):
             self.lines=[]
             #find layers this edge is crossing
@@ -308,6 +335,7 @@ try:
                 fix_attr(line,"zorder",z)
                 self.lines.append(line)
 
+    # Property assigners -->
 
     class PropertyAssigner(object):
         rules=set(["order","name","f"])
@@ -512,7 +540,7 @@ try:
         return ncoords,nlcoords         
 
 
-    def draw(net,layout="spring",layershape="rectangle",azim=-51,elev=22,show=False,layergap=1.0,camera_dist=None,autoscale=True,
+    def draw(net,layout="spring",layershape="rectangle",azim=-51,elev=22,show=False,layergap=1.0,camera_dist=None,autoscale=True,backend="mpl",
              figsize=None,nodeCoords={},nodelayerCoords={},
              layerPadding=0.05,alignedNodes=True,
              layerColorDict={},layerColorRule={},defaultLayerColor="#29b7c1",
@@ -562,6 +590,8 @@ try:
         autoscale : bool
            If true, the layergap and camera distance is scaled automatically such that the whole drawing fits the figure.
            This is done if the layergap times 3 is larger than 3.
+        backend : string
+           The backend for drawing the network. 'mpl' = Matplotlib
         figsize : tuple of integers, None
            The figsize argument is forwarded to pyplot.figure when a new figure is created.
         alignedNodes : bool, None
@@ -671,13 +701,19 @@ try:
         edgeZ=EdgeZAssigner(edgeZDict,edgeZRule,defaultEdgeZ,net)
 
 
+        #Choose the backend for drawing
+        if backend=="mpl":
+            NetFigureBE,LayerBE,NodeBE,EdgeBE=NetFigureMPL,LayerMPL,NodeMPL,EdgeMPL
+        else:
+            raise Exception("Unknown backend: "+str(backend))
+
         #Build the network
         layers={}
         nodes={}
-        nf=NetFigure(figsize=figsize,layergap=layergap,padding=layerPadding)
+        nf=NetFigureBE(figsize=figsize,layergap=layergap,padding=layerPadding)
         for layer in sorted(net.iter_layers(),key=lambda l:layerOrder[l]):
             layerLabelArgs={"size":layerLabelSize[layer],"color":layerLabelColor[layer],"style":layerLabelStyle[layer],"alpha":layerLabelAlpha[layer]}
-            layers[layer]=Layer(nf,shape=layershape,color=layerColor[layer],label=layerLabel[layer],alpha=layerAlpha[layer],labelloc=layerLabelLoc[layer],labelArgs=layerLabelArgs)
+            layers[layer]=LayerBE(nf,shape=layershape,color=layerColor[layer],label=layerLabel[layer],alpha=layerAlpha[layer],labelloc=layerLabelLoc[layer],labelArgs=layerLabelArgs)
 
         for nl in net.iter_node_layers():
             if nl in nlcoords:
@@ -687,11 +723,11 @@ try:
             else:
                 xy=(random.random(),random.random())
             nodeLabelArgs={"size":nodeLabelSize[nl],"color":nodeLabelColor[nl],"style":nodeLabelStyle[nl],"alpha":nodeLabelAlpha[nl]}
-            nodes[nl]=Node(layers[nl[1]],xy[0],xy[1],label=nodeLabel[nl],color=nodeColor[nl],size=nodeSize[nl],labelArgs=nodeLabelArgs)
+            nodes[nl]=NodeBE(layers[nl[1]],xy[0],xy[1],label=nodeLabel[nl],color=nodeColor[nl],size=nodeSize[nl],labelArgs=nodeLabelArgs)
 
         for nl1 in net.iter_node_layers():
             for nl2 in net[nl1]:
-                Edge(nodes[nl1],nodes[nl2],color=edgeColor[(nl1,nl2)],width=edgeWidth[(nl1,nl2)],style=edgeStyle[(nl1,nl2)],z=edgeZ[(nl1,nl2)],alpha=edgeAlpha[(nl1,nl2)])
+                EdgeBE(nodes[nl1],nodes[nl2],color=edgeColor[(nl1,nl2)],width=edgeWidth[(nl1,nl2)],style=edgeStyle[(nl1,nl2)],z=edgeZ[(nl1,nl2)],alpha=edgeAlpha[(nl1,nl2)])
 
         nf.draw()
         nf.ax.azim=azim
