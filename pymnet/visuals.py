@@ -168,7 +168,7 @@ try:
 
 
     class NetFigure(object):    
-        def __init__(self,figsize=None,layergap=1,eps=0.001,padding=0.05):
+        def __init__(self,figsize=None,layergap=1,eps=0.001,padding=0.05,azim=-51,elev=22,show=False,camera_dist=None,autoscale=True):
             self.nodes=[]
             self.layers=[]
             self.edges=[]
@@ -177,6 +177,11 @@ try:
             self.eps=eps        
             self.layergap=layergap
             self.figsize=figsize
+            self.azim=azim
+            self.elev=elev
+            self.show=show
+            self.camera_dist=camera_dist
+            self.autoscale=autoscale
 
         def normalize_coords(self):
             maxx,maxy,minx,miny=float("-inf"),float("-inf"),float("inf"),float("inf")
@@ -286,6 +291,18 @@ try:
             fix_attr_range(self.ax,"elev",[0,179])
 
             
+            self.ax.azim=self.azim
+            self.ax.elev=self.elev
+            if self.camera_dist!=None:
+                self.ax.dist=self.camera_dist
+            if self.autoscale and len(self.layers)*self.layergap>3:
+                self.ax.autoscale_view()
+            if self.show:
+                plt.show()
+
+            return self.fig
+
+
     class NodeMPL(Node):
          def draw(self):
             self.circle = Circle((self.x, self.y), self.size/2.,color=self.color)        
@@ -710,7 +727,7 @@ try:
         #Build the network
         layers={}
         nodes={}
-        nf=NetFigureBE(figsize=figsize,layergap=layergap,padding=layerPadding)
+        nf=NetFigureBE(figsize=figsize,layergap=layergap,padding=layerPadding,azim=azim,elev=elev,show=show,camera_dist=camera_dist,autoscale=autoscale)
         for layer in sorted(net.iter_layers(),key=lambda l:layerOrder[l]):
             layerLabelArgs={"size":layerLabelSize[layer],"color":layerLabelColor[layer],"style":layerLabelStyle[layer],"alpha":layerLabelAlpha[layer]}
             layers[layer]=LayerBE(nf,shape=layershape,color=layerColor[layer],label=layerLabel[layer],alpha=layerAlpha[layer],labelloc=layerLabelLoc[layer],labelArgs=layerLabelArgs)
@@ -729,16 +746,8 @@ try:
             for nl2 in net[nl1]:
                 EdgeBE(nodes[nl1],nodes[nl2],color=edgeColor[(nl1,nl2)],width=edgeWidth[(nl1,nl2)],style=edgeStyle[(nl1,nl2)],z=edgeZ[(nl1,nl2)],alpha=edgeAlpha[(nl1,nl2)])
 
-        nf.draw()
-        nf.ax.azim=azim
-        nf.ax.elev=elev
-        if camera_dist!=None:
-            nf.ax.dist=camera_dist
-        if autoscale and len(layers)*layergap>3:
-            nf.ax.autoscale_view()
-        if show:
-            plt.show()
-        return nf.fig
+        return nf.draw()
+
 except ImportError:
     print "Warning: cannot import matplotlib."
 
