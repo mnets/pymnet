@@ -1,3 +1,5 @@
+"""Module for creating plots of multiplex network for the web. This is completely separate functionality from the draw function.
+"""
 import random,math
 
 import pymnet

@@ -1,3 +1,5 @@
+"""Matplotlib backend for the draw method.
+"""
 from .. import drawnet
 
 import matplotlib

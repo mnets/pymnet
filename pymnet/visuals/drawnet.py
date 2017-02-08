@@ -1,3 +1,6 @@
+"""Classes that are used by the represent multilayer networks and drawing backends to visualize them.
+"""
+
 class NetFigure(object):    
     def __init__(self,figsize=None,layergap=1,eps=0.001,padding=0.05,azim=-51,elev=22,show=False,camera_dist=None,autoscale=True):
         self.nodes=[]
