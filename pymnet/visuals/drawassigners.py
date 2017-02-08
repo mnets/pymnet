@@ -1,3 +1,6 @@
+"""Property assigners that give a friendly user interface for setting properties of various elements of the networks.
+"""
+
 import math
 
 class PropertyAssigner(object):

@@ -1,3 +1,6 @@
+"""Module for creating network layouts.
+"""
+
 import pymnet
 
 def get_layout(layout,net,alignedNodes=True,**kwargs):

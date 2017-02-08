@@ -1,3 +1,5 @@
+"""The draw function. This is used to create figures of the network.
+"""
 
 import random,math
 
