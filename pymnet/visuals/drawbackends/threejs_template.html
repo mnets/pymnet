@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+ <title>Multilayer network visualization</title>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+</head>
+<body>
+
+<script src="three.min.js"></script>
+<script src="Detector.js"></script>
+<script src="OrbitControls.js"></script>
+
+
+<div id="ThreeJS" style="z-index: 1; position: absolute; left:0px; top:0px"></div>
+
+<script>
+// This script was written with the help of Lee Stemkoski's Three.js tutorial:"tutorials by example"
+
+var container, scene, camera, renderer, controls;
+var clock = new THREE.Clock();
+
+init();
+animate();
+			
+function init() {
+
+ scene = new THREE.Scene();
+
+ //Camera  
+ var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;	
+ var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
+
+ camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
+ scene.add(camera);
+ camera.position.set(0,150,400);
+ camera.lookAt(scene.position);	
+
+ // Renderer	
+ if ( Detector.webgl )
+  renderer = new THREE.WebGLRenderer( {antialias:true} );
+ else
+  renderer = new THREE.CanvasRenderer(); 
+	
+ renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);	
+ container = document.getElementById( 'ThreeJS' );
+ container.appendChild( renderer.domElement );
+	
+ // Adding orbital controls
+ controls = new THREE.OrbitControls( camera, renderer.domElement );
+	
+ // Creating a light source
+ var light = new THREE.PointLight(0xffffff);
+ light.position.set(0,250,0);
+ scene.add(light);
+ var ambientLight = new THREE.AmbientLight(0x111111);
+ scene.add(ambientLight);
+	
+ // Axes
+ var axes = new THREE.AxisHelper(100);
+ scene.add( axes );
+
+ // "background"
+ var skyBoxGeometry = new THREE.CubeGeometry( 10000, 10000, 10000 );
+ var skyBoxMaterial = new THREE.MeshBasicMaterial( { color: 0x9999ff, side: THREE.BackSide } );
+ var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
+ scene.add(skyBox);
+
+	
+ // The network
+	
+ // edges
+ @edges
+
+ //nodes
+ @nodes
+
+ //layers 
+ @layers
+
+}
+
+
+
+// Plot a link
+function getLink( x1,y1,z1, x2,y2,z2,radius) {
+ var lightMaterial = new THREE.MeshLambertMaterial( { color: 0xcccc00, side: THREE.DoubleSide, transparent:true, opacity:0.75  } );
+
+ pointX = new THREE.Vector3(x1,y1,z1);
+ pointY = new THREE.Vector3(x2,y2,z2);
+
+ var direction = new THREE.Vector3().subVectors( pointY, pointX );
+	
+ var arrow = new THREE.ArrowHelper( direction.clone().normalize(), pointX, direction.length() );
+		
+ var edgeGeometry = new THREE.CylinderGeometry( radius, radius, direction.length(), 6, 4 );
+
+ var edgeMesh = new THREE.Mesh( edgeGeometry, new THREE.MeshBasicMaterial( { color: 0x0000ff } ) );
+ edgeMesh.position.copy( new THREE.Vector3(0,0,0).addVectors( pointX, direction.multiplyScalar(0.5) ));
+ edgeMesh.setRotationFromEuler( arrow.rotation );
+
+ edgeMesh.material = lightMaterial;
+
+ return edgeMesh;
+}
+
+
+
+// Plot a node
+function getNode( x, y,z,r ){
+ var sphereGeometry = new THREE.SphereGeometry(r, 16, 8 ); 
+ var sphereMaterial = new THREE.MeshLambertMaterial( {color: 0x8888ff} ); 
+ var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+ sphere.position.set(x, y, z);
+ return sphere;
+}
+
+function animate() 
+{
+ requestAnimationFrame( animate );
+ render();		
+ update();
+}
+
+function update()
+{
+ var delta = clock.getDelta(); 
+ controls.update();
+
+}
+
+function render() 
+{	
+	renderer.render( scene, camera );
+}
+
+</script>
+
+</body>
+</html>

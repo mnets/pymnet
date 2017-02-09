@@ -16,6 +16,7 @@ from drawbackends.mpl import *
 #except ImportError:
 #    print "Warning: cannot import matplotlib."
 
+from drawbackends.threejs import NetFigureThreeJS,LayerThreeJS,NodeThreeJS,EdgeThreeJS
 
 
 def draw(net,layout="spring",layershape="rectangle",azim=-51,elev=22,show=False,layergap=1.0,camera_dist=None,autoscale=True,backend="mpl",
@@ -182,6 +183,8 @@ def draw(net,layout="spring",layershape="rectangle",azim=-51,elev=22,show=False,
     #Choose the backend for drawing
     if backend=="mpl":
         NetFigureBE,LayerBE,NodeBE,EdgeBE=NetFigureMPL,LayerMPL,NodeMPL,EdgeMPL
+    elif backend=="threejs":
+        NetFigureBE,LayerBE,NodeBE,EdgeBE=NetFigureThreeJS,LayerThreeJS,NodeThreeJS,EdgeThreeJS
     else:
         raise Exception("Unknown backend: "+str(backend))
 
