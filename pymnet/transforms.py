@@ -125,6 +125,9 @@ def subnet(net,nodes,*layers,**kwargs):
     newNet : None, MultilayerNetwork, MultiplexNetwork    
         An empty new network or None. If None, the new network is created as a
         an empty copy of the net. The edges and nodes are copied to this network.
+    nolinks : bool
+        If set True, this function does not copy any links. That is, the returned
+        network is _not_ an induced subnetwork but an empty network.
 
     Return
     ------
@@ -133,10 +136,16 @@ def subnet(net,nodes,*layers,**kwargs):
         `nodes` and the edges between those nodes that are
         present in `net`. Node properties etc are left untouched.
     """
+
     if "newNet" in kwargs:
         newNet=kwargs["newNet"]
     else:
         newNet=None
+
+    if "nolinks" in kwargs:
+        nolinks=kwargs["nolinks"]
+    else:
+        nolinks=False
 
     assert len(layers)==net.aspects, "Please give layers for each aspect."
     nodelayers=[]
@@ -183,30 +192,32 @@ def subnet(net,nodes,*layers,**kwargs):
         totalNodeLayers=reduce(lambda x,y:x*y,addedElementaryLayers)
 
 
-    if isinstance(net,netmodule.MultiplexNetwork):
-        #Go through all the combinations of new layers
-        for layer in itertools.product(*nodelayers[1:]):
-            layer=layer[0] if net.aspects==1 else layer
-            subnet(net.A[layer],nodelayers[0],newNet=newNet.A[layer])
-    elif isinstance(net,netmodule.MultilayerNetwork):
-        for nl1 in itertools.product(*nodelayers):
-            nl1 = nl1[0] if net.aspects==0 else nl1
-            if net[nl1].deg()>=totalNodeLayers:
-                for nl2 in itertools.product(*nodelayers):
-                    nl2 = nl2[0] if net.aspects==0 else nl2
-                    if net[nl1][nl2]!=net.noEdge:
-                        newNet[nl1][nl2]=net[nl1][nl2]
-            else:
-                if net.aspects==0:
-                    for nl2 in net[nl1]:
-                        if nl2 in nodelayers[0]:
+    #copy the links
+    if not nolinks:
+        if isinstance(net,netmodule.MultiplexNetwork):
+            #Go through all the combinations of new layers
+            for layer in itertools.product(*nodelayers[1:]):
+                layer=layer[0] if net.aspects==1 else layer
+                subnet(net.A[layer],nodelayers[0],newNet=newNet.A[layer],nolinks=nolinks)
+        elif isinstance(net,netmodule.MultilayerNetwork):
+            for nl1 in itertools.product(*nodelayers):
+                nl1 = nl1[0] if net.aspects==0 else nl1
+                if net[nl1].deg()>=totalNodeLayers:
+                    for nl2 in itertools.product(*nodelayers):
+                        nl2 = nl2[0] if net.aspects==0 else nl2
+                        if net[nl1][nl2]!=net.noEdge:
                             newNet[nl1][nl2]=net[nl1][nl2]
                 else:
-                    for nl2 in net[nl1]:
-                        if reduce(lambda x,y:x and y, (e in nodelayers[a] for a,e in enumerate(nl2))):
-                            newNet[nl1][nl2]=net[nl1][nl2]
-    else:
-        raise Exception("Invalid net type: "+str(type(net)))
+                    if net.aspects==0:
+                        for nl2 in net[nl1]:
+                            if nl2 in nodelayers[0]:
+                                newNet[nl1][nl2]=net[nl1][nl2]
+                    else:
+                        for nl2 in net[nl1]:
+                            if reduce(lambda x,y:x and y, (e in nodelayers[a] for a,e in enumerate(nl2))):
+                                newNet[nl1][nl2]=net[nl1][nl2]
+        else:
+            raise Exception("Invalid net type: "+str(type(net)))
 
     return newNet
 
@@ -240,6 +251,7 @@ def relabel(net,nodeNames=None,layerNames=None):
         The map from node names to node indices.
      layerNames : None, dict, or sequence of dicts
         The map(s) from (elementary) layer names to (elementary) layer indices.
+        Note that you can add empty dicts for aspects you do not want to relabel.
 
      Return
      ------
@@ -456,3 +468,86 @@ def randomize_nodes_by_layer(net):
         for e in inet.edges:
             newinet[nodemap[e[0]],nodemap[e[1]]]=e[2]
     return newnet
+
+
+
+def subnet_iter(net,remove_elayers=[],remove_edges=True):
+    """Iterator for all subnetworks of the given network. 
+
+    The subnetworks need not to be induced. For multiplex networks
+    the coupling edges are not removed.
+
+    Parameters
+    ----------
+    net : MultilayerNetwork, or MultiplexNetwork 
+       The original network.
+    remove_elayers : list of ints
+       List of elementary layers where removals can be done.
+    remove_edges : bool
+       True if edges can be removed between remaining nodes. 
+       If False, then all subnetworks are induced.
+
+    Return
+    ------
+    MultilayerNetwork or MultiplexNetwork objects depending on the net
+    parameter.
+
+    Examples
+    --------
+    Following returns all induced subnetworks when removing nodes:
+    >>> subnet_iter(net,remove_elayers[0],remove_edges=False)
+
+    Notes
+    -----
+    The number of subnetworks can grow very fast if the network is not very small
+    or doesn't have a very small number of edges.     
+    """
+    #Sanity checks for parameters
+    assert isinstance(net,netmodule.MultilayerNetwork), "The net parameter must be a MultilayerNetwork or MultiplexNetwork."
+    assert isinstance(remove_edges,bool), "The remove_edges parameter must be True or False."
+    elayersok=map(lambda a:isinstance(a,int) and 0<=a<=net.aspects,remove_elayers)
+    assert all(elayersok), "The remove_elayers must be a list of ints indicating aspects of the network." 
+
+    def all_nonzero_combinations(thelist):
+        """Returns all combinations that are not empty
+        """
+        for i in range(1,len(thelist)+1):
+            for comb in itertools.combinations(thelist,i):
+                yield comb
+
+    def all_combinations(thelist):
+        """Returns all combinations
+        """
+        for i in range(len(thelist)+1):
+            for comb in itertools.combinations(thelist,i):
+                yield comb
+
+    combinations_args=[]
+    for a in range(net.aspects+1):
+        if a in remove_elayers:
+            combinations_args.append(all_nonzero_combinations(net.slices[a]))
+        else:
+            combinations_args.append([net.slices[a]])
+
+    for nl in itertools.product(*combinations_args):
+        subnet_with_edges=subnet(net,*nl)
+        if remove_edges: #Going through all edge combinations
+            if isinstance(net,netmodule.MultiplexNetwork):
+                #For multiplex networks we do not want to go through coupling edges
+                couplings=subnet_with_edges.couplings
+                edges=list(subnet_with_edges.edges)
+                subnet_with_edges.couplings=couplings
+            else:
+                #For multilayer networks we go through all edges
+                edges=net.edges
+            for newnet_edges in all_combinations(edges):
+                newnet=subnet(subnet_with_edges,*nl,nolinks=True)
+                for edge in newnet_edges:
+                    newnet[edge[:-1]]=subnet_with_edges[edge[:-1]]
+                yield newnet
+        else: #All edges are kept
+            yield subnet_with_edges
+    
+
+
+
