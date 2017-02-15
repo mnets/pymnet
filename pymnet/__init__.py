@@ -8,6 +8,11 @@ from cc import   lcc,cc_zhang,gcc_zhang,cc_onnela,cc_barrat,cc_barrett,cc_sequen
 from visuals import webplot
 from visuals import draw
 
+import isomorphisms
+from isomorphisms import is_isomorphic
+from isomorphisms import get_certificate as get_isomorphism_certificate
+
+
 try:
     import nxwrap as nx
 except ImportError: #in case networkx is not installed

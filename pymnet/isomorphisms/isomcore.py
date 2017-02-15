@@ -1,0 +1,142 @@
+
+
+class AuxiliaryGraphBuilder(object):
+    """This is a generic class for building auxiliary graphs. Backends can inherit this class to create auxiliary graph builders.
+    """
+    has_comparison=False #method can be used to compare networks
+    has_certificate=False #method can be used to create certificates
+
+    def __init__(self,net,allowed_aspects="all",reduction_type="auto"):
+        assert net.directed == False, "Only undirected networks for now."
+        self.net=net
+
+        if allowed_aspects=="all":
+            allowed_aspects=range(net.aspects+1)
+        self.asp=sorted(allowed_aspects)
+        self.nasp=filter(lambda a:a not in allowed_aspects,range(net.aspects+1))
+
+        self.nodemap={}
+        self.auxnodemap={}
+        self.colormap={}
+        self.auxcolormap={}
+                
+        self.build_init()
+
+        if reduction_type=="auto":
+            self._build_graph_general() #this is the only one implemented so far
+        elif reduction_type=="general":
+            self._build_graph_general()
+        else:
+            raise Exception("Unknown reduction type: "+str(reduction_type))
+            
+        self.finalize()
+            
+    def _get_node_id(self,node):
+        if node not in self.nodemap:
+            assert len(self.auxnodemap)==0
+            self.nodemap[node]=len(self.nodemap)            
+        return self.nodemap[node]
+
+    def _get_auxnode_id(self,auxnode):
+        if auxnode not in self.auxnodemap:
+            self.auxnodemap[auxnode]=len(self.nodemap)+len(self.auxnodemap)
+        return self.auxnodemap[auxnode]
+    
+    def _slice_node_layer_allowed(self,nodelayer):
+        s=[]
+        for i in self.asp:
+            s.append(nodelayer[i])
+        return tuple(s)
+
+    def _slice_node_layer_not_allowed(self,nodelayer):
+        s=[]
+        for i in self.nasp:
+            s.append(nodelayer[i])
+        return tuple(s)
+
+    def _assert_full_order(self,seq):
+        for i in range(len(seq)-1):
+            assert seq[i]<seq[i+1], "Cannot sort the node or elemenetary layer names!"
+
+    def _build_graph_general(self):
+        """This is a reduction that works for all multilayer networks.
+        """        
+
+        #Find a canonical coloring scheme
+        #Each node has a color that is determined by the non-mapped aspects
+        nodecolors=set()
+        for nl in self.net.iter_node_layers():
+            nodecolors.add(self._slice_node_layer_not_allowed(nl))
+        nodecolors_sorted=sorted(list(nodecolors))
+        del nodecolors
+        self._assert_full_order(nodecolors_sorted)
+        self.colormap=dict( ((color,colorid) for colorid,color in enumerate(nodecolors_sorted) ))
+
+        #each aux node has a color that is determined by the aspect
+        self.auxcolormap=dict( ((auxcolor, auxcolorid+len(self.colormap)) for auxcolorid,auxcolor in enumerate(sorted(self.asp)) ) )
+
+
+        #Add the underlying network
+        #node-layers:
+        for nl in self.net.iter_node_layers():
+            nlid=self._get_node_id(nl)
+            color=self._slice_node_layer_not_allowed(nl)
+            colorid=self.colormap[color]
+            self.add_node(nlid,colorid)
+
+        #edges between node-layers:
+        for nl1 in self.net.iter_node_layers():
+            for nl2 in self.net[nl1]:
+                nl1id=self._get_node_id(nl1)
+                nl2id=self._get_node_id(nl2)
+                self.add_link(nl1id,nl2id)
+
+
+        #Add the auxiliary nodes and edges
+        #add the aux nodes
+        for a in self.asp:
+            for elayer in self.net.slices[a]:
+                auxid=self._get_auxnode_id( (a,elayer) )
+                auxcolorid=self.auxcolormap[a]
+                self.add_node(auxid,auxcolorid)
+                
+        #add the aux edges
+        for nl in self.net.iter_node_layers():
+            for a in self.asp:
+                nlid=self._get_node_id(nl)
+                auxid=self._get_auxnode_id( (a,nl[a]) )
+                self.add_link(nlid,auxid)
+
+    def compare_labels(self,other):
+        assert self.auxcolormap==other.auxcolormap #this should be true if comparable
+        return self.colormap==other.colormap
+
+
+    def compare(self,other):
+        #make sure that the two are comparable
+        assert self.asp==other.asp and self.nasp==other.nasp, "Auxiliary graphs build for different isomorphisms, cannot compare."
+
+        return self.compare_labels(other) and self.compare_structure(other)
+
+    ## The following functions need to be overriden:
+    def build_init(self):
+        raise NotImplemented()
+
+    def finalize(self):
+        raise NotImplemented()        
+
+    def add_node(self,name,color):
+        raise NotImplemented()
+
+    def add_link(self,node1,node2):
+        raise NotImplemented()
+    ##
+
+    ## The following can be overrridden if possible
+    def compare_structure(self,other):
+        raise NotImplemented()
+
+    def certificate_structure(self):
+        raise NotImplemented()
+
+    ##
