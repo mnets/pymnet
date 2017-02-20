@@ -5,6 +5,7 @@ class AuxiliaryGraphBuilder(object):
     """
     has_comparison=False #method can be used to compare networks
     has_complete_invariant=False #method can be used to create complete invariants
+    has_automorphism_group_generators=False #method can be used to generate automorphism groups
 
     def __init__(self,net,allowed_aspects="all",reduction_type="auto"):
         assert net.directed == False, "Only undirected networks for now."
@@ -128,6 +129,29 @@ class AuxiliaryGraphBuilder(object):
     def get_complete_invariant(self):
         return (self.complete_invariant_labels(),self.complete_invariant_structure())
 
+    def get_automorphism_generators(self,include_fixed=False):
+        generators=[]
+        invauxnodemap=dict( ((v,k) for k,v in self.auxnodemap.iteritems() ) )
+        for permutation in self._automorphism_generators():
+            mperms=[]
+            for a in range(self.net.aspects+1):
+                mperms.append({})
+            for node,nodeid in self.auxnodemap.iteritems():
+                aspect,elayer=node
+                new_aspect,new_elayer=invauxnodemap[permutation[nodeid]]
+                if elayer!=new_elayer or include_fixed:
+                    mperms[aspect][elayer]=new_elayer
+                assert aspect==new_aspect
+
+            #add the aspects that are not permuted
+            if include_fixed:
+                for aspect in self.nasp:
+                    for elayer in self.net.slices[aspect]:
+                        mperms[aspect][elayer]=elayer
+
+            generators.append(mperms)
+        return generators
+
     ## The following functions need to be overriden:
     def build_init(self):
         raise NotImplemented()
@@ -147,6 +171,9 @@ class AuxiliaryGraphBuilder(object):
         raise NotImplemented()
 
     def complete_invariant_structure(self):
+        raise NotImplemented()
+
+    def _automorphism_generators(self):
         raise NotImplemented()
 
     ##
