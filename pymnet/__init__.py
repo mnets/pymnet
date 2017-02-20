@@ -12,6 +12,7 @@ import isomorphisms
 from isomorphisms import is_isomorphic
 from isomorphisms import get_complete_invariant
 from isomorphisms import get_automorphism_generators
+from isomorphisms import get_isomorphism
 
 
 try:
