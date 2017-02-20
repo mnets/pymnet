@@ -3,6 +3,7 @@ auxbuilder_backends={}
 comparison_backends=[]
 complete_invariant_backends=[]
 automorphism_group_generator_backends=[]
+isomorphism_mapping_backends=[]
 
 #lets try to import some backends
 
@@ -28,6 +29,8 @@ for backendname,auxbuilder in auxbuilder_backends.items():
         complete_invariant_backends.append(backendname)
     if auxbuilder.has_automorphism_group_generators:
         automorphism_group_generator_backends.append(backendname)
+    if auxbuilder.has_isomorphism_mapping:
+        isomorphism_mapping_backends.append(backendname)
 
 
 
@@ -67,3 +70,18 @@ def get_automorphism_generators(net,allowed_aspects="all",include_fixed=False,ba
     aux_graph=auxbuilder(net,allowed_aspects)
 
     return aux_graph.get_automorphism_generators(include_fixed=include_fixed)
+
+
+
+def get_isomorphism(net1,net2,allowed_aspects="all",include_fixed=False,backend="auto"):
+    assert len(isomorphism_mapping_backends)>0, "No backends for isomorphism mapping were imported!"
+    if backend=="auto":
+        backend=isomorphism_mapping_backends[0]
+    else:
+        assert backend in isomorphism_mapping_backends, "Backend "+str(backend)+" cannot be used to produce isomorphism mappings"
+        
+    auxbuilder=auxbuilder_backends[backend]
+    aux_graph1=auxbuilder(net1,allowed_aspects)
+    aux_graph2=auxbuilder(net2,allowed_aspects)
+
+    return aux_graph1.get_isomorphism(aux_graph2,include_fixed=include_fixed)

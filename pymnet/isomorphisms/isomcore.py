@@ -6,6 +6,7 @@ class AuxiliaryGraphBuilder(object):
     has_comparison=False #method can be used to compare networks
     has_complete_invariant=False #method can be used to create complete invariants
     has_automorphism_group_generators=False #method can be used to generate automorphism groups
+    has_isomorphism_mapping=False #method can be used to generate an isomorphic mapping
 
     def __init__(self,net,allowed_aspects="all",reduction_type="auto"):
         assert net.directed == False, "Only undirected networks for now."
@@ -152,6 +153,37 @@ class AuxiliaryGraphBuilder(object):
             generators.append(mperms)
         return generators
 
+    def get_isomorphism(self,other,include_fixed=False):
+        if self.compare(other):
+            permutation=self._isomorphism_mapping(other)
+
+            #The code is almost duplicate to the automorphisms
+            #This should be cleaned up
+
+            invauxnodemap=dict( ((v,k) for k,v in other.auxnodemap.iteritems() ) )
+            mperms=[]
+            for a in range(self.net.aspects+1):
+                mperms.append({})
+            for node,nodeid in self.auxnodemap.iteritems():
+                aspect,elayer=node
+                new_aspect,new_elayer=invauxnodemap[permutation[nodeid]]
+                if elayer!=new_elayer or include_fixed:
+                    mperms[aspect][elayer]=new_elayer
+                assert aspect==new_aspect
+
+            #add the aspects that are not permuted
+            if include_fixed:
+                for aspect in self.nasp:
+                    for elayer in self.net.slices[aspect]:
+                        mperms[aspect][elayer]=elayer            
+
+            return mperms
+
+        else:
+            return None
+
+
+
     ## The following functions need to be overriden:
     def build_init(self):
         raise NotImplemented()
@@ -175,5 +207,9 @@ class AuxiliaryGraphBuilder(object):
 
     def _automorphism_generators(self):
         raise NotImplemented()
+
+    def _isomorphism_mapping(self,other):
+        raise NotImplemented()
+
 
     ##

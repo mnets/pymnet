@@ -1,9 +1,11 @@
 import networkx
+from networkx.algorithms import isomorphism as nxisomorphism
 import isomcore
 
 
 class AuxiliaryGraphBuilderNX(isomcore.AuxiliaryGraphBuilder):
     has_comparison=True
+    has_isomorphism_mapping=True
 
     def build_init(self):
         self.nxgraph=networkx.Graph()
@@ -33,3 +35,12 @@ class AuxiliaryGraphBuilderNX(isomcore.AuxiliaryGraphBuilder):
         matcher=lambda n1,n2:n1['color']==n2['color']
         return networkx.is_isomorphic(self.nxgraph,other.nxgraph,node_match=matcher)
         
+
+    def _isomorphism_mapping(self,other):
+        matcher=lambda n1,n2:n1['color']==n2['color']
+        m=nxisomorphism.GraphMatcher(self.nxgraph,other.nxgraph,node_match=matcher)
+        is_isomorphic=m.is_isomorphic() #this needs to be run so that the mapping is created
+        if is_isomorphic:
+            return m.mapping
+        else:
+            return None

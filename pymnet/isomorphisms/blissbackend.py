@@ -12,6 +12,7 @@ class AuxiliaryGraphBuilderBliss(isomcore.AuxiliaryGraphBuilder):
     has_comparison=True
     has_complete_invariant=True
     has_automorphism_group_generators=True
+    has_isomorphism_mapping=True
     
     def build_init(self):
         self.blissgraph=bliss.Graph()
@@ -39,3 +40,6 @@ class AuxiliaryGraphBuilderBliss(isomcore.AuxiliaryGraphBuilder):
         self.blissgraph.find_automorphisms(updater)
     
         return perms
+
+    def _isomorphism_mapping(self,other):
+        return self.blissgraph.get_isomorphism(other.blissgraph)
