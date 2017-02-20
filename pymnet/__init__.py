@@ -10,7 +10,7 @@ from visuals import draw
 
 import isomorphisms
 from isomorphisms import is_isomorphic
-from isomorphisms import get_certificate as get_isomorphism_certificate
+from isomorphisms import get_complete_invariant
 
 
 try:

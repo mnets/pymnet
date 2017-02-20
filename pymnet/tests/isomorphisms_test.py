@@ -24,11 +24,40 @@ def random_relabel(net,relabel_aspects):
     else:
         return transforms.relabel(net,nodeNames=labelings[0])
 
+
+
+
 class TestIsomorphisms(unittest.TestCase):
     
     def setUp(self):
         pass
 
+
+    def is_isomorphic_multimethod(self,net1,net2,allowed_aspects,backend):        
+        """This is a helper function that tries to use as many of the cababilities
+        of the backend to test the isomorphism, and makes sure that the results 
+        are consistent.
+        """
+        #Calculate the results in various ways
+        results={}
+        if backend in isomorphisms.comparison_backends:
+            results["comparison"]=isomorphisms.is_isomorphic(net1,net2,allowed_aspects=allowed_aspects,backend=backend)
+        if backend in isomorphisms.complete_invariant_backends:
+            c1=isomorphisms.get_complete_invariant(net1,allowed_aspects=allowed_aspects,backend=backend)
+            c2=isomorphisms.get_complete_invariant(net2,allowed_aspects=allowed_aspects,backend=backend)
+            results["complete_invariant"]=(c1==c2)
+
+        #Check that there was at least one way to get the result
+        self.assertTrue(len(results)>0) #This backend doesn't do anything...
+
+        #Check that the results are consistent
+        all_same= (len(set(results.values()))==1)
+        if not all_same:
+            print "Got inconsistent results for multilayer network isomorphisms"
+            print results
+        self.assertTrue(all_same)
+
+        return results.values()[0]
 
     def test_comparison_simple_mlayer(self,backend="nx"):
         """This tests that the simple example given in the article M. Kivela & M.A. Porter 
@@ -68,31 +97,31 @@ class TestIsomorphisms(unittest.TestCase):
         isomorphisms.nxbackend.AuxiliaryGraphBuilderNX(netc,[0])
 
         #Network a Isomorphic to itself
-        self.assertTrue(isomorphisms.is_isomorphic(neta,neta,allowed_aspects=[],backend=backend))
-        self.assertTrue(isomorphisms.is_isomorphic(neta,neta,allowed_aspects=[0],backend=backend))
-        self.assertTrue(isomorphisms.is_isomorphic(neta,neta,allowed_aspects=[1],backend=backend))
-        self.assertTrue(isomorphisms.is_isomorphic(neta,neta,allowed_aspects=[0,1],backend=backend))
+        self.assertTrue(self.is_isomorphic_multimethod(neta,neta,allowed_aspects=[],backend=backend))
+        self.assertTrue(self.is_isomorphic_multimethod(neta,neta,allowed_aspects=[0],backend=backend))
+        self.assertTrue(self.is_isomorphic_multimethod(neta,neta,allowed_aspects=[1],backend=backend))
+        self.assertTrue(self.is_isomorphic_multimethod(neta,neta,allowed_aspects=[0,1],backend=backend))
 
         #Network a vertex-isomorphic to network b
-        self.assertTrue(isomorphisms.is_isomorphic(neta,netb,allowed_aspects=[0],backend=backend))
+        self.assertTrue(self.is_isomorphic_multimethod(neta,netb,allowed_aspects=[0],backend=backend))
 
         #Network a layer-isomorphic to network c
-        self.assertTrue(isomorphisms.is_isomorphic(neta,netc,allowed_aspects=[1],backend=backend))
+        self.assertTrue(self.is_isomorphic_multimethod(neta,netc,allowed_aspects=[1],backend=backend))
 
         #Network a vertex-layer-isomorphic to network d
-        self.assertTrue(isomorphisms.is_isomorphic(neta,netd,allowed_aspects=[0,1],backend=backend))
+        self.assertTrue(self.is_isomorphic_multimethod(neta,netd,allowed_aspects=[0,1],backend=backend))
 
         #Network a is not vertex-isomorphic to network c or d
-        self.assertFalse(isomorphisms.is_isomorphic(neta,netc,allowed_aspects=[0],backend=backend))
-        self.assertFalse(isomorphisms.is_isomorphic(neta,netd,allowed_aspects=[0],backend=backend))
+        self.assertFalse(self.is_isomorphic_multimethod(neta,netc,allowed_aspects=[0],backend=backend))
+        self.assertFalse(self.is_isomorphic_multimethod(neta,netd,allowed_aspects=[0],backend=backend))
 
         #Network a is not layer-isomorphic to network b or d
-        self.assertFalse(isomorphisms.is_isomorphic(neta,netb,allowed_aspects=[1],backend=backend))
-        self.assertFalse(isomorphisms.is_isomorphic(neta,netd,allowed_aspects=[1],backend=backend))
+        self.assertFalse(self.is_isomorphic_multimethod(neta,netb,allowed_aspects=[1],backend=backend))
+        self.assertFalse(self.is_isomorphic_multimethod(neta,netd,allowed_aspects=[1],backend=backend))
 
         #Network a is vertex-layer-isomorphic to network b or c
-        self.assertTrue(isomorphisms.is_isomorphic(neta,netb,allowed_aspects=[0,1],backend=backend))
-        self.assertTrue(isomorphisms.is_isomorphic(neta,netc,allowed_aspects=[0,1],backend=backend))
+        self.assertTrue(self.is_isomorphic_multimethod(neta,netb,allowed_aspects=[0,1],backend=backend))
+        self.assertTrue(self.is_isomorphic_multimethod(neta,netc,allowed_aspects=[0,1],backend=backend))
 
 
     def _comparison_multiplex_category_counts(self,nodes,layers,aspects,backend="nx"):
@@ -101,7 +130,7 @@ class TestIsomorphisms(unittest.TestCase):
         for net in transforms.subnet_iter(fullnet,remove_edges=True):
             newtype=True
             for oldnet in classes:
-                if isomorphisms.is_isomorphic(net,oldnet,allowed_aspects=aspects,backend=backend):
+                if self.is_isomorphic_multimethod(net,oldnet,allowed_aspects=aspects,backend=backend):
                     newtype=False
             if newtype:
                 classes.append(net)
@@ -159,9 +188,9 @@ class TestIsomorphisms(unittest.TestCase):
 
     def _test_comparison_random_relabel(self,net,aspects,backend):
         net2=random_relabel(net,aspects)
-        self.assertTrue(isomorphisms.is_isomorphic(net,net2,allowed_aspects=aspects,backend=backend))
+        self.assertTrue(self.is_isomorphic_multimethod(net,net2,allowed_aspects=aspects,backend=backend))
         #net2[net2.edges.__iter__().next()[:-1]]=net2.noEdge #remove an arbitrary edge
-        #self.assertFalse(isomorphisms.is_isomorphic(net,net2,allowed_aspects=aspects,backend=backend))
+        #self.assertFalse(self.is_isomorphic_multimethod(net,net2,allowed_aspects=aspects,backend=backend))
 
 
     def test_comparison_random_relabel_mlayer_single_aspect_fast(self,backend="nx"):
@@ -189,24 +218,33 @@ class TestIsomorphisms(unittest.TestCase):
                         self._test_comparison_random_relabel(net,[0,1],backend)
 
                         if r>0: #should be very unlikely that the previous network is isomorphic
-                            self.assertFalse(isomorphisms.is_isomorphic(net,prevnet,allowed_aspects=[0],backend=backend))
-                            self.assertFalse(isomorphisms.is_isomorphic(net,prevnet,allowed_aspects=[1],backend=backend))
-                            self.assertFalse(isomorphisms.is_isomorphic(net,prevnet,allowed_aspects=[0,1],backend=backend))
+                            self.assertFalse(self.is_isomorphic_multimethod(net,prevnet,allowed_aspects=[0],backend=backend))
+                            self.assertFalse(self.is_isomorphic_multimethod(net,prevnet,allowed_aspects=[1],backend=backend))
+                            self.assertFalse(self.is_isomorphic_multimethod(net,prevnet,allowed_aspects=[0,1],backend=backend))
                         prevnet=net
 
 
 
+    ## NX tests
     def test_comparison_random_relabel_mplex_single_aspect_fast_nx(self):
         self.test_comparison_random_relabel_mplex_single_aspect_fast(backend="nx")
-
     def test_comparison_random_relabel_mlayer_single_aspect_fast_nx(self):
         self.test_comparison_random_relabel_mlayer_single_aspect_fast(backend="nx")
-
     def test_comparison_simple_mlayer_nx(self):
         self.test_comparison_simple_mlayer(backend="nx")
-
     def test_comparison_multiplex_category_counts_fast_nx(self):
         self.test_comparison_multiplex_category_counts_fast(backend="nx")
+
+
+    ## Bliss tests
+    def test_comparison_random_relabel_mplex_single_aspect_fast_bliss(self):
+        self.test_comparison_random_relabel_mplex_single_aspect_fast(backend="bliss")
+    def test_comparison_random_relabel_mlayer_single_aspect_fast_bliss(self):
+        self.test_comparison_random_relabel_mlayer_single_aspect_fast(backend="bliss")
+    def test_comparison_simple_mlayer_bliss(self):
+        self.test_comparison_simple_mlayer(backend="bliss")
+    def test_comparison_multiplex_category_counts_fast_bliss(self):
+        self.test_comparison_multiplex_category_counts_fast(backend="bliss")
 
 def test_isomorphisms():
     suite = unittest.TestSuite()   
@@ -215,6 +253,14 @@ def test_isomorphisms():
         suite.addTest(TestIsomorphisms("test_comparison_random_relabel_mlayer_single_aspect_fast_nx"))
         suite.addTest(TestIsomorphisms("test_comparison_random_relabel_mplex_single_aspect_fast_nx"))
         suite.addTest(TestIsomorphisms("test_comparison_multiplex_category_counts_fast_nx"))
+
+    if "bliss" in isomorphisms.comparison_backends:
+        suite.addTest(TestIsomorphisms("test_comparison_simple_mlayer_bliss"))
+        suite.addTest(TestIsomorphisms("test_comparison_random_relabel_mlayer_single_aspect_fast_bliss"))
+        suite.addTest(TestIsomorphisms("test_comparison_random_relabel_mplex_single_aspect_fast_bliss"))
+        suite.addTest(TestIsomorphisms("test_comparison_multiplex_category_counts_fast_bliss"))
+
+
     unittest.TextTestRunner().run(suite) 
 
 if __name__ == '__main__':
