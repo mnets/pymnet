@@ -5,17 +5,17 @@ complete_invariant_backends=[]
 
 #lets try to import some backends
 
-#try:
-import nxbackend
-auxbuilder_backends["nx"]=nxbackend.AuxiliaryGraphBuilderNX
-#except ImportError:
-#pass
+try:
+    import nxbackend
+    auxbuilder_backends["nx"]=nxbackend.AuxiliaryGraphBuilderNX
+except ImportError:
+    pass
 
-#try:
-import blissbackend
-auxbuilder_backends["bliss"]=blissbackend.AuxiliaryGraphBuilderBliss
-#except ImportError:
-#pass
+try:
+    import blissbackend
+    auxbuilder_backends["bliss"]=blissbackend.AuxiliaryGraphBuilderBliss
+except ImportError:
+    pass
 
 
 
