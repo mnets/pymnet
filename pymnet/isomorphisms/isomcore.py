@@ -4,7 +4,7 @@ class AuxiliaryGraphBuilder(object):
     """This is a generic class for building auxiliary graphs. Backends can inherit this class to create auxiliary graph builders.
     """
     has_comparison=False #method can be used to compare networks
-    has_certificate=False #method can be used to create certificates
+    has_complete_invariant=False #method can be used to create complete invariants
 
     def __init__(self,net,allowed_aspects="all",reduction_type="auto"):
         assert net.directed == False, "Only undirected networks for now."
@@ -118,6 +118,16 @@ class AuxiliaryGraphBuilder(object):
 
         return self.compare_labels(other) and self.compare_structure(other)
 
+
+    def complete_invariant_labels(self):
+        # the colors for the colors for the nodes are determined in a way that there is canonical order for them
+        # The self.colormap could be used directly for the invariant, but we want to make sure that the invariant
+        # is valid even after it is serialized. To this end, we will sort the dict entries
+        return tuple(sorted(self.colormap.items()))
+
+    def get_complete_invariant(self):
+        return (self.complete_invariant_labels(),self.complete_invariant_structure())
+
     ## The following functions need to be overriden:
     def build_init(self):
         raise NotImplemented()
@@ -136,7 +146,7 @@ class AuxiliaryGraphBuilder(object):
     def compare_structure(self,other):
         raise NotImplemented()
 
-    def certificate_structure(self):
+    def complete_invariant_structure(self):
         raise NotImplemented()
 
     ##
