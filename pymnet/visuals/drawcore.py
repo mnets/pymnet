@@ -39,7 +39,7 @@ def draw(net,layout="spring",layershape="rectangle",azim=-51,elev=22,show=False,
          nodeSizeDict={},nodeSizeRule={"rule":"scaled","scalecoeff":0.2},defaultNodeSize=None,
          nodeColorDict={},nodeColorRule={},defaultNodeColor="black",
          edgeColorDict={},edgeColorRule={},defaultEdgeColor="gray",
-         edgeWidthDict={},edgeWidthRule={},defaultEdgeWidth="1.5",
+         edgeWidthDict={},edgeWidthRule={},defaultEdgeWidth=1.5,
          edgeAlphaDict={},edgeAlphaRule={},defaultEdgeAlpha=1,
          edgeZDict={},edgeZRule={},defaultEdgeZ=0,
          edgeStyleDict={},edgeStyleRule={"rule":"edgetype","intra":"-","inter":":"},defaultEdgeStyle="-"):
