@@ -26,4 +26,4 @@
 
 ### Who do I talk to? ###
 
-* The main developer: [Mikko Kivela](https://www.maths.ox.ac.uk/people/mikko.kivela)
+* The main developer: [Mikko Kivela](http://www.mkivela.com/)
