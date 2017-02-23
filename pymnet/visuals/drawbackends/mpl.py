@@ -3,6 +3,12 @@
 from .. import drawnet
 
 import matplotlib
+
+#Checking if we can display graphics.
+import os
+if os.environ.get("DISPLAY","")=="":
+    matplotlib.use("Agg")
+
 from mpl_toolkits.mplot3d import Axes3D 
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle,PathPatch,Rectangle
