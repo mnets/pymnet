@@ -117,3 +117,19 @@ Visualization
 
   draw
   webplot
+
+Isomorphisms
+------------
+.. automodule:: pymnet.isomorphisms
+.. autosummary::
+  :toctree: autogen
+
+.. automodule:: pymnet
+.. autosummary::
+  :toctree: autogen
+
+  is_isomorphic
+  get_complete_invariant
+  get_automorphism_generators
+  get_isomorphism
+
