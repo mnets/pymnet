@@ -4,8 +4,8 @@
 ### What is this repository for? ###
 
 * Multilayer network analysis library for Python
-* [Documentation](http://people.maths.ox.ac.uk/kivela/mln_library/)
-* [Tutorial](http://people.maths.ox.ac.uk/kivela/mln_library/tutorial.html) for getting started.
+* [Documentation](http://mkivela.com/pymnet/)
+* [Tutorial](http://mkivela.com/pymnet/tutorial.html) for getting started.
 
 ### Main features ###
 
