@@ -76,6 +76,47 @@ class TestVisuals(unittest.TestCase):
         n[3,4,'A','B']=1
         self.mlayer_example_1d=n
 
+        #Non-aligned network for testing multilayer coordinates
+        n=net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        n.add_node(0,'a')
+        n.add_node(1,'b')
+        n.add_node(2,'b')
+        n.add_node(3,'b')
+        n.add_node(4,'b')
+        n.add_node(5,'b')
+        n[1,2,'b','b']=1
+        n[2,3,'b','b']=1
+        n[3,4,'b','b']=1
+        n[4,1,'b','b']=1
+
+        n[0,5,'a','b']=1
+        n[1,5,'b','b']=1
+        n[2,5,'b','b']=1
+        n[3,5,'b','b']=1
+        n[4,5,'b','b']=1
+        self.mlayer_nonaligned_aligntest=n
+
+        #Second non-aligned network for testing multilayer coordinates
+        n=net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        n.add_node(0,'a')
+        n.add_node(1,'b')
+        n.add_node(2,'b')
+        n.add_node(3,'b')
+        n.add_node(4,'b')
+
+        n[1,2,'b','b']=1
+        n[2,3,'b','b']=1
+        n[3,4,'b','b']=1
+        n[4,1,'b','b']=1
+
+        n[0,0,'a','b']=1
+        n[1,0,'b','b']=1
+        n[2,0,'b','b']=1
+        n[3,0,'b','b']=1
+        n[4,0,'b','b']=1
+        self.mlayer_nonaligned_aligntest2=n
+
+
         n=net.MultilayerNetwork(aspects=0,fullyInterconnected=True)
         n[1,2]=1
         n[2,3]=1
@@ -100,6 +141,20 @@ class TestVisuals(unittest.TestCase):
         fig=visuals.draw(self.mplex_simple,layerLabelColorDict={1:"blue",2:"green"},layerLabelSizeRule={"rule":"name","scaleby":10},layerLabelAlphaDict={3:0.5},layerLabelStyleDict={2:"italic"})
         fig.savefig(os.path.join(self.figdirpath,"mlayer_example_1d_layer_labels.png"))
 
+    def test_draw_mlayer_nonaligned_mlayer_coords(self):
+        nc=visuals.layouts.get_fruchterman_reingold_multilayer_layout(self.mlayer_nonaligned_aligntest)
+        fig=visuals.draw(self.mlayer_nonaligned_aligntest,nodeCoords=nc)
+        fig.savefig(os.path.join(self.figdirpath,"mlayer_nonaligned_mlayer_coords.png"))
+
+        nc2=visuals.layouts.get_fruchterman_reingold_multilayer_layout(self.mlayer_nonaligned_aligntest2)
+        fig2=visuals.draw(self.mlayer_nonaligned_aligntest2,nodeCoords=nc2)
+        fig2.savefig(os.path.join(self.figdirpath,"mlayer_nonaligned_mlayer_coords2.png"))
+
+        nc3=visuals.layouts.get_fruchterman_reingold_multilayer_layout(self.mlayer_nonaligned_aligntest2,alignedNodes=False)
+        fig3=visuals.draw(self.mlayer_nonaligned_aligntest2,nodelayerCoords=nc3)
+        fig3.savefig(os.path.join(self.figdirpath,"mlayer_nonaligned_mlayer_coords3.png"))
+
+
 
 def test_visuals():
     suite = unittest.TestSuite()    
@@ -107,6 +162,7 @@ def test_visuals():
     suite.addTest(TestVisuals("test_draw_mplex_nonaligned_simple_defaults"))
     suite.addTest(TestVisuals("test_draw_mlayer_example_1d_defaults"))
     suite.addTest(TestVisuals("test_draw_mplex_simple_layer_labels"))
+    suite.addTest(TestVisuals("test_draw_mlayer_nonaligned_mlayer_coords"))
     unittest.TextTestRunner().run(suite) 
 
 if __name__ == '__main__':
