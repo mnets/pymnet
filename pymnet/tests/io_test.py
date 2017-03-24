@@ -1,8 +1,8 @@
 import unittest
 from operator import itemgetter
 
-import sys
-sys.path.append("../../")
+#import sys
+#sys.path.append("../../")
 from pymnet import net,netio
 #from .. import net
 
