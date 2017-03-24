@@ -448,7 +448,7 @@ class TestCC(unittest.TestCase):
         net=models.er(10,[0.1,0.3])
         net=models.er(10,[0.4,0.6,0.5,0.3])
         for i in range(1):        
-            net=models.er(10,map(lambda x:random.random(),range(5)))
+            net=models.er(10,list(map(lambda x:random.random(),range(5))))
             self.test_unweighted_consistency(net)
             self.test_symmetric_aw(net)
 

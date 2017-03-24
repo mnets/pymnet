@@ -617,7 +617,7 @@ class MultilayerNetwork(object):
         """
         import numpy
         if self.aspects>0:
-            nodes=map(lambda x: tuple(reversed(x)),sorted(itertools.product(*map(lambda i:sorted(self.slices[i]),reversed(range(len(self.slices)))))))
+            nodes=list(map(lambda x: tuple(reversed(x)),sorted(itertools.product(*map(lambda i:sorted(self.slices[i]),reversed(range(len(self.slices))))))))
             matrix=numpy.zeros((len(nodes),len(nodes)),dtype=float)
             for i_index,i in enumerate(nodes):
                 for j_index,j in enumerate(nodes):
