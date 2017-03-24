@@ -5,7 +5,7 @@ import math,json,os
 
 def write_ucinet(net,outputfile,outputType="edges"):
     assert isinstance(net,MultiplexNetwork), "Multilayer networks not supported by the UCINET file format."
-    if isinstance(outputfile,str) or isinstance(outputfile,unicode):
+    if isinstance(outputfile,"".__class__) or isinstance(outputfile,u"".__class__):
         outputfile=open(outputfile,'w')
     
 def write_json(net,outputfile=None):
@@ -35,7 +35,7 @@ def write_json(net,outputfile=None):
                                   "layer" :layer2index[layer]})
 
     if outputfile!=None:
-        if isinstance(outputfile,str) or isinstance(outputfile,unicode):
+        if isinstance(outputfile,"".__class__) or isinstance(outputfile,u"".__class__):
             outputfile=open(outputfile,'w')
 
         json.dump(nets,outputfile)
