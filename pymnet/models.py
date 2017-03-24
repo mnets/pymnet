@@ -1,8 +1,16 @@
 """Functions for generating multilayer and multiplex networks using various network models.
 """
 
+##### Compatibility for Python 2/3
+try:
+    xrange
+except NameError:
+    xrange = range
+######
+
 from .net import MultilayerNetwork,MultiplexNetwork
 import math,random
+
 
 def single_layer_conf(net,degs,degstype="distribution"):
     """Generates a realization of configuration model network.
