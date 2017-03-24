@@ -2,7 +2,7 @@ import unittest
 from operator import itemgetter
 
 import sys,os
-sys.path.append("../../")
+#sys.path.append("../../")
 from pymnet import net,visuals
 
 
