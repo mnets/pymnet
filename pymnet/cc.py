@@ -2,8 +2,8 @@
 """
 
 import itertools
-from net import MultiplexNetwork
-import transforms
+from .net import MultiplexNetwork
+from . import transforms
 
 def cc_num_den(net,node):
     degree=net[node].deg()

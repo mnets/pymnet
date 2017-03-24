@@ -1,7 +1,7 @@
 """Functions for generating multilayer and multiplex networks using various network models.
 """
 
-from net import MultilayerNetwork,MultiplexNetwork
+from .net import MultilayerNetwork,MultiplexNetwork
 import math,random
 
 def single_layer_conf(net,degs,degstype="distribution"):

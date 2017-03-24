@@ -1,4 +1,4 @@
-from net import *
+from .net import MultilayerNetwork,MultiplexNetwork
 import heapq,itertools
 
 def degs(net,degstype="distribution"):
