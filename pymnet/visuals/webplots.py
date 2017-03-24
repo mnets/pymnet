@@ -4,7 +4,7 @@ import random,math
 
 import pymnet
 from pymnet.net import MultiplexNetwork
-from pymnet import netio
+from .. import netio
 
 webplot_template="""
 <script src="http://d3js.org/d3.v3.min.js"></script>

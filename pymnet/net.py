@@ -2,7 +2,7 @@
 """
 
 import math,itertools,pickle,collections
-import transforms
+import pymnet.transforms as transforms
 
 COLON=slice(None,None,None)
 

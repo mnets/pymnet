@@ -1,6 +1,6 @@
 """Functions for reading and writing networks in different file formats.
 """
-from net import MultilayerNetwork,MultiplexNetwork
+from .net import MultilayerNetwork,MultiplexNetwork
 import math,json,os
 
 def write_ucinet(net,outputfile,outputType="edges"):

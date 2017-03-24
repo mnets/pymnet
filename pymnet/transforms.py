@@ -1,6 +1,9 @@
 """Functions taking in networks and returning transformed versions of them.
 """
-import net as netmodule
+#from . import net as netmodule #this will break the circular imports
+#import net as netmodule #this will not work in python 3
+import pymnet as netmodule #this is the solution
+
 import math
 import itertools
 import random
