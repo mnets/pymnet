@@ -34,7 +34,7 @@ class MonoplexGraphWrapper_singleedge(collections.MutableMapping):
         if key=="weight":
             self.net[self.node1,self.node2]=self.net.noEdge
     def copy(self):
-        return dict(self.iteritems())
+        return dict( ((k,self[k]) for k in self) ) #dict(self.iteritems())
 
 class MonoplexGraphWrapper_adjlist(collections.MutableMapping):
     def __init__(self,net,node):
@@ -58,7 +58,8 @@ class MonoplexGraphWrapper_adjlist(collections.MutableMapping):
         if key.__class__==tuple: key=ntuple(key) 
         if isinstance(val,dict) or isinstance(val,MonoplexGraphWrapper_singleedge):
             if len(val)>0:
-                self.net[self.node,key]=list(val.itervalues())[0]
+                #self.net[self.node,key]=list(val.itervalues())[0]
+                self.net[self.node,key]=list( (val[key] for key in val))[0]
             else:
                 self.net[self.node,key]=1
         else:
@@ -87,7 +88,9 @@ class MonoplexGraphWrapper_adj(collections.MutableMapping):
         if key.__class__==tuple: key=ntuple(key) 
         if isinstance(val,dict):
             self.net.add_node(key)
-            for key2,val2 in val.iteritems():
+            #for key2,val2 in val.iteritems():
+            for key2 in val:
+                val2=val[key2]
                 MonoplexGraphWrapper_adjlist(self.net,key)[key2]=val2
         else:
             raise Exception("Can only sent adjacencies to dicts.")
@@ -154,7 +157,9 @@ def networkxdecorator(f):
                 newargs.append(arg)
         args=tuple(newargs)
 
-        for key,val in kwargs.iteritems():
+        #for key,val in kwargs.iteritems():
+        for key in kwargs:
+            val=kwargs[key]
             if isinstance(val,MultilayerNetwork):
                 kwargs[key]=autowrap(val)
             if val.__class__==tuple: 
