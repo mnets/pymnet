@@ -51,9 +51,6 @@ class TestIsomorphisms(unittest.TestCase):
 
         #Check that the results are consistent
         all_same= (len(set(results.values()))==1)
-        if not all_same:
-            print "Got inconsistent results for multilayer network isomorphisms"
-            print results
         self.assertTrue(all_same)
 
         return results.values()[0]
