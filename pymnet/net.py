@@ -794,7 +794,7 @@ class MultilayerEdges:
                 deg+=self.net[nl].deg()
                 if self.net[self.net._nodes_to_link(nl,nl)]!=self.net.noEdge:
                     deg+=1 #self-edges should also be counted twice
-            return deg/2
+            return int(deg/2)
 
 
 
