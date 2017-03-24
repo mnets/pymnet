@@ -19,7 +19,7 @@ class TestNxwrap(unittest.TestCase):
         self.assertEqual(nnx[3][2]['weight'],3)
         self.assertEqual(nnx[5][4]['weight'],4)
 
-        self.assertEqual(list(networkx.connected_components(nnx)),[set([1, 2, 3]), set([4, 5])])
+        self.assertEqual(map(set,networkx.connected_components(nnx)),[set([1, 2, 3]), set([4, 5])])
 
     def test_monoplex_basics_writing_pymnet(self):
         n=net.MultilayerNetwork(aspects=0)
@@ -49,7 +49,7 @@ class TestNxwrap(unittest.TestCase):
         n[2,3]=1
         n[4,5]=1        
 
-        self.assertEqual(list(nxwrap.connected_components(n)),[set([1, 2, 3]), set([4, 5])])
+        self.assertEqual(map(set,nxwrap.connected_components(n)),[set([1, 2, 3]), set([4, 5])])
 
     def test_mst(self):
         n=net.MultilayerNetwork(aspects=0)
@@ -92,7 +92,7 @@ class TestNxwrap(unittest.TestCase):
         self.assertEqual(nnx[(3,'a')][(2,'a')]['weight'],3)
         self.assertEqual(nnx[(5,'a')][(4,'a')]['weight'],4)
 
-        self.assertEqual(list(networkx.connected_components(nnx)),[set([(1,'a'), (2,'a'), (3,'a')]), set([(4,'a'), (5,'a')])])
+        self.assertEqual(map(set,networkx.connected_components(nnx)),[set([(1,'a'), (2,'a'), (3,'a')]), set([(4,'a'), (5,'a')])])
 
     def test_grid_graph(self):
         gg=nxwrap.grid_graph([2,3])
