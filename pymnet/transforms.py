@@ -1,12 +1,15 @@
 """Functions taking in networks and returning transformed versions of them.
 """
+import math
+import itertools
+import random
+from functools import reduce
+
 #from . import net as netmodule #this will break the circular imports
 #import net as netmodule #this will not work in python 3
 import pymnet as netmodule #this is the solution
 
-import math
-import itertools
-import random
+
 
 def aggregate(net,aspects,newNet=None,selfEdges=False):
     """Reduces the number of aspects by aggregating them.
