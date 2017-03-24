@@ -913,7 +913,7 @@ class MultiplexNetwork(MultilayerNetwork):
         coupling_types=["categorical","ordinal","none"]
         self.couplings=[]
 
-        if isinstance(couplings,tuple) or isinstance(couplings,str) or isinstance(couplings,unicode) or isinstance(couplings,MultilayerNetwork) or couplings==None:
+        if isinstance(couplings,tuple) or isinstance(couplings,"".__class__) or isinstance(couplings,u"".__class__) or isinstance(couplings,MultilayerNetwork) or couplings==None:
             couplings=[couplings]
 
         if isinstance(couplings,list):
@@ -927,7 +927,7 @@ class MultiplexNetwork(MultilayerNetwork):
                 elif isinstance(coupling,MultilayerNetwork):
                     assert coupling.aspects==0
                     self.couplings.append((coupling,))
-                elif isinstance(coupling,str) or isinstance(coupling,unicode):
+                elif isinstance(coupling,"".__class__) or isinstance(coupling,u"".__class__):
                     assert str(coupling) in coupling_types
                     self.couplings.append((coupling,1.0))
                 elif coupling==None:

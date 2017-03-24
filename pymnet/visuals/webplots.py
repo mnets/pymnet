@@ -125,7 +125,7 @@ def webplot(net,outputfile=None):
     if outputfile==None:
         return script
     else:
-        if isinstance(outputfile,str) or isinstance(outputfile,unicode):
+        if isinstance(outputfile,"".__class__) or isinstance(outputfile,u"".__class__):
             outputfile=open(outputfile,'w')
 
         outputfile.write("<html><body>")
