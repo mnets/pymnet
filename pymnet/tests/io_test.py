@@ -1,10 +1,8 @@
 import unittest
 from operator import itemgetter
+import sys
 
-#import sys
-#sys.path.append("../../")
 from pymnet import net,netio
-#from .. import net
 
 
 class TestIO(unittest.TestCase):
@@ -147,8 +145,8 @@ def test_io():
     suite.addTest(TestIO("test_read_ucinet_mplex_nonglobalnodes"))
     suite.addTest(TestIO("test_pickle"))
 
-    unittest.TextTestRunner().run(suite) 
+    return unittest.TextTestRunner().run(suite).wasSuccessful() 
 
 if __name__ == '__main__':
-    test_io()
+    sys.exit(not test_io())
 

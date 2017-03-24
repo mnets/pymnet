@@ -1,8 +1,7 @@
 import unittest
 from operator import itemgetter
+import sys
 
-#import sys
-#sys.path.append("../../")
 import random
 from pymnet import net,transforms,models,isomorphisms
 
@@ -261,8 +260,8 @@ def test_isomorphisms():
         suite.addTest(TestIsomorphisms("test_comparison_multiplex_category_counts_fast_bliss"))
 
 
-    unittest.TextTestRunner().run(suite) 
+    return unittest.TextTestRunner().run(suite).wasSuccessful() 
 
 if __name__ == '__main__':
-    test_isomorphisms()
+    sys.exit(not test_isomorphisms())
 

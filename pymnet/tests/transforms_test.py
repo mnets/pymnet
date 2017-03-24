@@ -1,8 +1,8 @@
 import unittest
 from operator import itemgetter
+import sys
 
-#import sys
-#sys.path.append("../../")
+
 from pymnet import net,transforms,diagnostics
 
 
@@ -305,8 +305,9 @@ def test_transforms():
     suite.addTest(TestTransforms("test_subnet_mplex_simple"))
     suite.addTest(TestTransforms("test_normalize_mplex_simple"))
     suite.addTest(TestTransforms("test_randomize_nodes_by_layer"))
-    unittest.TextTestRunner().run(suite) 
+    
+    return unittest.TextTestRunner().run(suite).wasSuccessful() 
 
 if __name__ == '__main__':
-    test_transforms()
+    sys.exit(not test_transforms())
 

@@ -15,12 +15,14 @@ except ImportError:
     nximported=False
 
 def test_all():
-    test_net()
-    test_cc()
-    test_diagnostics()
-    test_io()
-    test_models()
-    test_transforms()
-    test_visuals()
-    test_isomorphisms()
-    if nximported: test_nxwrap()
+    codes=[]
+    codes.append(test_net())
+    codes.append(test_cc())
+    codes.append(test_diagnostics())
+    codes.append(test_io())
+    codes.append(test_models())
+    codes.append(test_transforms())
+    codes.append(test_visuals())
+    codes.append(test_isomorphisms())
+    if nximported: codes.append(test_nxwrap())
+    return all(codes)

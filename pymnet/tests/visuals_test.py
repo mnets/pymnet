@@ -1,8 +1,7 @@
 import unittest
 from operator import itemgetter
-
 import sys,os
-#sys.path.append("../../")
+
 from pymnet import net,visuals
 
 
@@ -163,8 +162,8 @@ def test_visuals():
     suite.addTest(TestVisuals("test_draw_mlayer_example_1d_defaults"))
     suite.addTest(TestVisuals("test_draw_mplex_simple_layer_labels"))
     suite.addTest(TestVisuals("test_draw_mlayer_nonaligned_mlayer_coords"))
-    unittest.TextTestRunner().run(suite) 
+    return unittest.TextTestRunner().run(suite).wasSuccessful() 
 
 if __name__ == '__main__':
-    test_visuals()
+    sys.exit(not test_visuals())
 

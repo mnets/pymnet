@@ -1,6 +1,5 @@
 import unittest
-#import sys
-#sys.path.append("../../")
+import sys
 
 from pymnet import net,diagnostics,models,nx
 
@@ -158,8 +157,8 @@ def test_diagnostics():
     suite.addTest(TestDiagnostics("test_dijkstra_monoplex_compare"))
     suite.addTest(TestDiagnostics("test_dijkstra_multilayer_two_aspect"))
 
-    unittest.TextTestRunner().run(suite) 
+    return unittest.TextTestRunner().run(suite).wasSuccessful() 
 
 if __name__ == '__main__':
-    test_diagnostics()
+    sys.exit(not test_diagnostics())
 

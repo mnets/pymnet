@@ -1,11 +1,10 @@
 import unittest
 from operator import itemgetter
 import math
+import sys
 
-#import sys
-#sys.path.append("../../")
 from pymnet import net,models,diagnostics
-#from .. import net
+
 
 
 class TestModels(unittest.TestCase):
@@ -99,8 +98,8 @@ def test_models():
     suite.addTest(TestModels("test_monoplex_configuration_model"))
     suite.addTest(TestModels("test_multiplex_configuration_model"))
 
-    unittest.TextTestRunner().run(suite) 
+    return unittest.TextTestRunner().run(suite).wasSuccessful() 
 
 if __name__ == '__main__':
-    test_models()
+    sys.exit(not test_models())
 

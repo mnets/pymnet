@@ -1,6 +1,5 @@
 import unittest
-#import sys
-#sys.path.append("../../")
+import sys
 
 from pymnet import net,nxwrap
 import networkx
@@ -107,8 +106,9 @@ def test_nxwrap():
     suite.addTest(TestNxwrap("test_grid_graph")) 
     suite.addTest(TestNxwrap("test_autowrapping"))
     suite.addTest(TestNxwrap("test_mst"))
-    unittest.TextTestRunner().run(suite) 
+    
+    return unittest.TextTestRunner().run(suite).wasSuccessful()  
 
 if __name__ == '__main__':
-    test_nxwrap()
+    sys.exit(not test_nxwrap())
 
