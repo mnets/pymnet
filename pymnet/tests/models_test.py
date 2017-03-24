@@ -2,8 +2,8 @@ import unittest
 from operator import itemgetter
 import math
 
-import sys
-sys.path.append("../../")
+#import sys
+#sys.path.append("../../")
 from pymnet import net,models,diagnostics
 #from .. import net
 
