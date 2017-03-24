@@ -325,18 +325,18 @@ def er(n,p=None,edges=None):
         net=MultiplexNetwork(couplings=[('categorical',1.0)],fullyInterconnected=fic)
         if not hasattr(n,'__iter__'):
             if p!=None:
-                nodes=map(lambda x:xrange(n),p)
+                nodes=list(map(lambda x:xrange(n),p))
                 layers=xrange(len(p))
             else:
-                nodes=map(lambda x:xrange(n),edges)
+                nodes=list(map(lambda x:xrange(n),edges))
                 layers=xrange(len(edges))
         else:
             nodes=n
             layers=xrange(len(n))
             if p!=None and (not hasattr(p,'__iter__')):
-                p=map(lambda x:p,layers)
+                p=list(map(lambda x:p,layers))
             if edges!=None and (not hasattr(edges,'__iter__')):
-                edges=map(lambda x:edges,layers)
+                edges=list(map(lambda x:edges,layers))
                 
 
     # Fill in the edges
