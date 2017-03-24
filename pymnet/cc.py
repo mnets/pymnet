@@ -1468,7 +1468,9 @@ def lcc_brodka(net,node,anet=None,threshold=1,undefReturn=0.0):
             for neigh in net.A[layer][node].iter_total():
                 neighborcount[neigh]=neighborcount.get(neigh,0)+1            
                 thneighborhood=[]
-        for neighbor,count in neighborcount.iteritems():
+        #for neighbor,count in neighborcount.iteritems():            
+        for neighbor in neighborcount:
+            count=neighborcount[neighbor]
             if count >= threshold:
                 thneighborhood.append(neighbor)
     else:
