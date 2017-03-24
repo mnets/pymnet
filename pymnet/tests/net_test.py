@@ -1,8 +1,7 @@
 import unittest
 from operator import itemgetter
 
-#import sys
-#sys.path.append("../../")
+import sys
 from pymnet import net
 import pymnet
 #from .. import net
@@ -919,9 +918,10 @@ def test_net():
     suite.addTest(TestNet("test_mlayer_2dim_nonglobalnodes"))
     suite.addTest(TestNet("test_mplex_adding_intralayer_nets"))
     suite.addTest(TestNet("test_selfedges"))
-    
-    unittest.TextTestRunner().run(suite) 
+        
+    return unittest.TextTestRunner().run(suite).wasSuccessful()
+
 
 if __name__ == '__main__':
-    test_net()
+    sys.exit(not test_net())
 

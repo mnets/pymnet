@@ -1,8 +1,7 @@
 import unittest
 from operator import itemgetter
+import sys
 
-#import sys
-#sys.path.append("../../")
 from pymnet import net,cc,models,transforms
 import itertools
 import random
@@ -504,8 +503,11 @@ def test_cc(consistency_tests=False):
     if consistency_tests:
         suite.addTest(TestCC("test_consistency_mslice_er"))
         suite.addTest(TestCC("test_unweighted_nonglobalnodes_consistency_er"))
-    unittest.TextTestRunner().run(suite) 
+
+    return unittest.TextTestRunner().run(suite).wasSuccessful()
+
 
 if __name__ == '__main__':
-    test_cc()
+    sys.exit(not test_cc())
+
 
