@@ -73,7 +73,7 @@ def single_layer_conf(net,degs,degstype="distribution"):
 
     random.shuffle(stubs)
 
-    for s in range(len(stubs)/2):
+    for s in range(int(len(stubs)/2)):
         node1,node2=sorted([stubs[2*s],stubs[2*s+1]])
 
         edgetoindex[(node1,node2)]=edgetoindex.get((node1,node2),[])+[2*s]
@@ -91,7 +91,7 @@ def single_layer_conf(net,degs,degstype="distribution"):
             repeat=True
             while repeat:
                 #select two edges at random
-                e1i,e2i=map(lambda x:2*x,random.sample(xrange(len(stubs)/2),2))
+                e1i,e2i=map(lambda x:2*x,random.sample(xrange(int(len(stubs)/2)),2))
                 c=[node,stubs[e1i],stubs[e1i+1],stubs[e2i],stubs[e2i+1]]
                 n2,n3=sorted([c[1],c[2]])
                 n4,n5=sorted([c[3],c[4]])
@@ -121,7 +121,7 @@ def single_layer_conf(net,degs,degstype="distribution"):
             repeat=True
             while repeat:
                 #select two edges at random
-                e1i,e2i=map(lambda x:2*x,random.sample(xrange(len(stubs)/2),2))
+                e1i,e2i=map(lambda x:2*x,random.sample(xrange(int(len(stubs)/2)),2))
                 c=[n1,n2,stubs[e1i],stubs[e1i+1],stubs[e2i],stubs[e2i+1]]
                 n3,n4=sorted([c[2],c[3]])
                 n5,n6=sorted([c[4],c[5]])
@@ -189,9 +189,9 @@ def single_layer_er(net,nodes,p=None,edges=None):
                 if (v < n):
                     net[nodes[v],nodes[w]]=1
     else:
-        for edge_index in random.sample(xrange((n*(n-1))/2),edges):
+        for edge_index in random.sample(xrange(int((n*(n-1))/2)),edges):
             v=int(1+math.floor(-0.5+math.sqrt(0.25+2*edge_index)))
-            w=edge_index-(v*(v-1))/2
+            w=edge_index-int((v*(v-1))/2)
             net[nodes[v],nodes[w]]=1
 
 def conf(degs,degstype="distribution",couplings=("categorical",1.0)):
