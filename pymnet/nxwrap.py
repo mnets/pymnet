@@ -4,7 +4,7 @@
 import networkx
 import collections
 from functools import wraps
-from net import MultilayerNetwork
+from pymnet.net import MultilayerNetwork
 
 #NetworkX supports tuples as node names, but pymnet doesn't (because in Python there is no way of distinguishing between net[1,2] and net[(1,2)] ). 
 #In order to make some of the NetworkX functions that use tuples and node names to work, we define a new class "ntuple" which is a tuple that is
@@ -184,7 +184,7 @@ def networkxdecorator(f):
 #import networkx as networkx_modified
 #networkx_modified.Graph=MonoplexGraphNetworkxNew
 
-for name,obj in networkx.__dict__.iteritems():
+for name,obj in networkx.__dict__.items():
     if hasattr(obj,"__call__"):
         exec(name+"=networkxdecorator(obj)")
 
