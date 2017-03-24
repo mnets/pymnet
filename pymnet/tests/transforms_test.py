@@ -284,10 +284,8 @@ class TestTransforms(unittest.TestCase):
         n[0,3,2]=1
         n[1,3,2]=1
 
-        try:
-            self.assertEqual(transforms.normalize(self.mplex_nonaligned_simple),n)
-        except Exception,e:
-            self.assertEqual(str(e),"Not implemented.")
+        self.assertEqual(transforms.normalize(self.mplex_nonaligned_simple),n)
+
 
     def test_randomize_nodes_by_layer(self):
         n=transforms.randomize_nodes_by_layer(self.mplex_nonaligned_simple)
