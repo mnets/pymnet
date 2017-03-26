@@ -59,7 +59,9 @@ def single_layer_conf(net,degs,degstype="distribution"):
     elif degstype=="nodes":
         nstubs=sum(degs.values())
         nodes=len(degs)
-        for node,k in degs.iteritems():
+        #for node,k in degs.iteritems():
+        for node in degs:
+            k=degs[node]
             for i in range(k):
                 stubs.append(node)
             if k==0:
@@ -243,7 +245,8 @@ def conf(degs,degstype="distribution",couplings=("categorical",1.0)):
         for node in degs:
             d[node]=degs[node].deg()
         return conf(d,degstype="nodes")
-    elif isinstance(degs,dict) and not isinstance(degs.itervalues().next(),dict):
+    #elif isinstance(degs,dict) and not isinstance(degs.itervalues().next(),dict):
+    elif isinstance(degs,dict) and not isinstance(degs[(k for k in degs).send(None)],dict):
         net=MultilayerNetwork(aspects=0)
         single_layer_conf(net,degs,degstype=degstype)
     else:        
@@ -272,7 +275,8 @@ def conf(degs,degstype="distribution",couplings=("categorical",1.0)):
 
         net=MultiplexNetwork(couplings=[couplings],fullyInterconnected=nodeAligned)
         if namedlayers:
-            layers=degs.iteritems()
+            #layers=degs.iteritems()
+            layers = ((node, degs[node]) for node in degs )
         else:
             layers=enumerate(degs)
         for l,ldegs in layers:
