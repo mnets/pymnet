@@ -183,6 +183,9 @@ class MultilayerNetwork(object):
         --------
         add_layer
         """
+        if isinstance(layer,list): #Lists as layers allowed
+            layer=tuple(layer)
+
         self.slices[0].add(node)
         if layer!=None and not self.fullyInterconnected:
             #check that the layer exists, if not add it.

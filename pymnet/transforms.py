@@ -380,14 +380,18 @@ def normalize(net,nodesToIndices=None,layersToIndices=None,nodeStart=0,layerStar
 
     if nodesToIndices==False:
         indicesToNodes={}
-        for node,index in nodeNames.iteritems():
+        #for node,index in nodeNames.iteritems():
+        for node in nodeNames:
+            index=nodeNames[node]    
             indicesToNodes[index]=node
         nodeNames=indicesToNodes
 
     if layersToIndices==False:
         for aspect in range(net.aspects):
             indicesToLayers={}
-            for layer,index in layerNames[aspect].iteritems():
+            #for layer,index in layerNames[aspect].iteritems():
+            for layer in layerNames[aspect]:
+                index=layerNames[aspect][layer]
                 indicesToLayers[index]=layer
             layerNames[aspect]=indicesToLayers
 
@@ -463,7 +467,9 @@ def randomize_nodes_by_layer(net):
     assert isinstance(net,netmodule.MultiplexNetwork)
     assert net.aspects==1
     newnet=subnet(net,set(),net.iter_layers())
-    for layer,inet in net.A.iteritems():
+    #for layer,inet in net.A.iteritems():
+    for layer in net.A:
+        inet=net.A[layer]
         newinet=newnet.A[layer]
         nodes=list(inet)
         random.shuffle(nodes)
