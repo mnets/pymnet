@@ -15,12 +15,12 @@ class TestModels(unittest.TestCase):
     def test_monoplex_erdosrenyi(self):
         size=10
         full=net.MultilayerNetwork(aspects=0)
-        models.single_layer_er(full,range(10,10+size),p=None,edges=(size*(size-1))/2)
+        models.single_layer_er(full,range(10,10+size),p=None,edges=int((size*(size-1))/2))
         for i in full:
             for j in full:
                 if i!=j:
                     self.assertEqual(full[i,j],1)
-        self.assertEqual(len(full.edges),(size*(size-1))/2)
+        self.assertEqual(len(full.edges),int((size*(size-1))/2))
 
         net2=net.MultilayerNetwork(aspects=0)
         models.single_layer_er(net2,range(10),p=None,edges=30)
