@@ -50,10 +50,12 @@ class TestIsomorphisms(unittest.TestCase):
         self.assertTrue(len(results)>0) #This backend doesn't do anything...
 
         #Check that the results are consistent
-        all_same= (len(set(results.values()))==1)
+        #all_same= (len(set(results.values()))==1)
+        all_same= (len(set(  (results[k] for k in results)  ))==1)
         self.assertTrue(all_same)
 
-        return results.values()[0]
+        #return results.values()[0]
+        return [results[k] for k in results][0]
 
     def test_comparison_simple_mlayer(self,backend="nx"):
         """This tests that the simple example given in the article M. Kivela & M.A. Porter 

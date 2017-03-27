@@ -24,7 +24,11 @@ except ImportError:
 
 try:
     from . import blissbackend
-    auxbuilder_backends["bliss"]=blissbackend.AuxiliaryGraphBuilderBliss
+    try:
+        blissbackend.bliss.Graph #Bliss import might fail silently...
+        auxbuilder_backends["bliss"]=blissbackend.AuxiliaryGraphBuilderBliss
+    except AttributeError:
+        pass
 except ImportError:
     pass
 
