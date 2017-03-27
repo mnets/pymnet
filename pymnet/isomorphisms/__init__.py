@@ -17,13 +17,13 @@ isomorphism_mapping_backends=[]
 #lets try to import some backends
 
 try:
-    import nxbackend
+    from . import nxbackend
     auxbuilder_backends["nx"]=nxbackend.AuxiliaryGraphBuilderNX
 except ImportError:
     pass
 
 try:
-    import blissbackend
+    from . import blissbackend
     auxbuilder_backends["bliss"]=blissbackend.AuxiliaryGraphBuilderBliss
 except ImportError:
     pass

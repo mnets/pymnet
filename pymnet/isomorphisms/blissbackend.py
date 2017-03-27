@@ -5,7 +5,7 @@ http://www.tcs.hut.fi/Software/bliss/
 """
 
 import PyBliss as bliss
-import isomcore
+from . import isomcore
 
 
 class AuxiliaryGraphBuilderBliss(isomcore.AuxiliaryGraphBuilder):

@@ -1,6 +1,6 @@
 import networkx
 from networkx.algorithms import isomorphism as nxisomorphism
-import isomcore
+from . import isomcore
 
 
 class AuxiliaryGraphBuilderNX(isomcore.AuxiliaryGraphBuilder):
