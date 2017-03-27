@@ -15,7 +15,7 @@ class AuxiliaryGraphBuilder(object):
         if allowed_aspects=="all":
             allowed_aspects=range(net.aspects+1)
         self.asp=sorted(allowed_aspects)
-        self.nasp=filter(lambda a:a not in allowed_aspects,range(net.aspects+1))
+        self.nasp=list(filter(lambda a:a not in allowed_aspects,range(net.aspects+1)))
 
         self.nodemap={}
         self.auxnodemap={}
@@ -132,12 +132,15 @@ class AuxiliaryGraphBuilder(object):
 
     def get_automorphism_generators(self,include_fixed=False):
         generators=[]
-        invauxnodemap=dict( ((v,k) for k,v in self.auxnodemap.iteritems() ) )
+        #invauxnodemap=dict( ((v,k) for k,v in self.auxnodemap.iteritems() ) )
+        invauxnodemap=dict( ((auxnodemap[k],k) for k in self.auxnodemap ) )
         for permutation in self._automorphism_generators():
             mperms=[]
             for a in range(self.net.aspects+1):
                 mperms.append({})
-            for node,nodeid in self.auxnodemap.iteritems():
+            #for node,nodeid in self.auxnodemap.iteritems():
+            for node in self.auxnodemap:
+                nodeid=self.auxnodemap[node]
                 aspect,elayer=node
                 new_aspect,new_elayer=invauxnodemap[permutation[nodeid]]
                 if elayer!=new_elayer or include_fixed:
@@ -160,11 +163,14 @@ class AuxiliaryGraphBuilder(object):
             #The code is almost duplicate to the automorphisms
             #This should be cleaned up
 
-            invauxnodemap=dict( ((v,k) for k,v in other.auxnodemap.iteritems() ) )
+            #invauxnodemap=dict( ((v,k) for k,v in other.auxnodemap.iteritems() ) )
+            invauxnodemap=dict( ((other.auxnodemap[k],k) for k in other.auxnodemap ) )
             mperms=[]
             for a in range(self.net.aspects+1):
                 mperms.append({})
-            for node,nodeid in self.auxnodemap.iteritems():
+            #for node,nodeid in self.auxnodemap.iteritems():
+            for node in self.auxnodemap:
+                nodeid=self.auxnodemap[node]
                 aspect,elayer=node
                 new_aspect,new_elayer=invauxnodemap[permutation[nodeid]]
                 if elayer!=new_elayer or include_fixed:
