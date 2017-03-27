@@ -353,7 +353,7 @@ class TestCC(unittest.TestCase):
             for snode in range(len(w)):
                 moreno_sum=0
                 aw_sum=0
-                for layer in range(len(a)/len(w)):
+                for layer in range(int(len(a)/len(w))):
                     aaa,aacac,acaac,acaca,acacac, afa,afcac,acfac,acfca,acfcac=cc.cc_cycle_vector_bf(net,snode,layer)
                     moreno_sum+=aaa+2*aacac+2*acaac+acaca+2*acacac
                     aw_sum+=aaa+aacac+acaac+acaca+acacac
