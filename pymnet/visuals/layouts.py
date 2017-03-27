@@ -60,7 +60,9 @@ def normalize_coordinates(coords,boxSize,inplace=False):
        The size of the box where the coordinates are to be normalized
     """
     minx,miny,maxx,maxy=None,None,None,None
-    for node,(x,y) in coords.iteritems():
+    #for node,(x,y) in coords.iteritems():
+    for node in coords:
+        x,y=coords[node]
         if minx==None or x<minx:
             minx=x
         if miny==None or y<miny:
@@ -76,7 +78,9 @@ def normalize_coordinates(coords,boxSize,inplace=False):
         newcoords=coords
     else:
         newcoords={}
-    for node, (x, y) in coords.iteritems():
+    #for node, (x, y) in coords.iteritems():
+    for node in coords:
+        x,y=coords[node]
         newcoords[node]=((x-minx)/difx, (y-miny)/dify )
     return newcoords 
 
@@ -212,7 +216,9 @@ def get_fruchterman_reingold_multilayer_layout(net,
                         delta_nc[node2]=(delta_nc[node2][0]-c*diff[0],delta_nc[node2][1]-c*diff[1])
                     
             #Normalize coordinate, and apply them
-            for node,(x,y) in delta_nc.iteritems():
+            #for node,(x,y) in delta_nc.iteritems():
+            for node in delta_nc:
+                x,y=delta_nc[node]
                 if node not in fixedNodes:
                     delta_len=math.sqrt(x**2+y**2)
                     nc[node]=(nc[node][0]+temperature*delta_len*x, nc[node][1]+temperature*delta_len*y)
@@ -249,7 +255,9 @@ def get_fruchterman_reingold_multilayer_layout(net,
                         delta_nlc[nl2]=(delta_nlc[nl2][0]-c*diff[0],delta_nlc[nl2][1]-c*diff[1])
                     
             #Normalize coordinate, and apply them
-            for nl,(x,y) in delta_nlc.iteritems():
+            #for nl,(x,y) in delta_nlc.iteritems():
+            for nl in delta_nlc:
+                x,y=delta_nlc[nl]
                 if nl not in fixedNodeLayers:
                     delta_len=math.sqrt(x**2+y**2)
                     nlc[nl]=(nlc[nl][0]+temperature*delta_len*x, nlc[nl][1]+temperature*delta_len*y)
