@@ -134,7 +134,9 @@ class TestDiagnostics(unittest.TestCase):
 
 
         d,f=diagnostics.dijkstra(n,[(1,'a',1)])
-        for nl,dist in d.iteritems():            
+        #for nl,dist in d.iteritems():
+        for nl in d:
+            dist=d[nl]            
             self.assertEqual(d[nl],nl[2]-1)
 
         d,f=diagnostics.dijkstra_mlayer_prune(n,[(1,None,None)],aaspects=[1,2])

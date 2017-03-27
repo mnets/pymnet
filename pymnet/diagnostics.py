@@ -144,7 +144,9 @@ def dijkstra_mlayer_prune(net,sources,aaspects):
         return tuple(nnl)
 
     nd={}
-    for nl,dist in d.iteritems():
+    #for nl,dist in d.iteritems():
+    for nl in d:
+        dist=d[nl]
         nnl=select_aspects(nl,aaspects)
         if nnl not in nd or nd[nnl]>dist:
             nd[nnl]=dist
@@ -161,7 +163,9 @@ def dijkstra_mlayer_prune(net,sources,aaspects):
                              directed=True,
                              noEdge=-1)
 
-    for nl,dist in d.iteritems():
+    #for nl,dist in d.iteritems():
+    for nl in d:
+        dist=d[nl]
         nnl=select_aspects(nl,aaspects)
         if nd[nnl]==d[nl]:
             build_path(forest,nforest,nl)
