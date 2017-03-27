@@ -75,7 +75,7 @@ def aggregate(net,aspects,newNet=None,selfEdges=False):
         newNet.add_node(node)
     
     #Add edges
-    edgeIndices=filter(lambda x:math.floor(x/2) not in aspects,range(2*(net.aspects+1)))
+    edgeIndices=list(filter(lambda x:math.floor(x/2) not in aspects,range(2*(net.aspects+1))))
     for edge in net.edges:
         newEdge=[]
         for index in edgeIndices:
@@ -85,7 +85,7 @@ def aggregate(net,aspects,newNet=None,selfEdges=False):
 
     #Add node-layer tuples (if not node-aligned)
     if not net.fullyInterconnected and newNet.aspects>0:
-        nodeIndices=filter(lambda x:x not in aspects,range(1,net.aspects+1))
+        nodeIndices=list(filter(lambda x:x not in aspects,range(1,net.aspects+1)))
         for nlt in net.iter_node_layers():
             newlayer=[]
             for a in nodeIndices:
