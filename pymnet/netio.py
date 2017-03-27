@@ -125,7 +125,8 @@ def read_ucinet(netinput,couplings=('categorical',1.0),fullyInterconnected=True)
         try:
             nlabels=0
             while nlabels<length:
-                line=iterator.next()
+                #line=iterator.next()
+                line=iterator.send(None)
                 fields=line.split(",")
                 for label in fields:
                     nlabels+=1
@@ -138,7 +139,8 @@ def read_ucinet(netinput,couplings=('categorical',1.0),fullyInterconnected=True)
         netinput=open(netinput,'r')
 
     #create the input iterator
-    ii=iter(netinput)
+    #ii=iter(netinput)
+    ii=(x for x in netinput)
 
     #The file should start with dl or DL.
     #Then on the same row or next row it should contain
@@ -169,10 +171,12 @@ def read_ucinet(netinput,couplings=('categorical',1.0),fullyInterconnected=True)
  
             return int(nval),int(mval)
 
-        line=ii.next()
+        #line=ii.next()
+        line=ii.send(None)
         assert line.lower().startswith("dl"), "File not starting with DL"
         if len(line[2:].strip())==0: #nothing more in this line
-            line2=ii.next()
+            #line2=ii.next()
+            line2=ii.send(None)
             n,nm=parse_size(line2)
         else: #the size is on this line
             n,nm=parse_size(line[2:])
@@ -190,7 +194,8 @@ def read_ucinet(netinput,couplings=('categorical',1.0),fullyInterconnected=True)
     data=False
     try:
         while True:
-            line=ii.next().lstrip().lower()
+            #line=ii.next().lstrip().lower()
+            line=ii.send(None).lstrip().lower()
             if line.startswith("format"):
                 f=line.split("=")
                 if len(f)==2:
@@ -231,7 +236,7 @@ def read_ucinet(netinput,couplings=('categorical',1.0),fullyInterconnected=True)
             rlabels=labels
     if clabels==None:
         if labels==None:
-            clabels=range(n)
+            clabels=list(range(n))
         else:
             clabels=labels
 
@@ -246,15 +251,18 @@ def read_ucinet(netinput,couplings=('categorical',1.0),fullyInterconnected=True)
     if format=="fullmatrix" or "fullmatrix diagonal present":
         try:
             if labels_embedded: #first line is labels
-                clabels=map(lambda x:x.lower(),ii.next().split())
+                #clabels=map(lambda x:x.lower(),ii.next().split())
+                clabels=list(map(lambda x:x.lower(),ii.send(None).split()))
                 rlabels=[]
             assert len(clabels)==n,"Invalid number of labels."
             row=0
             while True:
-                line=ii.next().strip()
+                #line=ii.next().strip()
+                line=ii.send(None).strip()
                 fields=line.split()
                 while len(fields)<n:
-                    line=ii.next().strip()
+                    #line=ii.next().strip()
+                    line=ii.send(None).strip()
                     fields.extend(line.split())
 
                 if labels_embedded:
