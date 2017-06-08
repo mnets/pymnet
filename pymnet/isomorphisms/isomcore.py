@@ -133,7 +133,7 @@ class AuxiliaryGraphBuilder(object):
     def get_automorphism_generators(self,include_fixed=False):
         generators=[]
         #invauxnodemap=dict( ((v,k) for k,v in self.auxnodemap.iteritems() ) )
-        invauxnodemap=dict( ((auxnodemap[k],k) for k in self.auxnodemap ) )
+        invauxnodemap=dict( ((self.auxnodemap[k],k) for k in self.auxnodemap ) )
         for permutation in self._automorphism_generators():
             mperms=[]
             for a in range(self.net.aspects+1):
