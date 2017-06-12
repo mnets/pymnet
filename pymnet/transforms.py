@@ -563,3 +563,43 @@ def subnet_iter(net,remove_elayers=[],remove_edges=True):
 
 
 
+def get_underlying_graph(net):
+    """Creates the underlying graph of a multiplex network.
+
+    Parameters
+    ----------
+    net : MultilayerNetwork, or MultiplexNetwork 
+       The original network.
+
+    Return
+    ------
+    MultilayerNetwork objects with zero aspects.
+    Node-layer tuples are converted to node names that are strings.
+
+    Notes
+    -----
+    The node names are converted into strings instead of tuples because
+    Python doesn't differentiate between lists of arguments and tuples
+    in __getitem__ function calls.
+
+    A useful way of extracting the tuples back from the string is to
+    use the eval method.
+    """
+
+    #The network object to be returned
+    newNet=netmodule.MultilayerNetwork(aspects=0,
+                                       noEdge=net.noEdge,
+                                       directed=net.directed
+                                       )
+
+    #Add nodes
+    for nl in net.iter_node_layers():
+        newNet.add_node(str(nl))
+
+    #Add edges
+    for edge in net.edges:
+        n1,n2=net._link_to_nodes(edge[:-1])
+        w=edge[-1]
+        newNet[str(n1)][str(n2)]=w
+
+    return newNet
