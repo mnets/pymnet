@@ -4,7 +4,9 @@
 """
 
 import unittest
+from pymnet import net
 import reqs
+import dumb
 
 class TestRequirementChecks(unittest.TestCase):
     
@@ -36,6 +38,25 @@ class TestRequirementChecks(unittest.TestCase):
         with self.assertRaises(AssertionError):
             reqs.calculate_required_lengths([1,0.5],[1])
             
+    def test_dumb_enumeration(self):
+        net1 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net2 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net2[1,'X'][1,'Y'] = 1
+        net2[1,'X'][2,'X'] = 1
+        net3 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net3[1,'X'][1,'Y'] = 1
+        net3[1,'X'][3,'X'] = 1
+        net3[1,'Y'][2,'Z'] = 1
+        resultlist = []
+        dumb.dumbEnumeration(net1,[1,2],[1],resultlist)
+        self.assertEqual(resultlist,[])
+        resultlist = []
+        dumb.dumbEnumeration(net2,[1,2],[1],resultlist)
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,2],['X','Y'])])
             
 if __name__ == '__main__':
     unittest.main()
