@@ -10,6 +10,8 @@ class TestRequirementChecks(unittest.TestCase):
     
     def test_required_lengths(self):
         self.assertEqual((reqs.calculate_required_lengths([4,3,4,2],[3,2,2,1,2,1,1,2,1,1,1])),(6,4))
+        self.assertEqual((reqs.calculate_required_lengths([1,2,1],[1,0,1,0])),(2,3))
+        self.assertEqual((reqs.calculate_required_lengths([2,2,1],[1,0,1,0])),(3,3))
         self.assertEqual((reqs.calculate_required_lengths([1],[])),(1,1))
         self.assertEqual((reqs.calculate_required_lengths([9999],[])),(9999,1))
         
@@ -19,7 +21,21 @@ class TestRequirementChecks(unittest.TestCase):
             reqs.calculate_required_lengths([49,999],[])
         with self.assertRaises(AssertionError):
             reqs.calculate_required_lengths([],[])
-        
-        
+        with self.assertRaises(AssertionError):
+            reqs.calculate_required_lengths([1],[1,2,3,4])
+        with self.assertRaises(AssertionError):
+            reqs.calculate_required_lengths([0,-1,1],[1,2,3,4])
+        with self.assertRaises(AssertionError):
+            reqs.calculate_required_lengths([0,0,0],[1,2,3,4])
+        with self.assertRaises(AssertionError):
+            reqs.calculate_required_lengths([0,0,0],[0,0,0,0])
+        with self.assertRaises(AssertionError):
+            reqs.calculate_required_lengths([1,1],[-1])
+        with self.assertRaises(AssertionError):
+            reqs.calculate_required_lengths([1,1],[0.5])
+        with self.assertRaises(AssertionError):
+            reqs.calculate_required_lengths([1,0.5],[1])
+            
+            
 if __name__ == '__main__':
     unittest.main()
