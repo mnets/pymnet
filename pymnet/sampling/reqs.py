@@ -70,14 +70,16 @@ def check_reqs(network,nodelist,layerlist,sizes,intersections):
     
     
 def calculate_required_lengths(sizes,intersections):
-    assert sizes != []
+    assert sizes != [], "Empty layer size list"
+    assert len(intersections) == 2**len(sizes)-len(sizes)-1, "Wrong number of intersections"
+    assert all(i>=1 and isinstance(i,int) for i in sizes) and all(j>=0 and isinstance(j,int) for j in intersections), "Inappropriate intersections or sizes"
     if not intersections:
         return sizes[0],1
     layerlist_length = len(sizes)
     nodelist_length = sum(sizes)
     index = 0
     for ii in range(2,len(sizes)+1):
-        for jj,combination in enumerate(list(itertools.combinations(sizes,ii))):
+        for _ in list(itertools.combinations(sizes,ii)):
             if ii % 2 == 0:
                 nodelist_length = nodelist_length - intersections[index]
                 index = index + 1
