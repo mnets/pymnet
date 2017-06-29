@@ -3,13 +3,14 @@
 @author: T. Nurmi
 """
 
+import sys
 import unittest
 from pymnet import net
 import reqs
 import dumb
 
-class TestRequirementChecks(unittest.TestCase):
-    
+class TestSampling(unittest.TestCase):
+
     def test_required_lengths(self):
         self.assertEqual((reqs.calculate_required_lengths([4,3,4,2],[3,2,2,1,2,1,1,2,1,1,1])),(6,4))
         self.assertEqual((reqs.calculate_required_lengths([1,2,1],[1,0,1,0])),(2,3))
@@ -57,6 +58,14 @@ class TestRequirementChecks(unittest.TestCase):
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2],['X','Y'])])
-            
+        resultlist = []
+        dumb.dumbEnumeration(net2,[2,1],[1],resultlist)
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,2],['X','Y'])])
+
 if __name__ == '__main__':
-    unittest.main()
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestSampling)
+    unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(suite)
