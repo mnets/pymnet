@@ -108,7 +108,7 @@ def extendSubgraph_v4(network,nodelist,layerlist,sizes,intersections,V_extension
     if len(nodelist) > req_nodelist_len or len(layerlist) > req_layerlist_len:
         return
     try:
-        if check_reqs(network,nodelist,layerlist,sizes,intersections):
+        if check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,req_layerlist_len)):
             #print('ESU:',(list(nodelist),list(layerlist)))
             resultlist.append((list(nodelist),list(layerlist)))
             return
