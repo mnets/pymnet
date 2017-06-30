@@ -10,36 +10,35 @@ import itertools
 #from operator import itemgetter
 #import numpy as np
 
-def check_reqs(network,nodelist,layerlist,sizes,intersections):
+def check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,req_layerlist_len)=(None,None)):
     '''
     One aspect
-    NB! Should probably check nodelist length being appropriate?!?
     '''
-    assert len(layerlist) == len(sizes), "Wrong number of sizes"
-    assert 2**len(layerlist)-len(layerlist)-1 == len(intersections), "Wrong number of intersections"
+    if (req_nodelist_len,req_layerlist_len) == (None,None):
+        try:
+            req_nodelist_len,req_layerlist_len = calculate_required_lengths(sizes,intersections)
+        except AssertionError:
+            raise
+    assert len(nodelist) == req_nodelist_len, "Wrong number of nodes"
+    assert len(layerlist) == req_layerlist_len, "Wrong number of layers"
     induced_graph = pymnet.subnet(network,nodelist,layerlist)
-    
     try:
         graph_is_connected = nx.is_connected(pymnet.transforms.get_underlying_graph(induced_graph))
     except nx.networkx.NetworkXPointlessConcept:
         return False
-    
     if graph_is_connected:   
         d = dict() # keys: layers, values: nodes
         for nodelayer in list(induced_graph.iter_node_layers()):
             d.setdefault(nodelayer[1],[])
             d[nodelayer[1]].append(nodelayer[0])
-            
         if len(d) != len(layerlist):
-            return False
-            
+            return False   
         d_isect = dict() # layer intersections, roles 0,1,2,...
         indexer = 0
         for jj in range(2,len(layerlist)+1):
             for combination in list(itertools.combinations(list(range(0,len(layerlist))),jj)):
                 d_isect[combination] = intersections[indexer]
                 indexer = indexer + 1
-        
         for permutation in list(itertools.permutations(layerlist)):
             goto_next_perm = False
             # check all intersections and sizes
@@ -63,8 +62,7 @@ def check_reqs(network,nodelist,layerlist,sizes,intersections):
                 if goto_next_perm:
                     break
             if not goto_next_perm:
-                return True
-                            # tarkista logiikka
+                return True    # tarkista logiikka
     return False
     
     
