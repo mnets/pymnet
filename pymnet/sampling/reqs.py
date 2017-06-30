@@ -12,7 +12,9 @@ import itertools
 
 def check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,req_layerlist_len)=(None,None)):
     '''
-    One aspect
+    One aspect.
+    Inappropriate required lengths are intentionally not checked for, if you
+    aren't sure you can provide correct lengths leave them out of the parameters.
     '''
     if (req_nodelist_len,req_layerlist_len) == (None,None):
         try:
