@@ -220,7 +220,8 @@ class TestSampling(unittest.TestCase):
         self.assertEqual(resultlist,[([1,2],['X','Y','Z'])])
         
     def test_esu_exhaustive(self):
-        reqlist = [([1,1],[0]),([1,2],[0]),([1,2],[1]),([2,3],[1]),([2,3],[2])]
+        # Will take approx. 45 min
+        reqlist = [([1,1],[0]),([1,2],[0]),([1,2],[1]),([2,3],[1]),([2,1,1],[1,0,0,0])]
         for requirement in reqlist:
             for _ in range(30):
                 network = creators.multilayer_partially_interconnected(creators.random_nodelists(30,10,5),0.05)
@@ -236,16 +237,40 @@ class TestSampling(unittest.TestCase):
                     result[0].sort()
                     result[1].sort()
                 resultlist_esu.sort()
-                print(resultlist_dumb,resultlist_esu)
                 self.assertEqual(resultlist_dumb,resultlist_esu)
                 
+
+                
         
-        
-        
-        
-        
-        
+def makesuite(exhaustive=False):
+    suite = unittest.TestSuite()
+    suite.addTest(TestSampling("test_required_lengths"))
+    suite.addTest(TestSampling("test_dumb_enumeration"))
+    suite.addTest(TestSampling("test_esu_concise"))
+    if exhaustive:
+        suite.addTest(TestSampling("test_esu_exhaustive"))
+    return suite
 
 if __name__ == '__main__':
-    suite = unittest.TestLoader().loadTestsFromTestCase(TestSampling)
-    unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(suite)
+    #suite = unittest.TestLoader().loadTestsFromTestCase(TestSampling)
+    unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(makesuite())
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
