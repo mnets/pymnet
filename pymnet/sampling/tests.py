@@ -5,7 +5,7 @@
 
 import sys
 import unittest
-from pymnet import net
+from pymnet import net,models
 import reqs
 import dumb
 
@@ -47,7 +47,18 @@ class TestSampling(unittest.TestCase):
         net3 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
         net3[1,'X'][1,'Y'] = 1
         net3[1,'X'][3,'X'] = 1
+        net3[1,'Y'][1,'Z'] = 1
         net3[1,'Y'][2,'Z'] = 1
+        net4 = net.MultilayerNetwork(aspects=1,fullyInterconnected=True)
+        net4[1,'X'][1,'Y'] = 1
+        net4[1,'X'][2,'X'] = 1
+        net5 = models.full_multilayer(2,['X','Y','Z'])
+        net6 = net.MultilayerNetwork(aspects=1,fullyInterconnected=True)
+        net6[1,'X'][2,'X'] = 1
+        net6[1,'X'][1,'Y'] = 1
+        net6[1,'Y'][1,'Z'] = 1
+        net6[1,'Z'][2,'Z'] = 1
+        net6[2,'Z'][2,'Y'] = 1
         resultlist = []
         dumb.dumbEnumeration(net1,[1,2],[1],resultlist)
         self.assertEqual(resultlist,[])
@@ -65,6 +76,63 @@ class TestSampling(unittest.TestCase):
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2],['X','Y'])])
+        resultlist = []
+        dumb.dumbEnumeration(net3,[1,1],[1],resultlist)
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1],['X','Y']),([1],['Y','Z'])])
+        resultlist = []
+        dumb.dumbEnumeration(net3,[2,1],[1],resultlist)
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,2],['Y','Z']),([1,3],['X','Y'])])
+        resultlist = []
+        dumb.dumbEnumeration(net3,[2,2],[1],resultlist)
+        self.assertEqual(resultlist,[])
+        resultlist = []
+        dumb.dumbEnumeration(net3,[2,1,1],[1,0,0,0],resultlist)
+        self.assertEqual(resultlist,[])
+        resultlist = []
+        dumb.dumbEnumeration(net3,[2,1,2],[1,1,1,1],resultlist)
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,2,3],['X','Y','Z'])])
+        resultlist = []
+        dumb.dumbEnumeration(net4,[1,2],[1],resultlist)
+        self.assertEqual(resultlist,[])
+        resultlist =  []
+        dumb.dumbEnumeration(net5,[2,2,2],[2,2,2,2],resultlist)
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([0,1],['X','Y','Z'])])
+        resultlist =  []
+        dumb.dumbEnumeration(net5,[2,2],[2],resultlist)
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([0, 1], ['X', 'Y']), ([0, 1], ['X', 'Z']), ([0, 1], ['Y', 'Z'])])
+        resultlist = []
+        dumb.dumbEnumeration(net6,[2,2,2],[2,2,2,2],resultlist)
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,2],['X','Y','Z'])])
+        
+        
+        
+        
+        
+        
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(TestSampling)
