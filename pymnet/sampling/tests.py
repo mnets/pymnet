@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 @author: T. Nurmi
+TODO: assertion checks for dumb and esu, more check_reqs tests
+creators tests(?)
 """
 
 import sys
@@ -19,9 +21,7 @@ class TestSampling(unittest.TestCase):
         self.assertEqual((reqs.calculate_required_lengths([2,2,1],[1,0,1,0])),(3,3))
         self.assertEqual((reqs.calculate_required_lengths([1],[])),(1,1))
         self.assertEqual((reqs.calculate_required_lengths([9999],[])),(9999,1))
-        
         self.assertNotEqual((reqs.calculate_required_lengths([5,3,4,2],[3,2,2,1,2,1,1,2,1,1,1])),(6,4))
-        
         with self.assertRaises(AssertionError):
             reqs.calculate_required_lengths([49,999],[])
         with self.assertRaises(AssertionError):
@@ -46,12 +46,25 @@ class TestSampling(unittest.TestCase):
         net2 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
         net2[1,'X'][1,'Y'] = 1
         net2[1,'X'][2,'X'] = 1
+        net3 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net3[1,'X'][1,'Y'] = 1
+        net3[1,'X'][3,'X'] = 1
+        net3[1,'Y'][1,'Z'] = 1
+        net3[1,'Y'][2,'Z'] = 1
         self.assertFalse(reqs.check_reqs(net1,[1],['X'],[1],[]))
         self.assertFalse(reqs.check_reqs(net1,[1],['X','Y'],[1,1],[1]))
         self.assertTrue(reqs.check_reqs(net2,[1],['X'],[1],[]))
         self.assertTrue(reqs.check_reqs(net2,[1,2],['X','Y'],[1,2],[1]))
         self.assertFalse(reqs.check_reqs(net2,[1,2],['X','Z'],[1,2],[1]))
-            
+        with self.assertRaises(AssertionError):
+            reqs.check_reqs(net2,[1,2],['X','Y'],[1,2],[1,1])
+        with self.assertRaises(AssertionError):
+            reqs.check_reqs(net2,[1,2],['X'],[1,2],[1])
+        with self.assertRaises(AssertionError):
+            reqs.check_reqs(net2,[1],['X','Y'],[1,2],[1])
+        with self.assertRaises(AssertionError):
+            reqs.check_reqs(net2,[1,2],['X','Y'],[1,2],[1.5])
+    
     def test_dumb_enumeration(self):
         net1 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
         net2 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
