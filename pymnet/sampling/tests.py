@@ -239,16 +239,40 @@ class TestSampling(unittest.TestCase):
                 resultlist_esu.sort()
                 self.assertEqual(resultlist_dumb,resultlist_esu)
                 
-
+    def test_esu_insane(self):
+        # Will run overnight
+        reqlist = [([1,1],[0]),([1,1],[1]),([1,2],[0]),([1,2],[1]),([1,3],[0]),([1,3],[1]),([2,3],[0]),([2,3],[1]),([2,3],[2]),([3,3],[0]),([3,3],[1]),([3,3],[2]),([3,3],[3])]    
+        reqlist = reqlist + [([1,1,1],[0,0,0,0]),([1,1,1],[1,0,0,0]),([1,1,1],[1,1,1,1])]
+        reqlist = reqlist + [([2,1,1],[0,0,0,0]),([2,1,1],[1,0,0,0]),([2,1,1],[1,1,1,1])]
+        reqlist = reqlist + [([2,2,1],[0,0,0,0]),([2,2,1],[1,0,0,0]),([2,2,1],[2,0,0,0]),([2,2,1],[1,1,0,0]),([2,2,1],[1,0,1,0]),([2,2,1],[1,1,1,1]),([2,2,1],[2,0,0,0]),([2,2,1],[2,1,1,1])]
+        for requirement in reqlist:
+            for _ in range(100):
+                network = creators.multilayer_partially_interconnected(creators.random_nodelists(30,10,5),0.05)
+                resultlist_dumb = []
+                resultlist_esu = []
+                dumb.dumbEnumeration(network,requirement[0],requirement[1],resultlist_dumb)
+                esu.enumerateSubgraphs_v3(network,requirement[0],requirement[1],resultlist_esu)
+                for result in resultlist_dumb:
+                    result[0].sort()
+                    result[1].sort()
+                resultlist_dumb.sort()
+                for result in resultlist_esu:
+                    result[0].sort()
+                    result[1].sort()
+                resultlist_esu.sort()
+                print resultlist_dumb,resultlist_esu
+                self.assertEqual(resultlist_dumb,resultlist_esu)
                 
         
-def makesuite(exhaustive=False):
+def makesuite(exhaustive=False,insane=False):
     suite = unittest.TestSuite()
     suite.addTest(TestSampling("test_required_lengths"))
     suite.addTest(TestSampling("test_dumb_enumeration"))
     suite.addTest(TestSampling("test_esu_concise"))
     if exhaustive:
         suite.addTest(TestSampling("test_esu_exhaustive"))
+    if insane:
+        suite.addTest(TestSampling("test_esu_insane"))
     return suite
 
 if __name__ == '__main__':
