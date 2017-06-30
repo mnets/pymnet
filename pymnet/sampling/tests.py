@@ -9,6 +9,7 @@ from pymnet import net,models
 import reqs
 import dumb
 import esu
+import creators
 
 class TestSampling(unittest.TestCase):
 
@@ -217,6 +218,28 @@ class TestSampling(unittest.TestCase):
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2],['X','Y','Z'])])
+        
+    def test_esu_exhaustive(self):
+        reqlist = [([1,1],[0]),([1,2],[0]),([1,2],[1]),([2,3],[1]),([2,3],[2])]
+        for requirement in reqlist:
+            for _ in range(30):
+                network = creators.multilayer_partially_interconnected(creators.random_nodelists(30,10,5),0.05)
+                resultlist_dumb = []
+                resultlist_esu = []
+                dumb.dumbEnumeration(network,requirement[0],requirement[1],resultlist_dumb)
+                esu.enumerateSubgraphs_v3(network,requirement[0],requirement[1],resultlist_esu)
+                for result in resultlist_dumb:
+                    result[0].sort()
+                    result[1].sort()
+                resultlist_dumb.sort()
+                for result in resultlist_esu:
+                    result[0].sort()
+                    result[1].sort()
+                resultlist_esu.sort()
+                print(resultlist_dumb,resultlist_esu)
+                self.assertEqual(resultlist_dumb,resultlist_esu)
+                
+        
         
         
         
