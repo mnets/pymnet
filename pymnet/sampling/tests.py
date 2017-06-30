@@ -41,6 +41,17 @@ class TestSampling(unittest.TestCase):
         with self.assertRaises(AssertionError):
             reqs.calculate_required_lengths([1,0.5],[1])
             
+    def test_check_reqs(self):
+        net1 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net2 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net2[1,'X'][1,'Y'] = 1
+        net2[1,'X'][2,'X'] = 1
+        self.assertFalse(reqs.check_reqs(net1,[1],['X'],[1],[]))
+        self.assertFalse(reqs.check_reqs(net1,[1],['X','Y'],[1,1],[1]))
+        self.assertTrue(reqs.check_reqs(net2,[1],['X'],[1],[]))
+        self.assertTrue(reqs.check_reqs(net2,[1,2],['X','Y'],[1,2],[1]))
+        self.assertFalse(reqs.check_reqs(net2,[1,2],['X','Z'],[1,2],[1]))
+            
     def test_dumb_enumeration(self):
         net1 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
         net2 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
@@ -267,6 +278,7 @@ class TestSampling(unittest.TestCase):
 def makesuite(exhaustive=False,insane=False):
     suite = unittest.TestSuite()
     suite.addTest(TestSampling("test_required_lengths"))
+    suite.addTest(TestSampling("test_check_reqs"))
     suite.addTest(TestSampling("test_dumb_enumeration"))
     suite.addTest(TestSampling("test_esu_concise"))
     if exhaustive:
