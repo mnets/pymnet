@@ -2,7 +2,6 @@
 """
 @author: T. Nurmi
 TODO: assertion checks for dumb and esu
-creators tests(?)
 """
 
 import sys
@@ -14,6 +13,15 @@ import esu
 import creators
 
 class TestSampling(unittest.TestCase):
+    
+    def test_multilayer_partially_interconnected(self):
+        nodelist = [[1,2,3],[2,3,4],[4,1,2]]
+        net1 = creators.multilayer_partially_interconnected(nodelist,0)
+        for nodelayer in list(net1.iter_node_layers()):
+            self.assertEqual(net1[nodelayer[0],nodelayer[1]].deg(),0)
+        net2 = creators.multilayer_partially_interconnected(nodelist,1)
+        for nodelayer in list(net2.iter_node_layers()):
+            self.assertEqual(net2[nodelayer[0],nodelayer[1]].deg(),8)
 
     def test_required_lengths(self):
         self.assertEqual((reqs.calculate_required_lengths([4,3,4,2],[3,2,2,1,2,1,1,2,1,1,1])),(6,4))
@@ -324,6 +332,7 @@ class TestSampling(unittest.TestCase):
         
 def makesuite(exhaustive=False,insane=False):
     suite = unittest.TestSuite()
+    suite.addTest(TestSampling("test_multilayer_partially_interconnected"))
     suite.addTest(TestSampling("test_required_lengths"))
     suite.addTest(TestSampling("test_check_reqs"))
     suite.addTest(TestSampling("test_dumb_enumeration"))
