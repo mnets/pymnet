@@ -379,7 +379,6 @@ def makesuite(exhaustive=False,insane=False):
     return suite
 
 if __name__ == '__main__':
-    #suite = unittest.TestLoader().loadTestsFromTestCase(TestSampling)
     unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(makesuite())
     
     
