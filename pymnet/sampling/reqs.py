@@ -4,7 +4,6 @@
 """
 import pymnet
 from pymnet import nx
-import PyBliss
 import itertools
 
 def check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,req_layerlist_len)=(None,None)):
@@ -12,6 +11,7 @@ def check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,
     One aspect.
     Inappropriate required lengths are intentionally not checked for, if you
     aren't sure you can provide correct lengths leave them out of the parameters.
+    Each size must be at least one.
     '''
     if (req_nodelist_len,req_layerlist_len) == (None,None):
         try:
@@ -20,6 +20,7 @@ def check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,
             raise
     assert len(nodelist) == req_nodelist_len, "Wrong number of nodes"
     assert len(layerlist) == req_layerlist_len, "Wrong number of layers"
+    assert all(i>=1 for i in sizes), "Inappropriate sizes"
     induced_graph = pymnet.subnet(network,nodelist,layerlist)
     try:
         graph_is_connected = nx.is_connected(pymnet.transforms.get_underlying_graph(induced_graph))
@@ -30,7 +31,7 @@ def check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,
         for nodelayer in list(induced_graph.iter_node_layers()):
             d.setdefault(nodelayer[1],[])
             d[nodelayer[1]].append(nodelayer[0])
-        if len(d) != len(layerlist):
+        if len(d) != req_layerlist_len:
             return False   
         d_isect = dict() # layer intersections, roles 0,1,2,...
         indexer = 0
@@ -39,6 +40,7 @@ def check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,
                 d_isect[combination] = intersections[indexer]
                 indexer = indexer + 1
         for permutation in list(itertools.permutations(layerlist)):
+            # index in permutation determines role of layer
             goto_next_perm = False
             # check all intersections and sizes
             for ii in range(1,len(layerlist)+1): # A, B ect. AB, AC etc.
@@ -61,7 +63,7 @@ def check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,
                 if goto_next_perm:
                     break
             if not goto_next_perm:
-                return True    # Check logic
+                return True
     return False
     
     

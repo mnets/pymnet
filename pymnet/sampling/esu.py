@@ -4,10 +4,7 @@
 """
 
 import pymnet
-from pymnet import nx
-import PyBliss
 from reqs import check_reqs,calculate_required_lengths
-import pdb
 
 def enumerateSubgraphs(network,sizes,intersections,resultlist):
     numberings = dict()
@@ -43,12 +40,15 @@ def enumerateSubgraphs(network,sizes,intersections,resultlist):
 def extendSubgraph(network,nodelist,layerlist,sizes,intersections,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,depth,resultlist):    
     if len(nodelist) > req_nodelist_len or len(layerlist) > req_layerlist_len:
         return
-    try:
-        if check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,req_layerlist_len)):
-            resultlist.append((list(nodelist),list(layerlist)))
-            return
-    except AssertionError:
-        pass
+    if len(nodelist) == req_nodelist_len and len(layerlist) == req_layerlist_len:
+        try:
+            if check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,req_layerlist_len)):
+                resultlist.append((list(nodelist),list(layerlist)))
+                return
+            else:
+                return
+        except AssertionError:
+            pass
     while V_extension_nodes or V_extension_layers:
         new_nodelist = nodelist[:]
         new_layerlist = layerlist[:]

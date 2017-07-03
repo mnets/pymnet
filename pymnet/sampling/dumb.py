@@ -4,7 +4,6 @@
 """
 
 import itertools
-import pymnet
 from reqs import check_reqs, calculate_required_lengths
 
 def dumbEnumeration(network,sizes,intersections,resultlist):
