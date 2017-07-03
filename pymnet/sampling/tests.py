@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 @author: T. Nurmi
-TODO: assertion checks for dumb and esu
 """
 
 import sys
@@ -129,8 +128,26 @@ class TestSampling(unittest.TestCase):
         net6[1,'Z'][2,'Z'] = 1
         net6[2,'Z'][2,'Y'] = 1
         resultlist = []
+        with self.assertRaises(AssertionError):
+            dumb.dumbEnumeration(net2,[],[],resultlist)
+        with self.assertRaises(AssertionError):
+            dumb.dumbEnumeration(net2,[2,1],[1,1],resultlist)
+        with self.assertRaises(AssertionError):
+            dumb.dumbEnumeration(net2,[2,1],[],resultlist)
+        with self.assertRaises(AssertionError):
+            dumb.dumbEnumeration(net2,[2,1,1],[1],resultlist)
+        with self.assertRaises(AssertionError):
+            dumb.dumbEnumeration(net2,[],[1],resultlist)
+        resultlist = []
         dumb.dumbEnumeration(net1,[1,2],[1],resultlist)
         self.assertEqual(resultlist,[])
+        resultlist = []
+        dumb.dumbEnumeration(net2,[1],[],resultlist)
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1],['X']),([1],['Y']),([2],['X'])])
         resultlist = []
         dumb.dumbEnumeration(net2,[1,2],[1],resultlist)
         for result in resultlist:
@@ -218,8 +235,26 @@ class TestSampling(unittest.TestCase):
         net6[1,'Z'][2,'Z'] = 1
         net6[2,'Z'][2,'Y'] = 1
         resultlist = []
+        with self.assertRaises(AssertionError):
+            dumb.dumbEnumeration(net2,[],[],resultlist)
+        with self.assertRaises(AssertionError):
+            dumb.dumbEnumeration(net2,[2,1],[1,1],resultlist)
+        with self.assertRaises(AssertionError):
+            dumb.dumbEnumeration(net2,[2,1],[],resultlist)
+        with self.assertRaises(AssertionError):
+            dumb.dumbEnumeration(net2,[2,1,1],[1],resultlist)
+        with self.assertRaises(AssertionError):
+            dumb.dumbEnumeration(net2,[],[1],resultlist)
+        resultlist = []
         esu.enumerateSubgraphs_v3(net1,[1,2],[1],resultlist)
         self.assertEqual(resultlist,[])
+        resultlist = []
+        dumb.dumbEnumeration(net2,[1],[],resultlist)
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1],['X']),([1],['Y']),([2],['X'])])
         resultlist = []
         esu.enumerateSubgraphs_v3(net2,[1,2],[1],resultlist)
         for result in resultlist:
