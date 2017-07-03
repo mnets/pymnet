@@ -9,7 +9,6 @@ import PyBliss
 from reqs import check_reqs,calculate_required_lengths
 import pdb
 
-
 def enumerateSubgraphs_v3(network,sizes,intersections,resultlist):
     numberings = dict()
     for index,nodelayer in enumerate(list(network.iter_node_layers())):
@@ -41,14 +40,11 @@ def enumerateSubgraphs_v3(network,sizes,intersections,resultlist):
                 V_extension_layers.append(layer)
         extendSubgraph_v4(network,nodelist,layerlist,sizes,intersections,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,0,resultlist)
 
-def extendSubgraph_v4(network,nodelist,layerlist,sizes,intersections,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,depth,resultlist):
-    #if 21 in nodelist and 1 in layerlist:
-        #print('start:',nodelist,layerlist,'V_exts:',V_extension_nodes,V_extension_layers,'depth:',depth)    
+def extendSubgraph_v4(network,nodelist,layerlist,sizes,intersections,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,depth,resultlist):    
     if len(nodelist) > req_nodelist_len or len(layerlist) > req_layerlist_len:
         return
     try:
         if check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,req_layerlist_len)):
-            #print('ESU:',(list(nodelist),list(layerlist)))
             resultlist.append((list(nodelist),list(layerlist)))
             return
     except AssertionError:
@@ -65,16 +61,12 @@ def extendSubgraph_v4(network,nodelist,layerlist,sizes,intersections,V_extension
         added_graph = [nl for nl in induced_graph if nl not in orig_graph]
         orig_neighborhood_nodelist = []
         orig_neighborhood_layerlist = []
-        #if 21 in nodelist and 1 in layerlist:
-            #print('orig, ind and added:',orig_graph,induced_graph,added_graph)
         for nodelayer in orig_graph:
             for neighbor in list(network[nodelayer]):
                 if neighbor[0] not in nodelist and neighbor[0] not in orig_neighborhood_nodelist and numberings[neighbor] > numberings[v]:
                     orig_neighborhood_nodelist.append(neighbor[0])
                 if neighbor[1] not in layerlist and neighbor[1] not in orig_neighborhood_layerlist and numberings[neighbor] > numberings[v]:
                     orig_neighborhood_layerlist.append(neighbor[1])
-        #if 21 in nodelist and 1 in layerlist:
-            #print('neighborhood lists:',orig_neighborhood_nodelist,orig_neighborhood_layerlist)
         V_extension_nodes_prime = V_extension_nodes[:]
         V_extension_layers_prime = V_extension_layers[:]
         for nodelayer in added_graph:
@@ -100,8 +92,6 @@ def extendSubgraph_v4(network,nodelist,layerlist,sizes,intersections,V_extension
                     and no_layer_conflicts 
                     and layer not in V_extension_layers_prime):
                         V_extension_layers_prime.append(layer)
-        #if 21 in nodelist and 1 in layerlist:
-            #print('newlists:',new_nodelist,new_layerlist,'extensions:',V_extension_nodes_prime,V_extension_layers_prime)
         extendSubgraph_v4(network,new_nodelist,new_layerlist,sizes,intersections,V_extension_nodes_prime,V_extension_layers_prime,numberings,v,req_nodelist_len,req_layerlist_len,depth+1,resultlist)    
     return
         
