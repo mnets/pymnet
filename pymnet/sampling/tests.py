@@ -246,7 +246,7 @@ class TestSampling(unittest.TestCase):
         with self.assertRaises(AssertionError):
             dumb.dumbEnumeration(net2,[],[1],resultlist)
         resultlist = []
-        esu.enumerateSubgraphs_v3(net1,[1,2],[1],resultlist)
+        esu.enumerateSubgraphs(net1,[1,2],[1],resultlist)
         self.assertEqual(resultlist,[])
         resultlist = []
         dumb.dumbEnumeration(net2,[1],[],resultlist)
@@ -256,65 +256,65 @@ class TestSampling(unittest.TestCase):
         resultlist.sort()
         self.assertEqual(resultlist,[([1],['X']),([1],['Y']),([2],['X'])])
         resultlist = []
-        esu.enumerateSubgraphs_v3(net2,[1,2],[1],resultlist)
+        esu.enumerateSubgraphs(net2,[1,2],[1],resultlist)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2],['X','Y'])])
         resultlist = []
-        esu.enumerateSubgraphs_v3(net2,[2,1],[1],resultlist)
+        esu.enumerateSubgraphs(net2,[2,1],[1],resultlist)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2],['X','Y'])])
         resultlist = []
-        esu.enumerateSubgraphs_v3(net3,[1,1],[1],resultlist)
+        esu.enumerateSubgraphs(net3,[1,1],[1],resultlist)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1],['X','Y']),([1],['Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs_v3(net3,[2,1],[1],resultlist)
+        esu.enumerateSubgraphs(net3,[2,1],[1],resultlist)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2],['Y','Z']),([1,3],['X','Y'])])
         resultlist = []
-        esu.enumerateSubgraphs_v3(net3,[2,2],[1],resultlist)
+        esu.enumerateSubgraphs(net3,[2,2],[1],resultlist)
         self.assertEqual(resultlist,[])
         resultlist = []
-        esu.enumerateSubgraphs_v3(net3,[2,1,1],[1,0,0,0],resultlist)
+        esu.enumerateSubgraphs(net3,[2,1,1],[1,0,0,0],resultlist)
         self.assertEqual(resultlist,[])
         resultlist = []
-        esu.enumerateSubgraphs_v3(net3,[2,1,2],[1,1,1,1],resultlist)
+        esu.enumerateSubgraphs(net3,[2,1,2],[1,1,1,1],resultlist)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2,3],['X','Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs_v3(net4,[1,2],[1],resultlist)
+        esu.enumerateSubgraphs(net4,[1,2],[1],resultlist)
         self.assertEqual(resultlist,[])
         resultlist =  []
-        esu.enumerateSubgraphs_v3(net5,[2,2,2],[2,2,2,2],resultlist)
+        esu.enumerateSubgraphs(net5,[2,2,2],[2,2,2,2],resultlist)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([0,1],['X','Y','Z'])])
         resultlist =  []
-        esu.enumerateSubgraphs_v3(net5,[2,2],[2],resultlist)
+        esu.enumerateSubgraphs(net5,[2,2],[2],resultlist)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([0, 1], ['X', 'Y']), ([0, 1], ['X', 'Z']), ([0, 1], ['Y', 'Z'])])
         resultlist = []
-        esu.enumerateSubgraphs_v3(net6,[2,2,2],[2,2,2,2],resultlist)
+        esu.enumerateSubgraphs(net6,[2,2,2],[2,2,2,2],resultlist)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
@@ -330,7 +330,7 @@ class TestSampling(unittest.TestCase):
                 resultlist_dumb = []
                 resultlist_esu = []
                 dumb.dumbEnumeration(network,requirement[0],requirement[1],resultlist_dumb)
-                esu.enumerateSubgraphs_v3(network,requirement[0],requirement[1],resultlist_esu)
+                esu.enumerateSubgraphs(network,requirement[0],requirement[1],resultlist_esu)
                 for result in resultlist_dumb:
                     result[0].sort()
                     result[1].sort()
@@ -353,7 +353,7 @@ class TestSampling(unittest.TestCase):
                 resultlist_dumb = []
                 resultlist_esu = []
                 dumb.dumbEnumeration(network,requirement[0],requirement[1],resultlist_dumb)
-                esu.enumerateSubgraphs_v3(network,requirement[0],requirement[1],resultlist_esu)
+                esu.enumerateSubgraphs(network,requirement[0],requirement[1],resultlist_esu)
                 for result in resultlist_dumb:
                     result[0].sort()
                     result[1].sort()

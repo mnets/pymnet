@@ -9,7 +9,7 @@ import PyBliss
 from reqs import check_reqs,calculate_required_lengths
 import pdb
 
-def enumerateSubgraphs_v3(network,sizes,intersections,resultlist):
+def enumerateSubgraphs(network,sizes,intersections,resultlist):
     numberings = dict()
     for index,nodelayer in enumerate(list(network.iter_node_layers())):
         numberings[nodelayer] = index
@@ -38,9 +38,9 @@ def enumerateSubgraphs_v3(network,sizes,intersections,resultlist):
             and no_layer_conflicts
             and layer not in V_extension_layers):
                 V_extension_layers.append(layer)
-        extendSubgraph_v4(network,nodelist,layerlist,sizes,intersections,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,0,resultlist)
+        extendSubgraph(network,nodelist,layerlist,sizes,intersections,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,0,resultlist)
 
-def extendSubgraph_v4(network,nodelist,layerlist,sizes,intersections,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,depth,resultlist):    
+def extendSubgraph(network,nodelist,layerlist,sizes,intersections,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,depth,resultlist):    
     if len(nodelist) > req_nodelist_len or len(layerlist) > req_layerlist_len:
         return
     try:
@@ -92,7 +92,7 @@ def extendSubgraph_v4(network,nodelist,layerlist,sizes,intersections,V_extension
                     and no_layer_conflicts 
                     and layer not in V_extension_layers_prime):
                         V_extension_layers_prime.append(layer)
-        extendSubgraph_v4(network,new_nodelist,new_layerlist,sizes,intersections,V_extension_nodes_prime,V_extension_layers_prime,numberings,v,req_nodelist_len,req_layerlist_len,depth+1,resultlist)    
+        extendSubgraph(network,new_nodelist,new_layerlist,sizes,intersections,V_extension_nodes_prime,V_extension_layers_prime,numberings,v,req_nodelist_len,req_layerlist_len,depth+1,resultlist)    
     return
         
 
