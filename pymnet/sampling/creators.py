@@ -18,7 +18,7 @@ def multilayer_partially_interconnected(nodes_by_layer,p):
         numberings[nodelayer] = index
     for nodelayer1 in numberings:
         for nodelayer2 in numberings:
-            if numberings[nodelayer1] > numberings[nodelayer2] and random.random() < p: # p = 0 function not guaranteed
+            if numberings[nodelayer1] > numberings[nodelayer2] and random.random() < p:
                 network[nodelayer1][nodelayer2] = 1
     return network
     
