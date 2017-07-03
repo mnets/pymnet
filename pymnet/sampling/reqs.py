@@ -5,10 +5,7 @@
 import pymnet
 from pymnet import nx
 import PyBliss
-#import matplotlib.pyplot as plt
 import itertools
-#from operator import itemgetter
-#import numpy as np
 
 def check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,req_layerlist_len)=(None,None)):
     '''
