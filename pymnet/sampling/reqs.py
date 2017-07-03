@@ -61,7 +61,7 @@ def check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,
                 if goto_next_perm:
                     break
             if not goto_next_perm:
-                return True    # tarkista logiikka
+                return True    # Check logic
     return False
     
     

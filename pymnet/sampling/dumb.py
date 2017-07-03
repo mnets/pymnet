@@ -12,5 +12,4 @@ def dumbEnumeration(network,sizes,intersections,resultlist):
     for nodelist in list(itertools.combinations(list(network.iter_nodes()),req_nodelist_len)):
         for layerlist in list(itertools.combinations(list(network.iter_layers()),req_layerlist_len)):
                 if check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,req_layerlist_len)):
-                    #print('dumb',list(nodelist),list(layerlist))
                     resultlist.append((list(nodelist),list(layerlist)))
