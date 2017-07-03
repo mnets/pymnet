@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @author: T. Nurmi
-TODO: assertion checks for dumb and esu, more check_reqs tests
+TODO: assertion checks for dumb and esu
 creators tests(?)
 """
 
@@ -51,6 +51,25 @@ class TestSampling(unittest.TestCase):
         net3[1,'X'][3,'X'] = 1
         net3[1,'Y'][1,'Z'] = 1
         net3[1,'Y'][2,'Z'] = 1
+        net4 = net.MultilayerNetwork(aspects=1,fullyInterconnected=True)
+        net4[1,'X'][2,'X'] = 1
+        net4[1,'X'][1,'Y'] = 1
+        net4[1,'Y'][1,'Z'] = 1
+        net4[1,'Z'][2,'Z'] = 1
+        net5 = net.MultilayerNetwork(aspects=1,fullyInterconnected=True)
+        net5[1,'X'][2,'X'] = 1
+        net5[1,'X'][1,'Y'] = 1
+        net5[1,'Y'][1,'Z'] = 1
+        net5[1,'Z'][2,'Z'] = 1
+        net5[2,'Z'][2,'Y'] = 1
+        net6 = models.full_multilayer(2,['X','Y','Z'])
+        net7 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net7['X','X']['Z','X'] = 1
+        net7['X','X']['X','Z'] = 1
+        net7['X','Z']['Y','Z'] = 1
+        net7['X','Z']['X','Y'] = 1
+        net7['Y','Z']['Z','Z'] = 1
+        net7['X','Y']['Z','Y'] = 1
         self.assertFalse(reqs.check_reqs(net1,[1],['X'],[1],[]))
         self.assertFalse(reqs.check_reqs(net1,[1],['X','Y'],[1,1],[1]))
         self.assertTrue(reqs.check_reqs(net2,[1],['X'],[1],[]))
@@ -64,6 +83,22 @@ class TestSampling(unittest.TestCase):
             reqs.check_reqs(net2,[1],['X','Y'],[1,2],[1])
         with self.assertRaises(AssertionError):
             reqs.check_reqs(net2,[1,2],['X','Y'],[1,2],[1.5])
+        self.assertTrue(reqs.check_reqs(net3,[1,3],['X','Y'],[1,2],[1]))
+        self.assertTrue(reqs.check_reqs(net3,[2,1],['Y','Z'],[2,1],[1]))
+        self.assertTrue(reqs.check_reqs(net3,[1,2,3],['Y','Z','X'],[2,2,1],[1,1,1,1]))
+        self.assertFalse(reqs.check_reqs(net3,[1,2,3],['X','Z'],[2,2],[1]))
+        with self.assertRaises(AssertionError):
+            reqs.check_reqs(net3,[1,2,3],['X','Y'],[1,2],[1])
+        self.assertFalse(reqs.check_reqs(net4,[1,2],['X','Y','Z'],[2,2,2],[2,2,2,2]))
+        self.assertTrue(reqs.check_reqs(net5,[1,2],['X','Z','Y'],[2,2,2],[2,2,2,2]))
+        with self.assertRaises(AssertionError):
+            reqs.check_reqs(net5,[1,2],['X','Z','Y','Y'],[2,2,2],[2,2,2,2])
+        self.assertTrue(reqs.check_reqs(net6,[1,0],['Y','Z','X'],[2,2,2],[2,2,2,2]))
+        self.assertTrue(reqs.check_reqs(net6,[1,0],['Z','X'],[2,2],[2]))
+        self.assertFalse(reqs.check_reqs(net6,[1,0],['Y','Z','X'],[2,1,2],[1,2,1,1]))
+        self.assertTrue(reqs.check_reqs(net7,['X','Y'],['Z','Y','X'],[1,2,1],[1,1,1,1]))
+        self.assertTrue(reqs.check_reqs(net7,['X','Y'],['X','Z'],[1,2],[1]))
+        self.assertFalse(reqs.check_reqs(net7,['X','Z'],['X','Z'],[2,2],[2]))
     
     def test_dumb_enumeration(self):
         net1 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
@@ -264,7 +299,7 @@ class TestSampling(unittest.TestCase):
                 self.assertEqual(resultlist_dumb,resultlist_esu)
                 
     def test_esu_insane(self):
-        # Will run overnight
+        # Will run over weekend
         reqlist = [([1,1],[0]),([1,1],[1]),([1,2],[0]),([1,2],[1]),([1,3],[0]),([1,3],[1]),([2,3],[0]),([2,3],[1]),([2,3],[2]),([3,3],[0]),([3,3],[1]),([3,3],[2]),([3,3],[3])]    
         reqlist = reqlist + [([1,1,1],[0,0,0,0]),([1,1,1],[1,0,0,0]),([1,1,1],[1,1,1,1])]
         reqlist = reqlist + [([2,1,1],[0,0,0,0]),([2,1,1],[1,0,0,0]),([2,1,1],[1,1,1,1])]
@@ -284,7 +319,6 @@ class TestSampling(unittest.TestCase):
                     result[0].sort()
                     result[1].sort()
                 resultlist_esu.sort()
-                print resultlist_dumb,resultlist_esu
                 self.assertEqual(resultlist_dumb,resultlist_esu)
                 
         

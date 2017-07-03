@@ -44,9 +44,9 @@ def check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,
         for permutation in list(itertools.permutations(layerlist)):
             goto_next_perm = False
             # check all intersections and sizes
-            for ii in range(1,len(layerlist)+1): # A, B jne AB, AC jne.
+            for ii in range(1,len(layerlist)+1): # A, B ect. AB, AC etc.
                 for combination in list(itertools.combinations(permutation,ii)): # try all role combinations
-                    assert len(combination) >= 1, "Empty combination list"
+                    assert len(combination) >= 1, "Empty combination list, this shouldn't happen"
                     if len(combination) == 1:
                         if len(d[combination[0]]) != sizes[permutation.index(combination[0])]:
                             goto_next_perm = True
