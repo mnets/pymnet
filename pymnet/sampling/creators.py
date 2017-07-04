@@ -23,6 +23,6 @@ def multilayer_partially_interconnected(nodes_by_layer,p):
     return network
     
 def random_nodelists(poolsize,nodes_per_layer,layers,replace=True):
-    # nodes_per_layer only approximate, overlaps may occur
+    # nodes_per_layer is the maximum, overlaps may occur
     arr = np.random.choice(poolsize,size=(layers,nodes_per_layer),replace=replace)
     return [list(nodelist) for nodelist in arr]
