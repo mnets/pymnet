@@ -7,12 +7,32 @@ from pymnet import nx
 import itertools
 
 def check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,req_layerlist_len)=(None,None)):
-    '''
-    One aspect.
-    Inappropriate required lengths are intentionally not checked for, if you
-    aren't sure you can provide correct lengths leave them out of the parameters.
-    Each size must be at least one.
-    '''
+    """Checks whether an induced subgraph of the form [nodelist][layerlist] fulfills
+    the given requirements.
+    
+    Parameters
+    ----------
+    network : MultilayerNetwork
+        The network containing the induced subgraph.
+    nodelist : list of node names
+        The nodes in the induced subgraph.
+    layerlist : list of layer names
+        The layers in the induced subgraph.
+    sizes : list of ints > 0
+        How many nodes should be on each layer of an acceptable induced subgraph.
+    intersections : list of ints >= 0
+        How many nodes should be shared between sets of layers in an acceptable
+        induced subgraph.
+    (req_nodelist_len, req_layerlist_len) : tuple of ints
+        How long an acceptable nodelist (union of all nodes in the induced subgraph)
+        and an acceptable layerlist should be. If you cannot guarantee the correctness
+        of these numbers, leave this parameter empty. Mainly intended for use inside
+        scripts.
+        
+    Returns
+    -------
+    True if requirements are fulfilled, False otherwise.
+    """
     if (req_nodelist_len,req_layerlist_len) == (None,None):
         try:
             req_nodelist_len,req_layerlist_len = calculate_required_lengths(sizes,intersections)
@@ -69,6 +89,10 @@ def check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,
     
     
 def calculate_required_lengths(sizes,intersections):
+    """Returns the required nodelist length and required layerlist length of
+    and induced subgraph of the form [nodelist][layerlist] determined by the
+    given requirements.
+    """
     assert sizes != [], "Empty layer size list"
     assert len(intersections) == 2**len(sizes)-len(sizes)-1, "Wrong number of intersections"
     assert all(i>=1 and isinstance(i,int) for i in sizes) and all(j>=0 and isinstance(j,int) for j in intersections), "Inappropriate intersections or sizes"

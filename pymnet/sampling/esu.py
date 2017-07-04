@@ -7,6 +7,23 @@ import pymnet
 from reqs import check_reqs,calculate_required_lengths
 
 def enumerateSubgraphs(network,sizes,intersections,resultlist):
+    """The multilayer version of the ESU algorithm. Finds induced subgraphs
+    of the form [nodelist][layerlist], which fulfill the given requirements.
+    
+    Parameters
+    ----------
+    network : MultilayerNetwork
+        The multilayer network to be analyzed.
+    sizes : list of ints > 0
+        How many nodes are on each layer of the induced subgraphs that we want
+        to discover.
+    intersections : list of ints >= 0
+        How large are the intersections between groups of layers. The layer roles
+        are in the same order as in sizes.
+    resultlist : list
+        Where found induced subgraphs are appended as tuples (nodelist, layerlist).
+    
+    """
     numberings = dict()
     for index,nodelayer in enumerate(list(network.iter_node_layers())):
         numberings[nodelayer] = index
@@ -35,9 +52,9 @@ def enumerateSubgraphs(network,sizes,intersections,resultlist):
             and no_layer_conflicts
             and layer not in V_extension_layers):
                 V_extension_layers.append(layer)
-        extendSubgraph(network,nodelist,layerlist,sizes,intersections,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,0,resultlist)
+        _extendSubgraph(network,nodelist,layerlist,sizes,intersections,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,0,resultlist)
 
-def extendSubgraph(network,nodelist,layerlist,sizes,intersections,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,depth,resultlist):    
+def _extendSubgraph(network,nodelist,layerlist,sizes,intersections,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,depth,resultlist):    
     if len(nodelist) > req_nodelist_len or len(layerlist) > req_layerlist_len:
         return
     if len(nodelist) == req_nodelist_len and len(layerlist) == req_layerlist_len:
@@ -92,7 +109,7 @@ def extendSubgraph(network,nodelist,layerlist,sizes,intersections,V_extension_no
                     and no_layer_conflicts 
                     and layer not in V_extension_layers_prime):
                         V_extension_layers_prime.append(layer)
-        extendSubgraph(network,new_nodelist,new_layerlist,sizes,intersections,V_extension_nodes_prime,V_extension_layers_prime,numberings,v,req_nodelist_len,req_layerlist_len,depth+1,resultlist)    
+        _extendSubgraph(network,new_nodelist,new_layerlist,sizes,intersections,V_extension_nodes_prime,V_extension_layers_prime,numberings,v,req_nodelist_len,req_layerlist_len,depth+1,resultlist)    
     return
         
 
