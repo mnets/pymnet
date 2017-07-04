@@ -8,7 +8,7 @@ from reqs import check_reqs,calculate_required_lengths
 import random
 
 def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None):
-    """The multilayer version of the ESU algorithm. Finds induced subgraphs
+    """The multilayer version of the ESU algorithm. Uniformly samples induced subgraphs
     of the form [nodelist][layerlist], which fulfill the given requirements.
     
     Parameters
@@ -37,30 +37,30 @@ def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None):
     if p == None:
         p = [1] * (req_nodelist_len-1 + req_layerlist_len-1 + 1)
     for v in numberings:
-        nodelist = [v[0]]
-        layerlist = [v[1]]
-        V_extension_nodes = []
-        V_extension_layers = []
-        for neighbor in list(network[v]):
-            no_node_conflicts = True
-            no_layer_conflicts = True
-            node = neighbor[0]
-            layer = neighbor[1]
-            for nl in list(set(pymnet.subnet(network,[node],layerlist).iter_node_layers()) | set([neighbor])):
-                if numberings[nl] < numberings[v]:
-                    no_node_conflicts = False
-            for nl in list(set(pymnet.subnet(network,nodelist,[layer]).iter_node_layers()) | set([neighbor])):
-                if numberings[nl] < numberings[v]:
-                    no_layer_conflicts = False
-            if (node not in nodelist
-            and no_node_conflicts
-            and node not in V_extension_nodes):
-                V_extension_nodes.append(node)
-            if (layer not in layerlist
-            and no_layer_conflicts
-            and layer not in V_extension_layers):
-                V_extension_layers.append(layer)
         if random.random() < p[0]:
+            nodelist = [v[0]]
+            layerlist = [v[1]]
+            V_extension_nodes = []
+            V_extension_layers = []
+            for neighbor in list(network[v]):
+                no_node_conflicts = True
+                no_layer_conflicts = True
+                node = neighbor[0]
+                layer = neighbor[1]
+                for nl in list(set(pymnet.subnet(network,[node],layerlist).iter_node_layers()) | set([neighbor])):
+                    if numberings[nl] < numberings[v]:
+                        no_node_conflicts = False
+                for nl in list(set(pymnet.subnet(network,nodelist,[layer]).iter_node_layers()) | set([neighbor])):
+                    if numberings[nl] < numberings[v]:
+                        no_layer_conflicts = False
+                if (node not in nodelist
+                and no_node_conflicts
+                and node not in V_extension_nodes):
+                    V_extension_nodes.append(node)
+                if (layer not in layerlist
+                and no_layer_conflicts
+                and layer not in V_extension_layers):
+                    V_extension_layers.append(layer)
             _extendSubgraph(network,nodelist,layerlist,sizes,intersections,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,depth+1,p,resultlist)
 
 def _extendSubgraph(network,nodelist,layerlist,sizes,intersections,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,depth,p,resultlist):    
@@ -82,43 +82,43 @@ def _extendSubgraph(network,nodelist,layerlist,sizes,intersections,V_extension_n
             new_nodelist.append(V_extension_nodes.pop())
         else:
             new_layerlist.append(V_extension_layers.pop())
-        induced_graph = list(pymnet.subnet(network,new_nodelist,new_layerlist).iter_node_layers())
-        orig_graph = list(pymnet.subnet(network,nodelist,layerlist).iter_node_layers())
-        added_graph = [nl for nl in induced_graph if nl not in orig_graph]
-        orig_neighborhood_nodelist = []
-        orig_neighborhood_layerlist = []
-        for nodelayer in orig_graph:
-            for neighbor in list(network[nodelayer]):
-                if neighbor[0] not in nodelist and neighbor[0] not in orig_neighborhood_nodelist and numberings[neighbor] > numberings[v]:
-                    orig_neighborhood_nodelist.append(neighbor[0])
-                if neighbor[1] not in layerlist and neighbor[1] not in orig_neighborhood_layerlist and numberings[neighbor] > numberings[v]:
-                    orig_neighborhood_layerlist.append(neighbor[1])
-        V_extension_nodes_prime = V_extension_nodes[:]
-        V_extension_layers_prime = V_extension_layers[:]
-        for nodelayer in added_graph:
-            for neighbor in list(network[nodelayer]):
-                if numberings[neighbor] > numberings[v]:
-                    no_node_conflicts = True
-                    no_layer_conflicts = True
-                    node = neighbor[0]
-                    layer = neighbor[1]
-                    for nl in list(set(pymnet.subnet(network,[node],new_layerlist).iter_node_layers()) | set([neighbor])):
-                        if numberings[nl] < numberings[v]:
-                            no_node_conflicts = False
-                    for nl in list(set(pymnet.subnet(network,new_nodelist,[layer]).iter_node_layers()) | set([neighbor])):
-                        if numberings[nl] < numberings[v]:
-                            no_layer_conflicts = False
-                    if (node not in orig_neighborhood_nodelist 
-                    and node not in new_nodelist 
-                    and no_node_conflicts
-                    and node not in V_extension_nodes_prime):
-                        V_extension_nodes_prime.append(node)
-                    if (layer not in orig_neighborhood_layerlist 
-                    and layer not in new_layerlist 
-                    and no_layer_conflicts 
-                    and layer not in V_extension_layers_prime):
-                        V_extension_layers_prime.append(layer)
         if random.random() < p[len(new_nodelist)-1 + len(new_layerlist)-1]:
+            induced_graph = list(pymnet.subnet(network,new_nodelist,new_layerlist).iter_node_layers())
+            orig_graph = list(pymnet.subnet(network,nodelist,layerlist).iter_node_layers())
+            added_graph = [nl for nl in induced_graph if nl not in orig_graph]
+            orig_neighborhood_nodelist = []
+            orig_neighborhood_layerlist = []
+            for nodelayer in orig_graph:
+                for neighbor in list(network[nodelayer]):
+                    if neighbor[0] not in nodelist and neighbor[0] not in orig_neighborhood_nodelist and numberings[neighbor] > numberings[v]:
+                        orig_neighborhood_nodelist.append(neighbor[0])
+                    if neighbor[1] not in layerlist and neighbor[1] not in orig_neighborhood_layerlist and numberings[neighbor] > numberings[v]:
+                        orig_neighborhood_layerlist.append(neighbor[1])
+            V_extension_nodes_prime = V_extension_nodes[:]
+            V_extension_layers_prime = V_extension_layers[:]
+            for nodelayer in added_graph:
+                for neighbor in list(network[nodelayer]):
+                    if numberings[neighbor] > numberings[v]:
+                        no_node_conflicts = True
+                        no_layer_conflicts = True
+                        node = neighbor[0]
+                        layer = neighbor[1]
+                        for nl in list(set(pymnet.subnet(network,[node],new_layerlist).iter_node_layers()) | set([neighbor])):
+                            if numberings[nl] < numberings[v]:
+                                no_node_conflicts = False
+                        for nl in list(set(pymnet.subnet(network,new_nodelist,[layer]).iter_node_layers()) | set([neighbor])):
+                            if numberings[nl] < numberings[v]:
+                                no_layer_conflicts = False
+                        if (node not in orig_neighborhood_nodelist 
+                        and node not in new_nodelist 
+                        and no_node_conflicts
+                        and node not in V_extension_nodes_prime):
+                            V_extension_nodes_prime.append(node)
+                        if (layer not in orig_neighborhood_layerlist 
+                        and layer not in new_layerlist 
+                        and no_layer_conflicts 
+                        and layer not in V_extension_layers_prime):
+                            V_extension_layers_prime.append(layer)
             _extendSubgraph(network,new_nodelist,new_layerlist,sizes,intersections,V_extension_nodes_prime,V_extension_layers_prime,numberings,v,req_nodelist_len,req_layerlist_len,depth+1,p,resultlist)    
     return
         
