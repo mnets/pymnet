@@ -5,8 +5,9 @@
 
 import pymnet
 from reqs import check_reqs,calculate_required_lengths
+import random
 
-def enumerateSubgraphs(network,sizes,intersections,resultlist):
+def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None):
     """The multilayer version of the ESU algorithm. Finds induced subgraphs
     of the form [nodelist][layerlist], which fulfill the given requirements.
     
@@ -22,12 +23,19 @@ def enumerateSubgraphs(network,sizes,intersections,resultlist):
         are in the same order as in sizes.
     resultlist : list
         Where found induced subgraphs are appended as tuples (nodelist, layerlist).
+    p : list of floats 0 <= p <= 1
+        List of sampling probabilities at each depth. If None, p = 1 for each
+        depth is used.
     
     """
+    random.seed()
+    depth = 0
     numberings = dict()
     for index,nodelayer in enumerate(list(network.iter_node_layers())):
         numberings[nodelayer] = index
     req_nodelist_len,req_layerlist_len = calculate_required_lengths(sizes,intersections)
+    if p == None:
+        p = [1] * (req_nodelist_len-1 + req_layerlist_len-1 + 1)
     for v in numberings:
         nodelist = [v[0]]
         layerlist = [v[1]]
@@ -52,9 +60,10 @@ def enumerateSubgraphs(network,sizes,intersections,resultlist):
             and no_layer_conflicts
             and layer not in V_extension_layers):
                 V_extension_layers.append(layer)
-        _extendSubgraph(network,nodelist,layerlist,sizes,intersections,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,0,resultlist)
+        if random.random() < p[0]:
+            _extendSubgraph(network,nodelist,layerlist,sizes,intersections,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,depth+1,p,resultlist)
 
-def _extendSubgraph(network,nodelist,layerlist,sizes,intersections,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,depth,resultlist):    
+def _extendSubgraph(network,nodelist,layerlist,sizes,intersections,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,depth,p,resultlist):    
     if len(nodelist) > req_nodelist_len or len(layerlist) > req_layerlist_len:
         return
     if len(nodelist) == req_nodelist_len and len(layerlist) == req_layerlist_len:
@@ -109,7 +118,8 @@ def _extendSubgraph(network,nodelist,layerlist,sizes,intersections,V_extension_n
                     and no_layer_conflicts 
                     and layer not in V_extension_layers_prime):
                         V_extension_layers_prime.append(layer)
-        _extendSubgraph(network,new_nodelist,new_layerlist,sizes,intersections,V_extension_nodes_prime,V_extension_layers_prime,numberings,v,req_nodelist_len,req_layerlist_len,depth+1,resultlist)    
+        if random.random() < p[len(new_nodelist)-1 + len(new_layerlist)-1]:
+            _extendSubgraph(network,new_nodelist,new_layerlist,sizes,intersections,V_extension_nodes_prime,V_extension_layers_prime,numberings,v,req_nodelist_len,req_layerlist_len,depth+1,p,resultlist)    
     return
         
 
