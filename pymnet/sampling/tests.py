@@ -127,6 +127,11 @@ class TestSampling(unittest.TestCase):
         net6[1,'Y'][1,'Z'] = 1
         net6[1,'Z'][2,'Z'] = 1
         net6[2,'Z'][2,'Y'] = 1
+        net7 = net.MultilayerNetwork(aspects=1,fullyInterconnected=True)
+        net7[1,'X'][2,'X'] = 1
+        net7[1,'X'][1,'Y'] = 1
+        net7[1,'Y'][1,'Z'] = 1
+        net7[1,'Z'][2,'Z'] = 1
         resultlist = []
         with self.assertRaises(AssertionError):
             dumb.dumbEnumeration(net2,[],[],resultlist)
@@ -192,6 +197,9 @@ class TestSampling(unittest.TestCase):
         resultlist = []
         dumb.dumbEnumeration(net4,[1,2],[1],resultlist)
         self.assertEqual(resultlist,[])
+        resultlist = []
+        dumb.dumbEnumeration(net4,[2,2],[2],resultlist)
+        self.assertEqual(resultlist,[])
         resultlist =  []
         dumb.dumbEnumeration(net5,[2,2,2],[2,2,2,2],resultlist)
         for result in resultlist:
@@ -213,6 +221,9 @@ class TestSampling(unittest.TestCase):
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2],['X','Y','Z'])])
+        resultlist = []
+        esu.enumerateSubgraphs(net7,[2,2,2],[2,2,2,2],resultlist)
+        self.assertEqual(resultlist,[])
         
     def test_esu_concise(self):
         net1 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
@@ -234,6 +245,11 @@ class TestSampling(unittest.TestCase):
         net6[1,'Y'][1,'Z'] = 1
         net6[1,'Z'][2,'Z'] = 1
         net6[2,'Z'][2,'Y'] = 1
+        net7 = net.MultilayerNetwork(aspects=1,fullyInterconnected=True)
+        net7[1,'X'][2,'X'] = 1
+        net7[1,'X'][1,'Y'] = 1
+        net7[1,'Y'][1,'Z'] = 1
+        net7[1,'Z'][2,'Z'] = 1
         resultlist = []
         with self.assertRaises(AssertionError):
             dumb.dumbEnumeration(net2,[],[],resultlist)
@@ -299,6 +315,9 @@ class TestSampling(unittest.TestCase):
         resultlist = []
         esu.enumerateSubgraphs(net4,[1,2],[1],resultlist)
         self.assertEqual(resultlist,[])
+        resultlist = []
+        esu.enumerateSubgraphs(net4,[2,2],[2],resultlist)
+        self.assertEqual(resultlist,[])
         resultlist =  []
         esu.enumerateSubgraphs(net5,[2,2,2],[2,2,2,2],resultlist)
         for result in resultlist:
@@ -320,6 +339,9 @@ class TestSampling(unittest.TestCase):
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2],['X','Y','Z'])])
+        resultlist = []
+        esu.enumerateSubgraphs(net7,[2,2,2],[2,2,2,2],resultlist)
+        self.assertEqual(resultlist,[])
         
     def test_esu_exhaustive(self):
         # Will take approx. 45 min
