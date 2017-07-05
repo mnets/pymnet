@@ -7,7 +7,7 @@ from pymnet import nx
 import itertools
 
 def check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,req_layerlist_len)=(None,None)):
-    """Checks whether an induced subgraph of the form [nodelist][layerlist] fulfills
+    u"""Checks whether an induced subgraph of the form [nodelist][layerlist] fulfills
     the given requirements.
     
     Parameters
@@ -26,12 +26,49 @@ def check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,
     (req_nodelist_len, req_layerlist_len) : tuple of ints
         How long an acceptable nodelist (union of all nodes in the induced subgraph)
         and an acceptable layerlist should be. If you cannot guarantee the correctness
-        of these numbers, leave this parameter empty. Mainly intended for use inside
+        of these numbers, do not use this parameter. Mainly intended for use inside
         scripts.
         
     Returns
     -------
     True if the requirements are fulfilled, False otherwise.
+    
+    Constructing the requirements
+    -----------------------------
+    The sizes list contains the desired number of nodes on each layer in any order.
+    This means that the layers in the actual found sub-network can be in any order.
+    However, the order of sizes determines the order of entries in intersections.
+    The intersections list is constructed as follows:
+        First, think of each size in the size list as having a specific role:
+        the first entry in sizes corresponds to layer role A, the second to role
+        B, the third to role C, and so on. This order determines how intersections
+        in the intersections list are interpreted when checking if the requirements
+        are fulfilled.
+        
+        Then, construct the intersections list so that first all size-two intersections
+        are listed, then size-three intersections, and so on, until the intersection
+        between all layers is reached. The order of listing size n-intersections is
+        such that the closer the role is to the beginning of the size list, the later
+        it is iterated over. Since we signify the roles by letters A, B, C and so
+        on, this means that the intersections are listed in "alphabetical order"
+        within each size category.
+    
+    For example, suppose we have a length-four sizes list. Now, we think of the first
+    size entry as layer (role) A, the second as layer B, the third as layer C, and the fourth
+    as layer D. The intersections list is then assumed to contain the intersections
+    in the following order:
+    
+    intersections = [A∩B, A∩C, A∩D, B∩C, B∩D, C∩D, A∩B∩C, A∩B∩D, A∩C∩D, B∩C∩D, A∩B∩C∩D]
+    
+    When checking whether the size and intersection requirements are fulfilled,
+    each possible set of role assginments to the actual layers is checked. If even
+    one is suitable, the function returns True.
+    Continuing from the example above, if the actual induced subgraph has layers [X,Y,Z,W],
+    all possible role assignment combinations are checked (X takes role from {A,B,C,D}, Y 
+    takes role from {A,B,C,D} minus {role(X)}, Z takes role from {A,B,C,D} minus {role(X),role(Y)}, W
+    takes role from {A,B,C,D} minus {role(X),role(Y),role(Z)}). This also means that
+    the orderings of the [nodelist] and [layerlist] of the induced subgraph to be
+    tested do not matter.
     """
     if (req_nodelist_len,req_layerlist_len) == (None,None):
         try:
@@ -63,7 +100,7 @@ def check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,
             # index in permutation determines role of layer
             goto_next_perm = False
             # check all intersections and sizes
-            for ii in range(1,len(layerlist)+1): # A, B ect. AB, AC etc.
+            for ii in range(1,len(layerlist)+1): # A, B etc. AB, AC etc.
                 for combination in list(itertools.combinations(permutation,ii)): # try all role combinations
                     assert len(combination) >= 1, "Empty combination list, this shouldn't happen"
                     if len(combination) == 1:
