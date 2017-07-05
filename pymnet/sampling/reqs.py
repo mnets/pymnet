@@ -31,7 +31,7 @@ def check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,
         
     Returns
     -------
-    True if requirements are fulfilled, False otherwise.
+    True if the requirements are fulfilled, False otherwise.
     """
     if (req_nodelist_len,req_layerlist_len) == (None,None):
         try:
