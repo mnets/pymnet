@@ -37,7 +37,7 @@ def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None):
     if p == None:
         p = [1] * (req_nodelist_len-1 + req_layerlist_len-1 + 1)
     for v in numberings:
-        if random.random() < p[0]:
+        if random.random() < p[depth]:
             nodelist = [v[0]]
             layerlist = [v[1]]
             V_extension_nodes = []
@@ -82,7 +82,7 @@ def _extendSubgraph(network,nodelist,layerlist,sizes,intersections,V_extension_n
             new_nodelist.append(V_extension_nodes.pop())
         else:
             new_layerlist.append(V_extension_layers.pop())
-        if random.random() < p[len(new_nodelist)-1 + len(new_layerlist)-1]:
+        if random.random() < p[depth]:
             induced_graph = list(pymnet.subnet(network,new_nodelist,new_layerlist).iter_node_layers())
             orig_graph = list(pymnet.subnet(network,nodelist,layerlist).iter_node_layers())
             added_graph = [nl for nl in induced_graph if nl not in orig_graph]
