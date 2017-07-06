@@ -7,7 +7,7 @@ import pymnet
 from reqs import check_reqs,calculate_required_lengths
 import random
 
-def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None):
+def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None,seed=None):
     """The multilayer version of the ESU algorithm. Uniformly samples induced subgraphs
     of the form [nodelist][layerlist], which fulfill the given requirements.
     
@@ -28,10 +28,14 @@ def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None):
         depth is used.
     
     TODO: listat pois
+    parempi naapuruston ja node conflictien checkki! Miksi set[neighbor]?
     mieti verkon kopiointi ja nl:ien poisto
     seed parametriksi
     """
-    random.seed()
+    if seed == None:
+        random.seed()
+    else:
+        random.seed(seed)
     depth = 0
     numberings = dict()
     for index,nodelayer in enumerate(network.iter_node_layers()):
