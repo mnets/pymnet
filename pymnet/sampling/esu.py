@@ -48,8 +48,7 @@ def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None,seed=None):
         inverse_numberings[numberings[nodelayer]] = nodelayer
     req_nodelist_len,req_layerlist_len = calculate_required_lengths(sizes,intersections)
     if p == None:
-        p = [1] * (req_nodelist_len-1 + req_layerlist_len-1 + 1)    
-    #for v in numberings:
+        p = [1] * (req_nodelist_len-1 + req_layerlist_len-1 + 1)
     for indexnumber in range(len(numberings)):
         v = inverse_numberings[indexnumber]
         if random.random() < p[depth]:
@@ -68,14 +67,6 @@ def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None,seed=None):
                         no_node_conflicts = False
                     if (nodelist[0],layer) in numberings and numberings[(nodelist[0],layer)] < numberings[v]:
                         no_layer_conflicts = False
-                    '''
-                    for nl in pymnet.subnet(network,[node],layerlist).iter_node_layers():
-                        if numberings[nl] < numberings[v]:
-                            no_node_conflicts = False
-                    for nl in pymnet.subnet(network,nodelist,[layer]).iter_node_layers():
-                        if numberings[nl] < numberings[v]:
-                            no_layer_conflicts = False
-                    '''
                     if (node not in nodelist
                         and no_node_conflicts
                         and node not in V_extension_nodes):
@@ -128,10 +119,10 @@ def _extendSubgraph(network,nodelist,layerlist,sizes,intersections,V_extension_n
                         no_layer_conflicts = True
                         node = neighbor[0]
                         layer = neighbor[1]
-                        for nl in set(pymnet.subnet(network,[node],new_layerlist).iter_node_layers()) | set([neighbor]):
+                        for nl in pymnet.subnet(network,[node],new_layerlist).iter_node_layers():
                             if numberings[nl] < numberings[v]:
                                 no_node_conflicts = False
-                        for nl in set(pymnet.subnet(network,new_nodelist,[layer]).iter_node_layers()) | set([neighbor]):
+                        for nl in pymnet.subnet(network,new_nodelist,[layer]).iter_node_layers():
                             if numberings[nl] < numberings[v]:
                                 no_layer_conflicts = False
                         if (node not in orig_neighborhood_nodelist 
