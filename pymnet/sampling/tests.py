@@ -347,7 +347,7 @@ class TestSampling(unittest.TestCase):
         # Will take approx. 45 min
         reqlist = [([1,1],[0]),([1,2],[0]),([1,2],[1]),([2,3],[1]),([2,1,1],[1,0,0,0])]
         for requirement in reqlist:
-            for _ in range(15):
+            for _ in range(5):
                 network = creators.multilayer_partially_interconnected(creators.random_nodelists(30,10,5),0.05)
                 resultlist_dumb = []
                 resultlist_esu = []
@@ -401,7 +401,7 @@ def makesuite(exhaustive=False,insane=False):
     return suite
 
 if __name__ == '__main__':
-    unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(makesuite(exhaustive=False,insane=False))
+    unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(makesuite(exhaustive=True,insane=False))
     
     
     
