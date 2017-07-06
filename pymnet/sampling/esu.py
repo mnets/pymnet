@@ -26,10 +26,13 @@ def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None,seed=None):
     p : list of floats 0 <= p <= 1
         List of sampling probabilities at each depth. If None, p = 1 for each
         depth is used.
-    
+    seed : int, str, bytes or bytearray
+        Seed for Rand-ESU
+        
     TODO: listat pois
     parempi naapuruston ja node conflictien checkki! Miksi set[neighbor]?
     mieti verkon kopiointi ja nl:ien poisto
+    kayttajan maarittelema check-funktio
     """
     if seed == None:
         random.seed()
@@ -55,12 +58,18 @@ def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None,seed=None):
                     node = neighbor[0]
                     layer = neighbor[1]
                     #for nl in itertools.chain(pymnet.subnet(...).iter_node_layers(),(neighbor)):
+                    if (node,layerlist[0]) in numberings and numberings[(node,layerlist[0])] < numberings[v]:
+                        no_node_conflicts = False
+                    if (nodelist[0],layer) in numberings and numberings[(nodelist[0],layer)] < numberings[v]:
+                        no_layer_conflicts = False
+                    '''
                     for nl in pymnet.subnet(network,[node],layerlist).iter_node_layers():
                         if numberings[nl] < numberings[v]:
                             no_node_conflicts = False
                     for nl in pymnet.subnet(network,nodelist,[layer]).iter_node_layers():
                         if numberings[nl] < numberings[v]:
                             no_layer_conflicts = False
+                    '''
                     if (node not in nodelist
                         and no_node_conflicts
                         and node not in V_extension_nodes):
