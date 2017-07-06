@@ -34,24 +34,30 @@ def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None,seed=None):
     mieti verkon kopiointi ja nl:ien poisto
     kayttajan maarittelema check-funktio
     """
+    network_copy = pymnet.subnet(network,network.get_layers(aspect=0),network.get_layers(aspect=1))
     if seed == None:
         random.seed()
     else:
         random.seed(seed)
     depth = 0
     numberings = dict()
-    for index,nodelayer in enumerate(network.iter_node_layers()):
+    inverse_numberings = dict()
+    for index,nodelayer in enumerate(network_copy.iter_node_layers()):
         numberings[nodelayer] = index
+    for nodelayer in numberings:
+        inverse_numberings[numberings[nodelayer]] = nodelayer
     req_nodelist_len,req_layerlist_len = calculate_required_lengths(sizes,intersections)
     if p == None:
         p = [1] * (req_nodelist_len-1 + req_layerlist_len-1 + 1)    
-    for v in numberings:
+    #for v in numberings:
+    for indexnumber in range(len(numberings)):
+        v = inverse_numberings[indexnumber]
         if random.random() < p[depth]:
             nodelist = [v[0]]
             layerlist = [v[1]]
             V_extension_nodes = []
             V_extension_layers = []
-            for neighbor in network[v]:
+            for neighbor in network_copy[v]:
                 if numberings[neighbor] > numberings[v]:
                     no_node_conflicts = True
                     no_layer_conflicts = True
@@ -78,8 +84,9 @@ def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None,seed=None):
                         and no_layer_conflicts
                         and layer not in V_extension_layers):
                         V_extension_layers.append(layer)
-            _extendSubgraph(network,nodelist,layerlist,sizes,intersections,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,depth+1,p,resultlist)
-        
+            _extendSubgraph(network_copy,nodelist,layerlist,sizes,intersections,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,depth+1,p,resultlist)
+        for neighbor in list(network_copy[v]):
+            network_copy[neighbor][v] = 0
 
 def _extendSubgraph(network,nodelist,layerlist,sizes,intersections,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,depth,p,resultlist):    
     if len(nodelist) > req_nodelist_len or len(layerlist) > req_layerlist_len:
