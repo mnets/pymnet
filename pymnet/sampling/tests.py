@@ -132,6 +132,10 @@ class TestSampling(unittest.TestCase):
         net7[1,'X'][1,'Y'] = 1
         net7[1,'Y'][1,'Z'] = 1
         net7[1,'Z'][2,'Z'] = 1
+        net8 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net8[1,'X'][1,'Y'] = 1
+        net8[1,'X'][2,'X'] = 1
+        net8.add_node(2,layer='Y')
         resultlist = []
         with self.assertRaises(AssertionError):
             dumb.dumbEnumeration(net2,[],[],resultlist)
@@ -224,6 +228,9 @@ class TestSampling(unittest.TestCase):
         resultlist = []
         dumb.dumbEnumeration(net7,[2,2,2],[2,2,2,2],resultlist)
         self.assertEqual(resultlist,[])
+        resultlist = []
+        dumb.dumbEnumeration(net8,[1,2],[1],resultlist)
+        self.assertEqual(resultlist,[])
         
     def test_esu_concise(self):
         net1 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
@@ -250,6 +257,10 @@ class TestSampling(unittest.TestCase):
         net7[1,'X'][1,'Y'] = 1
         net7[1,'Y'][1,'Z'] = 1
         net7[1,'Z'][2,'Z'] = 1
+        net8 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net8[1,'X'][1,'Y'] = 1
+        net8[1,'X'][2,'X'] = 1
+        net8.add_node(2,layer='Y')
         resultlist = []
         with self.assertRaises(AssertionError):
             dumb.dumbEnumeration(net2,[],[],resultlist)
@@ -341,6 +352,9 @@ class TestSampling(unittest.TestCase):
         self.assertEqual(resultlist,[([1,2],['X','Y','Z'])])
         resultlist = []
         esu.enumerateSubgraphs(net7,[2,2,2],[2,2,2,2],resultlist)
+        self.assertEqual(resultlist,[])
+        resultlist = []
+        esu.enumerateSubgraphs(net8,[1,2],[1],resultlist)
         self.assertEqual(resultlist,[])
         
     def test_esu_exhaustive(self):
