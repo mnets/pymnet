@@ -299,7 +299,7 @@ class TestTransforms(unittest.TestCase):
         mplex[0,1,0]=1
         mplex[0,2,1]=1
 
-        mlayer=transforms.subnet(mplex,[0,1,2],[0,1],newNet=net.MultilayerNetwork(aspects=1))
+        mlayer=transforms.subnet(mplex,[0,1,2],[0,1],newNet=net.MultilayerNetwork(aspects=1,fullyInterconnected=False))
 
         self.assertEqual(set(mlayer.edges),set([(0, 0, 0, 1, 1.0), (0, 1, 0, 0, 1), (0, 2, 1, 1, 1)]))
         self.assertTrue(isinstance(mlayer,net.MultilayerNetwork))
