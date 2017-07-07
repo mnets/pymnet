@@ -222,7 +222,7 @@ class TestSampling(unittest.TestCase):
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2],['X','Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net7,[2,2,2],[2,2,2,2],resultlist)
+        dumb.dumbEnumeration(net7,[2,2,2],[2,2,2,2],resultlist)
         self.assertEqual(resultlist,[])
         
     def test_esu_concise(self):
