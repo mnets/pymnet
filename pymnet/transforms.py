@@ -199,13 +199,13 @@ def subnet(net,nodes,*layers,**kwargs):
 
 
     #copy the links
-    if not nolinks:
-        if isinstance(net,netmodule.MultiplexNetwork):
+    if not nolinks:        
+        if isinstance(net,netmodule.MultiplexNetwork) and isinstance(newNet,netmodule.MultiplexNetwork):
             #Go through all the combinations of new layers
             for layer in itertools.product(*nodelayers[1:]):
                 layer=layer[0] if net.aspects==1 else layer
                 subnet(net.A[layer],nodelayers[0],newNet=newNet.A[layer],nolinks=nolinks)
-        elif isinstance(net,netmodule.MultilayerNetwork):
+        elif (isinstance(net,netmodule.MultilayerNetwork) and (isinstance(newNet,netmodule.MultilayerNetwork) and not isinstance(newNet,netmodule.MultiplexNetwork))) or (isinstance(net,netmodule.MultiplexNetwork) and (isinstance(newNet,netmodule.MultilayerNetwork) and not isinstance(newNet,netmodule.MultiplexNetwork))):
             for nl1 in itertools.product(*nodelayers):
                 nl1 = nl1[0] if net.aspects==0 else nl1
                 if net[nl1].deg()>=totalNodeLayers:
@@ -222,8 +222,10 @@ def subnet(net,nodes,*layers,**kwargs):
                         for nl2 in net[nl1]:
                             if reduce(lambda x,y:x and y, (e in nodelayers[a] for a,e in enumerate(nl2))):
                                 newNet[nl1][nl2]=net[nl1][nl2]
+        elif isinstance(net,netmodule.MultilayerNetwork) and isinstance(newNet,netmodule.MultiplexNetwork):
+            raise TypeError("Cannot copy multilayer network to multiplex network.")
         else:
-            raise Exception("Invalid net type: "+str(type(net)))
+            raise TypeError("Invalid net types: "+str(type(net))+ " and "+ str(type(newNet)))
 
     return newNet
 

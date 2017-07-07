@@ -292,6 +292,34 @@ class TestTransforms(unittest.TestCase):
         self.assertNotEqual(n,self.mplex_nonaligned_simple)
         self.assertEqual(diagnostics.multiplex_degs(n),diagnostics.multiplex_degs(self.mplex_nonaligned_simple))
 
+
+    def test_subnet_mplex_to_mlayer(self):
+        mplex=net.MultiplexNetwork([('categorical',1.0)],fullyInterconnected=False)
+
+        mplex[0,1,0]=1
+        mplex[0,2,1]=1
+
+        mlayer=transforms.subnet(mplex,[0,1,2],[0,1],newNet=net.MultilayerNetwork(aspects=1))
+
+        self.assertEqual(set(mlayer.edges),set([(0, 0, 0, 1, 1.0), (0, 1, 0, 0, 1), (0, 2, 1, 1, 1)]))
+        self.assertTrue(isinstance(mlayer,net.MultilayerNetwork))
+        
+        self.assertRaises(TypeError,lambda :transforms.subnet(mlayer,[0,1,2],[0,1],newNet=net.MultiplexNetwork([('categorical',1.0)])))        
+
+
+
+        mplex=net.MultiplexNetwork([('categorical',1.0)],fullyInterconnected=True)
+
+        mplex[0,1,0]=1
+        mplex[0,2,1]=1
+
+        mlayer=transforms.subnet(mplex,[0,1,2],[0,1],newNet=net.MultilayerNetwork(aspects=1))
+
+        self.assertEqual(set(mlayer.edges),set([(0, 0, 0, 1, 1.0), (0, 1, 0, 0, 1), (0, 2, 1, 1, 1), (1, 1, 0, 1, 1.0), (2, 2, 0, 1, 1.0)]))
+        self.assertTrue(isinstance(mlayer,net.MultilayerNetwork))
+          
+
+
 def test_transforms():
     suite = unittest.TestSuite()    
     suite.addTest(TestTransforms("test_aggregate_unweighted_mplex_simple"))
@@ -301,6 +329,7 @@ def test_transforms():
     suite.addTest(TestTransforms("test_aggregate_2dim_mlayer_interlayeredges"))
     suite.addTest(TestTransforms("test_subnet_mlayer_example"))
     suite.addTest(TestTransforms("test_subnet_mplex_simple"))
+    suite.addTest(TestTransforms("test_subnet_mplex_to_mlayer"))
     suite.addTest(TestTransforms("test_normalize_mplex_simple"))
     suite.addTest(TestTransforms("test_randomize_nodes_by_layer"))
     
