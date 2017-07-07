@@ -159,6 +159,9 @@ class MultilayerNetwork(object):
         return len(self.slices[0])
 
     def __eq__(self,other):
+        if not isinstance(other,MultilayerNetwork):
+            return False
+        
         if not self.fullyInterconnected:
             if self._nodeToLayers!=other._nodeToLayers:
                 return False
