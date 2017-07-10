@@ -174,6 +174,9 @@ def subnet(net,nodes,*layers,**kwargs):
                                      fullyInterconnected=net.fullyInterconnected)
         else:
             raise Exception("Invalid net type: "+str(type(net)))
+            
+    if not net.fullyInterconnected and newNet.fullyInterconnected:
+        raise TypeError("Cannot copy a non-fully-interconnected network to a fully interconnected network.")
 
     addedElementaryLayers=[]
     for a,elayers in enumerate(nodelayers):#enumerate(itertools.chain((nodes,),layers)):
@@ -185,7 +188,7 @@ def subnet(net,nodes,*layers,**kwargs):
                     newNet.add_layer(elayer,a)
                     addedElementaryLayers[-1]+=1
 
-    if not net.fullyInterconnected:
+    if not newNet.fullyInterconnected:
         totalNodeLayers=0
         for nl in net.iter_node_layers():
             if reduce(lambda x,y:x and y, (e in nodelayers[a] for a,e in enumerate(nl))):

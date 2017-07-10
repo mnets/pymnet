@@ -317,7 +317,32 @@ class TestTransforms(unittest.TestCase):
 
         self.assertEqual(set(mlayer.edges),set([(0, 0, 0, 1, 1.0), (0, 1, 0, 0, 1), (0, 2, 1, 1, 1), (1, 1, 0, 1, 1.0), (2, 2, 0, 1, 1.0)]))
         self.assertTrue(isinstance(mlayer,net.MultilayerNetwork))
-          
+
+        
+    def test_subnet_different_interconnectivities(self):
+        fully_interc = net.MultilayerNetwork(aspects=1,fullyInterconnected=True)
+        fully_interc[1,'X'][1,'Y'] = 1
+        fully_interc[1,'X'][2,'X'] = 1
+        other_fully_interc = transforms.subnet(fully_interc,fully_interc.get_layers(aspect=0),fully_interc.get_layers(aspect=1),newNet=net.MultilayerNetwork(aspects=1,fullyInterconnected=True))
+        self.assertEqual(set(other_fully_interc.iter_node_layers()),set([(1, 'X'), (1, 'Y'), (2, 'X'), (2, 'Y')]))        
+        
+        fully_interc = net.MultilayerNetwork(aspects=1,fullyInterconnected=True)
+        fully_interc[1,'X'][1,'Y'] = 1
+        fully_interc[1,'X'][2,'X'] = 1
+        non_fully_interc = transforms.subnet(fully_interc,fully_interc.get_layers(aspect=0),fully_interc.get_layers(aspect=1),newNet=net.MultilayerNetwork(aspects=1,fullyInterconnected=False))
+        self.assertEqual(set(non_fully_interc.iter_node_layers()),set([(1, 'X'), (1, 'Y'), (2, 'X'), (2, 'Y')]))
+        
+        non_fully_interc = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        non_fully_interc[1,'X'][1,'Y'] = 1
+        non_fully_interc[1,'X'][2,'X'] = 1
+        non_fully_interc.add_node(2,layer='Y')
+        other_non_fully_interc = transforms.subnet(non_fully_interc,non_fully_interc.get_layers(aspect=0),non_fully_interc.get_layers(aspect=1),newNet=net.MultilayerNetwork(aspects=1,fullyInterconnected=False))
+        self.assertEqual(set(other_non_fully_interc.iter_node_layers()),set([(1, 'X'), (1, 'Y'), (2, 'X'), (2, 'Y')]))
+        
+        non_fully_interc = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        non_fully_interc[1,'X'][1,'Y'] = 1
+        non_fully_interc[1,'X'][2,'X'] = 1
+        self.assertRaises(TypeError,lambda :transforms.subnet(non_fully_interc,non_fully_interc.get_layers(aspect=0),non_fully_interc.get_layers(aspect=1),newNet=net.MultilayerNetwork(aspects=1,fullyInterconnected=True)))
 
 
 def test_transforms():
@@ -330,6 +355,7 @@ def test_transforms():
     suite.addTest(TestTransforms("test_subnet_mlayer_example"))
     suite.addTest(TestTransforms("test_subnet_mplex_simple"))
     suite.addTest(TestTransforms("test_subnet_mplex_to_mlayer"))
+    suite.addTest(TestTransforms("test_subnet_different_interconnectivities"))
     suite.addTest(TestTransforms("test_normalize_mplex_simple"))
     suite.addTest(TestTransforms("test_randomize_nodes_by_layer"))
     
