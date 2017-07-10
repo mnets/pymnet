@@ -33,6 +33,7 @@ def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None,seed=None):
     parempi naapuruston ja node conflictien checkki! Miksi set[neighbor]?
     mieti verkon kopiointi ja nl:ien poisto
     kayttajan maarittelema check-funktio
+    check_reqs joka palauttaa kolme eri arvoa
     """
     #network_copy = pymnet.MultilayerNetwork(aspects=1,fullyInterconnected=False)
     #network_copy = pymnet.subnet(network,network.get_layers(aspect=0),network.get_layers(aspect=1),newNet=network_copy)
