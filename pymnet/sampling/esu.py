@@ -84,14 +84,11 @@ def _extendSubgraph(network,nodelist,layerlist,sizes,intersections,V_extension_n
     if len(nodelist) > req_nodelist_len or len(layerlist) > req_layerlist_len:
         return
     if len(nodelist) == req_nodelist_len and len(layerlist) == req_layerlist_len:
-        try:
-            if check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,req_layerlist_len)):
-                resultlist.append((list(nodelist),list(layerlist)))
-                return
-            else:
-                return
-        except AssertionError:
-            pass
+        if check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,req_layerlist_len)):
+            resultlist.append((list(nodelist),list(layerlist)))
+            return
+        else:
+            return
     while V_extension_nodes or V_extension_layers:
         new_nodelist = list(nodelist)
         new_layerlist = list(layerlist)
