@@ -6,7 +6,7 @@ import pymnet
 import random
 import numpy as np
 
-def multilayer_partially_interconnected(nodes_by_layer,p):
+def multilayer_partially_interconnected(nodes_by_layer,p,seed=None):
     """Create a one-aspect E-R multilayer network with given nodesets for each
     layer and edge probability p.
     
@@ -16,7 +16,17 @@ def multilayer_partially_interconnected(nodes_by_layer,p):
         A list where each element is a list of nodes on a layer.
     p : float 0 <= p <= 1
         The probability that an edge exists between a node-layer pair.
+    seed : int, str, bytes or bytearray
+        Seed for network generation.
+        
+    Returns
+    -------
+    The generated network.
     """
+    if seed == None:
+        random.seed()
+    else:
+        random.seed(seed)
     network = pymnet.MultilayerNetwork(aspects=1,fullyInterconnected=False)
     for layer,nodelist in enumerate(nodes_by_layer):
         network.add_layer(layer)
@@ -31,7 +41,11 @@ def multilayer_partially_interconnected(nodes_by_layer,p):
                 network[nodelayer1][nodelayer2] = 1
     return network
     
-def random_nodelists(poolsize,nodes_per_layer,layers,replace=True):
+def random_nodelists(poolsize,nodes_per_layer,layers,replace=True,seed=None):
     # nodes_per_layer is the maximum, overlaps may occur
+    if seed == None:
+        np.random.seed()
+    else:
+        np.random.seed(seed)
     arr = np.random.choice(poolsize,size=(layers,nodes_per_layer),replace=replace)
     return [list(nodelist) for nodelist in arr]

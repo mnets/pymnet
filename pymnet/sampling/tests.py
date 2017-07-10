@@ -5,6 +5,7 @@
 
 import sys
 import unittest
+import time
 from pymnet import net,models
 import reqs
 import dumb
@@ -400,8 +401,23 @@ class TestSampling(unittest.TestCase):
                 resultlist_esu.sort()
                 self.assertEqual(resultlist_dumb,resultlist_esu)
                 
+    def test_esu_performance(self):
+        reqlist = [([1,1],[0]),([1,1],[1]),([1,2],[0]),([1,2],[1]),([1,3],[0]),([1,3],[1]),([2,3],[0]),([2,3],[1]),([2,3],[2]),([3,3],[0]),([3,3],[1]),([3,3],[2]),([3,3],[3])]    
+        reqlist = reqlist + [([1,1,1],[0,0,0,0]),([1,1,1],[1,0,0,0]),([1,1,1],[1,1,1,1])]
+        reqlist = reqlist + [([2,1,1],[0,0,0,0]),([2,1,1],[1,0,0,0]),([2,1,1],[1,1,1,1])]
+        reqlist = reqlist + [([2,2,1],[0,0,0,0]),([2,2,1],[1,0,0,0]),([2,2,1],[2,0,0,0]),([2,2,1],[1,1,0,0]),([2,2,1],[1,0,1,0]),([2,2,1],[1,1,1,1]),([2,2,1],[2,0,0,0]),([2,2,1],[2,1,1,1])]
+        network = creators.multilayer_partially_interconnected(creators.random_nodelists(30,10,5,seed=231),0.07,seed=1)
+        network[30,2][31,2]=1
+        network[31,2][31,3]=1
+        network[31,3][30,3]=1
+        network[30,3][31,4]=1
+        start = time.time()        
+        for requirement in reqlist:
+            resultlist_esu = []
+            esu.enumerateSubgraphs(network,requirement[0],requirement[1],resultlist_esu)
+        print("Time taken "+str(time.time()-start)+" s")
         
-def makesuite(exhaustive=False,insane=False):
+def makesuite(exhaustive=False,insane=False,performance=False):
     suite = unittest.TestSuite()
     suite.addTest(TestSampling("test_multilayer_partially_interconnected"))
     suite.addTest(TestSampling("test_required_lengths"))
@@ -412,10 +428,12 @@ def makesuite(exhaustive=False,insane=False):
         suite.addTest(TestSampling("test_esu_exhaustive"))
     if insane:
         suite.addTest(TestSampling("test_esu_insane"))
+    if performance:
+        suite.addTest(TestSampling("test_esu_performance"))
     return suite
 
 if __name__ == '__main__':
-    unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(makesuite(exhaustive=False,insane=False))
+    unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(makesuite(exhaustive=False,insane=False,performance=True))
     
     
     
