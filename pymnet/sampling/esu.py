@@ -8,7 +8,7 @@ from reqs import check_reqs,calculate_required_lengths
 import random
 
 def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None,seed=None):
-    """The multilayer version of the ESU algorithm. Uniformly samples induced subgraphs
+    u"""The multilayer version of the ESU algorithm. Uniformly samples induced subgraphs
     of the form [nodelist][layerlist], which fulfill the given requirements.
     
     Parameters
@@ -20,7 +20,8 @@ def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None,seed=None):
         to discover.
     intersections : list of ints >= 0
         How large are the intersections between groups of layers. The layer roles
-        are in the same order as in sizes.
+        are in the same order as in sizes. For a more detailed description
+        of how to construct the intersections list, see :func:'reqs.check_reqs'.
     resultlist : list
         Where found induced subgraphs are appended as tuples (nodelist, layerlist).
     p : list of floats 0 <= p <= 1
@@ -63,7 +64,6 @@ def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None,seed=None):
                     no_layer_conflicts = True
                     node = neighbor[0]
                     layer = neighbor[1]
-                    #for nl in itertools.chain(pymnet.subnet(...).iter_node_layers(),(neighbor)):
                     if (node,layerlist[0]) in numberings and numberings[(node,layerlist[0])] < numberings[v]:
                         no_node_conflicts = False
                     if (nodelist[0],layer) in numberings and numberings[(nodelist[0],layer)] < numberings[v]:
