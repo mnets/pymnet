@@ -7,7 +7,7 @@ import itertools
 from reqs import check_reqs, calculate_required_lengths
 
 def dumbEnumeration(network,sizes,intersections,resultlist):
-    """Enumerates all induced subgraphs of the form [nodelist][layerlist] by
+    u"""Enumerates all induced subgraphs of the form [nodelist][layerlist] by
     going through all possible [nodelist][layerlist] combinations and checking
     whether they fulfill the requirements. This is a dumb algorithm and is not
     intended for use in large networks.
@@ -21,7 +21,8 @@ def dumbEnumeration(network,sizes,intersections,resultlist):
         to discover.
     intersections : list of ints >= 0
         How large are the intersections between groups of layers. The layer roles
-        are in the same order as in sizes.
+        are in the same order as in sizes. For a more detailed description
+        of how to construct the intersections list, see :func:'reqs.check_reqs'.
     resultlist : list
         Where found induced subgraphs are appended as tuples (nodelist, layerlist).
     """
