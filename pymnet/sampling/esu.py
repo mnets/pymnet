@@ -89,6 +89,8 @@ def _extendSubgraph(network,nodelist,layerlist,sizes,intersections,V_extension_n
             return
         else:
             return
+    if len(nodelist) == req_nodelist_len:
+        V_extension_nodes = []
     while V_extension_nodes or V_extension_layers:
         new_nodelist = list(nodelist)
         new_layerlist = list(layerlist)
