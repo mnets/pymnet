@@ -35,10 +35,7 @@ def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None,seed=None):
     kayttajan maarittelema check-funktio
     check_reqs joka palauttaa kolme eri arvoa
     """
-    #network_copy = pymnet.MultilayerNetwork(aspects=1,fullyInterconnected=False)
-    #network_copy = pymnet.subnet(network,network.get_layers(aspect=0),network.get_layers(aspect=1),newNet=network_copy)
-    network_copy = pymnet.subnet(network,network.get_layers(aspect=0),network.get_layers(aspect=1))
-    # Passaa testit mutta ei toimi lentodatalla, koska multiplexistä ei voi poistaa edgejä
+    network_copy = pymnet.subnet(network,network.get_layers(aspect=0),network.get_layers(aspect=1),newNet=pymnet.MultilayerNetwork(aspects=1,fullyInterconnected=False))
     if seed == None:
         random.seed()
     else:
