@@ -30,10 +30,10 @@ def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None,seed=None):
         Seed for Rand-ESU
         
     TODO: listat pois
-    parempi naapuruston ja node conflictien checkki! Miksi set[neighbor]?
+    parempi naapuruston ja node conflictien checkki
     mieti verkon kopiointi ja nl:ien poisto
     kayttajan maarittelema check-funktio
-    check_reqs joka palauttaa kolme eri arvoa
+    tilastollinen testaus että samplaus toimii kuten pitaa
     """
     network_copy = pymnet.subnet(network,network.get_layers(aspect=0),network.get_layers(aspect=1),newNet=pymnet.MultilayerNetwork(aspects=1,fullyInterconnected=False))
     if seed == None:
