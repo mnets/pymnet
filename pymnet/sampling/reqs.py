@@ -49,7 +49,8 @@ def check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,
         are listed, then size-three intersections, and so on, until the intersection
         between all layers is reached. The order of listing size n-intersections is
         such that the closer the role is to the beginning of the size list, the later
-        it is iterated over. Since we signify the roles by letters A, B, C and so
+        it is iterated over. More specifically, this is the order that itertools.combinations()
+        uses to iterate. Since we signify the roles by letters A, B, C and so
         on, this means that the intersections are listed in "alphabetical order"
         within each size category.
     
