@@ -385,7 +385,7 @@ class TestSampling(unittest.TestCase):
         reqlist = reqlist + [([2,1,1],[0,0,0,0]),([2,1,1],[1,0,0,0]),([2,1,1],[1,1,1,1])]
         reqlist = reqlist + [([2,2,1],[0,0,0,0]),([2,2,1],[1,0,0,0]),([2,2,1],[2,0,0,0]),([2,2,1],[1,1,0,0]),([2,2,1],[1,0,1,0]),([2,2,1],[1,1,1,1]),([2,2,1],[2,0,0,0]),([2,2,1],[2,1,1,1])]
         for requirement in reqlist:
-            for _ in range(100):
+            for _ in range(30):
                 network = creators.multilayer_partially_interconnected(creators.random_nodelists(30,10,5),0.05)
                 resultlist_dumb = []
                 resultlist_esu = []
@@ -433,7 +433,7 @@ def makesuite(exhaustive=False,insane=False,performance=False):
     return suite
 
 if __name__ == '__main__':
-    unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(makesuite(exhaustive=False,insane=False,performance=True))
+    unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(makesuite(exhaustive=True,insane=False,performance=False))
     
     
     
