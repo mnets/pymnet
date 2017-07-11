@@ -54,8 +54,8 @@ def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None,seed=None):
     for indexnumber in range(len(numberings)):
         v = inverse_numberings[indexnumber]
         if random.random() < p[depth]:
-            nodelist = [v[0]]
-            layerlist = [v[1]]
+            start_node = v[0]
+            start_layer = v[1]
             V_extension_nodes = set()
             V_extension_layers = set()
             for neighbor in network_copy[v]:
@@ -64,19 +64,19 @@ def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None,seed=None):
                     no_layer_conflicts = True
                     node = neighbor[0]
                     layer = neighbor[1]
-                    if (node,layerlist[0]) in numberings and numberings[(node,layerlist[0])] < numberings[v]:
+                    if (node,start_layer) in numberings and numberings[(node,start_layer)] < numberings[v]:
                         no_node_conflicts = False
-                    if (nodelist[0],layer) in numberings and numberings[(nodelist[0],layer)] < numberings[v]:
+                    if (start_node,layer) in numberings and numberings[(start_node,layer)] < numberings[v]:
                         no_layer_conflicts = False
-                    if (node not in nodelist
+                    if (node != start_node
                         and no_node_conflicts
                         and node not in V_extension_nodes):
                         V_extension_nodes.add(node)
-                    if (layer not in layerlist
+                    if (layer != start_layer
                         and no_layer_conflicts
                         and layer not in V_extension_layers):
                         V_extension_layers.add(layer)
-            _extendSubgraph(network_copy,nodelist,layerlist,sizes,intersections,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,depth+1,p,resultlist)
+            _extendSubgraph(network_copy,[start_node],[start_layer],sizes,intersections,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,depth+1,p,resultlist)
         for neighbor in list(network_copy[v]):
             network_copy[neighbor][v] = 0
 
