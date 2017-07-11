@@ -91,6 +91,18 @@ def _extendSubgraph(network,nodelist,layerlist,sizes,intersections,V_extension_n
             return
     if len(nodelist) == req_nodelist_len:
         V_extension_nodes = []
+    
+    # Calculate the original neighborhood
+    orig_graph = set(pymnet.subnet(network,nodelist,layerlist).iter_node_layers())
+    orig_neighborhood_nodelist = set()
+    orig_neighborhood_layerlist = set()
+    for nodelayer in orig_graph:
+                for neighbor in network[nodelayer]:
+                    if neighbor[0] not in nodelist and neighbor[0] not in orig_neighborhood_nodelist and numberings[neighbor] > numberings[v]:
+                        orig_neighborhood_nodelist.add(neighbor[0])
+                    if neighbor[1] not in layerlist and neighbor[1] not in orig_neighborhood_layerlist and numberings[neighbor] > numberings[v]:
+                        orig_neighborhood_layerlist.add(neighbor[1])
+    
     while V_extension_nodes or V_extension_layers:
         new_nodelist = list(nodelist)
         new_layerlist = list(layerlist)
@@ -100,16 +112,16 @@ def _extendSubgraph(network,nodelist,layerlist,sizes,intersections,V_extension_n
             new_layerlist.append(V_extension_layers.pop())
         if random.random() < p[depth]:
             induced_graph = set(pymnet.subnet(network,new_nodelist,new_layerlist).iter_node_layers())
-            orig_graph = set(pymnet.subnet(network,nodelist,layerlist).iter_node_layers())
+            #orig_graph = set(pymnet.subnet(network,nodelist,layerlist).iter_node_layers())
             added_graph = [nl for nl in induced_graph if nl not in orig_graph]
-            orig_neighborhood_nodelist = set()
-            orig_neighborhood_layerlist = set()
-            for nodelayer in orig_graph:
-                for neighbor in network[nodelayer]:
-                    if neighbor[0] not in nodelist and neighbor[0] not in orig_neighborhood_nodelist and numberings[neighbor] > numberings[v]:
-                        orig_neighborhood_nodelist.add(neighbor[0])
-                    if neighbor[1] not in layerlist and neighbor[1] not in orig_neighborhood_layerlist and numberings[neighbor] > numberings[v]:
-                        orig_neighborhood_layerlist.add(neighbor[1])
+            #orig_neighborhood_nodelist = set()
+            #orig_neighborhood_layerlist = set()
+            #for nodelayer in orig_graph:
+            #    for neighbor in network[nodelayer]:
+            #        if neighbor[0] not in nodelist and neighbor[0] not in orig_neighborhood_nodelist and numberings[neighbor] > numberings[v]:
+            #            orig_neighborhood_nodelist.add(neighbor[0])
+            #        if neighbor[1] not in layerlist and neighbor[1] not in orig_neighborhood_layerlist and numberings[neighbor] > numberings[v]:
+            #            orig_neighborhood_layerlist.add(neighbor[1])
             V_extension_nodes_prime = list(V_extension_nodes)
             V_extension_layers_prime = list(V_extension_layers)
             for nodelayer in added_graph:
