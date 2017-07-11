@@ -6,6 +6,7 @@
 import pymnet
 from reqs import check_reqs,calculate_required_lengths
 import random
+import itertools
 
 def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None,seed=None):
     u"""The multilayer version of the ESU algorithm. Uniformly samples induced subgraphs
@@ -106,14 +107,22 @@ def _extendSubgraph(network,nodelist,layerlist,sizes,intersections,V_extension_n
     while V_extension_nodes or V_extension_layers:
         new_nodelist = list(nodelist)
         new_layerlist = list(layerlist)
+        node_added = None
+        layer_added = None
         if V_extension_nodes:
-            new_nodelist.append(V_extension_nodes.pop())
+            node_added = V_extension_nodes.pop()
+            new_nodelist.append(node_added)
         else:
-            new_layerlist.append(V_extension_layers.pop())
+            layer_added = V_extension_layers.pop()
+            new_layerlist.append(layer_added)
         if random.random() < p[depth]:
-            induced_graph = set(pymnet.subnet(network,new_nodelist,new_layerlist).iter_node_layers())
+            if node_added != None:
+                added_graph = [nl for nl in itertools.product([node_added],new_layerlist) if nl in numberings]
+            elif layer_added != None:
+                added_graph = [nl for nl in itertools.product(new_nodelist,[layer_added]) if nl in numberings]
+            #induced_graph = set(pymnet.subnet(network,new_nodelist,new_layerlist).iter_node_layers())
             #orig_graph = set(pymnet.subnet(network,nodelist,layerlist).iter_node_layers())
-            added_graph = [nl for nl in induced_graph if nl not in orig_graph]
+            #added_graph = [nl for nl in induced_graph if nl not in orig_graph]
             #orig_neighborhood_nodelist = set()
             #orig_neighborhood_layerlist = set()
             #for nodelayer in orig_graph:
