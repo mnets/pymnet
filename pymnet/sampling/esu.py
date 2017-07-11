@@ -141,10 +141,10 @@ def _extendSubgraph(network,nodelist,layerlist,sizes,intersections,V_extension_n
                         no_layer_conflicts = True
                         node = neighbor[0]
                         layer = neighbor[1]
-                        for nl in pymnet.subnet(network,[node],new_layerlist).iter_node_layers():
+                        for nl in pymnet.subnet(network,[node],new_layerlist,nolinks=True).iter_node_layers():
                             if numberings[nl] < numberings[v]:
                                 no_node_conflicts = False
-                        for nl in pymnet.subnet(network,new_nodelist,[layer]).iter_node_layers():
+                        for nl in pymnet.subnet(network,new_nodelist,[layer],nolinks=True).iter_node_layers():
                             if numberings[nl] < numberings[v]:
                                 no_layer_conflicts = False
                         if (node not in orig_neighborhood_nodelist 
