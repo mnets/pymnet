@@ -362,7 +362,7 @@ class TestSampling(unittest.TestCase):
         # Will take approx. 45 min
         reqlist = [([1,1],[0]),([1,2],[0]),([1,2],[1]),([2,3],[1]),([2,1,1],[1,0,0,0])]
         for requirement in reqlist:
-            for _ in range(30):
+            for _ in range(10):
                 network = creators.multilayer_partially_interconnected(creators.random_nodelists(30,10,5),0.05)
                 resultlist_dumb = []
                 resultlist_esu = []
