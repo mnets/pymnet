@@ -94,7 +94,8 @@ def _extendSubgraph(network,nodelist,layerlist,sizes,intersections,V_extension_n
         V_extension_nodes = set()
     
     # Calculate the original neighborhood
-    orig_graph = set(pymnet.subnet(network,nodelist,layerlist).iter_node_layers())
+    #orig_graph = set(pymnet.subnet(network,nodelist,layerlist).iter_node_layers())
+    orig_graph = set(nl for nl in itertools.product(nodelist,layerlist) if nl in numberings)
     orig_neighborhood_nodelist = set()
     orig_neighborhood_layerlist = set()
     for nodelayer in orig_graph:
