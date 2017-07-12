@@ -411,10 +411,11 @@ class TestSampling(unittest.TestCase):
         network[31,2][31,3]=1
         network[31,3][30,3]=1
         network[30,3][31,4]=1
-        start = time.time()        
-        for requirement in reqlist:
-            resultlist_esu = []
-            esu.enumerateSubgraphs(network,requirement[0],requirement[1],resultlist_esu)
+        start = time.time()
+        for _ in range(1):
+            for requirement in reqlist:
+                resultlist_esu = []
+                esu.enumerateSubgraphs(network,requirement[0],requirement[1],resultlist_esu)
         print("Time taken "+str(time.time()-start)+" s")
         
 def makesuite(exhaustive=False,insane=False,performance=False):
@@ -433,7 +434,7 @@ def makesuite(exhaustive=False,insane=False,performance=False):
     return suite
 
 if __name__ == '__main__':
-    unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(makesuite(exhaustive=True,insane=False,performance=False))
+    unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(makesuite(exhaustive=False,insane=False,performance=True))
     
     
     
