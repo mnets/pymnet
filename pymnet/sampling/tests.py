@@ -474,13 +474,13 @@ class TestSampling(unittest.TestCase):
         sampling of a network and calculates Pr for each instance of a motif in a network:
         
         Pr = the probability that, assuming that the sample is from the corresponding binomial distribution,
-        there is at least one value in the sample as far away from the expected value as the farthest value
+        there is at least one value in the sample at least as far away from the expected value as the farthest value
         found in the sample.
         
         This is a crude measure of sampling distribution width relative to the width of the binomial distribution
-        that the algorithm should produce if everything is correct. If the algorithm samples a distribution wider
+        that the algorithm should be sampling from if everything is correct. If the algorithm samples a distribution wider
         than the binomial distribution, Pr will be small.
-        The check is done for each instance of a motif found in the network specified in the code. The actual network
+        The check is done for each instance of a motif found in the network specified in the code. The actual default network
         may vary between different compilers/interpreters. Since no multiple correction is used and since crossing the
         threshold doesn't automatically mean that the algorithm isn't working correctly, the test is passed whether
         the threshold is crossed or not. If there are multiple Pr's smaller than a reasonable threshold, this might
@@ -511,7 +511,7 @@ class TestSampling(unittest.TestCase):
         else:
             print(str(outlier_count)+' possible outliers at threshold Pr < '+str(threshold)+', '+str(len(splitdata))+' samples of '+str(splitlen)+' runs each.')
         
-def makesuite(exhaustive=False,insane=False,performance=False,statistical=False):
+def makesuite(exhaustive=False,insane=False,performance=False,distribution_width=False):
     suite = unittest.TestSuite()
     suite.addTest(TestSampling("test_multilayer_partially_interconnected"))
     suite.addTest(TestSampling("test_required_lengths"))
@@ -524,12 +524,12 @@ def makesuite(exhaustive=False,insane=False,performance=False,statistical=False)
         suite.addTest(TestSampling("test_esu_insane"))
     if performance:
         suite.addTest(TestSampling("test_esu_performance"))
-    if statistical:
+    if distribution_width:
         suite.addTest(TestSampling("test_esu_distribution_width"))
     return suite
 
 if __name__ == '__main__':
-    unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(makesuite(exhaustive=False,insane=False,performance=False,statistical=True))
+    unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(makesuite(exhaustive=False,insane=False,performance=False,distribution_width=False))
     
     
     
