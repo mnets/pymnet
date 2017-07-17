@@ -6,6 +6,7 @@
 import sys
 import unittest
 import time
+import scipy,scipy.stats
 from pymnet import net,models
 import reqs
 import dumb
@@ -362,7 +363,7 @@ class TestSampling(unittest.TestCase):
         # Will take approx. 45 min
         reqlist = [([1,1],[0]),([1,2],[0]),([1,2],[1]),([2,3],[1]),([2,1,1],[1,0,0,0])]
         for requirement in reqlist:
-            for _ in range(10):
+            for _ in range(30):
                 network = creators.multilayer_partially_interconnected(creators.random_nodelists(30,10,5),0.05)
                 resultlist_dumb = []
                 resultlist_esu = []
@@ -385,7 +386,7 @@ class TestSampling(unittest.TestCase):
         reqlist = reqlist + [([2,1,1],[0,0,0,0]),([2,1,1],[1,0,0,0]),([2,1,1],[1,1,1,1])]
         reqlist = reqlist + [([2,2,1],[0,0,0,0]),([2,2,1],[1,0,0,0]),([2,2,1],[2,0,0,0]),([2,2,1],[1,1,0,0]),([2,2,1],[1,0,1,0]),([2,2,1],[1,1,1,1]),([2,2,1],[2,0,0,0]),([2,2,1],[2,1,1,1])]
         for requirement in reqlist:
-            for _ in range(30):
+            for _ in range(100):
                 network = creators.multilayer_partially_interconnected(creators.random_nodelists(30,10,5),0.05)
                 resultlist_dumb = []
                 resultlist_esu = []
@@ -449,7 +450,71 @@ class TestSampling(unittest.TestCase):
                 esu.enumerateSubgraphs(network,requirement[0],requirement[1],resultlist_esu)
         print("Time taken "+str(time.time()-start)+" s")
         
-def makesuite(exhaustive=False,insane=False,performance=False):
+    def statistical_sample(self,network,iterations,motif,p,all_subgraphs):
+        samplings = dict()
+        for subgraph in all_subgraphs:
+            subgraph[0].sort()
+            subgraph[1].sort()
+            samplings[tuple((tuple(subgraph[0]),tuple(subgraph[1])))] = []
+        start = time.time()
+        for _ in range(iterations):
+            resultlist = []
+            esu.enumerateSubgraphs(network,motif[0],motif[1],resultlist,p)
+            for result in resultlist:
+                result[0].sort()
+                result[1].sort()
+            resultlist = [tuple((tuple(result[0]),tuple(result[1]))) for result in resultlist]
+            resultlist = set(resultlist)
+            for entry in samplings:
+                if entry in resultlist:
+                    samplings[entry].append(1)
+                else:
+                    samplings[entry].append(0)
+        print("Iterated in: "+str(time.time()-start)+" s")
+        return samplings
+        
+    def test_esu_distribution_width(self,threshold=0.1,iterations=1000,motif=([2,1],[1]),splitlen=100,p=None,all_subgraphs=None):
+        """A crude test for checking that the width of the sampling distribution corresponds to the 
+        width of the binomial distribution from which the samples should originate. Does a repeated
+        sampling of a network and calculates Pr for each instance of a motif in a network:
+        
+        Pr = the probability that, assuming that the sample is from the corresponding binomial distribution,
+        there is at least one value in the sample as far away from the expected value as the farthest value
+        found in the sample.
+        
+        This is a crude measure of sampling distribution width relative to the width of the binomial distribution
+        that the algorithm should produce if everything is correct. If the algorithm samples a distribution wider
+        than the binomial distribution, Pr will be small.
+        The check is done for each instance of a motif found in the network specified in the code. The actual network
+        may vary between different compilers/interpreters. Since no multiple correction is used and since crossing the
+        threshold doesn't automatically mean that the algorithm isn't working correctly, the test is passed whether
+        the threshold is crossed or not. If there are multiple Pr's smaller than a reasonable threshold, this might
+        indicate that something is wrong with the algorithm.
+        """
+        network = creators.multilayer_partially_interconnected(creators.random_nodelists(100,30,10,seed=1),0.05,seed=1)       
+        if p == None:
+            req_nodelist_len,req_layerlist_len = reqs.calculate_required_lengths(motif[0],motif[1])
+            p = [0.5] * (req_nodelist_len-1 + req_layerlist_len-1 + 1)
+        if all_subgraphs == None:
+            all_subgraphs = []
+            esu.enumerateSubgraphs(network,motif[0],motif[1],all_subgraphs)
+        data = self.statistical_sample(network,iterations,motif,p,all_subgraphs)
+        outlier_count = 0
+        for motif in data:
+            splitdata = [sum(split) for split in [data[motif][i:i+splitlen] for i in range(0,len(data[motif]),splitlen)]]
+            number_of_groups = len(splitdata)
+            expected = float(splitlen*scipy.prod(p))
+            d_max = max([abs(datapoint-expected) for datapoint in splitdata])
+            if 1-abs(scipy.stats.binom.cdf(expected+d_max-1,splitlen,scipy.prod(p)) - scipy.stats.binom.cdf(expected-d_max,splitlen,scipy.prod(p)))**number_of_groups < threshold:
+                outlier_count += 1
+        if outlier_count == 0:
+            print('No outliers detected at threshold Pr < '+str(threshold)+'.')
+        elif outlier_count == 1:
+            print('1 possible outlier at threshold Pr < '+str(threshold)+'.')
+        else:
+            print(str(outlier_count)+' possible outliers at threshold Pr < '+str(threshold)+'.')
+        
+def makesuite(exhaustive=False,insane=False,performance=False,statistical=False):
     suite = unittest.TestSuite()
     suite.addTest(TestSampling("test_multilayer_partially_interconnected"))
     suite.addTest(TestSampling("test_required_lengths"))
@@ -462,10 +527,12 @@ def makesuite(exhaustive=False,insane=False,performance=False):
         suite.addTest(TestSampling("test_esu_insane"))
     if performance:
         suite.addTest(TestSampling("test_esu_performance"))
+    if statistical:
+        suite.addTest(TestSampling("test_esu_distribution_width"))
     return suite
 
 if __name__ == '__main__':
-    unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(makesuite(exhaustive=False,insane=False,performance=True))
+    unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(makesuite(exhaustive=False,insane=False,performance=False,statistical=True))
     
     
     
