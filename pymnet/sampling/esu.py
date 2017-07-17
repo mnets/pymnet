@@ -31,11 +31,11 @@ def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None,seed=None):
     seed : int, str, bytes or bytearray
         Seed for Rand-ESU
         
-    TODO: listat pois
+    TODO: DONE listat pois
     parempi naapuruston ja node conflictien checkki
     mieti verkon kopiointi ja nl:ien poisto
     kayttajan maarittelema check-funktio
-    tilastollinen testaus että samplaus toimii kuten pitaa
+    DONE tilastollinen testaus että samplaus toimii kuten pitaa
     """
     network_copy = pymnet.subnet(network,network.get_layers(aspect=0),network.get_layers(aspect=1),newNet=pymnet.MultilayerNetwork(aspects=1,fullyInterconnected=False))
     if seed == None:
