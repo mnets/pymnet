@@ -4,7 +4,7 @@
 """
 
 import pymnet
-from reqs import check_reqs,calculate_required_lengths
+from reqs import default_check_reqs,default_calculate_required_lengths
 import random
 import itertools
 
@@ -49,7 +49,7 @@ def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None,seed=None):
         numberings[nodelayer] = index
     for nodelayer in numberings:
         inverse_numberings[numberings[nodelayer]] = nodelayer
-    req_nodelist_len,req_layerlist_len = calculate_required_lengths(sizes,intersections)
+    req_nodelist_len,req_layerlist_len = default_calculate_required_lengths(sizes,intersections)
     if p == None:
         p = [1] * (req_nodelist_len-1 + req_layerlist_len-1 + 1)
     for indexnumber in range(len(numberings)):
@@ -85,7 +85,7 @@ def _extendSubgraph(network,nodelist,layerlist,sizes,intersections,V_extension_n
     if len(nodelist) > req_nodelist_len or len(layerlist) > req_layerlist_len:
         return
     if len(nodelist) == req_nodelist_len and len(layerlist) == req_layerlist_len:
-        if check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,req_layerlist_len)):
+        if default_check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,req_layerlist_len)):
             resultlist.append((list(nodelist),list(layerlist)))
             return
         else:

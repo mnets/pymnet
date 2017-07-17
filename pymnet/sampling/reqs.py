@@ -6,7 +6,7 @@ import pymnet
 from pymnet import nx
 import itertools
 
-def check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,req_layerlist_len)=(None,None)):
+def default_check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,req_layerlist_len)=(None,None)):
     u"""Checks whether an induced subgraph of the form [nodelist][layerlist] fulfills
     the given requirements.
     
@@ -73,7 +73,7 @@ def check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,
     """
     if (req_nodelist_len,req_layerlist_len) == (None,None):
         try:
-            req_nodelist_len,req_layerlist_len = calculate_required_lengths(sizes,intersections)
+            req_nodelist_len,req_layerlist_len = default_calculate_required_lengths(sizes,intersections)
         except AssertionError:
             raise
     assert len(nodelist) == req_nodelist_len, "Wrong number of nodes"
@@ -126,7 +126,7 @@ def check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,
     
     
     
-def calculate_required_lengths(sizes,intersections):
+def default_calculate_required_lengths(sizes,intersections):
     """Returns the required nodelist length and required layerlist length of
     and induced subgraph of the form [nodelist][layerlist] determined by the
     given requirements.

@@ -24,33 +24,33 @@ class TestSampling(unittest.TestCase):
         for nodelayer in list(net2.iter_node_layers()):
             self.assertEqual(net2[nodelayer[0],nodelayer[1]].deg(),8)
 
-    def test_required_lengths(self):
-        self.assertEqual((reqs.calculate_required_lengths([4,3,4,2],[3,2,2,1,2,1,1,2,1,1,1])),(6,4))
-        self.assertEqual((reqs.calculate_required_lengths([1,2,1],[1,0,1,0])),(2,3))
-        self.assertEqual((reqs.calculate_required_lengths([2,2,1],[1,0,1,0])),(3,3))
-        self.assertEqual((reqs.calculate_required_lengths([1],[])),(1,1))
-        self.assertEqual((reqs.calculate_required_lengths([9999],[])),(9999,1))
-        self.assertNotEqual((reqs.calculate_required_lengths([5,3,4,2],[3,2,2,1,2,1,1,2,1,1,1])),(6,4))
+    def test_default_required_lengths(self):
+        self.assertEqual((reqs.default_calculate_required_lengths([4,3,4,2],[3,2,2,1,2,1,1,2,1,1,1])),(6,4))
+        self.assertEqual((reqs.default_calculate_required_lengths([1,2,1],[1,0,1,0])),(2,3))
+        self.assertEqual((reqs.default_calculate_required_lengths([2,2,1],[1,0,1,0])),(3,3))
+        self.assertEqual((reqs.default_calculate_required_lengths([1],[])),(1,1))
+        self.assertEqual((reqs.default_calculate_required_lengths([9999],[])),(9999,1))
+        self.assertNotEqual((reqs.default_calculate_required_lengths([5,3,4,2],[3,2,2,1,2,1,1,2,1,1,1])),(6,4))
         with self.assertRaises(AssertionError):
-            reqs.calculate_required_lengths([49,999],[])
+            reqs.default_calculate_required_lengths([49,999],[])
         with self.assertRaises(AssertionError):
-            reqs.calculate_required_lengths([],[])
+            reqs.default_calculate_required_lengths([],[])
         with self.assertRaises(AssertionError):
-            reqs.calculate_required_lengths([1],[1,2,3,4])
+            reqs.default_calculate_required_lengths([1],[1,2,3,4])
         with self.assertRaises(AssertionError):
-            reqs.calculate_required_lengths([0,-1,1],[1,2,3,4])
+            reqs.default_calculate_required_lengths([0,-1,1],[1,2,3,4])
         with self.assertRaises(AssertionError):
-            reqs.calculate_required_lengths([0,0,0],[1,2,3,4])
+            reqs.default_calculate_required_lengths([0,0,0],[1,2,3,4])
         with self.assertRaises(AssertionError):
-            reqs.calculate_required_lengths([0,0,0],[0,0,0,0])
+            reqs.default_calculate_required_lengths([0,0,0],[0,0,0,0])
         with self.assertRaises(AssertionError):
-            reqs.calculate_required_lengths([1,1],[-1])
+            reqs.default_calculate_required_lengths([1,1],[-1])
         with self.assertRaises(AssertionError):
-            reqs.calculate_required_lengths([1,1],[0.5])
+            reqs.default_calculate_required_lengths([1,1],[0.5])
         with self.assertRaises(AssertionError):
-            reqs.calculate_required_lengths([1,0.5],[1])
+            reqs.default_calculate_required_lengths([1,0.5],[1])
             
-    def test_check_reqs(self):
+    def test_default_check_reqs(self):
         net1 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
         net2 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
         net2[1,'X'][1,'Y'] = 1
@@ -79,35 +79,35 @@ class TestSampling(unittest.TestCase):
         net7['X','Z']['X','Y'] = 1
         net7['Y','Z']['Z','Z'] = 1
         net7['X','Y']['Z','Y'] = 1
-        self.assertFalse(reqs.check_reqs(net1,[1],['X'],[1],[]))
-        self.assertFalse(reqs.check_reqs(net1,[1],['X','Y'],[1,1],[1]))
-        self.assertTrue(reqs.check_reqs(net2,[1],['X'],[1],[]))
-        self.assertTrue(reqs.check_reqs(net2,[1,2],['X','Y'],[1,2],[1]))
-        self.assertFalse(reqs.check_reqs(net2,[1,2],['X','Z'],[1,2],[1]))
+        self.assertFalse(reqs.default_check_reqs(net1,[1],['X'],[1],[]))
+        self.assertFalse(reqs.default_check_reqs(net1,[1],['X','Y'],[1,1],[1]))
+        self.assertTrue(reqs.default_check_reqs(net2,[1],['X'],[1],[]))
+        self.assertTrue(reqs.default_check_reqs(net2,[1,2],['X','Y'],[1,2],[1]))
+        self.assertFalse(reqs.default_check_reqs(net2,[1,2],['X','Z'],[1,2],[1]))
         with self.assertRaises(AssertionError):
-            reqs.check_reqs(net2,[1,2],['X','Y'],[1,2],[1,1])
+            reqs.default_check_reqs(net2,[1,2],['X','Y'],[1,2],[1,1])
         with self.assertRaises(AssertionError):
-            reqs.check_reqs(net2,[1,2],['X'],[1,2],[1])
+            reqs.default_check_reqs(net2,[1,2],['X'],[1,2],[1])
         with self.assertRaises(AssertionError):
-            reqs.check_reqs(net2,[1],['X','Y'],[1,2],[1])
+            reqs.default_check_reqs(net2,[1],['X','Y'],[1,2],[1])
         with self.assertRaises(AssertionError):
-            reqs.check_reqs(net2,[1,2],['X','Y'],[1,2],[1.5])
-        self.assertTrue(reqs.check_reqs(net3,[1,3],['X','Y'],[1,2],[1]))
-        self.assertTrue(reqs.check_reqs(net3,[2,1],['Y','Z'],[2,1],[1]))
-        self.assertTrue(reqs.check_reqs(net3,[1,2,3],['Y','Z','X'],[2,2,1],[1,1,1,1]))
-        self.assertFalse(reqs.check_reqs(net3,[1,2,3],['X','Z'],[2,2],[1]))
+            reqs.default_check_reqs(net2,[1,2],['X','Y'],[1,2],[1.5])
+        self.assertTrue(reqs.default_check_reqs(net3,[1,3],['X','Y'],[1,2],[1]))
+        self.assertTrue(reqs.default_check_reqs(net3,[2,1],['Y','Z'],[2,1],[1]))
+        self.assertTrue(reqs.default_check_reqs(net3,[1,2,3],['Y','Z','X'],[2,2,1],[1,1,1,1]))
+        self.assertFalse(reqs.default_check_reqs(net3,[1,2,3],['X','Z'],[2,2],[1]))
         with self.assertRaises(AssertionError):
-            reqs.check_reqs(net3,[1,2,3],['X','Y'],[1,2],[1])
-        self.assertFalse(reqs.check_reqs(net4,[1,2],['X','Y','Z'],[2,2,2],[2,2,2,2]))
-        self.assertTrue(reqs.check_reqs(net5,[1,2],['X','Z','Y'],[2,2,2],[2,2,2,2]))
+            reqs.default_check_reqs(net3,[1,2,3],['X','Y'],[1,2],[1])
+        self.assertFalse(reqs.default_check_reqs(net4,[1,2],['X','Y','Z'],[2,2,2],[2,2,2,2]))
+        self.assertTrue(reqs.default_check_reqs(net5,[1,2],['X','Z','Y'],[2,2,2],[2,2,2,2]))
         with self.assertRaises(AssertionError):
-            reqs.check_reqs(net5,[1,2],['X','Z','Y','Y'],[2,2,2],[2,2,2,2])
-        self.assertTrue(reqs.check_reqs(net6,[1,0],['Y','Z','X'],[2,2,2],[2,2,2,2]))
-        self.assertTrue(reqs.check_reqs(net6,[1,0],['Z','X'],[2,2],[2]))
-        self.assertFalse(reqs.check_reqs(net6,[1,0],['Y','Z','X'],[2,1,2],[1,2,1,1]))
-        self.assertTrue(reqs.check_reqs(net7,['X','Y'],['Z','Y','X'],[1,2,1],[1,1,1,1]))
-        self.assertTrue(reqs.check_reqs(net7,['X','Y'],['X','Z'],[1,2],[1]))
-        self.assertFalse(reqs.check_reqs(net7,['X','Z'],['X','Z'],[2,2],[2]))
+            reqs.default_check_reqs(net5,[1,2],['X','Z','Y','Y'],[2,2,2],[2,2,2,2])
+        self.assertTrue(reqs.default_check_reqs(net6,[1,0],['Y','Z','X'],[2,2,2],[2,2,2,2]))
+        self.assertTrue(reqs.default_check_reqs(net6,[1,0],['Z','X'],[2,2],[2]))
+        self.assertFalse(reqs.default_check_reqs(net6,[1,0],['Y','Z','X'],[2,1,2],[1,2,1,1]))
+        self.assertTrue(reqs.default_check_reqs(net7,['X','Y'],['Z','Y','X'],[1,2,1],[1,1,1,1]))
+        self.assertTrue(reqs.default_check_reqs(net7,['X','Y'],['X','Z'],[1,2],[1]))
+        self.assertFalse(reqs.default_check_reqs(net7,['X','Z'],['X','Z'],[2,2],[2]))
     
     def test_dumb_enumeration(self):
         net1 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
@@ -490,7 +490,7 @@ class TestSampling(unittest.TestCase):
         if network == None:
             network = creators.multilayer_partially_interconnected(creators.random_nodelists(100,30,10,seed=1),0.05,seed=1)       
         if p == None:
-            req_nodelist_len,req_layerlist_len = reqs.calculate_required_lengths(motif[0],motif[1])
+            req_nodelist_len,req_layerlist_len = reqs.default_calculate_required_lengths(motif[0],motif[1])
             p = [0.5] * (req_nodelist_len-1 + req_layerlist_len-1 + 1)
         if all_subgraphs == None:
             all_subgraphs = []
@@ -514,8 +514,8 @@ class TestSampling(unittest.TestCase):
 def makesuite(exhaustive=False,insane=False,performance=False,distribution_width=False):
     suite = unittest.TestSuite()
     suite.addTest(TestSampling("test_multilayer_partially_interconnected"))
-    suite.addTest(TestSampling("test_required_lengths"))
-    suite.addTest(TestSampling("test_check_reqs"))
+    suite.addTest(TestSampling("test_default_required_lengths"))
+    suite.addTest(TestSampling("test_default_check_reqs"))
     suite.addTest(TestSampling("test_dumb_enumeration"))
     suite.addTest(TestSampling("test_esu_concise"))
     if exhaustive:
