@@ -406,11 +406,6 @@ class TestSampling(unittest.TestCase):
         reqlist = reqlist + [([1,1,1],[0,0,0,0]),([1,1,1],[1,0,0,0]),([1,1,1],[1,1,1,1])]
         reqlist = reqlist + [([2,1,1],[0,0,0,0]),([2,1,1],[1,0,0,0]),([2,1,1],[1,1,1,1])]
         reqlist = reqlist + [([2,2,1],[0,0,0,0]),([2,2,1],[1,0,0,0]),([2,2,1],[2,0,0,0]),([2,2,1],[1,1,0,0]),([2,2,1],[1,0,1,0]),([2,2,1],[1,1,1,1]),([2,2,1],[2,0,0,0]),([2,2,1],[2,1,1,1])]
-        #network = creators.multilayer_partially_interconnected(creators.random_nodelists(30,10,5,seed=231),0.08,seed=1)
-        #network[30,2][31,2]=1
-        #network[31,2][31,3]=1
-        #network[31,3][30,3]=1
-        #network[30,3][31,4]=1
         network = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
         nodelayerlist = [(5, 0),(11, 0),(17, 0),(18, 0),(22, 0),
                         (23, 0),(25, 0),(27, 0),(28, 0),(29, 0),
