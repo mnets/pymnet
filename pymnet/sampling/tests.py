@@ -467,7 +467,7 @@ class TestSampling(unittest.TestCase):
         print("Iterated in: "+str(time.time()-start)+" s")
         return samplings
         
-    def test_esu_distribution_width(self,threshold=0.001,iterations=10000,motif=([2,1],[1]),splitlen=200,p=None,all_subgraphs=None):
+    def test_esu_distribution_width(self,network=None,threshold=0.001,iterations=10000,motif=([2,1],[1]),splitlen=200,p=None,all_subgraphs=None):
         """
         A crude test for checking that the width of the sampling distribution corresponds to the 
         width of the binomial distribution from which the samples should originate. Does a repeated
@@ -487,7 +487,8 @@ class TestSampling(unittest.TestCase):
         indicate that something is wrong with the algorithm.
         PyPy recommended for speed.
         """
-        network = creators.multilayer_partially_interconnected(creators.random_nodelists(100,30,10,seed=1),0.05,seed=1)       
+        if network == None:
+            network = creators.multilayer_partially_interconnected(creators.random_nodelists(100,30,10,seed=1),0.05,seed=1)       
         if p == None:
             req_nodelist_len,req_layerlist_len = reqs.calculate_required_lengths(motif[0],motif[1])
             p = [0.5] * (req_nodelist_len-1 + req_layerlist_len-1 + 1)
