@@ -379,7 +379,7 @@ class TestSampling(unittest.TestCase):
                 self.assertEqual(resultlist_dumb,resultlist_esu)
                 
     def test_esu_insane(self):
-        # PyPy recommended
+        # PyPy recommended for speed
         reqlist = [([1,1],[0]),([1,1],[1]),([1,2],[0]),([1,2],[1]),([1,3],[0]),([1,3],[1]),([2,3],[0]),([2,3],[1]),([2,3],[2]),([3,3],[0]),([3,3],[1]),([3,3],[2]),([3,3],[3])]    
         reqlist = reqlist + [([1,1,1],[0,0,0,0]),([1,1,1],[1,0,0,0]),([1,1,1],[1,1,1,1])]
         reqlist = reqlist + [([2,1,1],[0,0,0,0]),([2,1,1],[1,0,0,0]),([2,1,1],[1,1,1,1])]
@@ -485,6 +485,7 @@ class TestSampling(unittest.TestCase):
         threshold doesn't automatically mean that the algorithm isn't working correctly, the test is passed whether
         the threshold is crossed or not. If there are multiple Pr's smaller than a reasonable threshold, this might
         indicate that something is wrong with the algorithm.
+        PyPy recommended for speed.
         """
         network = creators.multilayer_partially_interconnected(creators.random_nodelists(100,30,10,seed=1),0.05,seed=1)       
         if p == None:
