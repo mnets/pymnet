@@ -360,7 +360,6 @@ class TestSampling(unittest.TestCase):
         self.assertEqual(resultlist,[])
         
     def test_esu_exhaustive(self):
-        # Will take approx. 45 min
         reqlist = [([1,1],[0]),([1,2],[0]),([1,2],[1]),([2,3],[1]),([2,1,1],[1,0,0,0])]
         for requirement in reqlist:
             for _ in range(30):
@@ -380,7 +379,7 @@ class TestSampling(unittest.TestCase):
                 self.assertEqual(resultlist_dumb,resultlist_esu)
                 
     def test_esu_insane(self):
-        # Will run over weekend
+        # PyPy recommended
         reqlist = [([1,1],[0]),([1,1],[1]),([1,2],[0]),([1,2],[1]),([1,3],[0]),([1,3],[1]),([2,3],[0]),([2,3],[1]),([2,3],[2]),([3,3],[0]),([3,3],[1]),([3,3],[2]),([3,3],[3])]    
         reqlist = reqlist + [([1,1,1],[0,0,0,0]),([1,1,1],[1,0,0,0]),([1,1,1],[1,1,1,1])]
         reqlist = reqlist + [([2,1,1],[0,0,0,0]),([2,1,1],[1,0,0,0]),([2,1,1],[1,1,1,1])]
@@ -450,7 +449,7 @@ class TestSampling(unittest.TestCase):
                 esu.enumerateSubgraphs(network,requirement[0],requirement[1],resultlist_esu)
         print("Time taken "+str(time.time()-start)+" s")
         
-    def statistical_sample(self,network,iterations,motif,p,all_subgraphs):
+    def _statistical_sample(self,network,iterations,motif,p,all_subgraphs):
         samplings = dict()
         for subgraph in all_subgraphs:
             subgraph[0].sort()
@@ -473,8 +472,9 @@ class TestSampling(unittest.TestCase):
         print("Iterated in: "+str(time.time()-start)+" s")
         return samplings
         
-    def test_esu_distribution_width(self,threshold=0.1,iterations=1000,motif=([2,1],[1]),splitlen=100,p=None,all_subgraphs=None):
-        """A crude test for checking that the width of the sampling distribution corresponds to the 
+    def test_esu_distribution_width(self,threshold=0.001,iterations=10000,motif=([2,1],[1]),splitlen=200,p=None,all_subgraphs=None):
+        """
+        A crude test for checking that the width of the sampling distribution corresponds to the 
         width of the binomial distribution from which the samples should originate. Does a repeated
         sampling of a network and calculates Pr for each instance of a motif in a network:
         
@@ -498,7 +498,7 @@ class TestSampling(unittest.TestCase):
         if all_subgraphs == None:
             all_subgraphs = []
             esu.enumerateSubgraphs(network,motif[0],motif[1],all_subgraphs)
-        data = self.statistical_sample(network,iterations,motif,p,all_subgraphs)
+        data = self._statistical_sample(network,iterations,motif,p,all_subgraphs)
         outlier_count = 0
         for motif in data:
             splitdata = [sum(split) for split in [data[motif][i:i+splitlen] for i in range(0,len(data[motif]),splitlen)]]
@@ -508,11 +508,11 @@ class TestSampling(unittest.TestCase):
             if 1-abs(scipy.stats.binom.cdf(expected+d_max-1,splitlen,scipy.prod(p)) - scipy.stats.binom.cdf(expected-d_max,splitlen,scipy.prod(p)))**number_of_groups < threshold:
                 outlier_count += 1
         if outlier_count == 0:
-            print('No outliers detected at threshold Pr < '+str(threshold)+'.')
+            print('No outliers detected at threshold Pr < '+str(threshold)+', '+str(len(splitdata))+' samples of '+str(splitlen)+' runs each.')
         elif outlier_count == 1:
-            print('1 possible outlier at threshold Pr < '+str(threshold)+'.')
+            print('1 possible outlier at threshold Pr < '+str(threshold)+', '+str(len(splitdata))+' samples of '+str(splitlen)+' runs each.')
         else:
-            print(str(outlier_count)+' possible outliers at threshold Pr < '+str(threshold)+'.')
+            print(str(outlier_count)+' possible outliers at threshold Pr < '+str(threshold)+', '+str(len(splitdata))+' samples of '+str(splitlen)+' runs each.')
         
 def makesuite(exhaustive=False,insane=False,performance=False,statistical=False):
     suite = unittest.TestSuite()
