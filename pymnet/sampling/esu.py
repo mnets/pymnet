@@ -8,7 +8,8 @@ from reqs import default_check_reqs,default_calculate_required_lengths
 import random
 import itertools
 
-def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None,seed=None):
+#def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None,seed=None):
+def enumerateSubgraphs(network,resultlist,lengthFunction=default_calculate_required_lengths,checkFunction=default_check_reqs,p=None,seed=None,**kwargs):
     u"""The multilayer version of the ESU algorithm. Uniformly samples induced subgraphs
     of the form [nodelist][layerlist], which fulfill the given requirements.
     
@@ -49,9 +50,12 @@ def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None,seed=None):
         numberings[nodelayer] = index
     for nodelayer in numberings:
         inverse_numberings[numberings[nodelayer]] = nodelayer
-    req_nodelist_len,req_layerlist_len = default_calculate_required_lengths(sizes,intersections)
+    req_nodelist_len_separate,req_layerlist_len_separate = lengthFunction(**kwargs)
+    # Add required lengths to kwargs to pass them to checkFunction
+    kwargs['req_nodelist_len'] = req_nodelist_len_separate
+    kwargs['req_layerlist_len'] = req_layerlist_len_separate
     if p == None:
-        p = [1] * (req_nodelist_len-1 + req_layerlist_len-1 + 1)
+        p = [1] * (req_nodelist_len_separate-1 + req_layerlist_len_separate-1 + 1)
     for indexnumber in range(len(numberings)):
         v = inverse_numberings[indexnumber]
         if random.random() < p[depth]:
@@ -77,20 +81,21 @@ def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None,seed=None):
                         and no_layer_conflicts
                         and layer not in V_extension_layers):
                         V_extension_layers.add(layer)
-            _extendSubgraph(network_copy,[start_node],[start_layer],sizes,intersections,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,depth+1,p,resultlist)
+            _extendSubgraph(network_copy,[start_node],[start_layer],checkFunction,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len_separate,req_layerlist_len_separate,depth+1,p,resultlist,**kwargs)
         for neighbor in list(network_copy[v]):
             network_copy[neighbor][v] = 0
 
-def _extendSubgraph(network,nodelist,layerlist,sizes,intersections,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,depth,p,resultlist):    
-    if len(nodelist) > req_nodelist_len or len(layerlist) > req_layerlist_len:
+def _extendSubgraph(network,nodelist,layerlist,checkFunction,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len_separate,req_layerlist_len_separate,depth,p,resultlist,**kwargs):    
+    if len(nodelist) > req_nodelist_len_separate or len(layerlist) > req_layerlist_len_separate:
         return
-    if len(nodelist) == req_nodelist_len and len(layerlist) == req_layerlist_len:
-        if default_check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,req_layerlist_len)):
+    if len(nodelist) == req_nodelist_len_separate and len(layerlist) == req_layerlist_len_separate:
+        if checkFunction(network,nodelist,layerlist,**kwargs):
+        #if checkFunction(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,req_layerlist_len)):
             resultlist.append((list(nodelist),list(layerlist)))
             return
         else:
             return
-    if len(nodelist) == req_nodelist_len:
+    if len(nodelist) == req_nodelist_len_separate:
         V_extension_nodes = set()
     
     # Calculate the original neighborhood
@@ -175,7 +180,7 @@ def _extendSubgraph(network,nodelist,layerlist,sizes,intersections,V_extension_n
                         #    and no_layer_conflicts 
                         #    and layer not in V_extension_layers_prime):
                         #    V_extension_layers_prime.add(layer)
-            _extendSubgraph(network,new_nodelist,new_layerlist,sizes,intersections,V_extension_nodes_prime,V_extension_layers_prime,numberings,v,req_nodelist_len,req_layerlist_len,depth+1,p,resultlist)    
+            _extendSubgraph(network,new_nodelist,new_layerlist,checkFunction,V_extension_nodes_prime,V_extension_layers_prime,numberings,v,req_nodelist_len_separate,req_layerlist_len_separate,depth+1,p,resultlist,**kwargs)    
     return
         
 

@@ -25,30 +25,30 @@ class TestSampling(unittest.TestCase):
             self.assertEqual(net2[nodelayer[0],nodelayer[1]].deg(),8)
 
     def test_default_required_lengths(self):
-        self.assertEqual((reqs.default_calculate_required_lengths([4,3,4,2],[3,2,2,1,2,1,1,2,1,1,1])),(6,4))
-        self.assertEqual((reqs.default_calculate_required_lengths([1,2,1],[1,0,1,0])),(2,3))
-        self.assertEqual((reqs.default_calculate_required_lengths([2,2,1],[1,0,1,0])),(3,3))
-        self.assertEqual((reqs.default_calculate_required_lengths([1],[])),(1,1))
-        self.assertEqual((reqs.default_calculate_required_lengths([9999],[])),(9999,1))
-        self.assertNotEqual((reqs.default_calculate_required_lengths([5,3,4,2],[3,2,2,1,2,1,1,2,1,1,1])),(6,4))
+        self.assertEqual((reqs.default_calculate_required_lengths(sizes=[4,3,4,2],intersections=[3,2,2,1,2,1,1,2,1,1,1])),(6,4))
+        self.assertEqual((reqs.default_calculate_required_lengths(sizes=[1,2,1],intersections=[1,0,1,0])),(2,3))
+        self.assertEqual((reqs.default_calculate_required_lengths(sizes=[2,2,1],intersections=[1,0,1,0])),(3,3))
+        self.assertEqual((reqs.default_calculate_required_lengths(sizes=[1],intersections=[])),(1,1))
+        self.assertEqual((reqs.default_calculate_required_lengths(sizes=[9999],intersections=[])),(9999,1))
+        self.assertNotEqual((reqs.default_calculate_required_lengths(sizes=[5,3,4,2],intersections=[3,2,2,1,2,1,1,2,1,1,1])),(6,4))
         with self.assertRaises(AssertionError):
-            reqs.default_calculate_required_lengths([49,999],[])
+            reqs.default_calculate_required_lengths(sizes=[49,999],intersections=[])
         with self.assertRaises(AssertionError):
-            reqs.default_calculate_required_lengths([],[])
+            reqs.default_calculate_required_lengths(sizes=[],intersections=[])
         with self.assertRaises(AssertionError):
-            reqs.default_calculate_required_lengths([1],[1,2,3,4])
+            reqs.default_calculate_required_lengths(sizes=[1],intersections=[1,2,3,4])
         with self.assertRaises(AssertionError):
-            reqs.default_calculate_required_lengths([0,-1,1],[1,2,3,4])
+            reqs.default_calculate_required_lengths(sizes=[0,-1,1],intersections=[1,2,3,4])
         with self.assertRaises(AssertionError):
-            reqs.default_calculate_required_lengths([0,0,0],[1,2,3,4])
+            reqs.default_calculate_required_lengths(sizes=[0,0,0],intersections=[1,2,3,4])
         with self.assertRaises(AssertionError):
-            reqs.default_calculate_required_lengths([0,0,0],[0,0,0,0])
+            reqs.default_calculate_required_lengths(sizes=[0,0,0],intersections=[0,0,0,0])
         with self.assertRaises(AssertionError):
-            reqs.default_calculate_required_lengths([1,1],[-1])
+            reqs.default_calculate_required_lengths(sizes=[1,1],intersections=[-1])
         with self.assertRaises(AssertionError):
-            reqs.default_calculate_required_lengths([1,1],[0.5])
+            reqs.default_calculate_required_lengths(sizes=[1,1],intersections=[0.5])
         with self.assertRaises(AssertionError):
-            reqs.default_calculate_required_lengths([1,0.5],[1])
+            reqs.default_calculate_required_lengths(sizes=[1,0.5],intersections=[1])
             
     def test_default_check_reqs(self):
         net1 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
@@ -265,98 +265,98 @@ class TestSampling(unittest.TestCase):
         net8.add_node(2,layer='Y')
         resultlist = []
         with self.assertRaises(AssertionError):
-            dumb.dumbEnumeration(net2,[],[],resultlist)
+            esu.enumerateSubgraphs(net2,resultlist,sizes=[],intersections=[])
         with self.assertRaises(AssertionError):
-            dumb.dumbEnumeration(net2,[2,1],[1,1],resultlist)
+            esu.enumerateSubgraphs(net2,resultlist,sizes=[2,1],intersections=[1,1])
         with self.assertRaises(AssertionError):
-            dumb.dumbEnumeration(net2,[2,1],[],resultlist)
+            esu.enumerateSubgraphs(net2,resultlist,sizes=[2,1],intersections=[])
         with self.assertRaises(AssertionError):
-            dumb.dumbEnumeration(net2,[2,1,1],[1],resultlist)
+            esu.enumerateSubgraphs(net2,resultlist,sizes=[2,1,1],intersections=[1])
         with self.assertRaises(AssertionError):
-            dumb.dumbEnumeration(net2,[],[1],resultlist)
+            esu.enumerateSubgraphs(net2,resultlist,sizes=[],intersections=[1])
         resultlist = []
-        esu.enumerateSubgraphs(net1,[1,2],[1],resultlist)
+        esu.enumerateSubgraphs(net1,resultlist,sizes=[1,2],intersections=[1])
         self.assertEqual(resultlist,[])
         resultlist = []
-        dumb.dumbEnumeration(net2,[1],[],resultlist)
+        esu.enumerateSubgraphs(net2,resultlist,sizes=[1],intersections=[])
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1],['X']),([1],['Y']),([2],['X'])])
         resultlist = []
-        esu.enumerateSubgraphs(net2,[1,2],[1],resultlist)
+        esu.enumerateSubgraphs(net2,resultlist,sizes=[1,2],intersections=[1])
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2],['X','Y'])])
         resultlist = []
-        esu.enumerateSubgraphs(net2,[2,1],[1],resultlist)
+        esu.enumerateSubgraphs(net2,resultlist,sizes=[2,1],intersections=[1])
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2],['X','Y'])])
         resultlist = []
-        esu.enumerateSubgraphs(net3,[1,1],[1],resultlist)
+        esu.enumerateSubgraphs(net3,resultlist,sizes=[1,1],intersections=[1])
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1],['X','Y']),([1],['Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net3,[2,1],[1],resultlist)
+        esu.enumerateSubgraphs(net3,resultlist,sizes=[2,1],intersections=[1])
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2],['Y','Z']),([1,3],['X','Y'])])
         resultlist = []
-        esu.enumerateSubgraphs(net3,[2,2],[1],resultlist)
+        esu.enumerateSubgraphs(net3,resultlist,sizes=[2,2],intersections=[1])
         self.assertEqual(resultlist,[])
         resultlist = []
-        esu.enumerateSubgraphs(net3,[2,1,1],[1,0,0,0],resultlist)
+        esu.enumerateSubgraphs(net3,resultlist,sizes=[2,1,1],intersections=[1,0,0,0])
         self.assertEqual(resultlist,[])
         resultlist = []
-        esu.enumerateSubgraphs(net3,[2,1,2],[1,1,1,1],resultlist)
+        esu.enumerateSubgraphs(net3,resultlist,sizes=[2,1,2],intersections=[1,1,1,1])
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2,3],['X','Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net4,[1,2],[1],resultlist)
+        esu.enumerateSubgraphs(net4,resultlist,sizes=[1,2],intersections=[1])
         self.assertEqual(resultlist,[])
         resultlist = []
-        esu.enumerateSubgraphs(net4,[2,2],[2],resultlist)
+        esu.enumerateSubgraphs(net4,resultlist,sizes=[2,2],intersections=[2])
         self.assertEqual(resultlist,[])
         resultlist =  []
-        esu.enumerateSubgraphs(net5,[2,2,2],[2,2,2,2],resultlist)
+        esu.enumerateSubgraphs(net5,resultlist,sizes=[2,2,2],intersections=[2,2,2,2])
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([0,1],['X','Y','Z'])])
         resultlist =  []
-        esu.enumerateSubgraphs(net5,[2,2],[2],resultlist)
+        esu.enumerateSubgraphs(net5,resultlist,sizes=[2,2],intersections=[2])
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([0, 1], ['X', 'Y']), ([0, 1], ['X', 'Z']), ([0, 1], ['Y', 'Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net6,[2,2,2],[2,2,2,2],resultlist)
+        esu.enumerateSubgraphs(net6,resultlist,sizes=[2,2,2],intersections=[2,2,2,2])
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2],['X','Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net7,[2,2,2],[2,2,2,2],resultlist)
+        esu.enumerateSubgraphs(net7,resultlist,sizes=[2,2,2],intersections=[2,2,2,2])
         self.assertEqual(resultlist,[])
         resultlist = []
-        esu.enumerateSubgraphs(net8,[1,2],[1],resultlist)
+        esu.enumerateSubgraphs(net8,resultlist,sizes=[1,2],intersections=[1])
         self.assertEqual(resultlist,[])
         
     def test_esu_exhaustive(self):
