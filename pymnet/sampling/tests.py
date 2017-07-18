@@ -453,7 +453,7 @@ class TestSampling(unittest.TestCase):
         start = time.time()
         for _ in range(iterations):
             resultlist = []
-            esu.enumerateSubgraphs(network,motif[0],motif[1],resultlist,p)
+            esu.enumerateSubgraphs(network,resultlist,p=p,sizes=motif[0],intersections=motif[1])
             for result in resultlist:
                 result[0].sort()
                 result[1].sort()
@@ -467,7 +467,7 @@ class TestSampling(unittest.TestCase):
         print("Iterated in: "+str(time.time()-start)+" s")
         return samplings
         
-    def test_esu_distribution_width(self,network=None,threshold=0.001,iterations=10000,motif=([2,1],[1]),splitlen=200,p=None,all_subgraphs=None):
+    def test_esu_distribution_width(self,network=None,threshold=0.001,iterations=1000,motif=([2,1],[1]),splitlen=100,p=None,all_subgraphs=None):
         """
         A crude test for checking that the width of the sampling distribution corresponds to the 
         width of the binomial distribution from which the samples should originate. Does a repeated
@@ -491,11 +491,11 @@ class TestSampling(unittest.TestCase):
         if network == None:
             network = creators.multilayer_partially_interconnected(creators.random_nodelists(100,30,10,seed=1),0.05,seed=1)       
         if p == None:
-            req_nodelist_len,req_layerlist_len = reqs.default_calculate_required_lengths(motif[0],motif[1])
+            req_nodelist_len,req_layerlist_len = reqs.default_calculate_required_lengths(sizes=motif[0],intersections=motif[1])
             p = [0.5] * (req_nodelist_len-1 + req_layerlist_len-1 + 1)
         if all_subgraphs == None:
             all_subgraphs = []
-            esu.enumerateSubgraphs(network,motif[0],motif[1],all_subgraphs)
+            esu.enumerateSubgraphs(network,all_subgraphs,sizes=motif[0],intersections=motif[1])
         data = self._statistical_sample(network,iterations,motif,p,all_subgraphs)
         outlier_count = 0
         for motif in data:
@@ -530,7 +530,7 @@ def makesuite(exhaustive=False,insane=False,performance=False,distribution_width
     return suite
 
 if __name__ == '__main__':
-    unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(makesuite(exhaustive=False,insane=False,performance=True,distribution_width=False))
+    unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(makesuite(exhaustive=False,insane=False,performance=False,distribution_width=True))
     
     
     
