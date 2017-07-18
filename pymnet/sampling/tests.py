@@ -498,8 +498,8 @@ class TestSampling(unittest.TestCase):
             esu.enumerateSubgraphs(network,all_subgraphs,sizes=motif[0],intersections=motif[1])
         data = self._statistical_sample(network,iterations,motif,p,all_subgraphs)
         outlier_count = 0
-        for motif in data:
-            splitdata = [sum(split) for split in [data[motif][i:i+splitlen] for i in range(0,len(data[motif]),splitlen)]]
+        for motif_instance in data:
+            splitdata = [sum(split) for split in [data[motif_instance][i:i+splitlen] for i in range(0,len(data[motif_instance]),splitlen)]]
             number_of_groups = len(splitdata)
             expected = float(splitlen*scipy.prod(p))
             d_max = max([abs(datapoint-expected) for datapoint in splitdata])
