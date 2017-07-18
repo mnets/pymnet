@@ -467,7 +467,7 @@ class TestSampling(unittest.TestCase):
         print("Iterated in: "+str(time.time()-start)+" s")
         return samplings
         
-    def test_esu_distribution_width(self,network=None,threshold=0.001,iterations=1000,motif=([2,1],[1]),splitlen=100,p=None,all_subgraphs=None):
+    def test_esu_distribution_width(self,network=None,threshold=0.05,iterations=1000,motif=([2,1],[1]),splitlen=100,p=None,all_subgraphs=None):
         """
         A crude test for checking that the width of the sampling distribution corresponds to the 
         width of the binomial distribution from which the samples should originate. Does a repeated
@@ -487,7 +487,7 @@ class TestSampling(unittest.TestCase):
         indicate that something is wrong with the algorithm.
         PyPy recommended for speed.
         """
-        # TODO: Multiple correction and single value reporting
+        # TODO: Multiple correction and single value reporting, report also number of tests (motif instances)
         if network == None:
             network = creators.multilayer_partially_interconnected(creators.random_nodelists(100,30,10,seed=1),0.05,seed=1)       
         if p == None:
@@ -498,19 +498,20 @@ class TestSampling(unittest.TestCase):
             esu.enumerateSubgraphs(network,all_subgraphs,sizes=motif[0],intersections=motif[1])
         data = self._statistical_sample(network,iterations,motif,p,all_subgraphs)
         outlier_count = 0
+        motif_count = len(data)
         for motif_instance in data:
             splitdata = [sum(split) for split in [data[motif_instance][i:i+splitlen] for i in range(0,len(data[motif_instance]),splitlen)]]
             number_of_groups = len(splitdata)
             expected = float(splitlen*scipy.prod(p))
             d_max = max([abs(datapoint-expected) for datapoint in splitdata])
-            if 1-abs(scipy.stats.binom.cdf(expected+d_max-1,splitlen,scipy.prod(p)) - scipy.stats.binom.cdf(expected-d_max,splitlen,scipy.prod(p)))**number_of_groups < threshold:
+            if 1-abs(scipy.stats.binom.cdf(expected+d_max-1,splitlen,scipy.prod(p)) - scipy.stats.binom.cdf(expected-d_max,splitlen,scipy.prod(p)))**number_of_groups < threshold/float(motif_count):
                 outlier_count += 1
         if outlier_count == 0:
-            print('No outliers detected at threshold Pr < '+str(threshold)+', '+str(len(splitdata))+' samples of '+str(splitlen)+' runs each.')
+            print('No outliers detected at threshold FWER <= '+str(threshold)+', Bonferroni correction used ('+str(motif_count)+' tests, '+str(len(splitdata))+' samples of '+str(splitlen)+' runs each).')
         elif outlier_count == 1:
-            print('1 possible outlier at threshold Pr < '+str(threshold)+', '+str(len(splitdata))+' samples of '+str(splitlen)+' runs each.')
+            print('1 possible outlier at threshold FWER <= '+str(threshold)+', Bonferroni correction used ('+str(motif_count)+' tests, '+str(len(splitdata))+' samples of '+str(splitlen)+' runs each).')
         else:
-            print(str(outlier_count)+' possible outliers at threshold Pr < '+str(threshold)+', '+str(len(splitdata))+' samples of '+str(splitlen)+' runs each.')
+            print(str(outlier_count)+' possible outliers at threshold FWER <= '+str(threshold)+', Bonferroni correction used ('+str(motif_count)+' tests, '+str(len(splitdata))+' samples of '+str(splitlen)+' runs each).')
         
 def makesuite(exhaustive=False,insane=False,performance=False,distribution_width=False):
     suite = unittest.TestSuite()
@@ -530,7 +531,7 @@ def makesuite(exhaustive=False,insane=False,performance=False,distribution_width
     return suite
 
 if __name__ == '__main__':
-    unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(makesuite(exhaustive=False,insane=False,performance=False,distribution_width=False))
+    unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(makesuite(exhaustive=False,insane=False,performance=False,distribution_width=True))
     
     
     
