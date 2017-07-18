@@ -79,35 +79,35 @@ class TestSampling(unittest.TestCase):
         net7['X','Z']['X','Y'] = 1
         net7['Y','Z']['Z','Z'] = 1
         net7['X','Y']['Z','Y'] = 1
-        self.assertFalse(reqs.default_check_reqs(net1,[1],['X'],[1],[]))
-        self.assertFalse(reqs.default_check_reqs(net1,[1],['X','Y'],[1,1],[1]))
-        self.assertTrue(reqs.default_check_reqs(net2,[1],['X'],[1],[]))
-        self.assertTrue(reqs.default_check_reqs(net2,[1,2],['X','Y'],[1,2],[1]))
-        self.assertFalse(reqs.default_check_reqs(net2,[1,2],['X','Z'],[1,2],[1]))
+        self.assertFalse(reqs.default_check_reqs(net1,[1],['X'],sizes=[1],intersections=[]))
+        self.assertFalse(reqs.default_check_reqs(net1,[1],['X','Y'],sizes=[1,1],intersections=[1]))
+        self.assertTrue(reqs.default_check_reqs(net2,[1],['X'],sizes=[1],intersections=[]))
+        self.assertTrue(reqs.default_check_reqs(net2,[1,2],['X','Y'],sizes=[1,2],intersections=[1]))
+        self.assertFalse(reqs.default_check_reqs(net2,[1,2],['X','Z'],sizes=[1,2],intersections=[1]))
         with self.assertRaises(AssertionError):
-            reqs.default_check_reqs(net2,[1,2],['X','Y'],[1,2],[1,1])
+            reqs.default_check_reqs(net2,[1,2],['X','Y'],sizes=[1,2],intersections=[1,1])
         with self.assertRaises(AssertionError):
-            reqs.default_check_reqs(net2,[1,2],['X'],[1,2],[1])
+            reqs.default_check_reqs(net2,[1,2],['X'],sizes=[1,2],intersections=[1])
         with self.assertRaises(AssertionError):
-            reqs.default_check_reqs(net2,[1],['X','Y'],[1,2],[1])
+            reqs.default_check_reqs(net2,[1],['X','Y'],sizes=[1,2],intersections=[1])
         with self.assertRaises(AssertionError):
-            reqs.default_check_reqs(net2,[1,2],['X','Y'],[1,2],[1.5])
-        self.assertTrue(reqs.default_check_reqs(net3,[1,3],['X','Y'],[1,2],[1]))
-        self.assertTrue(reqs.default_check_reqs(net3,[2,1],['Y','Z'],[2,1],[1]))
-        self.assertTrue(reqs.default_check_reqs(net3,[1,2,3],['Y','Z','X'],[2,2,1],[1,1,1,1]))
-        self.assertFalse(reqs.default_check_reqs(net3,[1,2,3],['X','Z'],[2,2],[1]))
+            reqs.default_check_reqs(net2,[1,2],['X','Y'],sizes=[1,2],intersections=[1.5])
+        self.assertTrue(reqs.default_check_reqs(net3,[1,3],['X','Y'],sizes=[1,2],intersections=[1]))
+        self.assertTrue(reqs.default_check_reqs(net3,[2,1],['Y','Z'],sizes=[2,1],intersections=[1]))
+        self.assertTrue(reqs.default_check_reqs(net3,[1,2,3],['Y','Z','X'],sizes=[2,2,1],intersections=[1,1,1,1]))
+        self.assertFalse(reqs.default_check_reqs(net3,[1,2,3],['X','Z'],sizes=[2,2],intersections=[1]))
         with self.assertRaises(AssertionError):
-            reqs.default_check_reqs(net3,[1,2,3],['X','Y'],[1,2],[1])
-        self.assertFalse(reqs.default_check_reqs(net4,[1,2],['X','Y','Z'],[2,2,2],[2,2,2,2]))
-        self.assertTrue(reqs.default_check_reqs(net5,[1,2],['X','Z','Y'],[2,2,2],[2,2,2,2]))
+            reqs.default_check_reqs(net3,[1,2,3],['X','Y'],sizes=[1,2],intersections=[1])
+        self.assertFalse(reqs.default_check_reqs(net4,[1,2],['X','Y','Z'],sizes=[2,2,2],intersections=[2,2,2,2]))
+        self.assertTrue(reqs.default_check_reqs(net5,[1,2],['X','Z','Y'],sizes=[2,2,2],intersections=[2,2,2,2]))
         with self.assertRaises(AssertionError):
-            reqs.default_check_reqs(net5,[1,2],['X','Z','Y','Y'],[2,2,2],[2,2,2,2])
-        self.assertTrue(reqs.default_check_reqs(net6,[1,0],['Y','Z','X'],[2,2,2],[2,2,2,2]))
-        self.assertTrue(reqs.default_check_reqs(net6,[1,0],['Z','X'],[2,2],[2]))
-        self.assertFalse(reqs.default_check_reqs(net6,[1,0],['Y','Z','X'],[2,1,2],[1,2,1,1]))
-        self.assertTrue(reqs.default_check_reqs(net7,['X','Y'],['Z','Y','X'],[1,2,1],[1,1,1,1]))
-        self.assertTrue(reqs.default_check_reqs(net7,['X','Y'],['X','Z'],[1,2],[1]))
-        self.assertFalse(reqs.default_check_reqs(net7,['X','Z'],['X','Z'],[2,2],[2]))
+            reqs.default_check_reqs(net5,[1,2],['X','Z','Y','Y'],sizes=[2,2,2],intersections=[2,2,2,2])
+        self.assertTrue(reqs.default_check_reqs(net6,[1,0],['Y','Z','X'],sizes=[2,2,2],intersections=[2,2,2,2]))
+        self.assertTrue(reqs.default_check_reqs(net6,[1,0],['Z','X'],sizes=[2,2],intersections=[2]))
+        self.assertFalse(reqs.default_check_reqs(net6,[1,0],['Y','Z','X'],sizes=[2,1,2],intersections=[1,2,1,1]))
+        self.assertTrue(reqs.default_check_reqs(net7,['X','Y'],['Z','Y','X'],sizes=[1,2,1],intersections=[1,1,1,1]))
+        self.assertTrue(reqs.default_check_reqs(net7,['X','Y'],['X','Z'],sizes=[1,2],intersections=[1]))
+        self.assertFalse(reqs.default_check_reqs(net7,['X','Z'],['X','Z'],sizes=[2,2],intersections=[2]))
     
     def test_dumb_enumeration(self):
         net1 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
