@@ -6,7 +6,7 @@
 import itertools
 from reqs import default_check_reqs, default_calculate_required_lengths
 
-def dumbEnumeration(network,resultlist,**kwargs):
+def dumbEnumeration(network,resultlist,lengthFunction=default_calculate_required_lengths,checkFunction=default_check_reqs,**kwargs):
     u"""Enumerates all induced subgraphs of the form [nodelist][layerlist] by
     going through all possible [nodelist][layerlist] combinations and checking
     whether they fulfill the requirements. This is a dumb algorithm and is not
@@ -26,10 +26,10 @@ def dumbEnumeration(network,resultlist,**kwargs):
     resultlist : list
         Where found induced subgraphs are appended as tuples (nodelist, layerlist).
     """
-    req_nodelist_len,req_layerlist_len = default_calculate_required_lengths(**kwargs)
+    req_nodelist_len,req_layerlist_len = lengthFunction(**kwargs)
     kwargs['req_nodelist_len'] = req_nodelist_len
     kwargs['req_layerlist_len'] = req_layerlist_len
     for nodelist in list(itertools.combinations(list(network.iter_nodes()),req_nodelist_len)):
         for layerlist in list(itertools.combinations(list(network.iter_layers()),req_layerlist_len)):
-                if default_check_reqs(network,nodelist,layerlist,**kwargs):
+                if checkFunction(network,nodelist,layerlist,**kwargs):
                     resultlist.append((list(nodelist),list(layerlist)))
