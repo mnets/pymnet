@@ -487,7 +487,6 @@ class TestSampling(unittest.TestCase):
         indicate that something is wrong with the algorithm.
         PyPy recommended for speed.
         """
-        # TODO: Multiple correction and single value reporting, report also number of tests (motif instances)
         if network == None:
             network = creators.multilayer_partially_interconnected(creators.random_nodelists(100,30,10,seed=1),0.05,seed=1)       
         if p == None:
