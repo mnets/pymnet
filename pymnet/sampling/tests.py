@@ -362,7 +362,7 @@ class TestSampling(unittest.TestCase):
     def test_esu_exhaustive(self):
         reqlist = [([1,1],[0]),([1,2],[0]),([1,2],[1]),([2,3],[1]),([2,1,1],[1,0,0,0])]
         for requirement in reqlist:
-            for _ in range(1):
+            for _ in range(30):
                 network = creators.multilayer_partially_interconnected(creators.random_nodelists(30,10,5),0.05)
                 resultlist_dumb = []
                 resultlist_esu = []
@@ -385,7 +385,7 @@ class TestSampling(unittest.TestCase):
         reqlist = reqlist + [([2,1,1],[0,0,0,0]),([2,1,1],[1,0,0,0]),([2,1,1],[1,1,1,1])]
         reqlist = reqlist + [([2,2,1],[0,0,0,0]),([2,2,1],[1,0,0,0]),([2,2,1],[2,0,0,0]),([2,2,1],[1,1,0,0]),([2,2,1],[1,0,1,0]),([2,2,1],[1,1,1,1]),([2,2,1],[2,0,0,0]),([2,2,1],[2,1,1,1])]
         for requirement in reqlist:
-            for _ in range(1):
+            for _ in range(100):
                 network = creators.multilayer_partially_interconnected(creators.random_nodelists(30,10,5),0.05)
                 resultlist_dumb = []
                 resultlist_esu = []
@@ -438,7 +438,7 @@ class TestSampling(unittest.TestCase):
         for edge in edgelist:
             network[edge[0],edge[1],edge[2],edge[3]] = 1
         start = time.time()
-        for _ in range(1):
+        for _ in range(10):
             for requirement in reqlist:
                 resultlist_esu = []
                 esu.enumerateSubgraphs(network,resultlist_esu,sizes=requirement[0],intersections=requirement[1])
@@ -467,7 +467,7 @@ class TestSampling(unittest.TestCase):
         print("Iterated in: "+str(time.time()-start)+" s")
         return samplings
         
-    def test_esu_distribution_width(self,network=None,threshold=0.05,iterations=1000,motif=([2,1],[1]),splitlen=100,p=None,all_subgraphs=None):
+    def test_esu_distribution_width(self,network=None,threshold=0.05,iterations=10000,motif=([2,1],[1]),splitlen=200,p=None,all_subgraphs=None):
         """
         A crude test for checking that the width of the sampling distribution corresponds to the 
         width of the binomial distribution from which the samples should originate. Does a repeated
@@ -530,7 +530,7 @@ def makesuite(exhaustive=False,insane=False,performance=False,distribution_width
     return suite
 
 if __name__ == '__main__':
-    unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(makesuite(exhaustive=False,insane=False,performance=False,distribution_width=True))
+    unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(makesuite(exhaustive=True,insane=True,performance=True,distribution_width=True))
     
     
     
