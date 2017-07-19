@@ -108,6 +108,24 @@ class TestSampling(unittest.TestCase):
         self.assertTrue(reqs.default_check_reqs(net7,['X','Y'],['Z','Y','X'],sizes=[1,2,1],intersections=[1,1,1,1]))
         self.assertTrue(reqs.default_check_reqs(net7,['X','Y'],['X','Z'],sizes=[1,2],intersections=[1]))
         self.assertFalse(reqs.default_check_reqs(net7,['X','Z'],['X','Z'],sizes=[2,2],intersections=[2]))
+        
+    def test_relaxed_calculate_required_lengths(self):
+        self.assertEqual((reqs.relaxed_calculate_required_lengths(req_nodelist_len=1,req_layerlist_len=1)),(1,1))
+        self.assertEqual((reqs.relaxed_calculate_required_lengths(req_nodelist_len=500,req_layerlist_len=49)),(500,49))
+        self.assertEqual((reqs.relaxed_calculate_required_lengths(req_nodelist_len=2,req_layerlist_len=7)),(2,7))
+        with self.assertRaises(AssertionError):
+            reqs.relaxed_calculate_required_lengths(req_nodelist_len=0,req_layerlist_len=1)
+            reqs.relaxed_calculate_required_lengths(req_nodelist_len=1,req_layerlist_len=0)
+            reqs.relaxed_calculate_required_lengths(req_nodelist_len=1.5,req_layerlist_len=1)
+            reqs.relaxed_calculate_required_lengths(req_nodelist_len=1,req_layerlist_len=1.5)
+            reqs.relaxed_calculate_required_lengths(req_nodelist_len=-1,req_layerlist_len=1)
+            reqs.relaxed_calculate_required_lengths(req_nodelist_len=1,req_layerlist_len=-1)
+        with self.assertRaises(TypeError):
+            reqs.relaxed_calculate_required_lengths(req_nodelist_len=1)
+            reqs.relaxed_calculate_required_lengths(req_layerlist_len=1)
+            reqs.relaxed_calculate_required_lengths(asdf=1,qwerty=2)
+            reqs.relaxed_calculate_required_lengths(req_nodelist_len=1,qwerty=1)
+            reqs.relaxed_calculate_required_lengths(asdf=1,req_layerlist_len=1)
     
     def test_dumb_enumeration(self):
         net1 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
@@ -517,6 +535,7 @@ def makesuite(exhaustive=False,insane=False,performance=False,distribution_width
     suite.addTest(TestSampling("test_multilayer_partially_interconnected"))
     suite.addTest(TestSampling("test_default_required_lengths"))
     suite.addTest(TestSampling("test_default_check_reqs"))
+    suite.addTest(TestSampling("test_relaxed_calculate_required_lengths"))
     suite.addTest(TestSampling("test_dumb_enumeration"))
     suite.addTest(TestSampling("test_esu_concise"))
     if exhaustive:
@@ -530,7 +549,7 @@ def makesuite(exhaustive=False,insane=False,performance=False,distribution_width
     return suite
 
 if __name__ == '__main__':
-    unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(makesuite(exhaustive=True,insane=True,performance=True,distribution_width=True))
+    unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(makesuite(exhaustive=False,insane=False,performance=False,distribution_width=False))
     
     
     

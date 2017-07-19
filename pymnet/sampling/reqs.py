@@ -189,6 +189,8 @@ def relaxed_calculate_required_lengths(**kwargs):
         req_layerlist_len = kwargs['req_layerlist_len']
     except KeyError:
         raise TypeError, "Please specify req_nodelist_len and req_layerlist_len"
+    assert isinstance(req_nodelist_len,int) and isinstance(req_layerlist_len,int), "Non-integer req_nodelist_len or req_layerlist_len"
+    assert req_nodelist_len > 0 and req_layerlist_len > 0, "Nonpositive req_nodelist_len or req_layerlist_len"
     return req_nodelist_len,req_layerlist_len
         
         
