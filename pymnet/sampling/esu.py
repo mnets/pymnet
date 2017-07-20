@@ -4,7 +4,7 @@
 """
 
 import pymnet
-from reqs import default_check_reqs,default_calculate_required_lengths
+from reqs import default_check_reqs,default_calculate_required_lengths,relaxed_check_reqs
 import random
 import itertools
 
@@ -56,7 +56,7 @@ def enumerateSubgraphs(network,resultlist,sizes=None,intersections=None,nnodes=N
         req_layerlist_len = nlayers
         assert isinstance(req_nodelist_len,int) and isinstance(req_layerlist_len,int), "Non-integer nnodes or nlayers"
         assert req_nodelist_len > 0 and req_layerlist_len > 0, "Nonpositive nnodes or nlayers"
-        check_function = lambda x,y,z: True
+        check_function = relaxed_check_reqs
     if custom_check_function != None:
         assert nnodes != None and nlayers != None, "Please provide nnodes and nlayers when using a custom check function"
         check_function = custom_check_function
