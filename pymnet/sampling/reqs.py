@@ -219,8 +219,6 @@ def check_only_common_intersection(network,nodelist,layerlist,common_intersectio
         for nodelayer in nls:
             d.setdefault(nodelayer[1],set())
             d[nodelayer[1]].add(nodelayer[0])
-        if len(d) != len(layerlist):
-            return False
         if not all(len(d[key]) >= common_intersection for key in d):
             return False
         common_intersection_set = set(nodelist)
