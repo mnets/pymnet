@@ -162,7 +162,32 @@ def default_calculate_required_lengths(sizes,intersections):
     
     
     
-
+def relaxed_check_reqs(network,nodelist,layerlist):
+    induced_graph = pymnet.subnet(network,nodelist,layerlist)
+    try:
+        graph_is_connected = nx.is_connected(pymnet.transforms.get_underlying_graph(induced_graph))
+    except nx.networkx.NetworkXPointlessConcept:
+        return False
+    if graph_is_connected:
+        nls = set(induced_graph.iter_node_layers())
+        for layer in layerlist:
+            no_nodelayers = True
+            for node in nodelist:
+                if (node,layer) in nls:
+                    no_nodelayers = False
+                    break
+            if no_nodelayers:
+                return False
+        for node in nodelist:
+            no_nodelayers = True
+            for layer in layerlist:
+                if (node,layer) in nls:
+                    no_nodelayers = False
+                    break
+            if no_nodelayers:
+                return False
+        return True
+    return False
         
         
         

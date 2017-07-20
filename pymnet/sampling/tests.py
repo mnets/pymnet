@@ -359,6 +359,63 @@ class TestSampling(unittest.TestCase):
         esu.enumerateSubgraphs(net8,resultlist,sizes=[1,2],intersections=[1])
         self.assertEqual(resultlist,[])
         
+    def test_esu_relaxed_concise(self):
+        net1 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net2 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net2[1,'X'][1,'Y'] = 1
+        net2[1,'X'][2,'X'] = 1
+        net3 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net3[1,'X'][1,'Y'] = 1
+        net3[1,'X'][3,'X'] = 1
+        net3[1,'Y'][1,'Z'] = 1
+        net3[1,'Y'][2,'Z'] = 1
+        net4 = net.MultilayerNetwork(aspects=1,fullyInterconnected=True)
+        net4[1,'X'][1,'Y'] = 1
+        net4[1,'X'][2,'X'] = 1
+        net5 = models.full_multilayer(2,['X','Y','Z'])
+        net6 = net.MultilayerNetwork(aspects=1,fullyInterconnected=True)
+        net6[1,'X'][2,'X'] = 1
+        net6[1,'X'][1,'Y'] = 1
+        net6[1,'Y'][1,'Z'] = 1
+        net6[1,'Z'][2,'Z'] = 1
+        net6[2,'Z'][2,'Y'] = 1
+        net7 = net.MultilayerNetwork(aspects=1,fullyInterconnected=True)
+        net7[1,'X'][2,'X'] = 1
+        net7[1,'X'][1,'Y'] = 1
+        net7[1,'Y'][1,'Z'] = 1
+        net7[1,'Z'][2,'Z'] = 1
+        net8 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net8[1,'X'][1,'Y'] = 1
+        net8[1,'X'][2,'X'] = 1
+        net8.add_node(2,layer='Y')
+        resultlist = []
+        esu.enumerateSubgraphs(net1,resultlist,nnodes=1,nlayers=1)
+        self.assertEqual(resultlist,[])
+        resultlist = []
+        esu.enumerateSubgraphs(net2,resultlist,nnodes=1,nlayers=1)
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1],['X']),([1],['Y']),([2],['X'])])
+        resultlist = []
+        esu.enumerateSubgraphs(net2,resultlist,nnodes=2,nlayers=1)
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        self.assertEqual(resultlist,[([1,2],['X'])])
+        resultlist = []
+        esu.enumerateSubgraphs(net2,resultlist,nnodes=2,nlayers=2)
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        self.assertEqual(resultlist,[([1,2,],['X','Y'])])
+        resultlist = []
+        esu.enumerateSubgraphs(net3,resultlist,nnodes=2,nlayers=2)
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        print resultlist
+        self.assertEqual(resultlist,[([1,2],['Y','Z']),([1,3],['X','Y'])])
+        
     def test_esu_exhaustive(self):
         reqlist = [([1,1],[0]),([1,2],[0]),([1,2],[1]),([2,3],[1]),([2,1,1],[1,0,0,0])]
         for requirement in reqlist:
@@ -519,6 +576,7 @@ def makesuite(exhaustive=False,insane=False,performance=False,distribution_width
     suite.addTest(TestSampling("test_default_check_reqs"))
     suite.addTest(TestSampling("test_dumb_enumeration"))
     suite.addTest(TestSampling("test_esu_concise"))
+    suite.addTest(TestSampling("test_esu_relaxed_concise"))
     if exhaustive:
         suite.addTest(TestSampling("test_esu_exhaustive"))
     if insane:
