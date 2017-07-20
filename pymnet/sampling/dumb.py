@@ -4,9 +4,7 @@
 """
 
 import itertools
-from reqs import default_check_reqs, default_calculate_required_lengths
-import pymnet
-from pymnet import nx
+from reqs import default_check_reqs,default_calculate_required_lengths,relaxed_check_reqs
 
 def dumbEnumeration(network,resultlist,sizes=None,intersections=None,nnodes=None,nlayers=None,intersection_type="strict",custom_check_function=None):
     u"""Enumerates all induced subgraphs of the form [nodelist][layerlist] by
@@ -40,7 +38,7 @@ def dumbEnumeration(network,resultlist,sizes=None,intersections=None,nnodes=None
         req_layerlist_len = nlayers
         assert isinstance(req_nodelist_len,int) and isinstance(req_layerlist_len,int), "Non-integer nnodes or nlayers"
         assert req_nodelist_len > 0 and req_layerlist_len > 0, "Nonpositive nnodes or nlayers"
-        check_function = dumb_enumeration_relaxed_check_function
+        check_function = relaxed_check_reqs
     if custom_check_function != None:
         assert nnodes != None and nlayers != None, "Please provide nnodes and nlayers when using a custom check function"
         check_function = custom_check_function
@@ -50,14 +48,3 @@ def dumbEnumeration(network,resultlist,sizes=None,intersections=None,nnodes=None
         for layerlist in list(itertools.combinations(list(network.iter_layers()),req_layerlist_len)):
                 if check_function(network,nodelist,layerlist):
                     resultlist.append((list(nodelist),list(layerlist)))
-                    
-def dumb_enumeration_relaxed_check_function(network,nodelist,layerlist):
-    induced_graph = pymnet.subnet(network,nodelist,layerlist)
-    try:
-        graph_is_connected = nx.is_connected(pymnet.transforms.get_underlying_graph(induced_graph))
-    except nx.networkx.NetworkXPointlessConcept:
-        return False
-    if graph_is_connected:
-        return True
-    else:
-        return False
