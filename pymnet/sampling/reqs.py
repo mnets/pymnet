@@ -6,7 +6,7 @@ import pymnet
 from pymnet import nx
 import itertools
 
-def default_check_reqs(network,nodelist,layerlist,**kwargs):
+def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=None,nlayers=None):
 #def default_check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,req_layerlist_len)=(None,None)):
     u"""Checks whether an induced subgraph of the form [nodelist][layerlist] fulfills
     the given requirements.
@@ -77,19 +77,16 @@ def default_check_reqs(network,nodelist,layerlist,**kwargs):
     #        req_nodelist_len,req_layerlist_len = default_calculate_required_lengths(sizes,intersections)
     #    except AssertionError:
     #        raise
-    try:
-        sizes = kwargs['sizes']
-        intersections = kwargs['intersections']
-    except KeyError:
-        raise TypeError, "Please specify sizes and intersections"
-    if 'req_nodelist_len' not in kwargs or 'req_layerlist_len' not in kwargs:
+
+    if nnodes != None and nlayers != None:
+        req_nodelist_len = nnodes
+        req_layerlist_len = nlayers
+    else:
         try:
-            req_nodelist_len,req_layerlist_len = default_calculate_required_lengths(**kwargs)
+            req_nodelist_len,req_layerlist_len = default_calculate_required_lengths(sizes,intersections)
         except AssertionError:
             raise
-    else:
-        req_nodelist_len = kwargs['req_nodelist_len']
-        req_layerlist_len = kwargs['req_layerlist_len']
+
     assert len(nodelist) == req_nodelist_len, "Wrong number of nodes"
     assert len(layerlist) == req_layerlist_len, "Wrong number of layers"
     assert all(i>=1 for i in sizes), "Inappropriate sizes"
@@ -140,16 +137,11 @@ def default_check_reqs(network,nodelist,layerlist,**kwargs):
     
     
     
-def default_calculate_required_lengths(**kwargs):
+def default_calculate_required_lengths(sizes,intersections):
     """Returns the required nodelist length and required layerlist length of
     and induced subgraph of the form [nodelist][layerlist] determined by the
     given requirements.
     """
-    try:
-        sizes = kwargs['sizes']
-        intersections = kwargs['intersections']
-    except KeyError:
-        raise TypeError, "Please specify sizes and intersections"
     assert sizes != [], "Empty layer size list"
     assert len(intersections) == 2**len(sizes)-len(sizes)-1, "Wrong number of intersections"
     assert all(i>=1 and isinstance(i,int) for i in sizes) and all(j>=0 and isinstance(j,int) for j in intersections), "Inappropriate intersections or sizes"
