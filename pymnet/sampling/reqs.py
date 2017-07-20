@@ -162,28 +162,7 @@ def default_calculate_required_lengths(sizes,intersections):
     
     
     
-def relaxed_check_reqs(network,nodelist,layerlist,**kwargs):
-    try:
-        req_nodelist_len = kwargs['req_nodelist_len']
-        req_layerlist_len = kwargs['req_layerlist_len']
-    except KeyError:
-        raise TypeError, "Please specify req_nodelist_len and req_layerlist_len"
-    if len(nodelist) == req_nodelist_len and len(layerlist) == req_layerlist_len:
-        return True
-    else:
-        return False
-    
-    
-    
-def relaxed_calculate_required_lengths(**kwargs):
-    try:
-        req_nodelist_len = kwargs['req_nodelist_len']
-        req_layerlist_len = kwargs['req_layerlist_len']
-    except KeyError:
-        raise TypeError, "Please specify req_nodelist_len and req_layerlist_len"
-    assert isinstance(req_nodelist_len,int) and isinstance(req_layerlist_len,int), "Non-integer req_nodelist_len or req_layerlist_len"
-    assert req_nodelist_len > 0 and req_layerlist_len > 0, "Nonpositive req_nodelist_len or req_layerlist_len"
-    return req_nodelist_len,req_layerlist_len
+
         
         
         
