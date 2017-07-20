@@ -639,8 +639,41 @@ class TestSampling(unittest.TestCase):
         net8[1,'X'][2,'X'] = 1
         net8.add_node(2,layer='Y')
         resultlist = []
-        esu.enumerateSubgraphs(net2,resultlist,sizes=[1,1],intersections=1,nnodes=1,nlayers=2)
-        
+        esu.enumerateSubgraphs(net1,resultlist,sizes=[1,1],intersections=1,nnodes=1)
+        self.assertEqual(resultlist,[])
+        esu.enumerateSubgraphs(net2,resultlist,sizes=[1,1],intersections=1,nnodes=1)
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        self.assertEqual(resultlist,[([1],['X','Y'])])
+        resultlist = []
+        esu.enumerateSubgraphs(net2,resultlist,sizes=[1,2],intersections=1,nnodes=2)
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        self.assertEqual(resultlist,[([1,2],['X','Y'])])
+        resultlist = []
+        esu.enumerateSubgraphs(net3,resultlist,sizes=[2,1],intersections=1,nnodes=2)
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,2],['Y','Z']),([1,3],['X','Y'])])
+        resultlist = []
+        esu.enumerateSubgraphs(net3,resultlist,sizes=[2,1,1],intersections=1,nnodes=2)
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,2],['X','Y','Z']),([1,3],['X','Y','Z'])])
+        resultlist = []
+        esu.enumerateSubgraphs(net3,resultlist,sizes=[2,2,1],intersections=1,nnodes=3)
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,2,3],['X','Y','Z'])])
+        # TODO: continue making this test
         
     def test_esu_exhaustive(self):
         reqlist = [([1,1],[0]),([1,2],[0]),([1,2],[1]),([2,3],[1]),([2,1,1],[1,0,0,0])]
