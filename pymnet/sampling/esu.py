@@ -4,7 +4,7 @@
 """
 
 import pymnet
-from reqs import default_check_reqs,default_calculate_required_lengths,relaxed_check_reqs
+from reqs import default_check_reqs,default_calculate_required_lengths,relaxed_check_reqs,check_only_common_intersection
 import random
 import itertools
 
@@ -47,10 +47,17 @@ def enumerateSubgraphs(network,resultlist,sizes=None,intersections=None,nnodes=N
     check_function = None
     assert (sizes != None and intersections != None) or (nnodes != None and nlayers != None), "Please provide either sizes and intersections or nnodes and nlayers"
     if sizes != None: # Work in progress
-        assert intersections != None and nnodes == None and nlayers == None, "Please provide intersections when providing sizes, and not nnodes or nlayers"
-        req_nodelist_len, req_layerlist_len = default_calculate_required_lengths(sizes,intersections)
-        check_function = lambda x,y,z: default_check_reqs(x,y,z,sizes,intersections,req_nodelist_len,req_layerlist_len)
-    if nnodes != None:
+        if isinstance(intersections,list):
+            assert intersections != None and nnodes == None and nlayers == None, "Please provide intersections when providing sizes, and not nnodes or nlayers"
+            req_nodelist_len, req_layerlist_len = default_calculate_required_lengths(sizes,intersections)
+            check_function = lambda x,y,z: default_check_reqs(x,y,z,sizes,intersections,req_nodelist_len,req_layerlist_len)
+        elif isinstance(intersections,int):
+            assert intersections >= 0, "Please provide nonnegative common intersection size"
+            assert nnodes != None and nlayers != None, "When requiring only common intersection size, please provide nnodes and nlayers"
+            req_nodelist_len = nnodes
+            req_layerlist_len = nlayers
+            check_function = lambda x,y,z: check_only_common_intersection(x,y,z,intersections)
+    if nnodes != None and not isinstance(intersections,int):
         assert nlayers != None and sizes == None and intersections == None, "Please provide nlayers when providing nnodes, and not sizes or intersections"
         req_nodelist_len = nnodes
         req_layerlist_len = nlayers

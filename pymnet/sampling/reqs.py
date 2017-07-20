@@ -191,6 +191,45 @@ def relaxed_check_reqs(network,nodelist,layerlist):
         
         
         
+def check_only_common_intersection(network,nodelist,layerlist,common_intersection):
+    induced_graph = pymnet.subnet(network,nodelist,layerlist)
+    try:
+        graph_is_connected = nx.is_connected(pymnet.transforms.get_underlying_graph(induced_graph))
+    except nx.networkx.NetworkXPointlessConcept:
+        return False
+    if graph_is_connected:
+        nls = set(induced_graph.iter_node_layers())
+        for layer in layerlist:
+            no_nodelayers = True
+            for node in nodelist:
+                if (node,layer) in nls:
+                    no_nodelayers = False
+                    break
+            if no_nodelayers:
+                return False
+        for node in nodelist:
+            no_nodelayers = True
+            for layer in layerlist:
+                if (node,layer) in nls:
+                    no_nodelayers = False
+                    break
+            if no_nodelayers:
+                return False
+        d = dict() # keys: layers, values: nodes
+        for nodelayer in nls:
+            d.setdefault(nodelayer[1],set())
+            d[nodelayer[1]].add(nodelayer[0])
+        if len(d) != len(layerlist):
+            return False
+        if not all(len(d[key]) >= common_intersection for key in d):
+            return False
+        common_intersection_set = set(nodelist)
+        for layer in d:
+            common_intersection_set = common_intersection_set & d[layer]
+        if len(common_intersection_set) == common_intersection:
+            return True
+    return False
+        
         
         
         
