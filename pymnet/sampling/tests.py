@@ -1196,7 +1196,102 @@ class TestSampling(unittest.TestCase):
         else:
             print(str(outlier_count)+' possible outliers at threshold FWER <= '+str(threshold)+', Bonferroni correction used ('+str(motif_count)+' tests, '+str(len(splitdata))+' samples of '+str(splitlen)+' runs each).')
         
-def makesuite(exhaustive=False,insane=False,performance=False,distribution_width=False):
+    def test_different_parameter_sets(self):
+        for _ in range(1000):
+            network = creators.multilayer_partially_interconnected(creators.random_nodelists(100,30,10,seed=1),0.05,seed=1)
+            resultlist_dumb = []
+            resultlist_esu = []
+            dumb.dumbEnumeration(network,resultlist_dumb,sizes=[2,1],intersections=[1])
+            esu.enumerateSubgraphs(network,resultlist_esu,sizes=[2,1],intersections=[1])
+            for result in resultlist_dumb:
+                result[0].sort()
+                result[1].sort()
+            resultlist_dumb.sort()
+            for result in resultlist_esu:
+                result[0].sort()
+                result[1].sort()
+            resultlist_esu.sort()
+            self.assertEqual(resultlist_dumb,resultlist_esu)
+            resultlist_dumb = []
+            resultlist_esu = []
+            dumb.dumbEnumeration(network,resultlist_dumb,sizes=[3,2,2],intersections=1,nnodes=4)
+            esu.enumerateSubgraphs(network,resultlist_esu,sizes=[3,2,2],intersections=1,nnodes=4)
+            for result in resultlist_dumb:
+                result[0].sort()
+                result[1].sort()
+            resultlist_dumb.sort()
+            for result in resultlist_esu:
+                result[0].sort()
+                result[1].sort()
+            resultlist_esu.sort()
+            self.assertEqual(resultlist_dumb,resultlist_esu)
+            resultlist_dumb = []
+            resultlist_esu = []
+            dumb.dumbEnumeration(network,resultlist_dumb,sizes=[3,2,2],intersections=2,nnodes=4,intersection_type="less_or_equal")
+            esu.enumerateSubgraphs(network,resultlist_esu,sizes=[3,2,2],intersections=2,nnodes=4,intersection_type="less_or_equal")
+            for result in resultlist_dumb:
+                result[0].sort()
+                result[1].sort()
+            resultlist_dumb.sort()
+            for result in resultlist_esu:
+                result[0].sort()
+                result[1].sort()
+            resultlist_esu.sort()
+            self.assertEqual(resultlist_dumb,resultlist_esu)
+            resultlist_dumb = []
+            resultlist_esu = []
+            dumb.dumbEnumeration(network,resultlist_dumb,sizes=[2,2,2],intersections=[2,2,2,2],intersection_type="less_or_equal")
+            esu.enumerateSubgraphs(network,resultlist_esu,sizes=[2,2,2],intersections=[2,2,2,2],intersection_type="less_or_equal")
+            for result in resultlist_dumb:
+                result[0].sort()
+                result[1].sort()
+            resultlist_dumb.sort()
+            for result in resultlist_esu:
+                result[0].sort()
+                result[1].sort()
+            resultlist_esu.sort()
+            self.assertEqual(resultlist_dumb,resultlist_esu)
+            resultlist_dumb = []
+            resultlist_esu = []
+            dumb.dumbEnumeration(network,resultlist_dumb,nnodes=3,nlayers=3)
+            esu.enumerateSubgraphs(network,resultlist_esu,nnodes=3,nlayers=3)
+            for result in resultlist_dumb:
+                result[0].sort()
+                result[1].sort()
+            resultlist_dumb.sort()
+            for result in resultlist_esu:
+                result[0].sort()
+                result[1].sort()
+            resultlist_esu.sort()
+            self.assertEqual(resultlist_dumb,resultlist_esu)
+            resultlist_dumb = []
+            resultlist_esu = []
+            dumb.dumbEnumeration(network,resultlist_dumb,sizes=[2,3,2],intersections=[2,1,None,None])
+            esu.enumerateSubgraphs(network,resultlist_esu,sizes=[2,3,2],intersections=[2,1,None,None])
+            for result in resultlist_dumb:
+                result[0].sort()
+                result[1].sort()
+            resultlist_dumb.sort()
+            for result in resultlist_esu:
+                result[0].sort()
+                result[1].sort()
+            resultlist_esu.sort()
+            self.assertEqual(resultlist_dumb,resultlist_esu)
+            resultlist_dumb = []
+            resultlist_esu = []
+            dumb.dumbEnumeration(network,resultlist_dumb,sizes=[2,3,2],intersections=[2,1,None,None],intersection_type="less_or_equal")
+            esu.enumerateSubgraphs(network,resultlist_esu,sizes=[2,3,2],intersections=[2,1,None,None],intersection_type="less_or_equal")
+            for result in resultlist_dumb:
+                result[0].sort()
+                result[1].sort()
+            resultlist_dumb.sort()
+            for result in resultlist_esu:
+                result[0].sort()
+                result[1].sort()
+            resultlist_esu.sort()
+            self.assertEqual(resultlist_dumb,resultlist_esu)
+
+def makesuite(exhaustive=False,insane=False,performance=False,distribution_width=False,parameter_sets=False):
     suite = unittest.TestSuite()
     suite.addTest(TestSampling("test_multilayer_partially_interconnected"))
     suite.addTest(TestSampling("test_default_required_lengths"))
@@ -1219,10 +1314,12 @@ def makesuite(exhaustive=False,insane=False,performance=False,distribution_width
         suite.addTest(TestSampling("test_esu_performance"))
     if distribution_width:
         suite.addTest(TestSampling("test_esu_distribution_width"))
+    if parameter_sets:
+        suite.addTest(TestSampling("test_different_parameter_sets"))
     return suite
 
 if __name__ == '__main__':
-    unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(makesuite(exhaustive=False,insane=False,performance=False,distribution_width=False))
+    unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(makesuite(exhaustive=False,insane=False,performance=False,distribution_width=False,parameter_sets=True))
     
     
     
