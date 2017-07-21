@@ -397,6 +397,112 @@ class TestSampling(unittest.TestCase):
         dumb.dumbEnumeration(net8,resultlist,sizes=[1,2],intersections=[1])
         self.assertEqual(resultlist,[])
         
+        resultlist = []
+        dumb.dumbEnumeration(net2,resultlist,sizes=[1,2],intersections=[2],nnodes=2,intersection_type="less_or_equal")
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,2],['X','Y'])])
+        resultlist = []
+        dumb.dumbEnumeration(net3,resultlist,sizes=[1,2,2],intersections=[2,2,2,2],nnodes=3,intersection_type="less_or_equal")
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,2,3],['X','Y','Z'])])
+        resultlist = []
+        dumb.dumbEnumeration(net3,resultlist,sizes=[1,2],intersections=[2],nnodes=2,intersection_type="less_or_equal")
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,2],['Y','Z']),([1,3],['X','Y'])])
+        resultlist = []
+        dumb.dumbEnumeration(net3,resultlist,sizes=[1,2,1],intersections=[2,1,1,1],nnodes=2,intersection_type="less_or_equal")
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,2],['X','Y','Z']),([1,3],['X','Y','Z'])])
+        resultlist = []
+        dumb.dumbEnumeration(net4,resultlist,sizes=[2,2],intersections=[2],nnodes=2,intersection_type="less_or_equal")
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[])
+        resultlist = []
+        dumb.dumbEnumeration(net5,resultlist,sizes=[2,2,2],intersections=[2,2,2,1],nnodes=2,intersection_type="less_or_equal")
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[])
+        resultlist = []
+        dumb.dumbEnumeration(net5,resultlist,sizes=[2,2,2],intersections=[2,2,2,3],nnodes=2,intersection_type="less_or_equal")
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([0,1],['X','Y','Z'])])
+        resultlist = []
+        dumb.dumbEnumeration(net6,resultlist,sizes=[2,2,2],intersections=[2,2,2,3],nnodes=2,intersection_type="less_or_equal")
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,2],['X','Y','Z'])])
+        resultlist = []
+        dumb.dumbEnumeration(net7,resultlist,sizes=[2,2,2],intersections=[2,2,2,3],nnodes=2,intersection_type="less_or_equal")
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[])
+        resultlist = []
+        dumb.dumbEnumeration(net3,resultlist,sizes=[1,2,2],intersections=[None,None,None,2],nnodes=3,intersection_type="less_or_equal")
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,2,3],['X','Y','Z'])])
+        resultlist = []
+        dumb.dumbEnumeration(net3,resultlist,sizes=[1,1,1],intersections=[None,None,None,None],nnodes=1,intersection_type="less_or_equal")
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1],['X','Y','Z'])])
+        resultlist = []
+        dumb.dumbEnumeration(net3,resultlist,sizes=[1,2,2],intersections=[3,None,None,None],nnodes=3,intersection_type="less_or_equal")
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,2,3],['X','Y','Z'])])
+        resultlist = []
+        dumb.dumbEnumeration(net3,resultlist,sizes=[1,2,2],intersections=[None,None,None,0],nnodes=3,intersection_type="less_or_equal")
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[])
+        resultlist = []
+        dumb.dumbEnumeration(net3,resultlist,sizes=[1,2,1],intersections=[None,2,2,2],nnodes=2,intersection_type="less_or_equal")
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,2],['X','Y','Z']),([1,3],['X','Y','Z'])])
+        resultlist = []
+        dumb.dumbEnumeration(net6,resultlist,sizes=[2,2,2],intersections=[None,2,None,None],nnodes=2,intersection_type="less_or_equal")
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,2],['X','Y','Z'])])
+        
     def test_esu_concise(self):
         net1 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
         net2 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
@@ -878,6 +984,171 @@ class TestSampling(unittest.TestCase):
         esu.enumerateSubgraphs(net8,resultlist,nnodes=2,nlayers=2)
         self.assertEqual(resultlist,[])
         
+    def test_dumb_enumeration_only_common_intersection_concise(self):
+        net1 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net2 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net2[1,'X'][1,'Y'] = 1
+        net2[1,'X'][2,'X'] = 1
+        net3 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net3[1,'X'][1,'Y'] = 1
+        net3[1,'X'][3,'X'] = 1
+        net3[1,'Y'][1,'Z'] = 1
+        net3[1,'Y'][2,'Z'] = 1
+        net4 = net.MultilayerNetwork(aspects=1,fullyInterconnected=True)
+        net4[1,'X'][1,'Y'] = 1
+        net4[1,'X'][2,'X'] = 1
+        net5 = models.full_multilayer(2,['X','Y','Z'])
+        net6 = net.MultilayerNetwork(aspects=1,fullyInterconnected=True)
+        net6[1,'X'][2,'X'] = 1
+        net6[1,'X'][1,'Y'] = 1
+        net6[1,'Y'][1,'Z'] = 1
+        net6[1,'Z'][2,'Z'] = 1
+        net6[2,'Z'][2,'Y'] = 1
+        net7 = net.MultilayerNetwork(aspects=1,fullyInterconnected=True)
+        net7[1,'X'][2,'X'] = 1
+        net7[1,'X'][1,'Y'] = 1
+        net7[1,'Y'][1,'Z'] = 1
+        net7[1,'Z'][2,'Z'] = 1
+        net8 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net8[1,'X'][1,'Y'] = 1
+        net8[1,'X'][2,'X'] = 1
+        net8.add_node(2,layer='Y')
+        net9 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net9[1,'X'][1,'Y'] = 1
+        net9[1,'X'][2,'X'] = 1
+        net9.add_node(2,layer='Y')
+        net9[1,'X'][3,'X'] = 1
+        net9[1,'Y'][1,'Z'] = 1
+        net9[1,'X'][4,'X'] = 1
+        net9[1,'Z'][4,'Z'] = 1
+        net9[4,'Z'][5,'Z'] = 1
+        net9[1,'Z'][4,'Y'] = 1
+        resultlist = []
+        dumb.dumbEnumeration(net1,resultlist,sizes=[1,1],intersections=1,nnodes=1)
+        self.assertEqual(resultlist,[])
+        dumb.dumbEnumeration(net2,resultlist,sizes=[1,1],intersections=1,nnodes=1)
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        self.assertEqual(resultlist,[([1],['X','Y'])])
+        resultlist = []
+        dumb.dumbEnumeration(net2,resultlist,sizes=[1,2],intersections=1,nnodes=2)
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        self.assertEqual(resultlist,[([1,2],['X','Y'])])
+        resultlist = []
+        dumb.dumbEnumeration(net3,resultlist,sizes=[2,1],intersections=1,nnodes=2)
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,2],['Y','Z']),([1,3],['X','Y'])])
+        resultlist = []
+        dumb.dumbEnumeration(net3,resultlist,sizes=[2,1,1],intersections=1,nnodes=2)
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,2],['X','Y','Z']),([1,3],['X','Y','Z'])])
+        resultlist = []
+        dumb.dumbEnumeration(net3,resultlist,sizes=[2,2,1],intersections=1,nnodes=3)
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,2,3],['X','Y','Z'])])
+        resultlist = []
+        dumb.dumbEnumeration(net4,resultlist,sizes=[2,2],intersections=1,nnodes=2)
+        self.assertEqual(resultlist,[])
+        resultlist = []
+        dumb.dumbEnumeration(net5,resultlist,sizes=[2,2,2],intersections=2,nnodes=2)
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([0,1],['X','Y','Z'])])
+        resultlist = []
+        dumb.dumbEnumeration(net5,resultlist,sizes=[1,1,1],intersections=1,nnodes=1)
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([0],['X','Y','Z']),([1],['X','Y','Z'])])
+        resultlist = []
+        dumb.dumbEnumeration(net5,resultlist,sizes=[1,2,1],intersections=1,nnodes=2)
+        self.assertEqual(resultlist,[])
+        resultlist = []
+        dumb.dumbEnumeration(net6,resultlist,sizes=[2,2,2],intersections=2,nnodes=2)
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,2],['X','Y','Z'])])
+        resultlist = []
+        dumb.dumbEnumeration(net7,resultlist,sizes=[2,2,2],intersections=2,nnodes=2)
+        self.assertEqual(resultlist,[])
+        resultlist = []
+        dumb.dumbEnumeration(net8,resultlist,sizes=[2,2],intersections=2,nnodes=2)
+        self.assertEqual(resultlist,[])
+        resultlist = []
+        dumb.dumbEnumeration(net9,resultlist,sizes=[3,3,2],intersections=2,nnodes=4)
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,3,4,5],['X','Y','Z'])])
+        
+        resultlist = []
+        dumb.dumbEnumeration(net3,resultlist,sizes=[2,1,2],intersections=2,nnodes=3,intersection_type="less_or_equal")
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,2,3],['X','Y','Z'])])
+        resultlist = []
+        dumb.dumbEnumeration(net3,resultlist,sizes=[2,1,2],intersections=2,nnodes=0,intersection_type="less_or_equal")
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[])
+        resultlist = []
+        dumb.dumbEnumeration(net3,resultlist,sizes=[2,1],intersections=2,nnodes=2,intersection_type="less_or_equal")
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,2],['Y','Z']),([1,3],['X','Y'])])
+        resultlist = []
+        dumb.dumbEnumeration(net3,resultlist,sizes=[2,1],intersections=2,nnodes=2,intersection_type="less_or_equal")
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,2],['Y','Z']),([1,3],['X','Y'])])
+        resultlist = []
+        dumb.dumbEnumeration(net9,resultlist,sizes=[2,2],intersections=3,nnodes=2,intersection_type="less_or_equal")
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,4],['Y','Z'])])
+        resultlist = []
+        dumb.dumbEnumeration(net9,resultlist,sizes=[2,2,3],intersections=3,nnodes=3,intersection_type="less_or_equal")
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,3,4],['X','Y','Z']),([1,4,5],['X','Y','Z'])])
+        resultlist = []
+        dumb.dumbEnumeration(net9,resultlist,sizes=[2,2,3],intersections=1,nnodes=3,intersection_type="less_or_equal")
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[])
+        
     def test_esu_only_common_intersection_concise(self):
         net1 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
         net2 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
@@ -1305,6 +1576,7 @@ def makesuite(exhaustive=False,insane=False,performance=False,distribution_width
     suite.addTest(TestSampling("test_esu_concise"))
     suite.addTest(TestSampling("test_dumb_enumeration_relaxed"))
     suite.addTest(TestSampling("test_esu_relaxed_concise"))
+    suite.addTest(TestSampling("test_dumb_enumeration_only_common_intersection_concise"))
     suite.addTest(TestSampling("test_esu_only_common_intersection_concise"))
     if exhaustive:
         suite.addTest(TestSampling("test_esu_exhaustive"))
@@ -1319,7 +1591,7 @@ def makesuite(exhaustive=False,insane=False,performance=False,distribution_width
     return suite
 
 if __name__ == '__main__':
-    unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(makesuite(exhaustive=False,insane=False,performance=False,distribution_width=False,parameter_sets=True))
+    unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(makesuite(exhaustive=False,insane=False,performance=False,distribution_width=False,parameter_sets=False))
     
     
     
