@@ -46,28 +46,30 @@ def enumerateSubgraphs(network,resultlist,sizes=None,intersections=None,nnodes=N
 
     check_function = None
     assert (sizes != None and intersections != None) or (nnodes != None and nlayers != None), "Please provide either sizes and intersections or nnodes and nlayers"
-    if sizes != None: # Work in progress
+    if custom_check_function != None:
+        assert nnodes != None and nlayers != None, "Please provide nnodes and nlayers when using a custom check function"
+        req_nodelist_len = nnodes
+        req_layerlist_len = nlayers
+        check_function = custom_check_function
+    if sizes != None and intersections != None and check_function == None:
         if isinstance(intersections,list):
-            assert intersections != None and nnodes == None and nlayers == None, "Please provide intersections when providing sizes, and not nnodes or nlayers"
+            assert nnodes == None and nlayers == None, "You cannot provide both sizes and intersections and nnodes and nlayers, if intersections is a list"
             req_nodelist_len, req_layerlist_len = default_calculate_required_lengths(sizes,intersections)
-            check_function = lambda x,y,z: default_check_reqs(x,y,z,sizes,intersections,req_nodelist_len,req_layerlist_len)
+            check_function = lambda x,y,z: default_check_reqs(x,y,z,sizes,intersections,req_nodelist_len,req_layerlist_len,intersection_type)
         elif isinstance(intersections,int):
             assert intersections >= 0, "Please provide nonnegative common intersection size"
-            assert nnodes != None, "When requiring only common intersection size, please provide nnodes"
+            assert nnodes != None and nlayers == None, "When requiring only common intersection size, please provide nnodes (and not nlayers)"
             req_nodelist_len = nnodes
             req_layerlist_len = len(sizes)
             check_function = lambda x,y,z: check_only_common_intersection(x,y,z,intersections)
-    if nnodes != None and not isinstance(intersections,int):
-        assert nlayers != None and sizes == None and intersections == None, "Please provide nlayers when providing nnodes, and not sizes or intersections"
+    if nnodes != None and nlayers != None and check_function == None:
+        assert sizes == None and intersections == None, "You cannot provide both sizes and intersections and nnodes and nlayers"
         req_nodelist_len = nnodes
         req_layerlist_len = nlayers
         assert isinstance(req_nodelist_len,int) and isinstance(req_layerlist_len,int), "Non-integer nnodes or nlayers"
         assert req_nodelist_len > 0 and req_layerlist_len > 0, "Nonpositive nnodes or nlayers"
         check_function = relaxed_check_reqs
-    if custom_check_function != None:
-        assert nnodes != None and nlayers != None, "Please provide nnodes and nlayers when using a custom check function"
-        check_function = custom_check_function
-    assert check_function != None, "Please specify a method of subgraph validity checking"
+    assert check_function != None, "Please specify a valid combination of parameters to determine method of subgraph validity checking"
         
     if p == None:
         p = [1] * (req_nodelist_len-1 + req_layerlist_len-1 + 1)
