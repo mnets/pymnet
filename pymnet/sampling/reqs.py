@@ -6,7 +6,7 @@ import pymnet
 from pymnet import nx
 import itertools
 
-def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=None,nlayers=None):
+def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=None,nlayers=None,intersection_type="strict"):
 #def default_check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,req_layerlist_len)=(None,None)):
     u"""Checks whether an induced subgraph of the form [nodelist][layerlist] fulfills
     the given requirements.
@@ -78,14 +78,30 @@ def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=Non
     #    except AssertionError:
     #        raise
 
-    if nnodes != None and nlayers != None:
-        req_nodelist_len = nnodes
-        req_layerlist_len = nlayers
+    if intersection_type == "strict":
+        if nnodes != None and nlayers != None:
+            req_nodelist_len = nnodes
+            req_layerlist_len = nlayers
+        else:
+            try:
+                req_nodelist_len,req_layerlist_len = default_calculate_required_lengths(sizes,intersections)
+            except AssertionError:
+                raise
+            
+    elif intersection_type == "less_or_equal":
+        assert nnodes != None, "Please specify nnodes when using less_or_equal intersection type"
+        if nlayers != None:
+            req_nodelist_len = nnodes
+            req_layerlist_len = nlayers
+        else:
+            req_nodelist_len = nnodes
+            try:
+                _,req_layerlist_len = default_calculate_required_lengths(sizes,intersections)
+            except AssertionError:
+                raise
+        
     else:
-        try:
-            req_nodelist_len,req_layerlist_len = default_calculate_required_lengths(sizes,intersections)
-        except AssertionError:
-            raise
+        raise TypeError, "Please specify either strict or less_or_equal as intersection type"
 
     assert len(nodelist) == req_nodelist_len, "Wrong number of nodes"
     assert len(layerlist) == req_layerlist_len, "Wrong number of layers"
@@ -126,9 +142,14 @@ def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=Non
                             rolelist.append(permutation.index(layer))
                             nodeset = nodeset & set(d[layer])
                         rolelist.sort()
-                        if len(nodeset) != d_isect[tuple(rolelist)]:
-                            goto_next_perm = True
-                            break
+                        if intersection_type == "strict":
+                            if len(nodeset) != d_isect[tuple(rolelist)]:
+                                goto_next_perm = True
+                                break
+                        elif intersection_type == "less_or_equal":
+                            if len(nodeset) > d_isect[tuple(rolelist)]:
+                                goto_next_perm = True
+                                break
                 if goto_next_perm:
                     break
             if not goto_next_perm:

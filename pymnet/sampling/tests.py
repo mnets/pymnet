@@ -108,6 +108,50 @@ class TestSampling(unittest.TestCase):
         self.assertTrue(reqs.default_check_reqs(net7,['X','Y'],['Z','Y','X'],sizes=[1,2,1],intersections=[1,1,1,1]))
         self.assertTrue(reqs.default_check_reqs(net7,['X','Y'],['X','Z'],sizes=[1,2],intersections=[1]))
         self.assertFalse(reqs.default_check_reqs(net7,['X','Z'],['X','Z'],sizes=[2,2],intersections=[2]))
+        
+    def test_default_check_reqs_less_or_equal(self):
+        net1 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net2 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net2[1,'X'][1,'Y'] = 1
+        net2[1,'X'][2,'X'] = 1
+        net3 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net3[1,'X'][1,'Y'] = 1
+        net3[1,'X'][3,'X'] = 1
+        net3[1,'Y'][1,'Z'] = 1
+        net3[1,'Y'][2,'Z'] = 1
+        net4 = net.MultilayerNetwork(aspects=1,fullyInterconnected=True)
+        net4[1,'X'][2,'X'] = 1
+        net4[1,'X'][1,'Y'] = 1
+        net4[1,'Y'][1,'Z'] = 1
+        net4[1,'Z'][2,'Z'] = 1
+        net5 = net.MultilayerNetwork(aspects=1,fullyInterconnected=True)
+        net5[1,'X'][2,'X'] = 1
+        net5[1,'X'][1,'Y'] = 1
+        net5[1,'Y'][1,'Z'] = 1
+        net5[1,'Z'][2,'Z'] = 1
+        net5[2,'Z'][2,'Y'] = 1
+        net6 = models.full_multilayer(2,['X','Y','Z'])
+        net7 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net7['X','X']['Z','X'] = 1
+        net7['X','X']['X','Z'] = 1
+        net7['X','Z']['Y','Z'] = 1
+        net7['X','Z']['X','Y'] = 1
+        net7['Y','Z']['Z','Z'] = 1
+        net7['X','Y']['Z','Y'] = 1
+        with self.assertRaises(AssertionError):
+            reqs.default_check_reqs(net2,[1,2],['Y','X'],sizes=[1,2],intersections=[3],intersection_type="less_or_equal")
+            reqs.default_check_reqs(net2,[1,2],['Y','X'],sizes=[1,2],intersections=[],nnodes=2,intersection_type="less_or_equal")
+        self.assertFalse(reqs.default_check_reqs(net1,[1],['X'],sizes=[1],intersections=[],nnodes=1,nlayers=1,intersection_type="less_or_equal"))
+        self.assertTrue(reqs.default_check_reqs(net2,[1,2],['Y','X'],sizes=[1,2],intersections=[3],nnodes=2,intersection_type="less_or_equal"))
+        self.assertTrue(reqs.default_check_reqs(net3,[1,2,3],['X','Y','Z'],sizes=[2,2,1],intersections=[3,2,3,2],nnodes=3,intersection_type="less_or_equal"))
+        self.assertTrue(reqs.default_check_reqs(net3,[1,2,3],['X','Y','Z'],sizes=[2,2,1],intersections=[1,1,1,1],nnodes=3,intersection_type="less_or_equal"))
+        self.assertFalse(reqs.default_check_reqs(net3,[1,2,3],['X','Y','Z'],sizes=[2,2,1],intersections=[0,1,1,0],nnodes=3,intersection_type="less_or_equal"))
+        self.assertFalse(reqs.default_check_reqs(net4,[1,2],['X','Y','Z'],sizes=[2,2,2],intersections=[3,3,3,3],nnodes=2,intersection_type="less_or_equal"))
+        self.assertTrue(reqs.default_check_reqs(net5,[1,2],['X','Y','Z'],sizes=[2,2,2],intersections=[3,3,3,3],nnodes=2,intersection_type="less_or_equal"))
+        self.assertFalse(reqs.default_check_reqs(net5,[1,2],['X','Y','Z'],sizes=[2,2,2],intersections=[2,2,2,1],nnodes=2,intersection_type="less_or_equal"))
+        self.assertTrue(reqs.default_check_reqs(net6,[1,0],['X','Z','Y'],sizes=[2,2,2],intersections=[3,2,3,3],nnodes=2,intersection_type="less_or_equal"))
+        self.assertTrue(reqs.default_check_reqs(net7,['X','Y'],['X','Y','Z'],sizes=[2,1,1],intersections=[3,3,3,3],nnodes=2,intersection_type="less_or_equal"))
+        self.assertFalse(reqs.default_check_reqs(net7,['X','Y'],['X','Y','Z'],sizes=[2,2,1],intersections=[3,3,3,3],nnodes=2,intersection_type="less_or_equal"))
     
     def test_dumb_enumeration(self):
         net1 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
@@ -882,6 +926,7 @@ def makesuite(exhaustive=False,insane=False,performance=False,distribution_width
     suite.addTest(TestSampling("test_multilayer_partially_interconnected"))
     suite.addTest(TestSampling("test_default_required_lengths"))
     suite.addTest(TestSampling("test_default_check_reqs"))
+    suite.addTest(TestSampling("test_default_check_reqs_less_or_equal"))
     suite.addTest(TestSampling("test_dumb_enumeration"))
     suite.addTest(TestSampling("test_esu_concise"))
     suite.addTest(TestSampling("test_dumb_enumeration_relaxed"))
