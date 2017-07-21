@@ -63,7 +63,7 @@ def enumerateSubgraphs(network,resultlist,sizes=None,intersections=None,nnodes=N
             req_layerlist_len = len(sizes)
             check_function = lambda x,y,z: check_only_common_intersection(x,y,z,intersections,intersection_type)
     if nnodes != None and nlayers != None and check_function == None:
-        assert sizes == None and intersections == None, "You cannot provide both sizes and intersections and nnodes and nlayers"
+        assert sizes == None and intersections == None, "You cannot provide both sizes and intersections and nnodes and nlayers, if intersections is a list"
         req_nodelist_len = nnodes
         req_layerlist_len = nlayers
         assert isinstance(req_nodelist_len,int) and isinstance(req_layerlist_len,int), "Non-integer nnodes or nlayers"

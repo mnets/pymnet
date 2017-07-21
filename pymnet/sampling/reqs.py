@@ -83,6 +83,8 @@ def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=Non
             req_nodelist_len = nnodes
             req_layerlist_len = nlayers
         else:
+            if None in intersections:
+                raise TypeError, "Please provide nnodes and nlayers when including Nones in intersections"
             try:
                 req_nodelist_len,req_layerlist_len = default_calculate_required_lengths(sizes,intersections)
             except AssertionError:
@@ -94,6 +96,8 @@ def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=Non
             req_nodelist_len = nnodes
             req_layerlist_len = nlayers
         else:
+            if None in intersections:
+                raise TypeError, "Please provide nnodes and nlayers when including Nones in intersections"
             req_nodelist_len = nnodes
             try:
                 _,req_layerlist_len = default_calculate_required_lengths(sizes,intersections)
@@ -143,11 +147,11 @@ def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=Non
                             nodeset = nodeset & set(d[layer])
                         rolelist.sort()
                         if intersection_type == "strict":
-                            if len(nodeset) != d_isect[tuple(rolelist)]:
+                            if d_isect[tuple(rolelist)] != None and len(nodeset) != d_isect[tuple(rolelist)]:
                                 goto_next_perm = True
                                 break
                         elif intersection_type == "less_or_equal":
-                            if len(nodeset) > d_isect[tuple(rolelist)]:
+                            if d_isect[tuple(rolelist)] != None and len(nodeset) > d_isect[tuple(rolelist)]:
                                 goto_next_perm = True
                                 break
                 if goto_next_perm:
