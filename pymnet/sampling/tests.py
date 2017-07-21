@@ -1035,6 +1035,13 @@ class TestSampling(unittest.TestCase):
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,3,4],['X','Y','Z']),([1,4,5],['X','Y','Z'])])
+        resultlist = []
+        esu.enumerateSubgraphs(net9,resultlist,sizes=[2,2,3],intersections=1,nnodes=3,intersection_type="less_or_equal")
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[])
         
     def test_esu_exhaustive(self):
         reqlist = [([1,1],[0]),([1,2],[0]),([1,2],[1]),([2,3],[1]),([2,1,1],[1,0,0,0])]
