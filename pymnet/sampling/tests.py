@@ -992,7 +992,43 @@ class TestSampling(unittest.TestCase):
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,3,4,5],['X','Y','Z'])])
-        # TODO:
+        
+        resultlist = []
+        esu.enumerateSubgraphs(net3,resultlist,sizes=[2,1,2],intersections=2,nnodes=3,intersection_type="less_or_equal")
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,2,3],['X','Y','Z'])])
+        resultlist = []
+        esu.enumerateSubgraphs(net3,resultlist,sizes=[2,1,2],intersections=2,nnodes=0,intersection_type="less_or_equal")
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[])
+        resultlist = []
+        esu.enumerateSubgraphs(net3,resultlist,sizes=[2,1],intersections=2,nnodes=2,intersection_type="less_or_equal")
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,2],['Y','Z']),([1,3],['X','Y'])])
+        resultlist = []
+        esu.enumerateSubgraphs(net3,resultlist,sizes=[2,1],intersections=2,nnodes=2,intersection_type="less_or_equal")
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,2],['Y','Z']),([1,3],['X','Y'])])
+        resultlist = []
+        esu.enumerateSubgraphs(net9,resultlist,sizes=[2,2],intersections=3,nnodes=2,intersection_type="less_or_equal")
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        print resultlist
+        self.assertEqual(resultlist,[([1,4],['Y','Z'])])
         
     def test_esu_exhaustive(self):
         reqlist = [([1,1],[0]),([1,2],[0]),([1,2],[1]),([2,3],[1]),([2,1,1],[1,0,0,0])]

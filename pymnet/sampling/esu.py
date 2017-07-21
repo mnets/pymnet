@@ -71,7 +71,10 @@ def enumerateSubgraphs(network,resultlist,sizes=None,intersections=None,nnodes=N
             assert nnodes != None and nlayers == None, "When requiring only common intersection size, please provide nnodes (and not nlayers)"
             req_nodelist_len = nnodes
             req_layerlist_len = len(sizes)
-            check_function = lambda x,y,z: check_only_common_intersection(x,y,z,intersections,intersection_type)
+            intersections_as_list = [None]*(2**len(sizes)-len(sizes)-1)
+            intersections_as_list[-1] = intersections
+            check_function = lambda x,y,z: default_check_reqs(x,y,z,sizes,intersections_as_list,req_nodelist_len,req_layerlist_len,intersection_type)
+            #check_function = lambda x,y,z: check_only_common_intersection(x,y,z,intersections,intersection_type)
     if nnodes != None and nlayers != None and check_function == None:
         assert sizes == None and intersections == None, "You cannot provide both sizes and intersections and nnodes and nlayers, if intersections is a list"
         req_nodelist_len = nnodes
