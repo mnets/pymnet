@@ -53,8 +53,18 @@ def enumerateSubgraphs(network,resultlist,sizes=None,intersections=None,nnodes=N
         check_function = custom_check_function
     if sizes != None and intersections != None and check_function == None:
         if isinstance(intersections,list):
-            assert nnodes == None and nlayers == None, "You cannot provide both sizes and intersections and nnodes and nlayers, if intersections is a list"
-            req_nodelist_len, req_layerlist_len = default_calculate_required_lengths(sizes,intersections)
+            if None in intersections:
+                assert nnodes != None, "Please provide nnodes if including Nones in intersections"
+                req_nodelist_len = nnodes
+                req_layerlist_len = len(sizes)
+            else:
+                if intersection_type == "strict":
+                    assert nnodes == None and nlayers == None, "You cannot provide both sizes and intersections and nnodes and nlayers, if intersections is a list"
+                    req_nodelist_len, req_layerlist_len = default_calculate_required_lengths(sizes,intersections)
+                elif intersection_type == "less_or_equal":
+                    assert nnodes != None and nlayers == None, "please provide nnodes (and not nlayers) if using less_or_equal intersection type"
+                    req_nodelist_len = nnodes
+                    req_layerlist_len = len(sizes)
             check_function = lambda x,y,z: default_check_reqs(x,y,z,sizes,intersections,req_nodelist_len,req_layerlist_len,intersection_type)
         elif isinstance(intersections,int):
             assert intersections >= 0, "Please provide nonnegative common intersection size"
