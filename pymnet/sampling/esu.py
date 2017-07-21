@@ -4,7 +4,7 @@
 """
 
 import pymnet
-from reqs import default_check_reqs,default_calculate_required_lengths,relaxed_check_reqs,check_only_common_intersection
+from reqs import default_check_reqs,default_calculate_required_lengths,relaxed_check_reqs
 import random
 import itertools
 

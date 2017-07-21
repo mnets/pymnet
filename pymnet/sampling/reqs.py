@@ -216,49 +216,49 @@ def relaxed_check_reqs(network,nodelist,layerlist):
         
         
         
-def check_only_common_intersection(network,nodelist,layerlist,common_intersection,intersection_type="strict"):
-    if not (intersection_type == "strict" or intersection_type == "less_or_equal"):
-        raise TypeError, "Please specify either strict or less_or_equal as intersection type"
-    induced_graph = pymnet.subnet(network,nodelist,layerlist)
-    try:
-        graph_is_connected = nx.is_connected(pymnet.transforms.get_underlying_graph(induced_graph))
-    except nx.networkx.NetworkXPointlessConcept:
-        return False
-    if graph_is_connected:
-        nls = set(induced_graph.iter_node_layers())
-        for layer in layerlist:
-            no_nodelayers = True
-            for node in nodelist:
-                if (node,layer) in nls:
-                    no_nodelayers = False
-                    break
-            if no_nodelayers:
-                return False
-        for node in nodelist:
-            no_nodelayers = True
-            for layer in layerlist:
-                if (node,layer) in nls:
-                    no_nodelayers = False
-                    break
-            if no_nodelayers:
-                return False
-        d = dict() # keys: layers, values: nodes
-        for nodelayer in nls:
-            d.setdefault(nodelayer[1],set())
-            d[nodelayer[1]].add(nodelayer[0])
-        if intersection_type == "strict":
-            if not all(len(d[key]) >= common_intersection for key in d):
-                return False
-        common_intersection_set = set(nodelist)
-        for layer in d:
-            common_intersection_set = common_intersection_set & d[layer]
-        if intersection_type == "strict":
-            if len(common_intersection_set) == common_intersection:
-                return True
-        elif intersection_type == "less_or_equal":
-            if len(common_intersection_set) <= common_intersection:
-                return True
-    return False
+#def check_only_common_intersection(network,nodelist,layerlist,common_intersection,intersection_type="strict"):
+#    if not (intersection_type == "strict" or intersection_type == "less_or_equal"):
+#        raise TypeError, "Please specify either strict or less_or_equal as intersection type"
+#    induced_graph = pymnet.subnet(network,nodelist,layerlist)
+#    try:
+#        graph_is_connected = nx.is_connected(pymnet.transforms.get_underlying_graph(induced_graph))
+#    except nx.networkx.NetworkXPointlessConcept:
+#        return False
+#    if graph_is_connected:
+#        nls = set(induced_graph.iter_node_layers())
+#        for layer in layerlist:
+#            no_nodelayers = True
+#            for node in nodelist:
+#                if (node,layer) in nls:
+#                    no_nodelayers = False
+#                    break
+#            if no_nodelayers:
+#                return False
+#        for node in nodelist:
+#            no_nodelayers = True
+#            for layer in layerlist:
+#                if (node,layer) in nls:
+#                    no_nodelayers = False
+#                    break
+#            if no_nodelayers:
+#                return False
+#        d = dict() # keys: layers, values: nodes
+#        for nodelayer in nls:
+#            d.setdefault(nodelayer[1],set())
+#            d[nodelayer[1]].add(nodelayer[0])
+#        if intersection_type == "strict":
+#            if not all(len(d[key]) >= common_intersection for key in d):
+#                return False
+#        common_intersection_set = set(nodelist)
+#        for layer in d:
+#            common_intersection_set = common_intersection_set & d[layer]
+#        if intersection_type == "strict":
+#            if len(common_intersection_set) == common_intersection:
+#                return True
+#        elif intersection_type == "less_or_equal":
+#            if len(common_intersection_set) <= common_intersection:
+#                return True
+#    return False
         
         
         
