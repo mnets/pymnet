@@ -1627,7 +1627,7 @@ class TestSampling(unittest.TestCase):
         
     def test_different_parameter_sets(self):
         for _ in range(100):
-            network = creators.multilayer_partially_interconnected(creators.random_nodelists(100,30,10,seed=1),0.05,seed=1)
+            network = creators.multilayer_partially_interconnected(creators.random_nodelists(100,30,10),0.05)
             resultlist_dumb = []
             resultlist_esu = []
             dumb.dumbEnumeration(network,resultlist_dumb,sizes=[2,1],intersections=[1])
