@@ -1433,6 +1433,44 @@ class TestSampling(unittest.TestCase):
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2],['Y','Z']),([1,3],['X','Y'])])
+    
+    def test_dumb_custom_check_function(self):
+        def custom_check(network,nodelist,layerlist):
+            if 3 in nodelist:
+                return True
+            else:
+                return False
+        net1 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net1[1,'X'][1,'Y'] = 1
+        net1[1,'X'][3,'X'] = 1
+        net1[1,'Y'][1,'Z'] = 1
+        net1[1,'Y'][2,'Z'] = 1
+        resultlist = []
+        dumb.dumbEnumeration(net1,resultlist,nnodes=2,nlayers=3,custom_check_function=custom_check)
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,3],['X','Y','Z']),([2,3],['X','Y','Z'])])
+    
+    def test_esu_custom_check_function(self):
+        def custom_check(network,nodelist,layerlist):
+            if 3 in nodelist:
+                return True
+            else:
+                return False
+        net1 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net1[1,'X'][1,'Y'] = 1
+        net1[1,'X'][3,'X'] = 1
+        net1[1,'Y'][1,'Z'] = 1
+        net1[1,'Y'][2,'Z'] = 1
+        resultlist = []
+        esu.enumerateSubgraphs(net1,resultlist,nnodes=2,nlayers=3,custom_check_function=custom_check)
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,3],['X','Y','Z'])])
         
     def test_esu_exhaustive(self):
         reqlist = [([1,1],[0]),([1,2],[0]),([1,2],[1]),([2,3],[1]),([2,1,1],[1,0,0,0])]
@@ -1700,6 +1738,8 @@ def makesuite(exhaustive=False,insane=False,performance=False,distribution_width
     suite.addTest(TestSampling("test_esu_only_common_intersection_concise"))
     suite.addTest(TestSampling("test_dumb_callback"))
     suite.addTest(TestSampling("test_esu_callback"))
+    suite.addTest(TestSampling("test_dumb_custom_check_function"))
+    suite.addTest(TestSampling("test_esu_custom_check_function"))
     if exhaustive:
         suite.addTest(TestSampling("test_esu_exhaustive"))
     if insane:
