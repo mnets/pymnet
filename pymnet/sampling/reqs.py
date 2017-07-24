@@ -91,7 +91,7 @@ def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=Non
                 raise
             
     elif intersection_type == "less_or_equal":
-        assert nnodes != None, "Please specify nnodes when using less_or_equal intersection type"
+        assert nnodes != None, "Please provide nnodes when using less_or_equal intersection type"
         if nlayers != None:
             req_nodelist_len = nnodes
             req_layerlist_len = nlayers
