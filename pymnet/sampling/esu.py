@@ -9,7 +9,7 @@ import random
 import itertools
 
 #def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None,seed=None):
-def enumerateSubgraphs(network,resultlist,sizes=None,intersections=None,nnodes=None,nlayers=None,p=None,seed=None,intersection_type="strict",custom_check_function=None):
+def enumerateSubgraphs(network,results,sizes=None,intersections=None,nnodes=None,nlayers=None,p=None,seed=None,intersection_type="strict",custom_check_function=None):
     u"""The multilayer version of the ESU algorithm. Uniformly samples induced subgraphs
     of the form [nodelist][layerlist], which fulfill the given requirements.
     
@@ -120,18 +120,24 @@ def enumerateSubgraphs(network,resultlist,sizes=None,intersections=None,nnodes=N
                         and no_layer_conflicts
                         and layer not in V_extension_layers):
                         V_extension_layers.add(layer)
-            _extendSubgraph(network_copy,[start_node],[start_layer],check_function,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,depth+1,p,resultlist)
+            _extendSubgraph(network_copy,[start_node],[start_layer],check_function,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,depth+1,p,results)
         for neighbor in list(network_copy[v]):
             network_copy[neighbor][v] = 0
 
-def _extendSubgraph(network,nodelist,layerlist,check_function,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,depth,p,resultlist):    
+def _extendSubgraph(network,nodelist,layerlist,check_function,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,depth,p,results):    
     if len(nodelist) > req_nodelist_len or len(layerlist) > req_layerlist_len:
         return
     if len(nodelist) == req_nodelist_len and len(layerlist) == req_layerlist_len:
         if check_function(network,nodelist,layerlist):
         #if checkFunction(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,req_layerlist_len)):
-            resultlist.append((list(nodelist),list(layerlist)))
-            return
+            if isinstance(results,list):
+                results.append((list(nodelist),list(layerlist)))
+                return
+            elif callable(results):
+                results((list(nodelist),list(layerlist)))
+                return
+            else:
+                raise TypeError,"Please provide results container as list or callable"
         else:
             return
     if len(nodelist) == req_nodelist_len:
@@ -219,7 +225,7 @@ def _extendSubgraph(network,nodelist,layerlist,check_function,V_extension_nodes,
                         #    and no_layer_conflicts 
                         #    and layer not in V_extension_layers_prime):
                         #    V_extension_layers_prime.add(layer)
-            _extendSubgraph(network,new_nodelist,new_layerlist,check_function,V_extension_nodes_prime,V_extension_layers_prime,numberings,v,req_nodelist_len,req_layerlist_len,depth+1,p,resultlist)    
+            _extendSubgraph(network,new_nodelist,new_layerlist,check_function,V_extension_nodes_prime,V_extension_layers_prime,numberings,v,req_nodelist_len,req_layerlist_len,depth+1,p,results)    
     return
         
 

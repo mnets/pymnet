@@ -1314,6 +1314,40 @@ class TestSampling(unittest.TestCase):
         resultlist.sort()
         self.assertEqual(resultlist,[])
         
+    def test_dumb_callback(self):
+        def callback_fun((nodelist,layerlist),resultlist):
+            resultlist.append((nodelist,layerlist))
+            return
+        net1 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net1[1,'X'][1,'Y'] = 1
+        net1[1,'X'][3,'X'] = 1
+        net1[1,'Y'][1,'Z'] = 1
+        net1[1,'Y'][2,'Z'] = 1
+        resultlist = []
+        dumb.dumbEnumeration(net1,lambda x: callback_fun(x,resultlist),sizes=[1,2],intersections=[1])
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,2],['Y','Z']),([1,3],['X','Y'])])
+        
+    def test_esu_callback(self):
+        def callback_fun((nodelist,layerlist),resultlist):
+            resultlist.append((nodelist,layerlist))
+            return
+        net1 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net1[1,'X'][1,'Y'] = 1
+        net1[1,'X'][3,'X'] = 1
+        net1[1,'Y'][1,'Z'] = 1
+        net1[1,'Y'][2,'Z'] = 1
+        resultlist = []
+        esu.enumerateSubgraphs(net1,lambda x: callback_fun(x,resultlist),sizes=[1,2],intersections=[1])
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        self.assertEqual(resultlist,[([1,2],['Y','Z']),([1,3],['X','Y'])])
+        
     def test_esu_exhaustive(self):
         reqlist = [([1,1],[0]),([1,2],[0]),([1,2],[1]),([2,3],[1]),([2,1,1],[1,0,0,0])]
         for requirement in reqlist:
@@ -1468,7 +1502,7 @@ class TestSampling(unittest.TestCase):
             print(str(outlier_count)+' possible outliers at threshold FWER <= '+str(threshold)+', Bonferroni correction used ('+str(motif_count)+' tests, '+str(len(splitdata))+' samples of '+str(splitlen)+' runs each).')
         
     def test_different_parameter_sets(self):
-        for _ in range(1000):
+        for _ in range(100):
             network = creators.multilayer_partially_interconnected(creators.random_nodelists(100,30,10,seed=1),0.05,seed=1)
             resultlist_dumb = []
             resultlist_esu = []
@@ -1578,6 +1612,8 @@ def makesuite(exhaustive=False,insane=False,performance=False,distribution_width
     suite.addTest(TestSampling("test_esu_relaxed_concise"))
     suite.addTest(TestSampling("test_dumb_enumeration_only_common_intersection_concise"))
     suite.addTest(TestSampling("test_esu_only_common_intersection_concise"))
+    suite.addTest(TestSampling("test_dumb_callback"))
+    suite.addTest(TestSampling("test_esu_callback"))
     if exhaustive:
         suite.addTest(TestSampling("test_esu_exhaustive"))
     if insane:
