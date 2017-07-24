@@ -8,37 +8,54 @@ import itertools
 
 def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=None,nlayers=None,intersection_type="strict"):
 #def default_check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,req_layerlist_len)=(None,None)):
-    u"""Checks whether an induced subgraph of the form [nodelist][layerlist] fulfills
-    the given requirements.
+    u"""Checks whether a multilayer induced subgraph of the form [nodelist][layerlist] is connected
+    and fulfills the given sizes and intersections requirements. Works on one-aspect multilayer networks.
     
     Parameters
     ----------
     network : MultilayerNetwork
-        The network containing the induced subgraph.
+        A one-aspect multilayer network containing the induced subgraph.
     nodelist : list of node names
         The nodes in the induced subgraph.
     layerlist : list of layer names
         The layers in the induced subgraph.
     sizes : list of ints > 0
         How many nodes should be on each layer of an acceptable induced subgraph.
-    intersections : list of ints >= 0
+        One integer for each layer of an acceptable subgraph.
+    intersections : list of ints >= 0 or Nones
         How many nodes should be shared between sets of layers in an acceptable
-        induced subgraph.
-    (req_nodelist_len, req_layerlist_len) : tuple of ints
-        How long an acceptable nodelist (union of all nodes in the induced subgraph)
-        and an acceptable layerlist should be. If you cannot guarantee the correctness
-        of these numbers, do not use this parameter. Mainly intended for use inside
-        scripts.
+        induced subgraph. If an entry in the list is None, any number of shared
+        nodes is accepted. The order of the intersections is taken to follow the
+        order of layers in sizes, with two-layer intersections being listed first,
+        then three-layer intersections, etc. For more details, see section
+        "Constructing the requirements".
+    nnodes : int
+        How many nodes an acceptable subgraph should have. Required if there are
+        Nones in intersections. If you cannot guarantee the correctness of this
+        number, do not use this parameter. Can be used in scripts to bypass
+        calculating the correct number of nodes based on the sizes and intersections
+        parameters.
+    nlayers : int
+        How many layers an acceptable subgraph should have. Required if there are
+        Nones in intersections. If you cannot guarantee the correctness of this
+        number, do not use this parameter. Can be used in scripts to bypass
+        calculating the correct number of layers based on the sizes and intersections
+        parameters.
+    intersection_type : string, "strict" or "less_or_equal"
+        If intersection_type is "strict", all intersections must be exactly equal
+        to entries in the intersections parameter. If intersection_type is
+        "less_or_equal", an intersection is allowed to be less than or equal to the corresponding
+        entry in the intersections parameter. Usage is case-sensitive.
         
     Returns
     -------
-    True if the requirements are fulfilled, False otherwise.
+    True if the requirements are fulfilled and the subgraph is connected, False otherwise.
     
     Constructing the requirements
     -----------------------------
     The sizes list contains the desired number of nodes on each layer in any order.
     This means that the layers in the actual found sub-network can be in any order.
-    However, the order of sizes determines the order of entries in intersections.
+    However, the order of entries in sizes determines the order of entries in intersections.
     The intersections list is constructed as follows:
         First, think of each size in the size list as having a specific role:
         the first entry in sizes corresponds to layer role A, the second to role
@@ -48,7 +65,7 @@ def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=Non
         
         Then, construct the intersections list so that first all size-two intersections
         are listed, then size-three intersections, and so on, until the intersection
-        between all layers is reached. The order of listing size n-intersections is
+        between all layers is reached. The order of listing size-n intersections is
         such that the closer the role is to the beginning of the size list, the later
         it is iterated over. More specifically, this is the order that itertools.combinations()
         uses to iterate. Since we signify the roles by letters A, B, C and so
@@ -65,12 +82,35 @@ def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=Non
     When checking whether the size and intersection requirements are fulfilled,
     each possible set of role assginments to the actual layers is checked. If even
     one is suitable, the function returns True.
+    
     Continuing from the example above, if the actual induced subgraph has layers [X,Y,Z,W],
-    all possible role assignment combinations are checked (X takes role from {A,B,C,D}, Y 
+    all possible role assignment combinations are checked (X takes role from the set {A,B,C,D}, Y 
     takes role from {A,B,C,D} minus {role(X)}, Z takes role from {A,B,C,D} minus {role(X),role(Y)}, W
-    takes role from {A,B,C,D} minus {role(X),role(Y),role(Z)}). This also means that
-    the orderings of the [nodelist] and [layerlist] of the induced subgraph to be
-    tested do not matter.
+    takes role from {A,B,C,D} minus {role(X),role(Y),role(Z)}). The role assignment is iterated
+    until an acceptable role assignment is found -- at which point the function returns True --
+    or until all possible role assignments have been considered without success -- at which
+    point the function returns False. 
+    
+    This also means that the orderings of the [nodelist] and [layerlist] of the induced subgraph
+    to be tested do not matter (i.e calling this function with nodelist = [1,2] and layerlist = ['X','Y']
+    gives the exact same return value as nodelist = [2,1] and layerlist = ['Y','X'], etc.).
+    
+    Example
+    -------
+    Suppose we have the multilayer network N:
+    
+    (1,'X')----(2,'X')    (3,'X')
+                  |
+                  |
+               (2,'Y')
+             
+    where (a,b) are nodelayer tuples with a = node identity and b = layer identity.
+    Now, default_check_reqs(N,[1,2],['X','Y'],[1,2],[1]) returns True, as does
+    default_check_reqs(N,[2,1],['Y','X'],[1,2],[1]) and
+    default_check_reqs(N,[1,2],['Y','X'],[2,1],[1]) (and naturally so do also all
+    other ways of defining the same induced subgraph and the same requirements).
+    On the other hand, default_check_reqs(N,[2,3],['X','Y'],[1,2],[1]) returns
+    False, since the induced subgraph is not connected.
     """
     #if (req_nodelist_len,req_layerlist_len) == (None,None):
     #    try:
@@ -163,9 +203,14 @@ def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=Non
     
     
 def default_calculate_required_lengths(sizes,intersections):
-    """Returns the required nodelist length and required layerlist length of
-    and induced subgraph of the form [nodelist][layerlist] determined by the
-    given requirements.
+    """Returns the required number of nodes and the required number of layers of
+    an induced subgraph of the form [nodelist][layerlist] determined by the
+    given sizes and intersections requirements. In other words
+    
+    Parameters
+    ----------
+    sizes : list of ints > 0
+        
     """
     assert sizes != [], "Empty layer size list"
     assert len(intersections) == 2**len(sizes)-len(sizes)-1, "Wrong number of intersections"
