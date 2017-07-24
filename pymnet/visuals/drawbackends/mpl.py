@@ -41,11 +41,15 @@ def fix_attr_range(obj,attr,ran):
 
 
 class NetFigureMPL(drawnet.NetFigure):
-    def draw(self):
+    def draw(self, ax):
         self.normalize_coords()
 
-        self.fig=plt.figure(figsize=self.figsize)
-        self.ax=self.fig.gca(projection='3d')
+        if ax == None:
+            self.fig=plt.figure(figsize=self.figsize)
+            self.ax=self.fig.gca(projection='3d')
+        else:
+            self.ax = ax
+            self.fig = self.ax.get_figure()
 
         self.draw_elements()
 

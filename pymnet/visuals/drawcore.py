@@ -42,7 +42,7 @@ def draw(net,layout="spring",layershape="rectangle",azim=-51,elev=22,show=False,
          edgeWidthDict={},edgeWidthRule={},defaultEdgeWidth=1.5,
          edgeAlphaDict={},edgeAlphaRule={},defaultEdgeAlpha=1,
          edgeZDict={},edgeZRule={},defaultEdgeZ=0,
-         edgeStyleDict={},edgeStyleRule={"rule":"edgetype","intra":"-","inter":":"},defaultEdgeStyle="-"):
+         edgeStyleDict={},edgeStyleRule={"rule":"edgetype","intra":"-","inter":":"},defaultEdgeStyle="-",ax=None):
     """Visualize a multilayer network.
 
     Creates a 3D pictures of multilayer networks are drawn using Matplotlib. The network can be any type of multilayer
@@ -210,4 +210,4 @@ def draw(net,layout="spring",layershape="rectangle",azim=-51,elev=22,show=False,
         for nl2 in net[nl1]:
             EdgeBE(nodes[nl1],nodes[nl2],color=edgeColor[(nl1,nl2)],width=edgeWidth[(nl1,nl2)],style=edgeStyle[(nl1,nl2)],z=edgeZ[(nl1,nl2)],alpha=edgeAlpha[(nl1,nl2)])
 
-    return nf.draw()
+    return nf.draw(ax)
