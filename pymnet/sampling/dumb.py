@@ -6,7 +6,7 @@
 import itertools
 from reqs import default_check_reqs,default_calculate_required_lengths,relaxed_check_reqs
 
-def dumbEnumeration(network,resultlist,sizes=None,intersections=None,nnodes=None,nlayers=None,intersection_type="strict",custom_check_function=None):
+def dumbEnumeration(network,results,sizes=None,intersections=None,nnodes=None,nlayers=None,intersection_type="strict",custom_check_function=None):
     u"""Enumerates all induced subgraphs of the form [nodelist][layerlist] by
     going through all possible [nodelist][layerlist] combinations and checking
     whether they fulfill the requirements. This is a dumb algorithm and is not
@@ -69,4 +69,9 @@ def dumbEnumeration(network,resultlist,sizes=None,intersections=None,nnodes=None
     for nodelist in list(itertools.combinations(list(network.iter_nodes()),req_nodelist_len)):
         for layerlist in list(itertools.combinations(list(network.iter_layers()),req_layerlist_len)):
                 if check_function(network,nodelist,layerlist):
-                    resultlist.append((list(nodelist),list(layerlist)))
+                    if isinstance(results,list):
+                        results.append((list(nodelist),list(layerlist)))
+                    elif callable(results):
+                        results((list(nodelist),list(layerlist)))
+                    else:
+                        raise TypeError,"Please provide results container as list or callable"
