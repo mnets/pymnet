@@ -201,61 +201,59 @@ class TestSampling(unittest.TestCase):
         self.assertTrue(reqs.default_check_reqs(net7,['X','Y','Z'],['X','Y','Z'],sizes=[3,2,2],intersections=[None,None,None,3],nnodes=3,nlayers=3,intersection_type="less_or_equal"))
         self.assertFalse(reqs.default_check_reqs(net7,['X','Y','Z'],['X','Y','Z'],sizes=[3,2,2],intersections=[None,None,None,1],nnodes=3,nlayers=3,intersection_type="less_or_equal"))
 
-#    def test_check_only_common_intersection(self):
-#        net1 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
-#        net2 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
-#        net2[1,'X'][1,'Y'] = 1
-#        net2[1,'X'][2,'X'] = 1
-#        net3 = net.MultilayerNetwork(aspects=1,fullyInterconnected=True)
-#        net3[1,'X'][2,'X'] = 1
-#        net3[1,'X'][1,'Y'] = 1
-#        net3[1,'Y'][1,'Z'] = 1
-#        net3[1,'Z'][2,'Z'] = 1
-#        net3[2,'Z'][2,'Y'] = 1
-#        net4 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
-#        net4['X','X']['Z','X'] = 1
-#        net4['X','X']['X','Z'] = 1
-#        net4['X','Z']['Y','Z'] = 1
-#        net4['X','Z']['X','Y'] = 1
-#        net4['Y','Z']['Z','Z'] = 1
-#        net4['X','Y']['Z','Y'] = 1
-#        self.assertFalse(reqs.check_only_common_intersection(net1,[1],['X'],0))
-#        self.assertTrue(reqs.check_only_common_intersection(net2,[1,2],['X','Y'],1))
-#        self.assertFalse(reqs.check_only_common_intersection(net2,[1,2],['X','Y'],0))
-#        self.assertTrue(reqs.check_only_common_intersection(net3,[2,1],['X','Y','Z'],2))
-#        self.assertFalse(reqs.check_only_common_intersection(net3,[2,1],['X','Y','Z'],3))
-#       self.assertFalse(reqs.check_only_common_intersection(net3,[2,1],['X','Y','Z'],1))
-#        self.assertTrue(reqs.check_only_common_intersection(net4,['X','Y','Z'],['X','Y','Z'],2))
-#        self.assertFalse(reqs.check_only_common_intersection(net4,['X','Y','Z'],['X','Y','Z'],3))
-#       self.assertFalse(reqs.check_only_common_intersection(net4,['X','Y','Z'],['X','Y','Z'],1))
+    def test_default_check_reqs_only_common_intersection(self):
+        net1 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net2 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net2[1,'X'][1,'Y'] = 1
+        net2[1,'X'][2,'X'] = 1
+        net3 = net.MultilayerNetwork(aspects=1,fullyInterconnected=True)
+        net3[1,'X'][2,'X'] = 1
+        net3[1,'X'][1,'Y'] = 1
+        net3[1,'Y'][1,'Z'] = 1
+        net3[1,'Z'][2,'Z'] = 1
+        net3[2,'Z'][2,'Y'] = 1
+        net4 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net4['X','X']['Z','X'] = 1
+        net4['X','X']['X','Z'] = 1
+        net4['X','Z']['Y','Z'] = 1
+        net4['X','Z']['X','Y'] = 1
+        net4['Y','Z']['Z','Z'] = 1
+        net4['X','Y']['Z','Y'] = 1
+        self.assertFalse(reqs.default_check_reqs(net1,[1],['X'],sizes=[1],intersections=[],nnodes=1,nlayers=1))
+        self.assertTrue(reqs.default_check_reqs(net2,[1,2],['X','Y'],sizes=[1,2],intersections=[1],nnodes=2,nlayers=2))
+        self.assertTrue(reqs.default_check_reqs(net3,[2,1],['X','Y','Z'],sizes=[2,2,2],intersections=[None,None,None,2],nnodes=2,nlayers=3))
+        self.assertFalse(reqs.default_check_reqs(net3,[2,1],['X','Y','Z'],sizes=[2,2,2],intersections=[None,None,None,3],nnodes=2,nlayers=3))
+        self.assertFalse(reqs.default_check_reqs(net3,[2,1],['X','Y','Z'],sizes=[2,2,2],intersections=[None,None,None,1],nnodes=2,nlayers=3))
+        self.assertTrue(reqs.default_check_reqs(net4,['X','Y','Z'],['X','Y','Z'],sizes=[2,3,2],intersections=[None,None,None,2],nnodes=3,nlayers=3))
+        self.assertFalse(reqs.default_check_reqs(net4,['X','Y','Z'],['X','Y','Z'],sizes=[2,3,2],intersections=[None,None,None,3],nnodes=3,nlayers=3))
+        self.assertFalse(reqs.default_check_reqs(net4,['X','Y','Z'],['X','Y','Z'],sizes=[2,3,2],intersections=[None,None,None,1],nnodes=3,nlayers=3))
     
-#    def test_check_only_common_intersection_less_or_equal(self):
-#        net1 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
-#        net2 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
-#        net2[1,'X'][1,'Y'] = 1
-#        net2[1,'X'][2,'X'] = 1
-#        net3 = net.MultilayerNetwork(aspects=1,fullyInterconnected=True)
-#        net3[1,'X'][2,'X'] = 1
-#        net3[1,'X'][1,'Y'] = 1
-#        net3[1,'Y'][1,'Z'] = 1
-#        net3[1,'Z'][2,'Z'] = 1
-#        net3[2,'Z'][2,'Y'] = 1
-#        net4 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
-#        net4['X','X']['Z','X'] = 1
-#        net4['X','X']['X','Z'] = 1
-#        net4['X','Z']['Y','Z'] = 1
-#        net4['X','Z']['X','Y'] = 1
-#        net4['Y','Z']['Z','Z'] = 1
-#        net4['X','Y']['Z','Y'] = 1
-#        self.assertFalse(reqs.check_only_common_intersection(net1,[1],['X'],0,intersection_type="less_or_equal"))
-#        self.assertTrue(reqs.check_only_common_intersection(net2,[1,2],['X','Y'],2,intersection_type="less_or_equal"))
-#        self.assertFalse(reqs.check_only_common_intersection(net2,[1,2],['X','Y'],0,intersection_type="less_or_equal"))
-#        self.assertTrue(reqs.check_only_common_intersection(net3,[2,1],['X','Y','Z'],2,intersection_type="less_or_equal"))
-#       self.assertTrue(reqs.check_only_common_intersection(net3,[2,1],['X','Y','Z'],3,intersection_type="less_or_equal"))
-#        self.assertFalse(reqs.check_only_common_intersection(net3,[2,1],['X','Y','Z'],1,intersection_type="less_or_equal"))
-#        self.assertTrue(reqs.check_only_common_intersection(net4,['X','Y','Z'],['X','Y','Z'],2,intersection_type="less_or_equal"))
-#       self.assertTrue(reqs.check_only_common_intersection(net4,['X','Y','Z'],['X','Y','Z'],3,intersection_type="less_or_equal"))
-#        self.assertFalse(reqs.check_only_common_intersection(net4,['X','Y','Z'],['X','Y','Z'],1,intersection_type="less_or_equal"))
+    def test_default_check_reqs_only_common_intersection_less_or_equal(self):
+        net1 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net2 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net2[1,'X'][1,'Y'] = 1
+        net2[1,'X'][2,'X'] = 1
+        net3 = net.MultilayerNetwork(aspects=1,fullyInterconnected=True)
+        net3[1,'X'][2,'X'] = 1
+        net3[1,'X'][1,'Y'] = 1
+        net3[1,'Y'][1,'Z'] = 1
+        net3[1,'Z'][2,'Z'] = 1
+        net3[2,'Z'][2,'Y'] = 1
+        net4 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net4['X','X']['Z','X'] = 1
+        net4['X','X']['X','Z'] = 1
+        net4['X','Z']['Y','Z'] = 1
+        net4['X','Z']['X','Y'] = 1
+        net4['Y','Z']['Z','Z'] = 1
+        net4['X','Y']['Z','Y'] = 1
+        self.assertFalse(reqs.default_check_reqs(net1,[1],['X'],sizes=[1],intersections=[2],nnodes=1,nlayers=1,intersection_type="less_or_equal"))
+        self.assertTrue(reqs.default_check_reqs(net2,[1,2],['X','Y'],sizes=[1,2],intersections=[2],nnodes=2,nlayers=2,intersection_type="less_or_equal"))
+        self.assertTrue(reqs.default_check_reqs(net3,[2,1],['X','Y','Z'],sizes=[2,2,2],intersections=[None,None,None,2],nnodes=2,nlayers=3,intersection_type="less_or_equal"))
+        self.assertTrue(reqs.default_check_reqs(net3,[2,1],['X','Y','Z'],sizes=[2,2,2],intersections=[None,None,None,3],nnodes=2,nlayers=3,intersection_type="less_or_equal"))
+        self.assertFalse(reqs.default_check_reqs(net3,[2,1],['X','Y','Z'],sizes=[2,2,2],intersections=[None,None,None,1],nnodes=2,nlayers=3,intersection_type="less_or_equal"))
+        self.assertTrue(reqs.default_check_reqs(net4,['X','Y','Z'],['X','Y','Z'],sizes=[2,3,2],intersections=[None,None,None,2],nnodes=3,nlayers=3,intersection_type="less_or_equal"))
+        self.assertTrue(reqs.default_check_reqs(net4,['X','Y','Z'],['X','Y','Z'],sizes=[2,3,2],intersections=[None,None,None,3],nnodes=3,nlayers=3,intersection_type="less_or_equal"))
+        self.assertFalse(reqs.default_check_reqs(net4,['X','Y','Z'],['X','Y','Z'],sizes=[2,3,2],intersections=[None,None,None,1],nnodes=3,nlayers=3,intersection_type="less_or_equal"))
 
     def test_relaxed_check_reqs(self):
         net1 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
@@ -1603,8 +1601,8 @@ def makesuite(exhaustive=False,insane=False,performance=False,distribution_width
     suite.addTest(TestSampling("test_default_check_reqs"))
     suite.addTest(TestSampling("test_default_check_reqs_less_or_equal"))
     suite.addTest(TestSampling("test_default_check_reqs_with_None_in_intersections"))
-#    suite.addTest(TestSampling("test_check_only_common_intersection"))
-#    suite.addTest(TestSampling("test_check_only_common_intersection_less_or_equal"))
+    suite.addTest(TestSampling("test_default_check_reqs_only_common_intersection"))
+    suite.addTest(TestSampling("test_default_check_reqs_only_common_intersection_less_or_equal"))
     suite.addTest(TestSampling("test_relaxed_check_reqs"))
     suite.addTest(TestSampling("test_dumb_enumeration"))
     suite.addTest(TestSampling("test_esu_concise"))
