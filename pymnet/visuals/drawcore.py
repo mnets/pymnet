@@ -21,7 +21,7 @@ from .drawbackends.threejs import NetFigureThreeJS,LayerThreeJS,NodeThreeJS,Edge
 
 def draw(net,layout="spring",layershape="rectangle",azim=-51,elev=22,show=False,layergap=1.0,camera_dist=None,autoscale=True,backend="mpl",
          figsize=None,nodeCoords={},nodelayerCoords={},
-         layerPadding=0.05,alignedNodes=True,
+         layerPadding=0.05,alignedNodes=True,ax=None,
          layerColorDict={},layerColorRule={},defaultLayerColor="#29b7c1",
          layerAlphaDict={},layerAlphaRule={},defaultLayerAlpha=0.75,
          layerLabelDict={},layerLabelRule={"rule":"name"},defaultLayerLabel=None,
@@ -42,7 +42,7 @@ def draw(net,layout="spring",layershape="rectangle",azim=-51,elev=22,show=False,
          edgeWidthDict={},edgeWidthRule={},defaultEdgeWidth=1.5,
          edgeAlphaDict={},edgeAlphaRule={},defaultEdgeAlpha=1,
          edgeZDict={},edgeZRule={},defaultEdgeZ=0,
-         edgeStyleDict={},edgeStyleRule={"rule":"edgetype","intra":"-","inter":":"},defaultEdgeStyle="-",ax=None):
+         edgeStyleDict={},edgeStyleRule={"rule":"edgetype","intra":"-","inter":":"},defaultEdgeStyle="-"):
     """Visualize a multilayer network.
 
     Creates a 3D pictures of multilayer networks are drawn using Matplotlib. The network can be any type of multilayer
@@ -77,6 +77,8 @@ def draw(net,layout="spring",layershape="rectangle",azim=-51,elev=22,show=False,
        Should each node have the same coordinate in each layer. If None, then True for multiplex networks and False for multilayer networks.
     layerPadding : float
        Space between nodes and the edge of each layer.
+    ax : [axes object]
+       The axes where the figure is drawn. (Only when Matplotlib is used for drawing. Axes need to be of Axes3D type.)
     [property]Dict : dict
        Dictionary giving each element a property value. Keys are the elements and values are the property values.
     [property]Rule : dict
@@ -210,4 +212,4 @@ def draw(net,layout="spring",layershape="rectangle",azim=-51,elev=22,show=False,
         for nl2 in net[nl1]:
             EdgeBE(nodes[nl1],nodes[nl2],color=edgeColor[(nl1,nl2)],width=edgeWidth[(nl1,nl2)],style=edgeStyle[(nl1,nl2)],z=edgeZ[(nl1,nl2)],alpha=edgeAlpha[(nl1,nl2)])
 
-    return nf.draw(ax)
+    return nf.draw(ax=ax)

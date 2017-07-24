@@ -11,7 +11,7 @@ TEMPLATE_FILE=os.path.join( os.path.dirname(drawbackends.__file__),"threejs_temp
 SIZE=100
 
 class NetFigureThreeJS(drawnet.NetFigure):
-    def draw(self):
+    def draw(self,**kwargs):
         self.normalize_coords()
 
         template_file=open(TEMPLATE_FILE,"r")

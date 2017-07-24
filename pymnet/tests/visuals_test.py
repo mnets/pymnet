@@ -154,6 +154,21 @@ class TestVisuals(unittest.TestCase):
         fig3.savefig(os.path.join(self.figdirpath,"mlayer_nonaligned_mlayer_coords3.png"))
 
 
+    def test_multiaxis(self):
+        from matplotlib import pyplot as plt
+        
+        fig = plt.figure()
+        ax1=fig.add_subplot(121, projection='3d')
+        ax2=fig.add_subplot(122, projection='3d')
+
+        nc=visuals.layouts.get_fruchterman_reingold_multilayer_layout(self.mlayer_nonaligned_aligntest)
+        visuals.draw(self.mlayer_nonaligned_aligntest,nodeCoords=nc,ax=ax1)
+
+        nc2=visuals.layouts.get_fruchterman_reingold_multilayer_layout(self.mlayer_nonaligned_aligntest2)
+        visuals.draw(self.mlayer_nonaligned_aligntest2,nodeCoords=nc2,ax=ax2)
+
+        fig.savefig(os.path.join(self.figdirpath,"multiaxis_mlayer.png"))
+
 
 def test_visuals():
     suite = unittest.TestSuite()    
@@ -162,6 +177,7 @@ def test_visuals():
     suite.addTest(TestVisuals("test_draw_mlayer_example_1d_defaults"))
     suite.addTest(TestVisuals("test_draw_mplex_simple_layer_labels"))
     suite.addTest(TestVisuals("test_draw_mlayer_nonaligned_mlayer_coords"))
+    suite.addTest(TestVisuals("test_multiaxis"))
     return unittest.TextTestRunner().run(suite).wasSuccessful() 
 
 if __name__ == '__main__':
