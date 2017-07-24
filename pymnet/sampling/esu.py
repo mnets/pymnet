@@ -9,7 +9,7 @@ import random
 import itertools
 
 #def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None,seed=None):
-def enumerateSubgraphs(network,results,sizes=None,intersections=None,nnodes=None,nlayers=None,p=None,seed=None,intersection_type="strict",custom_check_function=None):
+def enumerateSubgraphs(network,results,sizes=None,intersections=None,nnodes=None,nlayers=None,p=None,seed=None,intersection_type="strict",copy_network=True,custom_check_function=None):
     u"""The multilayer version of the ESU algorithm. Uniformly samples induced subgraphs
     of the form [nodelist][layerlist], which fulfill the given requirements.
     
@@ -38,7 +38,11 @@ def enumerateSubgraphs(network,results,sizes=None,intersections=None,nnodes=None
     kayttajan maarittelema check-funktio
     DONE tilastollinen testaus että samplaus toimii kuten pitaa
     """
-    network_copy = pymnet.subnet(network,network.get_layers(aspect=0),network.get_layers(aspect=1),newNet=pymnet.MultilayerNetwork(aspects=1,fullyInterconnected=False))
+    if copy_network == True:
+        network_copy = pymnet.subnet(network,network.get_layers(aspect=0),network.get_layers(aspect=1),newNet=pymnet.MultilayerNetwork(aspects=1,fullyInterconnected=False))
+    else:
+        network_copy = network
+        
     if seed == None:
         random.seed()
     else:
@@ -121,8 +125,9 @@ def enumerateSubgraphs(network,results,sizes=None,intersections=None,nnodes=None
                         and layer not in V_extension_layers):
                         V_extension_layers.add(layer)
             _extendSubgraph(network_copy,[start_node],[start_layer],check_function,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,depth+1,p,results)
-        for neighbor in list(network_copy[v]):
-            network_copy[neighbor][v] = 0
+        if copy_network == True:
+            for neighbor in list(network_copy[v]):
+                network_copy[neighbor][v] = 0
 
 def _extendSubgraph(network,nodelist,layerlist,check_function,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,depth,p,results):    
     if len(nodelist) > req_nodelist_len or len(layerlist) > req_layerlist_len:
