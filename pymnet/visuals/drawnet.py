@@ -47,7 +47,7 @@ class NetFigure(object):
             edge.draw()
 
 
-    def draw(self):
+    def draw(self,**kwargs):
         #Override this method
         raise NotImplemented()
 
