@@ -41,13 +41,16 @@ def fix_attr_range(obj,attr,ran):
 
 
 class NetFigureMPL(drawnet.NetFigure):
-    def draw(self, ax):
+    def draw(self, **kwargs):
+        ax=kwargs["ax"] if "ax" in kwargs else None
+
         self.normalize_coords()
 
         if ax == None:
             self.fig=plt.figure(figsize=self.figsize)
             self.ax=self.fig.gca(projection='3d')
         else:
+            assert isinstance(ax,Axes3D), "The axes need to have 3D projection. Use, for example, fig.add_subplot(111, projection='3d')"
             self.ax = ax
             self.fig = self.ax.get_figure()
 
