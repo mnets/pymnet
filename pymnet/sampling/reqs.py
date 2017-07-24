@@ -205,30 +205,68 @@ def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=Non
 def default_calculate_required_lengths(sizes,intersections):
     """Returns the required number of nodes and the required number of layers of
     an induced subgraph of the form [nodelist][layerlist] determined by the
-    given sizes and intersections requirements. In other words
+    given sizes and intersections requirements. This corresponds to the nnodes
+    and nlayers arguments of default_check_reqs. See Details section on how these
+    are calculated.
     
     Parameters
     ----------
     sizes : list of ints > 0
+        How many nodes should be on each layer of an acceptable induced subgraph.
+        One integer for each layer of an acceptable subgraph.
+    intersections : list of ints >= 0
+        How many nodes should be shared between sets of layers in an acceptable
+        induced subgraph. If an entry in the list is None, any number of shared
+        nodes is accepted. The order of the intersections is taken to follow the
+        order of layers in sizes, with two-layer intersections being listed first,
+        then three-layer intersections, etc. For more details, see section
+        "Constructing the requirements" in default_check_reqs docstring.
         
+    Returns
+    -------
+    nnodes, nlayers : ints
+        The number of nodes and the number of layers required of an acceptable subgraph,
+        as determined by the sizes and intersections requirements.
+        
+    Details
+    -------
+    The number of layers (nlayers) that an acceptable subgraph must have is simply the
+    length of sizes (since there is an entry for each layer). The number of nodes
+    is the cardinality (size) of the union of the sets of nodes on each layer.
+    This cardinality is unambiguously determined by the numbers of nodes on each
+    layer (sizes) and the number of shared nodes between all combinations of
+    layers (intersections), assuming that there are no missing values (Nones)
+    in intersections. The cardinality and thus nnodes is calculated by following
+    the inclusion-exclusion principle.
+    
+    Example
+    -------
+    Calling
+    
+    >>> nnodes,nlayers = default_calculate_required_lengths([2,3,4],[2,1,2,1])
+    
+    returns nnodes = 5 and nlayers = 3, because
+    nnodes = 2+3+4-2-1-2+1 and nlayers = len([2,3,4]) = 3. Therefore, an induced
+    subgraph must have 5 nodes and 3 layers for it to be possible to satisfy the
+    sizes and intersections requirements.
     """
     assert sizes != [], "Empty layer size list"
     assert len(intersections) == 2**len(sizes)-len(sizes)-1, "Wrong number of intersections"
     assert all(i>=1 and isinstance(i,int) for i in sizes) and all(j>=0 and isinstance(j,int) for j in intersections), "Inappropriate intersections or sizes"
     if not intersections:
         return sizes[0],1
-    layerlist_length = len(sizes)
-    nodelist_length = sum(sizes)
+    nlayers = len(sizes)
+    nnodes = sum(sizes)
     index = 0
     for ii in range(2,len(sizes)+1):
         for _ in list(itertools.combinations(sizes,ii)):
             if ii % 2 == 0:
-                nodelist_length = nodelist_length - intersections[index]
+                nnodes = nnodes - intersections[index]
                 index = index + 1
             else:
-                nodelist_length = nodelist_length + intersections[index]
+                nnodes = nnodes + intersections[index]
                 index = index + 1
-    return nodelist_length,layerlist_length
+    return nnodes,nlayers
     
     
     
