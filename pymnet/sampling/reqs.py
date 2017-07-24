@@ -105,12 +105,26 @@ def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=Non
                (2,'Y')
              
     where (a,b) are nodelayer tuples with a = node identity and b = layer identity.
-    Now, default_check_reqs(N,[1,2],['X','Y'],[1,2],[1]) returns True, as does
-    default_check_reqs(N,[2,1],['Y','X'],[1,2],[1]) and
-    default_check_reqs(N,[1,2],['Y','X'],[2,1],[1]) (and naturally so do also all
-    other ways of defining the same induced subgraph and the same requirements).
-    On the other hand, default_check_reqs(N,[2,3],['X','Y'],[1,2],[1]) returns
-    False, since the induced subgraph is not connected.
+    Now,
+    
+    >>> default_check_reqs(N,[1,2],['X','Y'],[1,2],[1])
+    
+    returns True, as do
+    
+    >>> default_check_reqs(N,[2,1],['Y','X'],[1,2],[1])
+    
+    and
+    
+    >>> default_check_reqs(N,[1,2],['Y','X'],[2,1],[1])
+    
+    (and naturally so do also all the other ways of defining the same induced subgraph
+    and the same requirements).
+    
+    On the other hand,
+    
+    >>> default_check_reqs(N,[2,3],['X','Y'],[1,2],[1])
+    
+    returns False, since the induced subgraph is not connected.
     """
     #if (req_nodelist_len,req_layerlist_len) == (None,None):
     #    try:
