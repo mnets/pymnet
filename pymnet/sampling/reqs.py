@@ -8,8 +8,9 @@ import itertools
 
 def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=None,nlayers=None,intersection_type="strict"):
 #def default_check_reqs(network,nodelist,layerlist,sizes,intersections,(req_nodelist_len,req_layerlist_len)=(None,None)):
-    u"""Checks whether a multilayer induced subgraph of the form [nodelist][layerlist] is connected
-    and fulfills the given sizes and intersections requirements. Works on one-aspect multilayer networks.
+    u"""Checks whether a multilayer induced subgraph of the form [nodelist][layerlist] is connected,
+    whether it has no empty layers or nodes, and whether it fulfills the given sizes and intersections
+    requirements. Works on one-aspect multilayer networks.
     
     Parameters
     ----------
@@ -49,7 +50,17 @@ def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=Non
         
     Returns
     -------
-    True if the requirements are fulfilled and the induced subgraph is connected, False otherwise.
+    True if the requirements are fulfilled, the induced subgraph has no empty nodes
+    or layers, and the induced subgraph is connected. False otherwise.
+    
+    Empty nodes or layers
+    ---------------------
+    The phrase 'does not contain any empty layers or nodes' means that for each
+    layer, there is at least one nodelayer in the induced subgraph, and that for
+    each node, there is at least one nodelayer in the induced subgraph.
+    In other words, each node in the nodelist and each layer in the layerlist
+    appears at least once as the node identity or the layer identity, respectively,
+    among the nodelayers present in the induced subgraph.
     
     Constructing the requirements
     -----------------------------
@@ -65,12 +76,18 @@ def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=Non
         
         Then, construct the intersections list so that first all size-two intersections
         are listed, then size-three intersections, and so on, until the intersection
-        between all layers is reached. The order of listing size-n intersections is
-        such that the closer the role is to the beginning of the size list, the later
-        it is iterated over. More specifically, this is the order that itertools.combinations()
-        uses to iterate. Since we signify the roles by letters A, B, C and so
-        on, this means that the intersections are listed in "alphabetical order"
-        within each size category.
+        between all layers is reached. The entry for each intersection can be an integer
+        or None. An integer signifies the number of nodes in the intersection (the cardinality
+        of the intersection set), and it can be followed strictly or less strictly, depending
+        on the intersection_type parameter. The value None signifies that the intersection in
+        question can have any size in an acceptable induced subgraph. If intersections
+        contains Nones, the nnodes and nlayers parameters must also be specified.
+        
+        The order of listing size-n intersections is such that the closer the role is
+        to the beginning of the size list, the later it is iterated over. More specifically,
+        this is the order that itertools.combinations() uses to iterate. Since we signify
+        the roles by letters A, B, C and so on, this means that the intersections are
+        listed in "alphabetical order" within each size category.
     
     For example, suppose we have a length-four sizes list. Now, we think of the first
     size entry as layer (role) A, the second as layer B, the third as layer C, and the fourth
@@ -89,11 +106,31 @@ def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=Non
     takes role from {A,B,C,D} minus {role(X),role(Y),role(Z)}). The role assignment is iterated
     until an acceptable role assignment is found -- at which point the function returns True --
     or until all possible role assignments have been considered without success -- at which
-    point the function returns False. 
+    point the function returns False.
     
     This also means that the orderings of the [nodelist] and [layerlist] of the induced subgraph
     to be tested do not matter (i.e calling this function with nodelist = [1,2] and layerlist = ['X','Y']
     gives the exact same return value as nodelist = [2,1] and layerlist = ['Y','X'], etc.).
+    
+    Using Nones
+    -----------
+    If we only care about the cardinalities of some specific intersections, we can set
+    the rest to None. For example, calling
+    
+    >>> default_check_reqs(some_network,some_nodelist,some_layerlist,[1,2,3],[None,None,2,None],nnodes=4,nlayers=3)
+    
+    means that the algorithm will find the induced subgraphs which are connected, have 4 nodes and
+    3 layers, have no empty layers or nodes, have one node on one layer, two nodes on another layer,
+    three nodes on the third layer, and have a cardinality-2 (size-2) intersection between the layer
+    that has two nodes and the layer that has three nodes (with no constraints on the cardinalities
+    of the other intersections).
+    
+    When using Nones, nnodes and nlayers have to be specified, since if all intersection
+    cardinalities are not unambiguous, the nnodes and nlayers cannot be calculated based
+    on the sizes and intersections alone. It is up to the user to provide nnodes and nlayers
+    that are sensible (for example, nnodes cannot sensibly be more than the sum of all sizes).
+    Technically, only nnodes would be required, but both have to be given to make the function
+    call more explicit and more intuitive to read.
     
     Example
     -------
@@ -325,10 +362,11 @@ def relaxed_check_reqs(network,nodelist,layerlist):
     Details
     -------
     The phrase 'does not contain any empty layers or nodes' means that for each
-    layer, there is at least one nodelayer and that for each node, there is at
-    least one nodelayer. In other words, each node in the nodelist and each layer
-    in the layerlist appears at least once as the node identity or the layer identity,
-    respectively, among the nodelayers present in the induced subgraph.
+    layer, there is at least one nodelayer in the induced subgraph, and that for
+    each node, there is at least one nodelayer in the induced subgraph.
+    In other words, each node in the nodelist and each layer in the layerlist
+    appears at least once as the node identity or the layer identity, respectively,
+    among the nodelayers present in the induced subgraph.
     
     Example
     -------
