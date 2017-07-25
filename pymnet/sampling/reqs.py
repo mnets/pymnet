@@ -169,9 +169,28 @@ def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=Non
         graph_is_connected = nx.is_connected(pymnet.transforms.get_underlying_graph(induced_graph))
     except nx.networkx.NetworkXPointlessConcept:
         return False
-    if graph_is_connected:   
+    if graph_is_connected:
+        
+        nls = set(induced_graph.iter_node_layers())
+        for layer in layerlist:
+            no_nodelayers = True
+            for node in nodelist:
+                if (node,layer) in nls:
+                    no_nodelayers = False
+                    break
+            if no_nodelayers:
+                return False
+        for node in nodelist:
+            no_nodelayers = True
+            for layer in layerlist:
+                if (node,layer) in nls:
+                    no_nodelayers = False
+                    break
+            if no_nodelayers:
+                return False        
+        
         d = dict() # keys: layers, values: nodes
-        for nodelayer in list(induced_graph.iter_node_layers()):
+        for nodelayer in nls:
             d.setdefault(nodelayer[1],[])
             d[nodelayer[1]].append(nodelayer[0])
         if len(d) != req_layerlist_len:
