@@ -102,6 +102,19 @@ def enumerateSubgraphs(network,results,sizes=None,intersections=None,nnodes=None
     -----
     There are multiple functionalities built-in, and determining which is used is
     done by checking which parameters have been given by the user.
+    
+    1. Sizes and intersections have been given:
+        i. If intersection_type == "strict":
+            a. If there are no Nones in intersections:
+                - nnodes and nlayers cannot be given
+                - TODO
+            b. If there are Nones in intersections:
+                - nnodes must be given
+        ii. If intersection_type == "less_or_equal":
+            a. If there are no Nones in intersections:
+                - TODO
+    2. Nnodes and nlayers have been given:
+        i. If sizes and 
         
     TODO: DONE listat pois
     parempi naapuruston ja node conflictien checkki
