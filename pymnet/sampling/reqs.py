@@ -49,7 +49,7 @@ def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=Non
         
     Returns
     -------
-    True if the requirements are fulfilled and the subgraph is connected, False otherwise.
+    True if the requirements are fulfilled and the induced subgraph is connected, False otherwise.
     
     Constructing the requirements
     -----------------------------
@@ -189,7 +189,7 @@ def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=Non
             for ii in range(1,len(layerlist)+1): # A, B etc. AB, AC etc.
                 for combination in list(itertools.combinations(permutation,ii)): # try all role combinations
                     assert len(combination) >= 1, "Empty combination list, this shouldn't happen"
-                    if len(combination) == 1:
+                    if len(combination) == 1: # check sizes
                         if len(d[combination[0]]) != sizes[permutation.index(combination[0])]:
                             goto_next_perm = True
                             break
@@ -218,7 +218,7 @@ def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=Non
     
 def default_calculate_required_lengths(sizes,intersections):
     """Returns the required number of nodes and the required number of layers of
-    an induced subgraph of the form [nodelist][layerlist] determined by the
+    a one-aspect induced subgraph of the form [nodelist][layerlist] determined by the
     given sizes and intersections requirements. This corresponds to the nnodes
     and nlayers arguments of default_check_reqs. See Details section on how these
     are calculated.
@@ -249,7 +249,7 @@ def default_calculate_required_lengths(sizes,intersections):
     is the cardinality (size) of the union of the sets of nodes on each layer.
     This cardinality is unambiguously determined by the numbers of nodes on each
     layer (sizes) and the number of shared nodes between all combinations of
-    layers (intersections), assuming that there are no missing values (Nones)
+    layers (intersections), assuming that there are no undefined values (Nones)
     in intersections. The cardinality and thus nnodes is calculated by following
     the inclusion-exclusion principle.
     
@@ -285,6 +285,51 @@ def default_calculate_required_lengths(sizes,intersections):
     
     
 def relaxed_check_reqs(network,nodelist,layerlist):
+    """Checks whether a multilayer induced subgraph of the form [nodelist][layerlist] is connected
+    and does not contain any empty layers or nodes. Works on one-aspect multilayer networks.
+    See section Details for more information.
+    
+    Parameters
+    ----------
+    network : MultilayerNetwork
+        A one-aspect multilayer network containing the induced subgraph.
+    nodelist : list of node names
+        The nodes in the induced subgraph.
+    layerlist : list of layer names
+        The layers in the induced subgraph.
+        
+    Returns
+    -------
+    True if the induced subgraph is connected and does not contain empty layers
+    or nodes, False otherwise.
+    
+    Details
+    -------
+    The phrase 'does not contain any empty layers or nodes' means that for each
+    layer, there is at least one nodelayer and that for each node, there is at
+    least one nodelayer. In other words, each node in the nodelist and each layer
+    in the layerlist appears at least once as the node identity or the layer identity,
+    respectively, among the nodelayers present in the induced subgraph.
+    
+    Example
+    -------
+    Suppose we have the multilayer network N:
+    
+    (1,'X')----(2,'X')
+                  |
+                  |
+               (2,'Y')
+               
+    Calling
+    
+    >>> relaxed_check_reqs(N,[1,2],['X','Y'])
+    
+    returns True, but calling
+    
+    >>> relaxed_check_reqs(N,[1,2],['Y'])
+    
+    returns False, because node 1 is empty.
+    """
     induced_graph = pymnet.subnet(network,nodelist,layerlist)
     try:
         graph_is_connected = nx.is_connected(pymnet.transforms.get_underlying_graph(induced_graph))
