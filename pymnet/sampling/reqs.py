@@ -31,17 +31,20 @@ def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=Non
         then three-layer intersections, etc. For more details, see section
         "Constructing the requirements".
     nnodes : int
-        How many nodes an acceptable subgraph should have. Required if there are
-        Nones in intersections. If you cannot guarantee the correctness of this
+        How many nodes an acceptable subgraph should have. If not provided, it
+        will be calculated based on the sizes and intersections parameters.
+        Required if there are Nones in intersections or if intersection_type
+        is not "strict". If you cannot guarantee the correctness of this
         number, do not use this parameter. Can be used in scripts to bypass
         calculating the correct number of nodes based on the sizes and intersections
         parameters.
     nlayers : int
-        How many layers an acceptable subgraph should have. Required if there are
-        Nones in intersections. If you cannot guarantee the correctness of this
-        number, do not use this parameter. Can be used in scripts to bypass
-        calculating the correct number of layers based on the sizes and intersections
-        parameters.
+        How many layers an acceptable subgraph should have. If not provided, it
+        will be calculated based on the sizes and intersections parameters.
+        Required if there are Nones in intersections.
+        If you cannot guarantee the correctness of this number, do not use this
+        parameter. Can be used in scripts to bypass calculating the correct number
+        of layers based on the sizes and intersections parameters.
     intersection_type : string, "strict" or "less_or_equal"
         If intersection_type is "strict", all intersections must be exactly equal
         to entries in the intersections parameter. If intersection_type is

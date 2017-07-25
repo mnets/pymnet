@@ -10,27 +10,53 @@ import itertools
 
 #def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None,seed=None):
 def enumerateSubgraphs(network,results,sizes=None,intersections=None,nnodes=None,nlayers=None,p=None,seed=None,intersection_type="strict",copy_network=True,custom_check_function=None):
-    u"""A one-aspect multilayer version of the ESU algorithm. Uniformly samples induced subgraphs
-    of the form [nodelist][layerlist], which fulfill the given requirements.
+    u"""A one-aspect multilayer version of the EnumerateSubgraphs (ESU) algorithm
+    introduced by Wernicke [1].
+    Uniformly samples induced subgraphs of the form [nodelist][layerlist] which
+    fulfill the given requirements.
     
     Parameters
     ----------
     network : MultilayerNetwork
         The multilayer network to be analyzed.
+    results : list or callable
+        The method of outputting the found induced subgraphs. If a list, then
+        the induced subgraphs are appended to it as ([nodelist],[layerlist]) tuples.
+        If a callable, when an acceptable induced subgraph is found, this callable
+        is called with the argument ([nodelist],[layerlist]) (that is, one argument
+        which is a tuple of two lists). The callable should therefore take only one
+        required parameter in the form of a tuple. If you want to pass more parameters
+        to the callable, do so via e.g. an anonymous function.
     sizes : list of ints > 0
-        How many nodes are on each layer of the induced subgraphs that we want
-        to discover.
-    intersections : list of ints >= 0
-        How large are the intersections between groups of layers. The layer roles
-        are in the same order as in sizes. For a more detailed description
-        of how to construct the intersections list, see :func:'reqs.check_reqs'.
-    resultlist : list
-        Where found induced subgraphs are appended as tuples (nodelist, layerlist).
+        How many nodes should be on each layer of an acceptable induced subgraph.
+        One integer for each layer of an acceptable subgraph.
+    intersections : list of ints >= 0 or Nones
+        How many nodes should be shared between sets of layers in an acceptable
+        induced subgraph. If an entry in the list is None, any number of shared
+        nodes is accepted. The order of the intersections is taken to follow the
+        order of layers in sizes, with two-layer intersections being listed first,
+        then three-layer intersections, etc. For more details, see section
+        "Constructing the requirements" in the documentation of the function
+        default_check_reqs.
+    nnodes : int
+        How many nodes an acceptable subgraph should have. If not provided, it
+        will be calculated based on the sizes and intersections parameters.
+        Required if there are Nones in intersections or if intersection_type
+        is not "strict". If you cannot guarantee the correctness of this
+        number, do not use this parameter.
+    nlayers : int
+        How many layers an acceptable subgraph should have. If not provided,
+        it will be calculated based on the sizes and intersections requirements.
+        If you cannot guarantee the correctness of this number, do not use this
+        parameter.
     p : list of floats 0 <= p <= 1
         List of sampling probabilities at each depth. If None, p = 1 for each
         depth is used.
     seed : int, str, bytes or bytearray
         Seed for Rand-ESU
+        
+    Usage
+    -----
         
     TODO: DONE listat pois
     parempi naapuruston ja node conflictien checkki
@@ -40,7 +66,7 @@ def enumerateSubgraphs(network,results,sizes=None,intersections=None,nnodes=None
     
     References
     ----------
-    "A Faster Algorithm for Detecting Network Motifs", S. Wernicke, WABI. Vol. 3692, pp. 165-177. Springer 2005.
+    [1] "A Faster Algorithm for Detecting Network Motifs", S. Wernicke, WABI. Vol. 3692, pp. 165-177. Springer 2005.
     """
     if copy_network == True:
         network_copy = pymnet.subnet(network,network.get_layers(aspect=0),network.get_layers(aspect=1),newNet=pymnet.MultilayerNetwork(aspects=1,fullyInterconnected=False))
