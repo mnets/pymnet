@@ -129,6 +129,7 @@ def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=Non
     cardinalities are not unambiguous, the nnodes and nlayers cannot be calculated based
     on the sizes and intersections alone. It is up to the user to provide nnodes and nlayers
     that are sensible (for example, nnodes cannot sensibly be more than the sum of all sizes).
+    It is also up to the user to not give contradictory requirements.
     Technically, only nnodes would be required, but both have to be given to make the function
     call more explicit and more intuitive to read.
     
