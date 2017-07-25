@@ -10,13 +10,22 @@ import itertools
 
 #def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None,seed=None):
 def enumerateSubgraphs(network,results,sizes=None,intersections=None,nnodes=None,nlayers=None,p=None,seed=None,intersection_type="strict",copy_network=True,custom_check_function=None):
-    u"""A one-aspect multilayer version of the EnumerateSubgraphs (ESU) algorithm
+    u"""A one-aspect multilayer version of the Rand-EnumerateSubgraphs (Rand-ESU) algorithm
     introduced by Wernicke [1].
+    
     Uniformly samples induced subgraphs of the form [nodelist][layerlist] which
-    fulfill the given requirements.
+    fulfill the given requirements. Each subgraph is sampled at probability
+    product(p), where p is the parameter p. If all entries in p are 1, all
+    such induced subgraphs in the network are found.
     
     Parameters
     ----------
+    Multiple parameters can be given by the user, some of which are always required,
+    some of which are sometimes required, and some of which are mutually
+    exclusive. There are multiple functionalities to this function, and the choice
+    is done based on the parameters passed by the user. For a description of all
+    of them, see section Usage.
+    
     network : MultilayerNetwork
         The multilayer network to be analyzed.
     results : list or callable
@@ -39,24 +48,60 @@ def enumerateSubgraphs(network,results,sizes=None,intersections=None,nnodes=None
         "Constructing the requirements" in the documentation of the function
         default_check_reqs.
     nnodes : int
-        How many nodes an acceptable subgraph should have. If not provided, it
+        How many nodes an acceptable subgraph should have. If not provided and
+        sizes and intersections are provided, it
         will be calculated based on the sizes and intersections parameters.
         Required if there are Nones in intersections or if intersection_type
         is not "strict". If you cannot guarantee the correctness of this
         number, do not use this parameter.
     nlayers : int
-        How many layers an acceptable subgraph should have. If not provided,
+        How many layers an acceptable subgraph should have. If not provided and
+        sizes and intersections are provided,
         it will be calculated based on the sizes and intersections requirements.
         If you cannot guarantee the correctness of this number, do not use this
         parameter.
     p : list of floats 0 <= p <= 1
         List of sampling probabilities at each depth. If None, p = 1 for each
-        depth is used.
+        depth is used. The probability of sampling a given induced subgraph is
+        the product of the elements of p.
+        It is up to the user to provide a p of correct length to
+        match the depth at which desired induced subgraphs are found.
+        If you know how many nodes and layers an acceptable induced subgraph should
+        have (nnodes and nlayers, respectively), you can calculate the length of p by:
+        len(p) = nnodes - 1 + nlayers - 1 + 1.
+        This formula follows from the fact that finding an induced subgraph starts
+        from a nodelayer (the + 1), and then each node and each layer have to be added
+        one at a time to the nodelist and layerlist, respectively
+        (nnodes - 1 and nlayer - 1, respectively). Starting from a nodelayer means
+        that both nodelist and layerlist are of length 1 when the expansion of the
+        subgraph is started, hence the - 1's.
     seed : int, str, bytes or bytearray
-        Seed for Rand-ESU
+        Seed for Rand-ESU.
+    intersection_type : string, "strict" or "less_or_equal"
+        If intersection_type is "strict", all intersections must be exactly equal
+        to entries in the intersections parameter. If intersection_type is
+        "less_or_equal", an intersection is allowed to be less than or equal to the corresponding
+        entry in the intersections parameter. Usage is case-sensitive.
+    copy_network : boolean
+        Determines whether the network is copied at the beginning of execution. If True (default),
+        the network is copied and the copy is modified during the execution (the original
+        network is not modified). If False, the network is not copied, and the network is
+        NOT modified during the execution.
+        The copying takes more memory but results in faster execution times - the default
+        value (True) is the recommended setting. The modification of the copy does not affect
+        the edges in the induced subgraphs that are passed to the check function. During the
+        execution, if this parameter is True, as starting nodelayers are iterated through in their numerical order,
+        after a nodelayer has been iterated over all edges leading to it are removed (at this
+        point, it is impossible to reach the nodelayer from subsequent starting nodelayers in
+        any case). Therefore, if you use a custom_check_function whose return value depends
+        also on the edges OUTSIDE the induced subgraph to be tested, set this parameter to False.
+    custom_check_function : callable or None
+        TODO
         
     Usage
     -----
+    There are multiple functionalities built-in, and determining which is used is
+    done by checking which parameters have been given by the user.
         
     TODO: DONE listat pois
     parempi naapuruston ja node conflictien checkki
