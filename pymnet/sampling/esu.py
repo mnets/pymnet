@@ -10,7 +10,7 @@ import itertools
 
 #def enumerateSubgraphs(network,sizes,intersections,resultlist,p=None,seed=None):
 def enumerateSubgraphs(network,results,sizes=None,intersections=None,nnodes=None,nlayers=None,p=None,seed=None,intersection_type="strict",copy_network=True,custom_check_function=None):
-    u"""The multilayer version of the ESU algorithm. Uniformly samples induced subgraphs
+    u"""A one-aspect multilayer version of the ESU algorithm. Uniformly samples induced subgraphs
     of the form [nodelist][layerlist], which fulfill the given requirements.
     
     Parameters
@@ -35,8 +35,12 @@ def enumerateSubgraphs(network,results,sizes=None,intersections=None,nnodes=None
     TODO: DONE listat pois
     parempi naapuruston ja node conflictien checkki
     mieti verkon kopiointi ja nl:ien poisto
-    kayttajan maarittelema check-funktio
     DONE tilastollinen testaus että samplaus toimii kuten pitaa
+    kayttajan maarittelema check-funktio
+    
+    References
+    ----------
+    "A Faster Algorithm for Detecting Network Motifs", S. Wernicke, WABI. Vol. 3692, pp. 165-177. Springer 2005.
     """
     if copy_network == True:
         network_copy = pymnet.subnet(network,network.get_layers(aspect=0),network.get_layers(aspect=1),newNet=pymnet.MultilayerNetwork(aspects=1,fullyInterconnected=False))
