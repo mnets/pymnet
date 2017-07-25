@@ -1203,7 +1203,6 @@ class TestSampling(unittest.TestCase):
             result[0].sort()
             result[1].sort()
         resultlist.sort()
-        print resultlist
         self.assertEqual(resultlist,[([1,2,3,4],['X','Y','Z']),([5,6,7,8],['X','Y','Z'])])
         
         resultlist = []
@@ -1389,7 +1388,6 @@ class TestSampling(unittest.TestCase):
             result[0].sort()
             result[1].sort()
         resultlist.sort()
-        print resultlist
         self.assertEqual(resultlist,[([1,2,3,4],['X','Y','Z']),([5,6,7,8],['X','Y','Z'])])
         
         resultlist = []
@@ -1669,7 +1667,7 @@ class TestSampling(unittest.TestCase):
         
     def test_different_parameter_sets(self):
         for _ in range(30):
-            network = creators.multilayer_partially_interconnected(creators.random_nodelists(100,30,10),0.05)
+            network = creators.multilayer_partially_interconnected(creators.random_nodelists(45,15,5),0.05)
             resultlist_dumb = []
             resultlist_esu = []
             dumb.dumbEnumeration(network,resultlist_dumb,sizes=[2,1],intersections=[1])
@@ -1683,6 +1681,7 @@ class TestSampling(unittest.TestCase):
                 result[1].sort()
             resultlist_esu.sort()
             self.assertEqual(resultlist_dumb,resultlist_esu)
+            print('Normal okay')
             resultlist_dumb = []
             resultlist_esu = []
             dumb.dumbEnumeration(network,resultlist_dumb,sizes=[3,2,2],intersections=1,nnodes=4)
@@ -1696,6 +1695,7 @@ class TestSampling(unittest.TestCase):
                 result[1].sort()
             resultlist_esu.sort()
             self.assertEqual(resultlist_dumb,resultlist_esu)
+            print('Int isect okay')
             resultlist_dumb = []
             resultlist_esu = []
             dumb.dumbEnumeration(network,resultlist_dumb,sizes=[3,2,2],intersections=2,nnodes=4,intersection_type="less_or_equal")
@@ -1709,6 +1709,7 @@ class TestSampling(unittest.TestCase):
                 result[1].sort()
             resultlist_esu.sort()
             self.assertEqual(resultlist_dumb,resultlist_esu)
+            print('LOE int isect okay')
             resultlist_dumb = []
             resultlist_esu = []
             dumb.dumbEnumeration(network,resultlist_dumb,sizes=[2,2,2],intersections=[2,2,2,2],intersection_type="less_or_equal")
@@ -1722,6 +1723,7 @@ class TestSampling(unittest.TestCase):
                 result[1].sort()
             resultlist_esu.sort()
             self.assertEqual(resultlist_dumb,resultlist_esu)
+            print('LOE okay')
             resultlist_dumb = []
             resultlist_esu = []
             dumb.dumbEnumeration(network,resultlist_dumb,nnodes=3,nlayers=3)
@@ -1735,6 +1737,7 @@ class TestSampling(unittest.TestCase):
                 result[1].sort()
             resultlist_esu.sort()
             self.assertEqual(resultlist_dumb,resultlist_esu)
+            print('Relaxed okay')
             resultlist_dumb = []
             resultlist_esu = []
             dumb.dumbEnumeration(network,resultlist_dumb,sizes=[2,3,2],intersections=[2,1,None,None])
@@ -1748,6 +1751,7 @@ class TestSampling(unittest.TestCase):
                 result[1].sort()
             resultlist_esu.sort()
             self.assertEqual(resultlist_dumb,resultlist_esu)
+            print('None okay')
             resultlist_dumb = []
             resultlist_esu = []
             dumb.dumbEnumeration(network,resultlist_dumb,sizes=[2,3,2],intersections=[2,1,None,None],intersection_type="less_or_equal")
@@ -1761,6 +1765,8 @@ class TestSampling(unittest.TestCase):
                 result[1].sort()
             resultlist_esu.sort()
             self.assertEqual(resultlist_dumb,resultlist_esu)
+            print('LOE None okay')
+            print('---- LOOP OKAY ----')
 
 def makesuite(exhaustive=False,insane=False,performance=False,distribution_width=False,parameter_sets=False):
     suite = unittest.TestSuite()
@@ -1795,7 +1801,7 @@ def makesuite(exhaustive=False,insane=False,performance=False,distribution_width
     return suite
 
 if __name__ == '__main__':
-    unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(makesuite(exhaustive=False,insane=False,performance=False,distribution_width=False,parameter_sets=False))
+    unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(makesuite(exhaustive=False,insane=False,performance=False,distribution_width=False,parameter_sets=True))
     
     
     
