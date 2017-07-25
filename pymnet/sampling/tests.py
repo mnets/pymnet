@@ -1109,6 +1109,19 @@ class TestSampling(unittest.TestCase):
         net9[1,'Z'][4,'Z'] = 1
         net9[4,'Z'][5,'Z'] = 1
         net9[1,'Z'][4,'Y'] = 1
+        net10 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net10[1,'X'][2,'X'] = 1
+        net10[2,'X'][2,'Y'] = 1
+        net10[2,'Y'][3,'Y'] = 1
+        net10[3,'X'][3,'Y'] = 1
+        net10[3,'Y'][3,'Z'] = 1
+        net10[3,'Z'][4,'Z'] = 1
+        net10[5,'X'][6,'Y'] = 1
+        net10[6,'X'][6,'Y'] = 1
+        net10[6,'Y'][6,'Z'] = 1
+        net10[6,'Z'][7,'Z'] = 1
+        net10[6,'Y'][8,'Z'] = 1
+        net10[6,'Z'][5,'Y'] = 1
         resultlist = []
         dumb.dumbEnumeration(net1,resultlist,sizes=[1,1],intersections=1,nnodes=1)
         self.assertEqual(resultlist,[])
@@ -1184,6 +1197,14 @@ class TestSampling(unittest.TestCase):
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,3,4,5],['X','Y','Z'])])
+        resultlist = []
+        dumb.dumbEnumeration(net10,resultlist,sizes=[3,2,2],intersections=1,nnodes=4)
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        print resultlist
+        self.assertEqual(resultlist,[([1,2,3,4],['X','Y','Z']),([5,6,7,8],['X','Y','Z'])])
         
         resultlist = []
         dumb.dumbEnumeration(net3,resultlist,sizes=[2,1,2],intersections=2,nnodes=3,intersection_type="less_or_equal")
@@ -1274,6 +1295,19 @@ class TestSampling(unittest.TestCase):
         net9[1,'Z'][4,'Z'] = 1
         net9[4,'Z'][5,'Z'] = 1
         net9[1,'Z'][4,'Y'] = 1
+        net10 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net10[1,'X'][2,'X'] = 1
+        net10[2,'X'][2,'Y'] = 1
+        net10[2,'Y'][3,'Y'] = 1
+        net10[3,'X'][3,'Y'] = 1
+        net10[3,'Y'][3,'Z'] = 1
+        net10[3,'Z'][4,'Z'] = 1
+        net10[5,'X'][6,'Y'] = 1
+        net10[6,'X'][6,'Y'] = 1
+        net10[6,'Y'][6,'Z'] = 1
+        net10[6,'Z'][7,'Z'] = 1
+        net10[6,'Y'][8,'Z'] = 1
+        net10[6,'Z'][5,'Y'] = 1
         resultlist = []
         esu.enumerateSubgraphs(net1,resultlist,sizes=[1,1],intersections=1,nnodes=1)
         self.assertEqual(resultlist,[])
@@ -1349,6 +1383,14 @@ class TestSampling(unittest.TestCase):
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,3,4,5],['X','Y','Z'])])
+        resultlist = []
+        esu.enumerateSubgraphs(net10,resultlist,sizes=[3,2,2],intersections=1,nnodes=4)
+        for result in resultlist:
+            result[0].sort()
+            result[1].sort()
+        resultlist.sort()
+        print resultlist
+        self.assertEqual(resultlist,[([1,2,3,4],['X','Y','Z']),([5,6,7,8],['X','Y','Z'])])
         
         resultlist = []
         esu.enumerateSubgraphs(net3,resultlist,sizes=[2,1,2],intersections=2,nnodes=3,intersection_type="less_or_equal")
