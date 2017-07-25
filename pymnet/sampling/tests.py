@@ -1122,6 +1122,14 @@ class TestSampling(unittest.TestCase):
         net10[6,'Z'][7,'Z'] = 1
         net10[6,'Y'][8,'Z'] = 1
         net10[6,'Z'][5,'Y'] = 1
+        net11 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net11[1,'X'][2,'X'] = 1
+        net11[2,'X'][3,'X'] = 1
+        net11[1,'X'][1,'Y'] = 1
+        net11[1,'Y'][2,'Y'] = 1
+        net11[1,'Y'][1,'Z'] = 1
+        net11[1,'Z'][3,'Z'] = 1
+        net11.add_node(4,layer='W')
         resultlist = []
         dumb.dumbEnumeration(net1,resultlist,sizes=[1,1],intersections=1,nnodes=1)
         self.assertEqual(resultlist,[])
@@ -1204,6 +1212,9 @@ class TestSampling(unittest.TestCase):
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2,3,4],['X','Y','Z']),([5,6,7,8],['X','Y','Z'])])
+        resultlist = []
+        dumb.dumbEnumeration(net11,resultlist,sizes=[3,2,2],intersections=1,nnodes=4)
+        self.assertEqual(resultlist,[])
         
         resultlist = []
         dumb.dumbEnumeration(net3,resultlist,sizes=[2,1,2],intersections=2,nnodes=3,intersection_type="less_or_equal")
@@ -1307,6 +1318,14 @@ class TestSampling(unittest.TestCase):
         net10[6,'Z'][7,'Z'] = 1
         net10[6,'Y'][8,'Z'] = 1
         net10[6,'Z'][5,'Y'] = 1
+        net11 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
+        net11[1,'X'][2,'X'] = 1
+        net11[2,'X'][3,'X'] = 1
+        net11[1,'X'][1,'Y'] = 1
+        net11[1,'Y'][2,'Y'] = 1
+        net11[1,'Y'][1,'Z'] = 1
+        net11[1,'Z'][3,'Z'] = 1
+        net11.add_node(4,layer='W')
         resultlist = []
         esu.enumerateSubgraphs(net1,resultlist,sizes=[1,1],intersections=1,nnodes=1)
         self.assertEqual(resultlist,[])
@@ -1389,6 +1408,9 @@ class TestSampling(unittest.TestCase):
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2,3,4],['X','Y','Z']),([5,6,7,8],['X','Y','Z'])])
+        resultlist = []
+        esu.enumerateSubgraphs(net11,resultlist,sizes=[3,2,2],intersections=1,nnodes=4)
+        self.assertEqual(resultlist,[])
         
         resultlist = []
         esu.enumerateSubgraphs(net3,resultlist,sizes=[2,1,2],intersections=2,nnodes=3,intersection_type="less_or_equal")
@@ -1712,8 +1734,8 @@ class TestSampling(unittest.TestCase):
             print('LOE int isect okay')
             resultlist_dumb = []
             resultlist_esu = []
-            dumb.dumbEnumeration(network,resultlist_dumb,sizes=[2,2,2],intersections=[2,2,2,2],intersection_type="less_or_equal")
-            esu.enumerateSubgraphs(network,resultlist_esu,sizes=[2,2,2],intersections=[2,2,2,2],intersection_type="less_or_equal")
+            dumb.dumbEnumeration(network,resultlist_dumb,sizes=[2,2,2],intersections=[2,2,2,2],nnodes=4,intersection_type="less_or_equal")
+            esu.enumerateSubgraphs(network,resultlist_esu,sizes=[2,2,2],intersections=[2,2,2,2],nnodes=4,intersection_type="less_or_equal")
             for result in resultlist_dumb:
                 result[0].sort()
                 result[1].sort()
@@ -1740,8 +1762,8 @@ class TestSampling(unittest.TestCase):
             print('Relaxed okay')
             resultlist_dumb = []
             resultlist_esu = []
-            dumb.dumbEnumeration(network,resultlist_dumb,sizes=[2,3,2],intersections=[2,1,None,None])
-            esu.enumerateSubgraphs(network,resultlist_esu,sizes=[2,3,2],intersections=[2,1,None,None])
+            dumb.dumbEnumeration(network,resultlist_dumb,sizes=[2,3,2],intersections=[2,1,None,None],nnodes=4)
+            esu.enumerateSubgraphs(network,resultlist_esu,sizes=[2,3,2],intersections=[2,1,None,None],nnodes=4)
             for result in resultlist_dumb:
                 result[0].sort()
                 result[1].sort()
@@ -1754,8 +1776,8 @@ class TestSampling(unittest.TestCase):
             print('None okay')
             resultlist_dumb = []
             resultlist_esu = []
-            dumb.dumbEnumeration(network,resultlist_dumb,sizes=[2,3,2],intersections=[2,1,None,None],intersection_type="less_or_equal")
-            esu.enumerateSubgraphs(network,resultlist_esu,sizes=[2,3,2],intersections=[2,1,None,None],intersection_type="less_or_equal")
+            dumb.dumbEnumeration(network,resultlist_dumb,sizes=[2,3,2],intersections=[2,1,None,None],nnodes=4,intersection_type="less_or_equal")
+            esu.enumerateSubgraphs(network,resultlist_esu,sizes=[2,3,2],intersections=[2,1,None,None],nnodes=4,intersection_type="less_or_equal")
             for result in resultlist_dumb:
                 result[0].sort()
                 result[1].sort()
@@ -1801,7 +1823,7 @@ def makesuite(exhaustive=False,insane=False,performance=False,distribution_width
     return suite
 
 if __name__ == '__main__':
-    unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(makesuite(exhaustive=False,insane=False,performance=False,distribution_width=False,parameter_sets=True))
+    unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(makesuite(exhaustive=False,insane=False,performance=False,distribution_width=False,parameter_sets=False))
     
     
     
