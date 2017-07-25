@@ -1688,7 +1688,7 @@ class TestSampling(unittest.TestCase):
             print(str(outlier_count)+' possible outliers at threshold FWER <= '+str(threshold)+', Bonferroni correction used ('+str(motif_count)+' tests, '+str(len(splitdata))+' samples of '+str(splitlen)+' runs each).')
         
     def test_different_parameter_sets(self):
-        for _ in range(30):
+        for _ in range(50):
             network = creators.multilayer_partially_interconnected(creators.random_nodelists(45,15,5),0.05)
             resultlist_dumb = []
             resultlist_esu = []
