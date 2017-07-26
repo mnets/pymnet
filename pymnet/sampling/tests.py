@@ -15,12 +15,12 @@ import creators
 
 class TestSampling(unittest.TestCase):
     
-    def test_multilayer_partially_interconnected(self):
+    def test_er_multilayer_partially_interconnected(self):
         nodelist = [[1,2,3],[2,3,4],[4,1,2]]
-        net1 = creators.multilayer_partially_interconnected(nodelist,0)
+        net1 = creators.er_multilayer_partially_interconnected(nodelist,0)
         for nodelayer in list(net1.iter_node_layers()):
             self.assertEqual(net1[nodelayer[0],nodelayer[1]].deg(),0)
-        net2 = creators.multilayer_partially_interconnected(nodelist,1)
+        net2 = creators.er_multilayer_partially_interconnected(nodelist,1)
         for nodelayer in list(net2.iter_node_layers()):
             self.assertEqual(net2[nodelayer[0],nodelayer[1]].deg(),8)
 
@@ -1538,7 +1538,7 @@ class TestSampling(unittest.TestCase):
         reqlist = [([1,1],[0]),([1,2],[0]),([1,2],[1]),([2,3],[1]),([2,1,1],[1,0,0,0])]
         for requirement in reqlist:
             for _ in range(30):
-                network = creators.multilayer_partially_interconnected(creators.random_nodelists(30,10,5),0.05)
+                network = creators.er_multilayer_partially_interconnected(creators.random_nodelists(30,10,5),0.05)
                 resultlist_dumb = []
                 resultlist_esu = []
                 dumb.dumbEnumeration(network,resultlist_dumb,sizes=requirement[0],intersections=requirement[1])
@@ -1561,7 +1561,7 @@ class TestSampling(unittest.TestCase):
         reqlist = reqlist + [([2,2,1],[0,0,0,0]),([2,2,1],[1,0,0,0]),([2,2,1],[2,0,0,0]),([2,2,1],[1,1,0,0]),([2,2,1],[1,0,1,0]),([2,2,1],[1,1,1,1]),([2,2,1],[2,0,0,0]),([2,2,1],[2,1,1,1])]
         for requirement in reqlist:
             for _ in range(100):
-                network = creators.multilayer_partially_interconnected(creators.random_nodelists(30,10,5),0.05)
+                network = creators.er_multilayer_partially_interconnected(creators.random_nodelists(30,10,5),0.05)
                 resultlist_dumb = []
                 resultlist_esu = []
                 dumb.dumbEnumeration(network,resultlist_dumb,sizes=requirement[0],intersections=requirement[1])
@@ -1663,7 +1663,7 @@ class TestSampling(unittest.TestCase):
         PyPy recommended for speed.
         """
         if network == None:
-            network = creators.multilayer_partially_interconnected(creators.random_nodelists(100,30,10,seed=1),0.05,seed=1)       
+            network = creators.er_multilayer_partially_interconnected(creators.random_nodelists(100,30,10,seed=1),0.05,seed=1)       
         if p == None:
             req_nodelist_len,req_layerlist_len = reqs.default_calculate_required_lengths(sizes=motif[0],intersections=motif[1])
             p = [0.5] * (req_nodelist_len-1 + req_layerlist_len-1 + 1)
@@ -1689,7 +1689,7 @@ class TestSampling(unittest.TestCase):
         
     def test_different_parameter_sets(self):
         for _ in range(50):
-            network = creators.multilayer_partially_interconnected(creators.random_nodelists(45,15,5),0.05)
+            network = creators.er_multilayer_partially_interconnected(creators.random_nodelists(45,15,5),0.05)
             resultlist_dumb = []
             resultlist_esu = []
             dumb.dumbEnumeration(network,resultlist_dumb,sizes=[2,1],intersections=[1])
@@ -1792,7 +1792,7 @@ class TestSampling(unittest.TestCase):
 
 def makesuite(exhaustive=False,insane=False,performance=False,distribution_width=False,parameter_sets=False):
     suite = unittest.TestSuite()
-    suite.addTest(TestSampling("test_multilayer_partially_interconnected"))
+    suite.addTest(TestSampling("test_er_multilayer_partially_interconnected"))
     suite.addTest(TestSampling("test_default_required_lengths"))
     suite.addTest(TestSampling("test_default_check_reqs"))
     suite.addTest(TestSampling("test_default_check_reqs_less_or_equal"))
