@@ -6,7 +6,7 @@
 import itertools
 from reqs import default_check_reqs,default_calculate_required_lengths,relaxed_check_reqs
 
-def dumbEnumeration(network,results,sizes=None,intersections=None,nnodes=None,nlayers=None,intersection_type="strict",custom_check_function=None):
+def dumb_enumeration(network,results,sizes=None,intersections=None,nnodes=None,nlayers=None,intersection_type="strict",custom_check_function=None):
     """Enumerates all induced subgraphs of the form [nodelist][layerlist] by
     going through all possible [nodelist][layerlist] combinations and checking
     whether they fulfill the requirements. This is a naive algorithm and is not
