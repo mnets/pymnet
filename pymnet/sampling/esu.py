@@ -217,7 +217,7 @@ def enumerateSubgraphs(network,results,sizes=None,intersections=None,nnodes=None
     Further reading
     ---------------
     The documentation of the functions default_check_reqs, default_calculate_required_lengths
-    and relaxed_check_reqs offer mroe insight into what are considered acceptable induced subgraphs
+    and relaxed_check_reqs offer more insight into what are considered acceptable induced subgraphs
     in different cases in the functionalities described in the Usage section. You should read these
     if you are not sure what you want to do or how to do it after reading this documentation.
     
