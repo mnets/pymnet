@@ -586,234 +586,234 @@ class TestSampling(unittest.TestCase):
         net9[1,'Z'][4,'Y'] = 1
         resultlist = []
         with self.assertRaises(AssertionError):
-            esu.enumerateSubgraphs(net2,resultlist,sizes=[],intersections=[])
+            esu.sample_multilayer_subgraphs_esu(net2,resultlist,sizes=[],intersections=[])
         with self.assertRaises(AssertionError):
-            esu.enumerateSubgraphs(net2,resultlist,sizes=[2,1],intersections=[1,1])
+            esu.sample_multilayer_subgraphs_esu(net2,resultlist,sizes=[2,1],intersections=[1,1])
         with self.assertRaises(AssertionError):
-            esu.enumerateSubgraphs(net2,resultlist,sizes=[2,1],intersections=[])
+            esu.sample_multilayer_subgraphs_esu(net2,resultlist,sizes=[2,1],intersections=[])
         with self.assertRaises(AssertionError):
-            esu.enumerateSubgraphs(net2,resultlist,sizes=[2,1,1],intersections=[1])
+            esu.sample_multilayer_subgraphs_esu(net2,resultlist,sizes=[2,1,1],intersections=[1])
         with self.assertRaises(AssertionError):
-            esu.enumerateSubgraphs(net2,resultlist,sizes=[],intersections=[1])
+            esu.sample_multilayer_subgraphs_esu(net2,resultlist,sizes=[],intersections=[1])
         resultlist = []
-        esu.enumerateSubgraphs(net1,resultlist,sizes=[1,2],intersections=[1])
+        esu.sample_multilayer_subgraphs_esu(net1,resultlist,sizes=[1,2],intersections=[1])
         self.assertEqual(resultlist,[])
         resultlist = []
-        esu.enumerateSubgraphs(net2,resultlist,sizes=[1],intersections=[])
+        esu.sample_multilayer_subgraphs_esu(net2,resultlist,sizes=[1],intersections=[])
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1],['X']),([1],['Y']),([2],['X'])])
         resultlist = []
-        esu.enumerateSubgraphs(net2,resultlist,sizes=[1,2],intersections=[1])
+        esu.sample_multilayer_subgraphs_esu(net2,resultlist,sizes=[1,2],intersections=[1])
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2],['X','Y'])])
         resultlist = []
-        esu.enumerateSubgraphs(net2,resultlist,sizes=[2,1],intersections=[1])
+        esu.sample_multilayer_subgraphs_esu(net2,resultlist,sizes=[2,1],intersections=[1])
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2],['X','Y'])])
         resultlist = []
-        esu.enumerateSubgraphs(net3,resultlist,sizes=[1,1],intersections=[1])
+        esu.sample_multilayer_subgraphs_esu(net3,resultlist,sizes=[1,1],intersections=[1])
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1],['X','Y']),([1],['Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net3,resultlist,sizes=[2,1],intersections=[1])
+        esu.sample_multilayer_subgraphs_esu(net3,resultlist,sizes=[2,1],intersections=[1])
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2],['Y','Z']),([1,3],['X','Y'])])
         resultlist = []
-        esu.enumerateSubgraphs(net3,resultlist,sizes=[2,2],intersections=[1])
+        esu.sample_multilayer_subgraphs_esu(net3,resultlist,sizes=[2,2],intersections=[1])
         self.assertEqual(resultlist,[])
         resultlist = []
-        esu.enumerateSubgraphs(net3,resultlist,sizes=[2,1,1],intersections=[1,0,0,0])
+        esu.sample_multilayer_subgraphs_esu(net3,resultlist,sizes=[2,1,1],intersections=[1,0,0,0])
         self.assertEqual(resultlist,[])
         resultlist = []
-        esu.enumerateSubgraphs(net3,resultlist,sizes=[2,1,2],intersections=[1,1,1,1])
+        esu.sample_multilayer_subgraphs_esu(net3,resultlist,sizes=[2,1,2],intersections=[1,1,1,1])
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2,3],['X','Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net4,resultlist,sizes=[1,2],intersections=[1])
+        esu.sample_multilayer_subgraphs_esu(net4,resultlist,sizes=[1,2],intersections=[1])
         self.assertEqual(resultlist,[])
         resultlist = []
-        esu.enumerateSubgraphs(net4,resultlist,sizes=[2,2],intersections=[2])
+        esu.sample_multilayer_subgraphs_esu(net4,resultlist,sizes=[2,2],intersections=[2])
         self.assertEqual(resultlist,[])
         resultlist =  []
-        esu.enumerateSubgraphs(net5,resultlist,sizes=[2,2,2],intersections=[2,2,2,2])
+        esu.sample_multilayer_subgraphs_esu(net5,resultlist,sizes=[2,2,2],intersections=[2,2,2,2])
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([0,1],['X','Y','Z'])])
         resultlist =  []
-        esu.enumerateSubgraphs(net5,resultlist,sizes=[2,2],intersections=[2])
+        esu.sample_multilayer_subgraphs_esu(net5,resultlist,sizes=[2,2],intersections=[2])
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([0, 1], ['X', 'Y']), ([0, 1], ['X', 'Z']), ([0, 1], ['Y', 'Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net6,resultlist,sizes=[2,2,2],intersections=[2,2,2,2])
+        esu.sample_multilayer_subgraphs_esu(net6,resultlist,sizes=[2,2,2],intersections=[2,2,2,2])
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2],['X','Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net7,resultlist,sizes=[2,2,2],intersections=[2,2,2,2])
+        esu.sample_multilayer_subgraphs_esu(net7,resultlist,sizes=[2,2,2],intersections=[2,2,2,2])
         self.assertEqual(resultlist,[])
         resultlist = []
-        esu.enumerateSubgraphs(net8,resultlist,sizes=[1,2],intersections=[1])
+        esu.sample_multilayer_subgraphs_esu(net8,resultlist,sizes=[1,2],intersections=[1])
         self.assertEqual(resultlist,[])
         
         resultlist = []
-        esu.enumerateSubgraphs(net3,resultlist,sizes=[2,2,1],intersections=[1,None,None,None],nnodes=3)
+        esu.sample_multilayer_subgraphs_esu(net3,resultlist,sizes=[2,2,1],intersections=[1,None,None,None],nnodes=3)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2,3],['X','Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net6,resultlist,sizes=[2,2],intersections=[None],nnodes=2)
+        esu.sample_multilayer_subgraphs_esu(net6,resultlist,sizes=[2,2],intersections=[None],nnodes=2)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2],['Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net9,resultlist,sizes=[3,2,2],intersections=[None,None,2,None],nnodes=3)
+        esu.sample_multilayer_subgraphs_esu(net9,resultlist,sizes=[3,2,2],intersections=[None,None,2,None],nnodes=3)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,3,4],['X','Y','Z']),([1,4,5],['X','Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net9,resultlist,sizes=[1,2,1],intersections=[1,None,1,None],nnodes=2)
+        esu.sample_multilayer_subgraphs_esu(net9,resultlist,sizes=[1,2,1],intersections=[1,None,1,None],nnodes=2)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,3],['X','Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net9,resultlist,sizes=[1,2,1],intersections=[1,None,1,None],nnodes=3)
+        esu.sample_multilayer_subgraphs_esu(net9,resultlist,sizes=[1,2,1],intersections=[1,None,1,None],nnodes=3)
         self.assertEqual(resultlist,[])
         resultlist = []
-        esu.enumerateSubgraphs(net9,resultlist,sizes=[1,2,1],intersections=[0,None,1,None],nnodes=2)
+        esu.sample_multilayer_subgraphs_esu(net9,resultlist,sizes=[1,2,1],intersections=[0,None,1,None],nnodes=2)
         self.assertEqual(resultlist,[])
         resultlist = []
-        esu.enumerateSubgraphs(net2,resultlist,sizes=[1,2],intersections=[2],nnodes=2,intersection_type="less_or_equal")
+        esu.sample_multilayer_subgraphs_esu(net2,resultlist,sizes=[1,2],intersections=[2],nnodes=2,intersection_type="less_or_equal")
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2],['X','Y'])])
         resultlist = []
-        esu.enumerateSubgraphs(net3,resultlist,sizes=[1,2,2],intersections=[2,2,2,2],nnodes=3,intersection_type="less_or_equal")
+        esu.sample_multilayer_subgraphs_esu(net3,resultlist,sizes=[1,2,2],intersections=[2,2,2,2],nnodes=3,intersection_type="less_or_equal")
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2,3],['X','Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net3,resultlist,sizes=[1,2],intersections=[2],nnodes=2,intersection_type="less_or_equal")
+        esu.sample_multilayer_subgraphs_esu(net3,resultlist,sizes=[1,2],intersections=[2],nnodes=2,intersection_type="less_or_equal")
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2],['Y','Z']),([1,3],['X','Y'])])
         resultlist = []
-        esu.enumerateSubgraphs(net3,resultlist,sizes=[1,2,1],intersections=[2,1,1,1],nnodes=2,intersection_type="less_or_equal")
+        esu.sample_multilayer_subgraphs_esu(net3,resultlist,sizes=[1,2,1],intersections=[2,1,1,1],nnodes=2,intersection_type="less_or_equal")
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2],['X','Y','Z']),([1,3],['X','Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net4,resultlist,sizes=[2,2],intersections=[2],nnodes=2,intersection_type="less_or_equal")
+        esu.sample_multilayer_subgraphs_esu(net4,resultlist,sizes=[2,2],intersections=[2],nnodes=2,intersection_type="less_or_equal")
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[])
         resultlist = []
-        esu.enumerateSubgraphs(net5,resultlist,sizes=[2,2,2],intersections=[2,2,2,1],nnodes=2,intersection_type="less_or_equal")
+        esu.sample_multilayer_subgraphs_esu(net5,resultlist,sizes=[2,2,2],intersections=[2,2,2,1],nnodes=2,intersection_type="less_or_equal")
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[])
         resultlist = []
-        esu.enumerateSubgraphs(net5,resultlist,sizes=[2,2,2],intersections=[2,2,2,3],nnodes=2,intersection_type="less_or_equal")
+        esu.sample_multilayer_subgraphs_esu(net5,resultlist,sizes=[2,2,2],intersections=[2,2,2,3],nnodes=2,intersection_type="less_or_equal")
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([0,1],['X','Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net6,resultlist,sizes=[2,2,2],intersections=[2,2,2,3],nnodes=2,intersection_type="less_or_equal")
+        esu.sample_multilayer_subgraphs_esu(net6,resultlist,sizes=[2,2,2],intersections=[2,2,2,3],nnodes=2,intersection_type="less_or_equal")
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2],['X','Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net7,resultlist,sizes=[2,2,2],intersections=[2,2,2,3],nnodes=2,intersection_type="less_or_equal")
+        esu.sample_multilayer_subgraphs_esu(net7,resultlist,sizes=[2,2,2],intersections=[2,2,2,3],nnodes=2,intersection_type="less_or_equal")
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[])
         resultlist = []
-        esu.enumerateSubgraphs(net3,resultlist,sizes=[1,2,2],intersections=[None,None,None,2],nnodes=3,intersection_type="less_or_equal")
+        esu.sample_multilayer_subgraphs_esu(net3,resultlist,sizes=[1,2,2],intersections=[None,None,None,2],nnodes=3,intersection_type="less_or_equal")
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2,3],['X','Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net3,resultlist,sizes=[1,1,1],intersections=[None,None,None,None],nnodes=1,intersection_type="less_or_equal")
+        esu.sample_multilayer_subgraphs_esu(net3,resultlist,sizes=[1,1,1],intersections=[None,None,None,None],nnodes=1,intersection_type="less_or_equal")
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1],['X','Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net3,resultlist,sizes=[1,2,2],intersections=[3,None,None,None],nnodes=3,intersection_type="less_or_equal")
+        esu.sample_multilayer_subgraphs_esu(net3,resultlist,sizes=[1,2,2],intersections=[3,None,None,None],nnodes=3,intersection_type="less_or_equal")
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2,3],['X','Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net3,resultlist,sizes=[1,2,2],intersections=[None,None,None,0],nnodes=3,intersection_type="less_or_equal")
+        esu.sample_multilayer_subgraphs_esu(net3,resultlist,sizes=[1,2,2],intersections=[None,None,None,0],nnodes=3,intersection_type="less_or_equal")
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[])
         resultlist = []
-        esu.enumerateSubgraphs(net3,resultlist,sizes=[1,2,1],intersections=[None,2,2,2],nnodes=2,intersection_type="less_or_equal")
+        esu.sample_multilayer_subgraphs_esu(net3,resultlist,sizes=[1,2,1],intersections=[None,2,2,2],nnodes=2,intersection_type="less_or_equal")
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2],['X','Y','Z']),([1,3],['X','Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net6,resultlist,sizes=[2,2,2],intersections=[None,2,None,None],nnodes=2,intersection_type="less_or_equal")
+        esu.sample_multilayer_subgraphs_esu(net6,resultlist,sizes=[2,2,2],intersections=[None,2,None,None],nnodes=2,intersection_type="less_or_equal")
         for result in resultlist:
             result[0].sort()
             result[1].sort()
@@ -976,98 +976,98 @@ class TestSampling(unittest.TestCase):
         net8.add_node(2,layer='Y')
         resultlist = []
         with self.assertRaises(AssertionError):
-            esu.enumerateSubgraphs(net2,resultlist,nnodes=1)
-            esu.enumerateSubgraphs(net2,resultlist,nlayers=1)
+            esu.sample_multilayer_subgraphs_esu(net2,resultlist,nnodes=1)
+            esu.sample_multilayer_subgraphs_esu(net2,resultlist,nlayers=1)
         resultlist = []
-        esu.enumerateSubgraphs(net1,resultlist,nnodes=1,nlayers=1)
+        esu.sample_multilayer_subgraphs_esu(net1,resultlist,nnodes=1,nlayers=1)
         self.assertEqual(resultlist,[])
         resultlist = []
-        esu.enumerateSubgraphs(net2,resultlist,nnodes=1,nlayers=1)
+        esu.sample_multilayer_subgraphs_esu(net2,resultlist,nnodes=1,nlayers=1)
         resultlist.sort()
         self.assertEqual(resultlist,[([1],['X']),([1],['Y']),([2],['X'])])
         resultlist = []
-        esu.enumerateSubgraphs(net2,resultlist,nnodes=2,nlayers=1)
+        esu.sample_multilayer_subgraphs_esu(net2,resultlist,nnodes=2,nlayers=1)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         self.assertEqual(resultlist,[([1,2],['X'])])
         resultlist = []
-        esu.enumerateSubgraphs(net2,resultlist,nnodes=2,nlayers=2)
+        esu.sample_multilayer_subgraphs_esu(net2,resultlist,nnodes=2,nlayers=2)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         self.assertEqual(resultlist,[([1,2,],['X','Y'])])
         resultlist = []
-        esu.enumerateSubgraphs(net3,resultlist,nnodes=2,nlayers=2)
+        esu.sample_multilayer_subgraphs_esu(net3,resultlist,nnodes=2,nlayers=2)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2],['Y','Z']),([1,3],['X','Y'])])
         resultlist = []
-        esu.enumerateSubgraphs(net3,resultlist,nnodes=3,nlayers=2)
+        esu.sample_multilayer_subgraphs_esu(net3,resultlist,nnodes=3,nlayers=2)
         self.assertEqual(resultlist,[])
         resultlist = []
-        esu.enumerateSubgraphs(net3,resultlist,nnodes=1,nlayers=3)
+        esu.sample_multilayer_subgraphs_esu(net3,resultlist,nnodes=1,nlayers=3)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1],['X','Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net3,resultlist,nnodes=1,nlayers=2)
+        esu.sample_multilayer_subgraphs_esu(net3,resultlist,nnodes=1,nlayers=2)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1],['X','Y']),([1],['Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net3,resultlist,nnodes=3,nlayers=3)
+        esu.sample_multilayer_subgraphs_esu(net3,resultlist,nnodes=3,nlayers=3)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2,3],['X','Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net4,resultlist,nnodes=2,nlayers=2)
+        esu.sample_multilayer_subgraphs_esu(net4,resultlist,nnodes=2,nlayers=2)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[])
         resultlist = []
-        esu.enumerateSubgraphs(net5,resultlist,nnodes=2,nlayers=2)
+        esu.sample_multilayer_subgraphs_esu(net5,resultlist,nnodes=2,nlayers=2)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([0,1],['X','Y']),([0,1],['X','Z']),([0,1],['Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net5,resultlist,nnodes=2,nlayers=3)
+        esu.sample_multilayer_subgraphs_esu(net5,resultlist,nnodes=2,nlayers=3)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([0,1],['X','Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net6,resultlist,nnodes=2,nlayers=3)
+        esu.sample_multilayer_subgraphs_esu(net6,resultlist,nnodes=2,nlayers=3)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2],['X','Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net6,resultlist,nnodes=1,nlayers=3)
+        esu.sample_multilayer_subgraphs_esu(net6,resultlist,nnodes=1,nlayers=3)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1],['X','Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net7,resultlist,nnodes=2,nlayers=3)
+        esu.sample_multilayer_subgraphs_esu(net7,resultlist,nnodes=2,nlayers=3)
         self.assertEqual(resultlist,[])
         resultlist = []
-        esu.enumerateSubgraphs(net8,resultlist,nnodes=2,nlayers=2)
+        esu.sample_multilayer_subgraphs_esu(net8,resultlist,nnodes=2,nlayers=2)
         self.assertEqual(resultlist,[])
         
     def test_dumb_enumeration_only_common_intersection_concise(self):
@@ -1327,135 +1327,135 @@ class TestSampling(unittest.TestCase):
         net11[1,'Z'][3,'Z'] = 1
         net11.add_node(4,layer='W')
         resultlist = []
-        esu.enumerateSubgraphs(net1,resultlist,sizes=[1,1],intersections=1,nnodes=1)
+        esu.sample_multilayer_subgraphs_esu(net1,resultlist,sizes=[1,1],intersections=1,nnodes=1)
         self.assertEqual(resultlist,[])
-        esu.enumerateSubgraphs(net2,resultlist,sizes=[1,1],intersections=1,nnodes=1)
+        esu.sample_multilayer_subgraphs_esu(net2,resultlist,sizes=[1,1],intersections=1,nnodes=1)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         self.assertEqual(resultlist,[([1],['X','Y'])])
         resultlist = []
-        esu.enumerateSubgraphs(net2,resultlist,sizes=[1,2],intersections=1,nnodes=2)
+        esu.sample_multilayer_subgraphs_esu(net2,resultlist,sizes=[1,2],intersections=1,nnodes=2)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         self.assertEqual(resultlist,[([1,2],['X','Y'])])
         resultlist = []
-        esu.enumerateSubgraphs(net3,resultlist,sizes=[2,1],intersections=1,nnodes=2)
+        esu.sample_multilayer_subgraphs_esu(net3,resultlist,sizes=[2,1],intersections=1,nnodes=2)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2],['Y','Z']),([1,3],['X','Y'])])
         resultlist = []
-        esu.enumerateSubgraphs(net3,resultlist,sizes=[2,1,1],intersections=1,nnodes=2)
+        esu.sample_multilayer_subgraphs_esu(net3,resultlist,sizes=[2,1,1],intersections=1,nnodes=2)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2],['X','Y','Z']),([1,3],['X','Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net3,resultlist,sizes=[2,2,1],intersections=1,nnodes=3)
+        esu.sample_multilayer_subgraphs_esu(net3,resultlist,sizes=[2,2,1],intersections=1,nnodes=3)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2,3],['X','Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net4,resultlist,sizes=[2,2],intersections=1,nnodes=2)
+        esu.sample_multilayer_subgraphs_esu(net4,resultlist,sizes=[2,2],intersections=1,nnodes=2)
         self.assertEqual(resultlist,[])
         resultlist = []
-        esu.enumerateSubgraphs(net5,resultlist,sizes=[2,2,2],intersections=2,nnodes=2)
+        esu.sample_multilayer_subgraphs_esu(net5,resultlist,sizes=[2,2,2],intersections=2,nnodes=2)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([0,1],['X','Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net5,resultlist,sizes=[1,1,1],intersections=1,nnodes=1)
+        esu.sample_multilayer_subgraphs_esu(net5,resultlist,sizes=[1,1,1],intersections=1,nnodes=1)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([0],['X','Y','Z']),([1],['X','Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net5,resultlist,sizes=[1,2,1],intersections=1,nnodes=2)
+        esu.sample_multilayer_subgraphs_esu(net5,resultlist,sizes=[1,2,1],intersections=1,nnodes=2)
         self.assertEqual(resultlist,[])
         resultlist = []
-        esu.enumerateSubgraphs(net6,resultlist,sizes=[2,2,2],intersections=2,nnodes=2)
+        esu.sample_multilayer_subgraphs_esu(net6,resultlist,sizes=[2,2,2],intersections=2,nnodes=2)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2],['X','Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net7,resultlist,sizes=[2,2,2],intersections=2,nnodes=2)
+        esu.sample_multilayer_subgraphs_esu(net7,resultlist,sizes=[2,2,2],intersections=2,nnodes=2)
         self.assertEqual(resultlist,[])
         resultlist = []
-        esu.enumerateSubgraphs(net8,resultlist,sizes=[2,2],intersections=2,nnodes=2)
+        esu.sample_multilayer_subgraphs_esu(net8,resultlist,sizes=[2,2],intersections=2,nnodes=2)
         self.assertEqual(resultlist,[])
         resultlist = []
-        esu.enumerateSubgraphs(net9,resultlist,sizes=[3,3,2],intersections=2,nnodes=4)
+        esu.sample_multilayer_subgraphs_esu(net9,resultlist,sizes=[3,3,2],intersections=2,nnodes=4)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,3,4,5],['X','Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net10,resultlist,sizes=[3,2,2],intersections=1,nnodes=4)
+        esu.sample_multilayer_subgraphs_esu(net10,resultlist,sizes=[3,2,2],intersections=1,nnodes=4)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2,3,4],['X','Y','Z']),([5,6,7,8],['X','Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net11,resultlist,sizes=[3,2,2],intersections=1,nnodes=4)
+        esu.sample_multilayer_subgraphs_esu(net11,resultlist,sizes=[3,2,2],intersections=1,nnodes=4)
         self.assertEqual(resultlist,[])
         
         resultlist = []
-        esu.enumerateSubgraphs(net3,resultlist,sizes=[2,1,2],intersections=2,nnodes=3,intersection_type="less_or_equal")
+        esu.sample_multilayer_subgraphs_esu(net3,resultlist,sizes=[2,1,2],intersections=2,nnodes=3,intersection_type="less_or_equal")
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2,3],['X','Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net3,resultlist,sizes=[2,1,2],intersections=2,nnodes=0,intersection_type="less_or_equal")
+        esu.sample_multilayer_subgraphs_esu(net3,resultlist,sizes=[2,1,2],intersections=2,nnodes=0,intersection_type="less_or_equal")
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[])
         resultlist = []
-        esu.enumerateSubgraphs(net3,resultlist,sizes=[2,1],intersections=2,nnodes=2,intersection_type="less_or_equal")
+        esu.sample_multilayer_subgraphs_esu(net3,resultlist,sizes=[2,1],intersections=2,nnodes=2,intersection_type="less_or_equal")
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2],['Y','Z']),([1,3],['X','Y'])])
         resultlist = []
-        esu.enumerateSubgraphs(net3,resultlist,sizes=[2,1],intersections=2,nnodes=2,intersection_type="less_or_equal")
+        esu.sample_multilayer_subgraphs_esu(net3,resultlist,sizes=[2,1],intersections=2,nnodes=2,intersection_type="less_or_equal")
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,2],['Y','Z']),([1,3],['X','Y'])])
         resultlist = []
-        esu.enumerateSubgraphs(net9,resultlist,sizes=[2,2],intersections=3,nnodes=2,intersection_type="less_or_equal")
+        esu.sample_multilayer_subgraphs_esu(net9,resultlist,sizes=[2,2],intersections=3,nnodes=2,intersection_type="less_or_equal")
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,4],['Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net9,resultlist,sizes=[2,2,3],intersections=3,nnodes=3,intersection_type="less_or_equal")
+        esu.sample_multilayer_subgraphs_esu(net9,resultlist,sizes=[2,2,3],intersections=3,nnodes=3,intersection_type="less_or_equal")
         for result in resultlist:
             result[0].sort()
             result[1].sort()
         resultlist.sort()
         self.assertEqual(resultlist,[([1,3,4],['X','Y','Z']),([1,4,5],['X','Y','Z'])])
         resultlist = []
-        esu.enumerateSubgraphs(net9,resultlist,sizes=[2,2,3],intersections=1,nnodes=3,intersection_type="less_or_equal")
+        esu.sample_multilayer_subgraphs_esu(net9,resultlist,sizes=[2,2,3],intersections=1,nnodes=3,intersection_type="less_or_equal")
         for result in resultlist:
             result[0].sort()
             result[1].sort()
@@ -1489,7 +1489,7 @@ class TestSampling(unittest.TestCase):
         net1[1,'Y'][1,'Z'] = 1
         net1[1,'Y'][2,'Z'] = 1
         resultlist = []
-        esu.enumerateSubgraphs(net1,lambda x: callback_fun(x,resultlist),sizes=[1,2],intersections=[1])
+        esu.sample_multilayer_subgraphs_esu(net1,lambda x: callback_fun(x,resultlist),sizes=[1,2],intersections=[1])
         for result in resultlist:
             result[0].sort()
             result[1].sort()
@@ -1527,7 +1527,7 @@ class TestSampling(unittest.TestCase):
         net1[1,'Y'][1,'Z'] = 1
         net1[1,'Y'][2,'Z'] = 1
         resultlist = []
-        esu.enumerateSubgraphs(net1,resultlist,nnodes=2,nlayers=3,custom_check_function=custom_check)
+        esu.sample_multilayer_subgraphs_esu(net1,resultlist,nnodes=2,nlayers=3,custom_check_function=custom_check)
         for result in resultlist:
             result[0].sort()
             result[1].sort()
@@ -1542,7 +1542,7 @@ class TestSampling(unittest.TestCase):
                 resultlist_dumb = []
                 resultlist_esu = []
                 dumb.dumbEnumeration(network,resultlist_dumb,sizes=requirement[0],intersections=requirement[1])
-                esu.enumerateSubgraphs(network,resultlist_esu,sizes=requirement[0],intersections=requirement[1])
+                esu.sample_multilayer_subgraphs_esu(network,resultlist_esu,sizes=requirement[0],intersections=requirement[1])
                 for result in resultlist_dumb:
                     result[0].sort()
                     result[1].sort()
@@ -1565,7 +1565,7 @@ class TestSampling(unittest.TestCase):
                 resultlist_dumb = []
                 resultlist_esu = []
                 dumb.dumbEnumeration(network,resultlist_dumb,sizes=requirement[0],intersections=requirement[1])
-                esu.enumerateSubgraphs(network,resultlist_esu,sizes=requirement[0],intersections=requirement[1])
+                esu.sample_multilayer_subgraphs_esu(network,resultlist_esu,sizes=requirement[0],intersections=requirement[1])
                 for result in resultlist_dumb:
                     result[0].sort()
                     result[1].sort()
@@ -1616,7 +1616,7 @@ class TestSampling(unittest.TestCase):
         for _ in range(10):
             for requirement in reqlist:
                 resultlist_esu = []
-                esu.enumerateSubgraphs(network,resultlist_esu,sizes=requirement[0],intersections=requirement[1])
+                esu.sample_multilayer_subgraphs_esu(network,resultlist_esu,sizes=requirement[0],intersections=requirement[1])
         print("Time taken "+str(time.time()-start)+" s")
         
     def _statistical_sample(self,network,iterations,motif,p,all_subgraphs):
@@ -1628,7 +1628,7 @@ class TestSampling(unittest.TestCase):
         start = time.time()
         for _ in range(iterations):
             resultlist = []
-            esu.enumerateSubgraphs(network,resultlist,p=p,sizes=motif[0],intersections=motif[1])
+            esu.sample_multilayer_subgraphs_esu(network,resultlist,p=p,sizes=motif[0],intersections=motif[1])
             for result in resultlist:
                 result[0].sort()
                 result[1].sort()
@@ -1669,7 +1669,7 @@ class TestSampling(unittest.TestCase):
             p = [0.5] * (req_nodelist_len-1 + req_layerlist_len-1 + 1)
         if all_subgraphs == None:
             all_subgraphs = []
-            esu.enumerateSubgraphs(network,all_subgraphs,sizes=motif[0],intersections=motif[1])
+            esu.sample_multilayer_subgraphs_esu(network,all_subgraphs,sizes=motif[0],intersections=motif[1])
         data = self._statistical_sample(network,iterations,motif,p,all_subgraphs)
         outlier_count = 0
         motif_count = len(data)
@@ -1693,7 +1693,7 @@ class TestSampling(unittest.TestCase):
             resultlist_dumb = []
             resultlist_esu = []
             dumb.dumbEnumeration(network,resultlist_dumb,sizes=[2,1],intersections=[1])
-            esu.enumerateSubgraphs(network,resultlist_esu,sizes=[2,1],intersections=[1])
+            esu.sample_multilayer_subgraphs_esu(network,resultlist_esu,sizes=[2,1],intersections=[1])
             for result in resultlist_dumb:
                 result[0].sort()
                 result[1].sort()
@@ -1707,7 +1707,7 @@ class TestSampling(unittest.TestCase):
             resultlist_dumb = []
             resultlist_esu = []
             dumb.dumbEnumeration(network,resultlist_dumb,sizes=[3,2,2],intersections=1,nnodes=4)
-            esu.enumerateSubgraphs(network,resultlist_esu,sizes=[3,2,2],intersections=1,nnodes=4)
+            esu.sample_multilayer_subgraphs_esu(network,resultlist_esu,sizes=[3,2,2],intersections=1,nnodes=4)
             for result in resultlist_dumb:
                 result[0].sort()
                 result[1].sort()
@@ -1721,7 +1721,7 @@ class TestSampling(unittest.TestCase):
             resultlist_dumb = []
             resultlist_esu = []
             dumb.dumbEnumeration(network,resultlist_dumb,sizes=[3,2,2],intersections=2,nnodes=4,intersection_type="less_or_equal")
-            esu.enumerateSubgraphs(network,resultlist_esu,sizes=[3,2,2],intersections=2,nnodes=4,intersection_type="less_or_equal")
+            esu.sample_multilayer_subgraphs_esu(network,resultlist_esu,sizes=[3,2,2],intersections=2,nnodes=4,intersection_type="less_or_equal")
             for result in resultlist_dumb:
                 result[0].sort()
                 result[1].sort()
@@ -1735,7 +1735,7 @@ class TestSampling(unittest.TestCase):
             resultlist_dumb = []
             resultlist_esu = []
             dumb.dumbEnumeration(network,resultlist_dumb,sizes=[2,2,2],intersections=[2,2,2,2],nnodes=4,intersection_type="less_or_equal")
-            esu.enumerateSubgraphs(network,resultlist_esu,sizes=[2,2,2],intersections=[2,2,2,2],nnodes=4,intersection_type="less_or_equal")
+            esu.sample_multilayer_subgraphs_esu(network,resultlist_esu,sizes=[2,2,2],intersections=[2,2,2,2],nnodes=4,intersection_type="less_or_equal")
             for result in resultlist_dumb:
                 result[0].sort()
                 result[1].sort()
@@ -1749,7 +1749,7 @@ class TestSampling(unittest.TestCase):
             resultlist_dumb = []
             resultlist_esu = []
             dumb.dumbEnumeration(network,resultlist_dumb,nnodes=3,nlayers=3)
-            esu.enumerateSubgraphs(network,resultlist_esu,nnodes=3,nlayers=3)
+            esu.sample_multilayer_subgraphs_esu(network,resultlist_esu,nnodes=3,nlayers=3)
             for result in resultlist_dumb:
                 result[0].sort()
                 result[1].sort()
@@ -1763,7 +1763,7 @@ class TestSampling(unittest.TestCase):
             resultlist_dumb = []
             resultlist_esu = []
             dumb.dumbEnumeration(network,resultlist_dumb,sizes=[2,3,2],intersections=[2,1,None,None],nnodes=4)
-            esu.enumerateSubgraphs(network,resultlist_esu,sizes=[2,3,2],intersections=[2,1,None,None],nnodes=4)
+            esu.sample_multilayer_subgraphs_esu(network,resultlist_esu,sizes=[2,3,2],intersections=[2,1,None,None],nnodes=4)
             for result in resultlist_dumb:
                 result[0].sort()
                 result[1].sort()
@@ -1777,7 +1777,7 @@ class TestSampling(unittest.TestCase):
             resultlist_dumb = []
             resultlist_esu = []
             dumb.dumbEnumeration(network,resultlist_dumb,sizes=[2,3,2],intersections=[2,1,None,None],nnodes=4,intersection_type="less_or_equal")
-            esu.enumerateSubgraphs(network,resultlist_esu,sizes=[2,3,2],intersections=[2,1,None,None],nnodes=4,intersection_type="less_or_equal")
+            esu.sample_multilayer_subgraphs_esu(network,resultlist_esu,sizes=[2,3,2],intersections=[2,1,None,None],nnodes=4,intersection_type="less_or_equal")
             for result in resultlist_dumb:
                 result[0].sort()
                 result[1].sort()

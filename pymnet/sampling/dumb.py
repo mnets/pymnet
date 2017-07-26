@@ -12,14 +12,14 @@ def dumbEnumeration(network,results,sizes=None,intersections=None,nnodes=None,nl
     whether they fulfill the requirements. This is a naive algorithm and is not
     intended for use in large networks.
     
-    Accepts the same parameters as enumerateSubgraphs, and has the same functionalities
+    Accepts the same parameters as sample_multilayer_subgraphs_esu, and has the same functionalities
     (except when using a custom_check_function, where induced subgraphs passed to
-    the check function are different between this and enumerateSubgraphs, which needs to
+    the check function are different between this and sample_multilayer_subgraphs_esu, which needs to
     be handled by the user - see below).
     
-    A difference between this and enumerateSubgraphs is that in this function, no
+    A difference between this and sample_multilayer_subgraphs_esu is that in this function, no
     guarantees other than nnodes and nlayers being correct are made about the
-    induced subgraphs passed to the validity checking function (unlike in enumerateSubgraphs,
+    induced subgraphs passed to the validity checking function (unlike in sample_multilayer_subgraphs_esu,
     where they are guaranteed to have at least some path in them and have no empty nodes or
     layers.) That is, the induced subgraphs are probably not connected, they might contain
     empty layers or nodes, etc. If you use a custom_check_function, take this into account.
