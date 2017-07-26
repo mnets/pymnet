@@ -41,7 +41,24 @@ def multilayer_partially_interconnected(nodes_by_layer,p,seed=None):
     return network
     
 def random_nodelists(poolsize,nodes_per_layer,layers,seed=None):
-    # nodes_per_layer is exact, no overlaps
+    """Draw a random sample of nodes without replacement for each layer
+    from a pool of specified size.
+    
+    Parameters
+    ----------
+    poolsize : int
+        Size of the pool to draw nodes from.
+    nodes_per_layer : int
+        How many nodes are on each layer.
+    layers : int
+        How many layers should nodes be drawn for.
+    seed : int, str, bytes or bytearray
+        Seed for random drawing.
+        
+    Yields
+    ------
+    A list of a sample of nodes_per_layer nodes without replacement, times layers.
+    """
     if seed == None:
         random.seed()
     else:
