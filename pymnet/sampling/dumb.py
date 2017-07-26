@@ -7,24 +7,24 @@ import itertools
 from reqs import default_check_reqs,default_calculate_required_lengths,relaxed_check_reqs
 
 def dumbEnumeration(network,results,sizes=None,intersections=None,nnodes=None,nlayers=None,intersection_type="strict",custom_check_function=None):
-    u"""Enumerates all induced subgraphs of the form [nodelist][layerlist] by
+    """Enumerates all induced subgraphs of the form [nodelist][layerlist] by
     going through all possible [nodelist][layerlist] combinations and checking
-    whether they fulfill the requirements. This is a dumb algorithm and is not
+    whether they fulfill the requirements. This is a naive algorithm and is not
     intended for use in large networks.
     
-    Parameters
-    ----------
-    network : MultilayerNetwork
-        The multilayer network to be analyzed.
-    sizes : list of ints > 0
-        How many nodes are on each layer of the induced subgraphs that we want
-        to discover.
-    intersections : list of ints >= 0
-        How large are the intersections between groups of layers. The layer roles
-        are in the same order as in sizes. For a more detailed description
-        of how to construct the intersections list, see :func:'reqs.check_reqs'.
-    resultlist : list
-        Where found induced subgraphs are appended as tuples (nodelist, layerlist).
+    Accepts the same parameters as enumerateSubgraphs, and has the same functionalities
+    (except when using a custom_check_function, where induced subgraphs passed to
+    the check function are different between this and enumerateSubgraphs, which needs to
+    be handled by the user - see below).
+    
+    A difference between this and enumerateSubgraphs is that in this function, no
+    guarantees other than nnodes and nlayers being correct are made about the
+    induced subgraphs passed to the validity checking function (unlike in enumerateSubgraphs,
+    where they are guaranteed to have at least some path in them and have no empty nodes or
+    layers.) That is, the induced subgraphs are probably not connected, they might contain
+    empty layers or nodes, etc. If you use a custom_check_function, take this into account.
+    If using one of the built-in functionalities which use default_check_reqs or
+    relaxed_check_reqs, this has been taken into account and you don't have to worry about it.
     """
     check_function = None
     assert (sizes != None and intersections != None) or (nnodes != None and nlayers != None), "Please provide either sizes and intersections or nnodes and nlayers"
