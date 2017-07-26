@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-@author: T. Nurmi
-"""
+
 import pymnet
 from pymnet import nx
 import itertools

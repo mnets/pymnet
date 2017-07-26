@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-@author: T. Nurmi
-"""
 
 import pymnet
 from reqs import default_check_reqs,default_calculate_required_lengths,relaxed_check_reqs
