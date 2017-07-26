@@ -1824,23 +1824,3 @@ def makesuite(exhaustive=False,insane=False,performance=False,distribution_width
 
 if __name__ == '__main__':
     unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(makesuite(exhaustive=False,insane=False,performance=False,distribution_width=False,parameter_sets=False))
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
