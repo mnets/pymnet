@@ -39,14 +39,17 @@ def enumerateSubgraphs(network,results,sizes=None,intersections=None,nnodes=None
     sizes : list of ints > 0
         How many nodes should be on each layer of an acceptable induced subgraph.
         One integer for each layer of an acceptable subgraph.
-    intersections : list of ints >= 0 or Nones
+    intersections : list of ints >= 0 or Nones, or int
         How many nodes should be shared between sets of layers in an acceptable
-        induced subgraph. If an entry in the list is None, any number of shared
+        induced subgraph. If list, if an entry in the list is None, any number of shared
         nodes is accepted. The order of the intersections is taken to follow the
         order of layers in sizes, with two-layer intersections being listed first,
-        then three-layer intersections, etc. For more details, see section
-        "Constructing the requirements" in the documentation of the function
-        default_check_reqs.
+        then three-layer intersections, etc. If int, then this is taken to mean
+        the intersection between ALL layers, and the other intersections can be anything.
+        If this is an int with value x, it is equivalent to being a list with
+        [None,None,...,None,x].
+        For more details, see section "Constructing the requirements" in the documentation
+        of the function default_check_reqs.
     nnodes : int
         How many nodes an acceptable subgraph should have. If not provided and
         sizes and intersections are provided, it
@@ -72,7 +75,7 @@ def enumerateSubgraphs(network,results,sizes=None,intersections=None,nnodes=None
         This formula follows from the fact that finding an induced subgraph starts
         from a nodelayer (the + 1), and then each node and each layer have to be added
         one at a time to the nodelist and layerlist, respectively
-        (nnodes - 1 and nlayer - 1, respectively). Starting from a nodelayer means
+        (nnodes - 1 and nlayers - 1, respectively). Starting from a nodelayer means
         that both nodelist and layerlist are of length 1 when the expansion of the
         subgraph is started, hence the - 1's.
     seed : int, str, bytes or bytearray
@@ -96,31 +99,92 @@ def enumerateSubgraphs(network,results,sizes=None,intersections=None,nnodes=None
         any case). Therefore, if you use a custom_check_function whose return value depends
         also on the edges OUTSIDE the induced subgraph to be tested, set this parameter to False.
     custom_check_function : callable or None
-        TODO
+        If not None, this will be used to determine whether an induced subgraph is okay or not
+        (instead of one of the built-in check functions).
+        The algorithm finds induced subgraphs which have the given nnodes and nlayers, and which
+        have a path spanning the induced subgraph (but are not necessarily connected). The algorithm
+        then passes these to the check function, which determines whether the subgraph is acceptable
+        or not. The arguments that are passed to your custom check function are the network, the nodelist
+        of the induced subgraph, and the layerlist of the induced subgraph (three parameters, in this
+        order). Your check function should therefore accept exactly three parameters. If you want to pass
+        more parameters to the check function, do so via e.g. an anonymous function.
+        If copy_network is True, the passed network is the copy of the network, which might have
+        edges removed OUTSIDE of the induced subgraph (the edges inside the induced subgraph are identical
+        to the original network's). The function should return True or False (the subgraph is acceptable
+        or not acceptable, respectively). When this parameter is not None, you must also specify nnodes
+        and nlayers.
         
     Usage
     -----
     There are multiple functionalities built-in, and determining which is used is
     done by checking which parameters have been given by the user.
     
-    1. Sizes and intersections have been given:
-        i. If intersection_type == "strict":
-            a. If there are no Nones in intersections:
-                - nnodes and nlayers cannot be given
-                - TODO
-            b. If there are Nones in intersections:
-                - nnodes must be given
-        ii. If intersection_type == "less_or_equal":
-            a. If there are no Nones in intersections:
-                - TODO
-    2. Nnodes and nlayers have been given:
-        i. If sizes and 
+    If you want to find induced subgraphs (ISs) that have a specified number of nodes
+    on each layer and have specific intersections between layers, provide:
+        - network
+        - results
+        - sizes
+        - intersections as list without Nones
         
-    TODO: DONE listat pois
-    parempi naapuruston ja node conflictien checkki
-    mieti verkon kopiointi ja nl:ien poisto
-    DONE tilastollinen testaus että samplaus toimii kuten pitaa
-    kayttajan maarittelema check-funktio
+    If you want to find ISs that have a specific number of nodes on each layer and
+    have some specific intersections between layers, and some intersections that can
+    be of any cardinality, provide:
+        - network
+        - results
+        - sizes
+        - intersections as list with Nones in the elements where intersection cardinalities can be anything (even all elements can be Nones)
+        - nnodes
+        
+    If you want to find ISs that have a specific number of nodes on each layer and
+    have intersections that have at most specific cardinalities, provide:
+        - network
+        - results
+        - sizes
+        - intersections as list without Nones
+        - nnodes
+        - intersection_type = "less_or_equal"
+        
+    If you want to find ISs that have a specific number of nodes on each layer and
+    have some specific intersections that have at most specific cardinalities, and some
+    intersections that can be of any cardinality, provide:
+        - network
+        - results
+        - sizes
+        - intersections as list with Nones in the elements where intersection cardinalities can be anything (even all intersections can be Nones)
+        - nnodes
+        - intersection_type = "less_or_equal"
+        
+    If you want to find ISs that have a specific number of nodes on each layer and
+    have a specific intersection between ALL layers (the other intersections can be anything),
+    provide:
+        - network
+        - results
+        - sizes
+        - nnodes
+        - intersections as int
+        
+    If you want to find ISs that have a specific number of nodes and a specific number
+    of layers, provide:
+        - network
+        - results
+        - nnodes
+        - nlayers
+        
+    If you want to define your own function to determine when an IS is acceptable,
+    provide:
+        - network
+        - results
+        - nnodes
+        - nlayers
+        - custom_check_function
+    
+    For all of the above uses, if you don't want to find all ISs but only sample a
+    portion of them, also provide:
+        - p
+    
+    Of the above uses, the first five use the default_check_reqs function for checking
+    subgraph validity, the sixth uses the relaxed_check_reqs function, and the seventh
+    uses the user-supplied checking function.
     
     References
     ----------
