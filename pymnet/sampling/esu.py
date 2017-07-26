@@ -31,6 +31,8 @@ def enumerateSubgraphs(network,results,sizes=None,intersections=None,nnodes=None
     results : list or callable
         The method of outputting the found induced subgraphs. If a list, then
         the induced subgraphs are appended to it as ([nodelist],[layerlist]) tuples.
+        The results list or the [nodelist] or [layerlist] lists are not guaranteed to
+        be in any specific order.
         If a callable, when an acceptable induced subgraph is found, this callable
         is called with the argument ([nodelist],[layerlist]) (that is, one argument
         which is a tuple of two lists). The callable should therefore take only one
@@ -186,6 +188,39 @@ def enumerateSubgraphs(network,results,sizes=None,intersections=None,nnodes=None
     subgraph validity, the sixth uses the relaxed_check_reqs function, and the seventh
     uses the user-supplied checking function.
     
+    Example
+    -------
+    Suppose we have the multilayer network N:
+    
+    (1,'X')----(2,'X')----(3,'X')
+                  |
+                  |
+               (2,'Y')
+    
+    where (a,b) are nodelayer tuples with a = node identity and b = layer identity.
+    After calling
+    
+    >>> results = []
+    >>> enumerateSubgraphs(N,results,[2,1],[1])
+    
+    the results list looks like [([1,2],['X','Y']),([2,3],['X','Y'])] (or some other
+    order of tuples and [nodelist] and [layerlist] inside the tuples, since the output
+    is not guaranteed to be in any specific order).
+    
+    After calling
+    
+    >>> results = []
+    >>> enumerateSubgraphs(N,results,nnodes=3,nlayers=1)
+    
+    the results list looks like [([1,2,3],['X'])] (or again, some other ordering).
+    
+    Further reading
+    ---------------
+    The documentation of the functions default_check_reqs, default_calculate_required_lengths
+    and relaxed_check_reqs offer mroe insight into what are considered acceptable induced subgraphs
+    in different cases in the functionalities described in the Usage section. You should read these
+    if you are not sure what you want to do or how to do it after reading this documentation.
+    
     References
     ----------
     [1] "A Faster Algorithm for Detecting Network Motifs", S. Wernicke, WABI. Vol. 3692, pp. 165-177. Springer 2005.
@@ -282,6 +317,7 @@ def enumerateSubgraphs(network,results,sizes=None,intersections=None,nnodes=None
                 network_copy[neighbor][v] = 0
 
 def _extendSubgraph(network,nodelist,layerlist,check_function,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,depth,p,results):    
+    # A helper function of enumerateSubgraphs, not intended for use by users    
     if len(nodelist) > req_nodelist_len or len(layerlist) > req_layerlist_len:
         return
     if len(nodelist) == req_nodelist_len and len(layerlist) == req_layerlist_len:
