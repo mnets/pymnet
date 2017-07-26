@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-@author: T. Nurmi
-"""
 
 import sys
 import unittest
