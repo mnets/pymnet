@@ -8,7 +8,7 @@ from reqs import default_check_reqs,default_calculate_required_lengths,relaxed_c
 import random
 import itertools
 
-def enumerateSubgraphs(network,results,sizes=None,intersections=None,nnodes=None,nlayers=None,p=None,seed=None,intersection_type="strict",copy_network=True,custom_check_function=None):
+def sample_multilayer_subgraphs_esu(network,results,sizes=None,intersections=None,nnodes=None,nlayers=None,p=None,seed=None,intersection_type="strict",copy_network=True,custom_check_function=None):
     u"""A one-aspect multilayer version of the Rand-EnumerateSubgraphs (Rand-ESU) algorithm
     introduced by Wernicke [1].
     
@@ -200,7 +200,7 @@ def enumerateSubgraphs(network,results,sizes=None,intersections=None,nnodes=None
     After calling
     
     >>> results = []
-    >>> enumerateSubgraphs(N,results,[2,1],[1])
+    >>> sample_multilayer_subgraphs_esu(N,results,[2,1],[1])
     
     the results list looks like [([1,2],['X','Y']),([2,3],['X','Y'])] (or some other
     order of tuples and [nodelist] and [layerlist] inside the tuples, since the output
@@ -209,7 +209,7 @@ def enumerateSubgraphs(network,results,sizes=None,intersections=None,nnodes=None
     After calling
     
     >>> results = []
-    >>> enumerateSubgraphs(N,results,nnodes=3,nlayers=1)
+    >>> sample_multilayer_subgraphs_esu(N,results,nnodes=3,nlayers=1)
     
     the results list looks like [([1,2,3],['X'])] (or again, some other ordering).
     
@@ -315,7 +315,7 @@ def enumerateSubgraphs(network,results,sizes=None,intersections=None,nnodes=None
                 network_copy[neighbor][v] = 0
 
 def _extend_subgraph(network,nodelist,layerlist,check_function,V_extension_nodes,V_extension_layers,numberings,v,req_nodelist_len,req_layerlist_len,depth,p,results):    
-    # A helper function of enumerateSubgraphs, not intended for use by users    
+    # A helper function of sample_multilayer_subgraphs_esu, not intended for use by users    
     if len(nodelist) > req_nodelist_len or len(layerlist) > req_layerlist_len:
         return
     if len(nodelist) == req_nodelist_len and len(layerlist) == req_layerlist_len:
