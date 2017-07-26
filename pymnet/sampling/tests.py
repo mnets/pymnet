@@ -1703,7 +1703,6 @@ class TestSampling(unittest.TestCase):
                 result[1].sort()
             resultlist_esu.sort()
             self.assertEqual(resultlist_dumb,resultlist_esu)
-            #print('Normal okay')
             resultlist_dumb = []
             resultlist_esu = []
             dumb.dumb_enumeration(network,resultlist_dumb,sizes=[3,2,2],intersections=1,nnodes=4)
@@ -1717,7 +1716,6 @@ class TestSampling(unittest.TestCase):
                 result[1].sort()
             resultlist_esu.sort()
             self.assertEqual(resultlist_dumb,resultlist_esu)
-            #print('Int isect okay')
             resultlist_dumb = []
             resultlist_esu = []
             dumb.dumb_enumeration(network,resultlist_dumb,sizes=[3,2,2],intersections=2,nnodes=4,intersection_type="less_or_equal")
@@ -1731,7 +1729,6 @@ class TestSampling(unittest.TestCase):
                 result[1].sort()
             resultlist_esu.sort()
             self.assertEqual(resultlist_dumb,resultlist_esu)
-            #print('LOE int isect okay')
             resultlist_dumb = []
             resultlist_esu = []
             dumb.dumb_enumeration(network,resultlist_dumb,sizes=[2,2,2],intersections=[2,2,2,2],nnodes=4,intersection_type="less_or_equal")
@@ -1745,7 +1742,6 @@ class TestSampling(unittest.TestCase):
                 result[1].sort()
             resultlist_esu.sort()
             self.assertEqual(resultlist_dumb,resultlist_esu)
-            #print('LOE okay')
             resultlist_dumb = []
             resultlist_esu = []
             dumb.dumb_enumeration(network,resultlist_dumb,nnodes=3,nlayers=3)
@@ -1759,7 +1755,6 @@ class TestSampling(unittest.TestCase):
                 result[1].sort()
             resultlist_esu.sort()
             self.assertEqual(resultlist_dumb,resultlist_esu)
-            #print('Relaxed okay')
             resultlist_dumb = []
             resultlist_esu = []
             dumb.dumb_enumeration(network,resultlist_dumb,sizes=[2,3,2],intersections=[2,1,None,None],nnodes=4)
@@ -1773,7 +1768,6 @@ class TestSampling(unittest.TestCase):
                 result[1].sort()
             resultlist_esu.sort()
             self.assertEqual(resultlist_dumb,resultlist_esu)
-            #print('None okay')
             resultlist_dumb = []
             resultlist_esu = []
             dumb.dumb_enumeration(network,resultlist_dumb,sizes=[2,3,2],intersections=[2,1,None,None],nnodes=4,intersection_type="less_or_equal")
@@ -1787,8 +1781,6 @@ class TestSampling(unittest.TestCase):
                 result[1].sort()
             resultlist_esu.sort()
             self.assertEqual(resultlist_dumb,resultlist_esu)
-            #print('LOE None okay')
-            #print('---- LOOP OKAY ----')
 
 def makesuite(exhaustive=False,insane=False,performance=False,distribution_width=False,parameter_sets=False):
     suite = unittest.TestSuite()
