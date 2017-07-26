@@ -5,7 +5,7 @@
 import pymnet
 import random
 
-def multilayer_partially_interconnected(nodes_by_layer,p,seed=None):
+def er_multilayer_partially_interconnected(nodes_by_layer,p,seed=None):
     """Create a one-aspect E-R multilayer network with given nodesets for each
     layer and edge probability p.
     
