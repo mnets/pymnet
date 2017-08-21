@@ -3,6 +3,13 @@
 
 import math
 
+#Some assigner features use matplotlib. These features are only available if matplotlib can be loaded
+try:
+    import matplotlib
+    matplotlib_loaded=True
+except ImportError:
+    matplotlib_loaded=False
+
 class PropertyAssigner(object):
     rules=set(["order","name","f"])
     def __init__(self,propDict,propRule,defaultProp,net):
@@ -47,7 +54,10 @@ class PropertyAssigner(object):
         if "scaleby" in self.propRule:
             item=item*self.propRule["scaleby"]
         if "colormap" in self.propRule:
-            item=matplotlib.cm.get_cmap(self.propRule["colormap"])(item)
+            if matplotlib_loaded:
+                item=matplotlib.cm.get_cmap(self.propRule["colormap"])(item)
+            else:
+                raise ImportError("The colormap feature uses matplotlib, and matplotlib cannot be imported.")
         return item
 
 class LayerPropertyAssigner(PropertyAssigner):
