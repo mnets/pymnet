@@ -5,10 +5,7 @@ import unittest
 import time
 import scipy,scipy.stats
 from pymnet import net,models
-import reqs
-import dumb
-import esu
-import creators
+from pymnet.sampling import reqs,dumb,esu,creators
 
 class TestSampling(unittest.TestCase):
     
