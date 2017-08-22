@@ -6,6 +6,7 @@ from .models_test import test_models
 from .transforms_test import test_transforms
 from .visuals_test import test_visuals
 from .isomorphisms_test import test_isomorphisms
+from .sampling_test import test_sampling
 
 try:
     import networkx
@@ -24,5 +25,6 @@ def test_all():
     codes.append(test_transforms())
     codes.append(test_visuals())
     codes.append(test_isomorphisms())
+    codes.append(test_sampling())
     if nximported: codes.append(test_nxwrap())
     return all(codes)

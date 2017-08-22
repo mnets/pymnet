@@ -1808,5 +1808,9 @@ def makesuite(exhaustive=False,insane=False,performance=False,distribution_width
         suite.addTest(TestSampling("test_different_parameter_sets"))
     return suite
 
+def test_sampling(**kwargs):
+    suite=makesuite(**kwargs)
+    return unittest.TextTestRunner().run(suite).wasSuccessful()
+
 if __name__ == '__main__':
-    unittest.TextTestRunner(stream=sys.stdout,verbosity=2).run(makesuite(exhaustive=False,insane=False,performance=False,distribution_width=False,parameter_sets=False))
+    sys.exit(not test_sampling(exhaustive=False,insane=False,performance=False,distribution_width=False,parameter_sets=False))
