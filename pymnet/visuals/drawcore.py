@@ -1,5 +1,6 @@
 """The draw function. This is used to create figures of the network.
 """
+from __future__ import print_function
 
 import random,math
 
@@ -10,13 +11,19 @@ import pymnet.netio as netio
 from .layouts import get_layout
 from .drawassigners import *
 from .drawnet import *
+
+possible_backends=["mpl","threejs"]
+imported_backends=[]
+import_errors={}
 try:
     from .drawbackends.mpl import *
-except ImportError:
+    imported_backends.append("mpl")
+except ImportError as e:
     #print "Warning: cannot import matplotlib."
-    pass
+    import_errors["mpl"]=e
 
 from .drawbackends.threejs import NetFigureThreeJS,LayerThreeJS,NodeThreeJS,EdgeThreeJS
+imported_backends.append("threejs")
 
 
 def draw(net,layout="spring",layershape="rectangle",azim=-51,elev=22,show=False,layergap=1.0,camera_dist=None,autoscale=True,backend="mpl",
@@ -183,12 +190,17 @@ def draw(net,layout="spring",layershape="rectangle",azim=-51,elev=22,show=False,
 
 
     #Choose the backend for drawing
+    if backend not in possible_backends:
+        raise Exception("Unknown backend: "+str(backend))
+    if backend not in imported_backends:
+        print("There was an error importing backend'"+str(backend)+"'.")
+        print("Please use one of the available backends: "+" ".join(imported_backends))
+        print("The following error was raised:")
+        raise import_errors[backend]
     if backend=="mpl":
         NetFigureBE,LayerBE,NodeBE,EdgeBE=NetFigureMPL,LayerMPL,NodeMPL,EdgeMPL
     elif backend=="threejs":
         NetFigureBE,LayerBE,NodeBE,EdgeBE=NetFigureThreeJS,LayerThreeJS,NodeThreeJS,EdgeThreeJS
-    else:
-        raise Exception("Unknown backend: "+str(backend))
 
     #Build the network
     layers={}
