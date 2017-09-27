@@ -29,9 +29,9 @@ class PropertyAssigner(object):
         if pdictval!=None:
             return pdictval
         elif len(self.propRule)>0:
-            assert "rule" in self.propRule
+            assert "rule" in self.propRule, "The rule dictionary must contain 'rule' key"
             if self.propRule["rule"] in self.rules:
-                return self.apply_modify_rules(self.get_by_rule(item,self.propRule["rule"]))
+                return self.apply_modify_rules(self.get_by_rule(item,self.propRule["rule"]),item)
             else:
                 raise Exception("Unknown rule: "+str(self.propRule["rule"]))
         else:
@@ -48,11 +48,16 @@ class PropertyAssigner(object):
         elif rule=="name":
             return item
 
-    def apply_modify_rules(self,item):
+    def apply_modify_rules(self,item,origitem):
         if "f" in self.propRule and self.propRule["rule"]!="f":
             item=self.propRule["f"](item)
+        if "mapping" in self.propRule and self.propRule["mapping"]:
+            item=self.propRule[item]
         if "scaleby" in self.propRule:
-            item=item*self.propRule["scaleby"]
+            if self.propRule["scaleby"] in self.rules:
+                item=item*self.propRule[self.get_by_rule(origitem,self.propRule["scaleby"])]
+            else:
+                item=item*self.propRule["scaleby"]
         if "colormap" in self.propRule:
             if matplotlib_loaded:
                 item=matplotlib.cm.get_cmap(self.propRule["colormap"])(item)
@@ -84,10 +89,12 @@ class LayerLabelAlphaAssigner(LayerPropertyAssigner):
 
 
 class NodePropertyAssigner(PropertyAssigner):
-    rules=PropertyAssigner.rules.union(set(["degree"]))
+    rules=PropertyAssigner.rules.union(set(["degree","layer"]))
     def get_by_rule(self,item,rule):
         if rule=="degree":
             return self.net[item].deg()
+        elif rule=="layer":
+            return item[1] #assuming a single aspect here
         return super(NodePropertyAssigner,self).get_by_rule(item,rule)
 
 class NodeLabelSizeAssigner(NodePropertyAssigner):
@@ -118,18 +125,18 @@ class NodeSizeAssigner(NodePropertyAssigner):
             return coeff/float(math.sqrt(n))
         return super(NodeSizeAssigner,self).get_by_rule(item,rule)
 
-    def apply_modify_rules(self,item):
+    def apply_modify_rules(self,item,origitem):
         if "propscale" in self.propRule:
             coeff=self.propRule["propscale"]
             n=len(self.net)     
             item=item*coeff/float(math.sqrt(n))
-        return super(NodeSizeAssigner,self).apply_modify_rules(item)
+        return super(NodeSizeAssigner,self).apply_modify_rules(item,origitem)
 
 
 #nodes todo: marker
 
 class EdgePropertyAssigner(PropertyAssigner):
-    rules=NodePropertyAssigner.rules.union(set(["edgetype","edgeweight"]))
+    rules=PropertyAssigner.rules.union(set(["edgetype","edgeweight","sourcedestweight","layer"]))
 
     def _get_from_property_dict(self,item):
         """Return the edge property from the property dict given by the user.
@@ -159,6 +166,15 @@ class EdgePropertyAssigner(PropertyAssigner):
                 return self.propRule["inter"]
         elif rule=="edgeweight":
             return self.net[item[0]][item[1]]
+        elif rule=="layer":
+            if item[0][1]==item[1][1]:
+                return item[0][1]
+            else:
+                return "interlayer"
+        elif rule=="sourcedestweight":
+            return item[0],item[1],self.net[item[0]][item[1]]
+        return super(EdgePropertyAssigner,self).get_by_rule(item,rule)
+
 
 class EdgeWidthAssigner(EdgePropertyAssigner):
     pass

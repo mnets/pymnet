@@ -169,6 +169,13 @@ class TestVisuals(unittest.TestCase):
 
         fig.savefig(os.path.join(self.figdirpath,"multiaxis_mlayer.png"))
 
+    def test_draw_assigners_advanced1(self):
+        fig=visuals.draw(self.mplex_simple,
+                         edgeWidthRule={"rule":"edgeweight","scaleby":"layer",1:1.0,2:0.5,3:2.0,"interlayer":3},
+                         nodeColorRule={"rule":"layer","mapping":True,1:"red",2:"blue",3:"green"})
+        fig.savefig(os.path.join(self.figdirpath,"mlayer_example_1d_assigners_advanced1.png"))
+
+
 
 def test_visuals():
     suite = unittest.TestSuite()    
@@ -177,6 +184,7 @@ def test_visuals():
     suite.addTest(TestVisuals("test_draw_mlayer_example_1d_defaults"))
     suite.addTest(TestVisuals("test_draw_mplex_simple_layer_labels"))
     suite.addTest(TestVisuals("test_draw_mlayer_nonaligned_mlayer_coords"))
+    suite.addTest(TestVisuals("test_draw_assigners_advanced1"))
     suite.addTest(TestVisuals("test_multiaxis"))
     return unittest.TextTestRunner().run(suite).wasSuccessful() 
 
