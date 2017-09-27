@@ -193,7 +193,7 @@ def draw(net,layout="spring",layershape="rectangle",azim=-51,elev=22,show=False,
     if backend not in possible_backends:
         raise Exception("Unknown backend: "+str(backend))
     if backend not in imported_backends:
-        print("There was an error importing backend'"+str(backend)+"'.")
+        print("There was an error importing backend '"+str(backend)+"'.")
         print("Please use one of the available backends: "+" ".join(imported_backends))
         print("The following error was raised:")
         raise import_errors[backend]
