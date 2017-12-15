@@ -125,14 +125,22 @@ class MonoplexGraphNetworkxView(networkx.Graph):
         super(MonoplexGraphNetworkxView, self).__init__(**kwargs)
 
         self.net=net
-        self.adj=MonoplexGraphWrapper_adj(net)
-        self.edge=MonoplexGraphWrapper_adj(net)
-        self.node=MonoplexGraphWrapper_node(net)
-        self.graph={}
+
+        #Networkx Graph class has changed since 2.0
+        if int(networkx.__version__.split(".")[0])>=2:
+            self._adj=MonoplexGraphWrapper_adj(net)
+            self._node=MonoplexGraphWrapper_node(net)
+        else:
+            self.adj=MonoplexGraphWrapper_adj(net)
+            self.edge=MonoplexGraphWrapper_adj(net)
+            self.node=MonoplexGraphWrapper_node(net)
 
         if data is not None:
             networkx.convert.to_networkx_graph(data,create_using=self)
 
+    def fresh_copy(self):
+        fresh_net=MultilayerNetwork(aspects=0)
+        return MonoplexGraphNetworkxView(fresh_net)
 
 
 class MonoplexGraphNetworkxNew(MonoplexGraphNetworkxView):
