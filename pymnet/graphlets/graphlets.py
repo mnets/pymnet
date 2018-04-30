@@ -123,6 +123,42 @@ def automorphism_orbits(nets, allowed_aspects='all'):
                 
     return auts
     
+def automorphism_orbits_nl(nets, allowed_aspects='all'):
+    '''
+    computes the automorphism orbits for node-layers for each network in nets
+    
+    Paramaters
+    ----------
+    nets: dict (key: n_nodes, value: list of networks)
+        graphlets
+    
+    Returns
+    -------
+    auts: dd (key: (n_nodes, net_index, (node, layer)), value: (node, layer))
+    '''
+    
+    auts = dd()
+    for n_nodes in nets:
+        for i in range(len(nets[n_nodes])):
+            net = nets[n_nodes][i]
+            aut = pymnet.get_automorphism_generators(net, allowed_aspects=allowed_aspects, include_fixed=True)
+            for nl in net.iter_node_layers():
+                auts[n_nodes, i, nl] = set([nl])
+                
+            for a in aut:
+                for key_n in a[0]:
+                    for key_l in a[1]:
+                        for nl in net.iter_node_layers():
+                            if (key_n, key_l) in auts[n_nodes, i, nl]:
+                                nl_2 = (a[0][key_n], a[1][key_l])
+                                auts[n_nodes, i , nl] = auts[n_nodes, i, nl].union(auts[n_nodes, i, nl_2])
+                                
+            for nl in net.iter_node_layers():
+                auts[n_nodes, i, nl] = min(auts[n_nodes, i, nl])
+                
+    return auts
+    
+
     
 def orbit_equations(n, nets, auts, invs, allowed_aspects='all'):
     '''
