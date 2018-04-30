@@ -781,4 +781,60 @@ def er_overlaps_match_aggregated(n, edges, ps, couplings=None):
     
     return net
 
-
+    
+def ba_total_degree(n, ms, couplings=None):
+    """
+    Generates a Barabasi-Albert multiplex network, where the preferential
+    attachement process is run for each layer separately and concurrently
+    in a way that the total degree of the node is used for the preferential
+    attachement. That is, the new nodes attach preferentially to nodes that
+    have high total degree (sum of degree in all layers).
+    
+    Parameters
+    ----------
+    n : int
+        number of nodes
+    ms : list of ints
+        the numbers of links added to each new node for each layer
+    couplings : None or tuple
+        The coupling types of the multiplex network object.
+        
+    Returns
+    -------
+    net : MultiplexNetwork
+       The multiplex network produced
+       
+    References
+    ----------
+    Kim, Jung Yeol, and K-I. Goh. "Coevolution and correlated multiplexity in 
+    multiplex networks." Physical review letters 111.5 (2013): 058702.
+    """
+    
+    net = MultiplexNetwork(couplings=couplings)
+    links = []
+    
+    for i in range(n):
+        net.add_node(i)
+        link_sets = []
+        for layer, m in enumerate(ms):
+            if i == m:
+                link_set = set(range(i))
+                
+            elif i > m:
+                link_set = set()
+                while len(link_set) < m:
+                    link_set = link_set | set(random.sample(links, m - len(link_set)))
+                    
+            else:
+                link_set = set()
+                    
+            link_sets.append(link_set)
+            
+            for j in link_set:
+                net[i,j,layer] = 1
+            
+        for link_set in link_sets:
+            links += list(link_set)
+            links += [i]*(len(link_set))
+            
+    return net
