@@ -46,15 +46,18 @@ def single_layer_conf(net,degs,degstype="distribution"):
     if degstype=="distribution":
         nstubs=sum(map(lambda x:x[0]*x[1],degs.items()))
         nodes=sum(degs.values())
+        shuffled_node_indices=list(range(nodes))
+        random.shuffle(shuffled_node_indices)
         node=0
         for k,num in degs.items():
-            for i in range(num):
-                for j in range(k):
-                    stubs.append(node)
-                node+=1
             if k==0:
                 for i in range(num):
-                    net.add_node(node)
+                    net.add_node(shuffled_node_indices[node])
+                    node+=1
+            else:
+                for i in range(num):
+                    for j in range(k):
+                        stubs.append(shuffled_node_indices[node])
                     node+=1
     elif degstype=="nodes":
         nstubs=sum(degs.values())
@@ -142,10 +145,11 @@ def single_layer_conf(net,degs,degstype="distribution"):
                             net[n2,n6]=1
                             si1,si2=sorted([edgetoindex[n1,n2].pop(),edgetoindex[n1,n2].pop()])
                             stubs[si1],stubs[si1+1]=sorted([n1,n3])
-                            stubs[si1],stubs[si1+1]=sorted([n2,n4])
+                            stubs[si2],stubs[si2+1]=sorted([n2,n4]) #stubs[si1],stubs[si1+1]=sorted([n2,n4])
                             stubs[e1i],stubs[e1i+1]=sorted([n1,n5])
                             stubs[e2i],stubs[e2i+1]=sorted([n2,n6])
                             repeat=False
+
 
 
 def single_layer_er(net,nodes,p=None,edges=None):
@@ -502,3 +506,6 @@ def er_multilayer(nodes,layers,p,randomWeights=False):
                                 n[node1,node2,layer1,layer2]=1
 
     return n
+
+
+
