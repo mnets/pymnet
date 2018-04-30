@@ -509,3 +509,199 @@ def er_multilayer(nodes,layers,p,randomWeights=False):
 
 
 
+
+
+def conf_overlaps(ol_degs, couplings=None):
+    """
+    Generate multiplex configuration model network with given overlap degree 
+    sequences. 
+
+    One can specify the 'overlap degree sequences', as defined in overlap_degs.
+    
+    Parameters
+    ----------
+    ol_degs : dict of dicts
+        The overlap degrees. Keys are tuples containing layer combinations 
+        (including the trivial combination of a single layer) and 
+        values are the overlap degree distributions with nodes as keys. See
+        overlap_degs.
+    couplings : None or tuple
+        The coupling types passed directly to multiplex network object
+        constructor.
+    
+    Returns
+    -------
+    net : MultiplexNetwork
+       The multiplex network produced with the configuration model.
+       
+
+    Notes
+    -----
+    The algorithm to produce the multiplex network is a modified version of the
+    one implemented in single_layer_conf (McKay et al). The modification tries
+    link swapping in cases where edges in another layer combination already 
+    exists.
+    
+
+    References
+    ----------
+    Marceau, Vincent, et al. "Modeling the dynamical interaction between 
+    epidemics on overlay networks." Physical Review E 84.2 (2011): 026105.
+    """
+    
+    net = MultiplexNetwork(couplings=couplings)
+    used_edges = set()
+    
+    for layer_comb in ol_degs:
+        degs = ol_degs[layer_comb]
+        
+        # mostly modified from single_layer_conf
+        stubs=[]
+        selfedges={}
+        multiedges=set()
+        takenedges=set()
+        edgetoindex={}
+        
+        net_temp = MultilayerNetwork()
+        
+        nstubs=sum(degs.values())
+        n_nodes=len(degs)
+        for node in degs:
+            k=degs[node]
+            for i in range(k):
+                stubs.append(node)
+            if k==0:
+                net_temp.add_node(node)
+                
+        # Here we should do the Erdos-Gallai test
+        assert nstubs%2==0
+        assert (n_nodes*(n_nodes-1)) >= nstubs
+    
+        random.shuffle(stubs)
+        
+        for s in range(int(len(stubs)/2)):
+            node1,node2=sorted([stubs[2*s],stubs[2*s+1]])
+    
+            edgetoindex[(node1,node2)]=edgetoindex.get((node1,node2),[])+[2*s]
+    
+            if node1==node2:
+                selfedges[node1]=selfedges.get(node1,[])+[2*s]
+            elif net_temp[node1,node2]!=0:
+                multiedges.add((node1,node2))
+            elif (node1, node2) in used_edges:
+                takenedges.add((node1,node2))
+            else:
+                net_temp[node1,node2]=1
+                used_edges.add((node1, node2))
+                
+        for node,sis in selfedges.items():
+            for si in sis:
+                repeat=True
+                while repeat:
+                    #select two edges at random
+                    e1i,e2i=map(lambda x:2*x,random.sample(xrange(int(len(stubs)/2)),2))
+                    c=[node,stubs[e1i],stubs[e1i+1],stubs[e2i],stubs[e2i+1]]
+                    n2,n3=sorted([c[1],c[2]])
+                    n4,n5=sorted([c[3],c[4]])
+                    if len(set(c))==len(c):
+                        if (n2,n3) not in multiedges and (n4,n5) not in multiedges and (n2,n3) not in takenedges and (n4,n5) not in takenedges:
+                            e1 = tuple(sorted([node, n2]))
+                            e2 = tuple(sorted([node, n4]))
+                            e3 = tuple(sorted([n3, n5]))
+                            if e1 not in used_edges and e2 not in used_edges and e3 not in used_edges:
+                                net_temp[n2,n3]=0
+                                net_temp[n4,n5]=0
+                                net_temp[node,n2]=1
+                                net_temp[node,n4]=1
+                                net_temp[n3,n5]=1
+                                stubs[si],stubs[si+1]=sorted([n3,n5])
+                                stubs[e1i],stubs[e1i+1]=sorted([node,n2])
+                                stubs[e2i],stubs[e2i+1]=sorted([node,n4])
+                                repeat=False
+                                
+                                used_edges.remove((n2,n3))
+                                used_edges.remove((n4,n5))
+                                used_edges.add(e1)
+                                used_edges.add(e2)
+                                used_edges.add(e3)
+                                
+        for n1,n2 in multiedges:
+            for dummy in range(int(math.floor(len(edgetoindex[(n1,n2)])/2.))):
+                repeat=True
+                while repeat:
+                    #select two edges at random
+                    e1i,e2i=map(lambda x:2*x,random.sample(xrange(int(len(stubs)/2)),2))
+                    c=[n1,n2,stubs[e1i],stubs[e1i+1],stubs[e2i],stubs[e2i+1]]
+                    n3,n4=sorted([c[2],c[3]])
+                    n5,n6=sorted([c[4],c[5]])
+                    if len(set(c))==len(c):
+                        if (n3,n4) not in multiedges and (n5,n6) not in multiedges and (n3,n4) not in takenedges and (n5,n6) not in takenedges:
+                            e1 = tuple(sorted([n1,n3]))
+                            e2 = tuple(sorted([n2,n4]))
+                            e3 = tuple(sorted([n1,n5]))
+                            e4 = tuple(sorted([n2,n6]))
+                            if e1 not in used_edges and e2 not in used_edges and e3 not in used_edges and e4 not in used_edges: #net[n1,n3]==0 and net[n2,n4]==0 and net[n1,n5]==0 and net[n2,n6]==0:
+                                if len(edgetoindex[n1,n2])==2:
+                                    net_temp[n1,n2]=0
+                                    used_edges.remove((n1,n2))
+                                net_temp[n3,n4]=0
+                                net_temp[n5,n6]=0
+                                net_temp[n1,n3]=1
+                                net_temp[n2,n4]=1
+                                net_temp[n1,n5]=1
+                                net_temp[n2,n6]=1
+                                si1,si2=sorted([edgetoindex[n1,n2].pop(),edgetoindex[n1,n2].pop()])
+                                stubs[si1],stubs[si1+1]=sorted([n1,n3])
+                                stubs[si2],stubs[si2+1]=sorted([n2,n4])#stubs[si1],stubs[si1+1]=sorted([n2,n4])
+                                stubs[e1i],stubs[e1i+1]=sorted([n1,n5])
+                                stubs[e2i],stubs[e2i+1]=sorted([n2,n6])
+                                repeat=False
+                                
+                                used_edges.remove((n3,n4))
+                                used_edges.remove((n5,n6))
+                                used_edges.add(e1)
+                                used_edges.add(e2)
+                                used_edges.add(e3)
+                                used_edges.add(e4)
+                                
+        for n1,n2 in takenedges:
+            for si1 in edgetoindex[(n1,n2)]:
+                repeat=True
+                while repeat:
+                    #select two edges at random
+                    e1i,e2i=map(lambda x:2*x,random.sample(xrange(int(len(stubs)/2)),2))
+                    c=[n1,n2,stubs[e1i],stubs[e1i+1],stubs[e2i],stubs[e2i+1]]
+                    n3,n4=sorted([c[2],c[3]])
+                    n5,n6=sorted([c[4],c[5]])
+                    if len(set(c))==len(c):
+                        if (n3,n4) not in takenedges and (n5,n6) not in takenedges:
+                            e1 = tuple(sorted([n1,n3]))
+                            e2 = tuple(sorted([n2,n5]))
+                            e3 = tuple(sorted([n4,n6]))
+                            if e1 not in used_edges and e2 not in used_edges and e3 not in used_edges:
+                                assert net_temp[n3,n4]==1
+                                assert net_temp[n5,n6]==1
+                                net_temp[n3,n4]=0
+                                net_temp[n5,n6]=0
+                                net_temp[n1,n3]=1
+                                net_temp[n2,n5]=1
+                                net_temp[n4,n6]=1
+                                
+                                stubs[si1],stubs[si1+1]=sorted([n1,n3])
+                                stubs[e1i],stubs[e1i+1]=sorted([n2,n5])
+                                stubs[e2i],stubs[e2i+1]=sorted([n4,n6])
+                                repeat=False
+                                
+                                used_edges.remove((n3,n4))
+                                used_edges.remove((n5,n6))
+                                used_edges.add(e1)
+                                used_edges.add(e2)
+                                used_edges.add(e3)
+                                
+        for e in net_temp.edges:
+            for layer in layer_comb:
+                net[e[0], e[1], layer] = 1
+                                    
+    return net
+
+
