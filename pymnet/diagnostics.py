@@ -88,6 +88,45 @@ def multiplex_degs(net,degstype="distribution"):
         d[layer]=degs(net.A[layer],degstype=degstype)
     return d
 
+def overlap_degs(net):
+    """ Returns a dictionary of overlap degree distributions of each layer combination
+    of a multiplex network.
+
+    The overlap degree distribution will contain every layer combination, including the
+    one where there is only a single layer, and the key of each of those is another
+    dictionary giving the overlap degrees of nodes.
+
+    The overlap degrees of nodes for a given layer combination give the number of links that
+    are shared between exactly the layers in the combination. If the link is in an additional
+    layer, or it is missing from one layer, then it is not included in the degree of the
+    corresponding layer combination.
+    
+    Parameters
+    ----------
+    net : MultiplexNetwork
+       A multiplex network object.
+    """
+    ol_degs = {}
+    nodes = net.slices[0]
+    layers = net.slices[1]
+    
+    net0 = subnet(net, nodes, layers)
+    
+    for n_l in range(len(layers), 0, -1):
+        for layer_comb in itertools.combinations(layers, n_l):
+            sub_net = subnet(net0, nodes, layer_comb)
+            agg_net = aggregate(sub_net, 1)
+            thr_net = threshold(agg_net, n_l)
+            ol_degs[layer_comb] = degs(thr_net, degstype='nodes')
+            
+            if n_l > 1:
+                for e in thr_net.edges:
+                    for layer in layer_comb:
+                        net0[e[0], e[1], layer] = 0
+                        
+    return ol_degs
+    
+
 def dijkstra(net,sources):
     """Return the forest giving shortest paths from a set of source nodes.
 
