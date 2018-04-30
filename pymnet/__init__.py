@@ -14,6 +14,7 @@ from .isomorphisms import get_complete_invariant
 from .isomorphisms import get_automorphism_generators
 from .isomorphisms import get_isomorphism
 
+from . import graphlets
 
 try:
     from . import nxwrap as nx
