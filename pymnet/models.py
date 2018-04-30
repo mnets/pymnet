@@ -419,7 +419,7 @@ def full(nodes,layers,couplings=('categorical',1.0)):
         for node1 in range(nodes):
             for node2 in range(nodes):
                 if node1!=node2:
-                    n[node1,node2,layer,layer]=1
+                    n[node1,node2]=1
     elif not hasattr(layers,'__iter__'): #is not sequence
         n=MultiplexNetwork(couplings=[couplings])
         for layer in range(layers):
