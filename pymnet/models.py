@@ -838,3 +838,82 @@ def ba_total_degree(n, ms, couplings=None):
             links += [i]*(len(link_set))
             
     return net
+
+
+try:
+    from . import nxwrap as nx
+    import networkx
+
+    def ws(n, edges, p=0.3, couplings=None):
+        """
+        Generates a multiplex network where each layer is generated
+        using the same Watts-Strogatz model. 
+
+        Parameters
+        ----------
+        n : int
+            Number of nodes
+        edges : list of ints
+            Number of edges in each layer
+        p : float
+            Probability of rewiring an edge
+        couplings : None or tuple
+            The coupling types of the multiplex network object.
+
+        Returns
+        -------
+        net : MultiplexNetwork
+           The multiplex network produced
+        """
+
+        net = MultiplexNetwork(couplings=couplings)
+        for layer, m in enumerate(edges):
+            net.add_layer(layer)
+            net.A[layer] = nx.watts_strogatz_graph(n, int(math.ceil(2*m / float(n))), p=p)
+
+        return net
+    
+    
+    def geo(n, edges, couplings=None):
+        """
+        Generates a multiplex network where each layer is genereted using the
+        same soft geometric network model.
+
+        The intra-layer networks are generated using the networkx function
+        soft_random_geometeric_graph.
+        
+        Parameters
+        ----------
+        n : int
+            Number of nodes
+        edges : list of ints
+            Approximate number of edges in each layer
+        couplings : None or tuple
+            The coupling types of the multiplex network object.
+
+        Returns
+        -------
+        net : MultiplexNetwork
+           The multiplex network produced
+
+        Notes
+        -----
+        Works only with networkX2
+        """
+
+        net = MultiplexNetwork(couplings=couplings)
+        pos = None
+        for layer, m in enumerate(edges):
+            net.add_layer(layer)
+            r = math.sqrt(2.2 * float(m) / ((n - 1.0) * n) / math.pi)
+            netX = networkx.soft_random_geometric_graph(n, r, pos=pos)
+            pos = networkx.get_node_attributes(netX, 'pos')
+            for node in netX.nodes:
+                net.add_node(node)
+
+            for e in netX.edges:
+                net[e[0], e[1], layer] = 1
+
+        return net
+except ImportError:
+    pass
