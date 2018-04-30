@@ -705,3 +705,80 @@ def conf_overlaps(ol_degs, couplings=None):
     return net
 
 
+def er_overlaps_match_aggregated(n, edges, ps, couplings=None):
+    '''
+    Generates a multiplex Erdos-Renyi networks which produces an aggregated
+    network with given number of edges. The target it that the aggregated 
+    network of the resulting network has edges * n_layers edges.
+    
+    The algorithm goes through each of the user-given layer combinations with
+    2 or more layers. It generates an ER graph which does not include any edges
+    that are already in any of the layers of the combination. It then copies
+    the edges of that ER graph to all of the layers of the combination.
+
+    
+
+
+    Parameters
+    ----------
+    n : int
+        Number of nodes
+    edges : int
+        Number of edges in each layer
+    ps : dict
+        Proportions of overlapping edges in each layer combination given as 
+        keys (note that the sum of these proportions should not exceed 1 for 
+        any one layer). The trivial combinations including only a single layer
+        do not need to be given (and if they are given, the given proportions
+        are ignored).
+    couplings : None or tuple
+        The coupling types of the multiplex network object.
+
+    Returns
+    -------
+    net : MultiplexNetwork
+       The multiplex network produced
+    '''
+    
+    net = MultiplexNetwork(couplings=couplings)
+    used_edges = set()
+    
+    e_left = {}
+    for layer_comb in ps:
+        if len(layer_comb) == 1:
+            e_left[layer_comb[0]] = e_left.get(layer_comb[0], edges)
+            continue
+        p = ps[layer_comb]
+        m = int(round(p*edges))
+        k = len(layer_comb)
+        if k > 1:
+            for layer in layer_comb:
+                e_left[layer] = e_left.get(layer, edges) - m
+            i = 0
+            while i < (k * m):
+                edge_index = random.choice(xrange(int((n*(n-1))/2)))
+                v=int(1+math.floor(-0.5+math.sqrt(0.25+2*edge_index)))
+                w=edge_index-int((v*(v-1))/2)
+                edge = (w, v)
+                if edge not in used_edges:
+                    used_edges.add(edge)
+                    i += 1
+                    for layer in layer_comb:
+                        net[edge[0], edge[1], layer] = 1
+                        
+    for layer in e_left:
+        m = e_left[layer]
+        i = 0
+        while i < m:
+            edge_index = random.choice(xrange(int((n*(n-1))/2)))
+            v=int(1+math.floor(-0.5+math.sqrt(0.25+2*edge_index)))
+            w=edge_index-int((v*(v-1))/2)
+            edge = (w, v)
+            if edge not in used_edges:
+                used_edges.add(edge)
+                i += 1
+                net[edge[0], edge[1], layer] = 1
+    
+    return net
+
+
