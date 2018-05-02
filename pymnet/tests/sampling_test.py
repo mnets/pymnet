@@ -1457,7 +1457,9 @@ class TestSampling(unittest.TestCase):
         self.assertEqual(resultlist,[])
         
     def test_dumb_callback(self):
-        def callback_fun((nodelist,layerlist),resultlist):
+        #def callback_fun((nodelist,layerlist),resultlist):
+        def callback_fun(nodelist_layerlist,resultlist):
+            nodelist,layerlist=nodelist_layerlist
             resultlist.append((nodelist,layerlist))
             return
         net1 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
@@ -1474,7 +1476,9 @@ class TestSampling(unittest.TestCase):
         self.assertEqual(resultlist,[([1,2],['Y','Z']),([1,3],['X','Y'])])
         
     def test_esu_callback(self):
-        def callback_fun((nodelist,layerlist),resultlist):
+        #def callback_fun((nodelist,layerlist),resultlist):
+        def callback_fun(nodelist_layerlist,resultlist):
+            nodelist,layerlist=nodelist_layerlist
             resultlist.append((nodelist,layerlist))
             return
         net1 = net.MultilayerNetwork(aspects=1,fullyInterconnected=False)
