@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import pymnet
-from reqs import default_check_reqs,default_calculate_required_lengths,relaxed_check_reqs
+from .reqs import default_check_reqs,default_calculate_required_lengths,relaxed_check_reqs
 import random
 import itertools
 
@@ -324,7 +324,7 @@ def _extend_subgraph(network,nodelist,layerlist,check_function,V_extension_nodes
                 results((list(nodelist),list(layerlist)))
                 return
             else:
-                raise TypeError,"Please provide results container as list or callable"
+                raise TypeError("Please provide results container as list or callable")
         else:
             return
     if len(nodelist) == req_nodelist_len:

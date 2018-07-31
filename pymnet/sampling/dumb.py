@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import itertools
-from reqs import default_check_reqs,default_calculate_required_lengths,relaxed_check_reqs
+from .reqs import default_check_reqs,default_calculate_required_lengths,relaxed_check_reqs
 
 def dumb_enumeration(network,results,sizes=None,intersections=None,nnodes=None,nlayers=None,intersection_type="strict",custom_check_function=None):
     """Enumerates all induced subgraphs of the form [nodelist][layerlist] by
@@ -70,4 +70,4 @@ def dumb_enumeration(network,results,sizes=None,intersections=None,nnodes=None,n
                     elif callable(results):
                         results((list(nodelist),list(layerlist)))
                     else:
-                        raise TypeError,"Please provide results container as list or callable"
+                        raise TypeError("Please provide results container as list or callable")
