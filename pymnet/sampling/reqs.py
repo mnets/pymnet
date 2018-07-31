@@ -170,7 +170,7 @@ def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=Non
             req_layerlist_len = nlayers
         else:
             if None in intersections:
-                raise TypeError, "Please provide nnodes and nlayers when including Nones in intersections"
+                raise TypeError("Please provide nnodes and nlayers when including Nones in intersections")
             try:
                 req_nodelist_len,req_layerlist_len = default_calculate_required_lengths(sizes,intersections)
             except AssertionError:
@@ -183,7 +183,7 @@ def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=Non
             req_layerlist_len = nlayers
         else:
             if None in intersections:
-                raise TypeError, "Please provide nnodes and nlayers when including Nones in intersections"
+                raise TypeError("Please provide nnodes and nlayers when including Nones in intersections")
             req_nodelist_len = nnodes
             try:
                 _,req_layerlist_len = default_calculate_required_lengths(sizes,intersections)
@@ -191,7 +191,7 @@ def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=Non
                 raise
         
     else:
-        raise TypeError, "Please specify either strict or less_or_equal as intersection type"
+        raise TypeError("Please specify either strict or less_or_equal as intersection type")
 
     assert len(nodelist) == req_nodelist_len, "Wrong number of nodes"
     assert len(layerlist) == req_layerlist_len, "Wrong number of layers"
