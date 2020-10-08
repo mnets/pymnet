@@ -34,12 +34,16 @@ def get_layout(layout,net,alignedNodes=True,**kwargs):
         elif layout=="random":
             for node in net:
                 ncoords[node]=(random.random(),random.random())
+        elif layout=="fr":
+            ncoords=get_fruchterman_reingold_multilayer_layout(net)
         else:
             raise Exception("Invalid layout: "+layout)
     else:
         if layout=="random":
             for nl in net.iter_node_layers():
                 nlcoords[nl]=(random.random(),random.random())
+        elif layout=="fr":
+            nlcoords=get_fruchterman_reingold_multilayer_layout(net)
         else:
             raise Exception("Invalid layout: "+layout)
     return ncoords,nlcoords         
@@ -136,7 +140,14 @@ def get_fruchterman_reingold_multilayer_layout(net,
     #net
     assert isinstance(net,pymnet.MultilayerNetwork), "Invalid network type"
     assert net.aspects>=1, "No monoplex networks"
-    assert net.fullyInterconnected==False, "Node-aligned networks are not supported."
+
+    #If the network is fully interconnected, we just create network with one layer
+    if net.fullyInterconnected:
+        assert nodelayerCoords==None, "Only node coordinates for fully interconnected networks"
+        magg=pymnet.MultiplexNetwork(fullyInterconnected=False)
+        magg.add_layer("all")
+        magg.A["all"]=pymnet.transforms.aggregate(net,1)
+        net=magg
 
     #nodeDist
     if nodeDist=="auto":
