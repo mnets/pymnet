@@ -175,6 +175,24 @@ class TestVisuals(unittest.TestCase):
                          nodeColorRule={"rule":"layer","mapping":True,1:"red",2:"blue",3:"green"})
         fig.savefig(os.path.join(self.figdirpath,"mlayer_example_1d_assigners_advanced1.png"))
 
+    def test_mplex_networkx_layouts(self):
+        from pymnet import nx
+        #from pymnet import transforms
+        g=nx.karate_club_graph()
+        mplex=net.MultiplexNetwork()
+        mplex.add_layer("karate-1")
+        mplex.add_layer("karate-2")
+        mplex.A['karate-1']=g
+        mplex.A['karate-2']=g
+        fig=visuals.draw(mplex,layout="spring")
+        fig.savefig(os.path.join(self.figdirpath,"mplex_networkx_spring.png"))
+
+    def test_mplex_fr_layout(self):
+        from pymnet import models
+        mplex=models.er(10,2*[0.2])
+        fig=visuals.draw(mplex,layout="fr")
+        fig.savefig(os.path.join(self.figdirpath,"mplex_er100_fr.png"))
+
 
 
 def test_visuals():
@@ -186,6 +204,8 @@ def test_visuals():
     suite.addTest(TestVisuals("test_draw_mlayer_nonaligned_mlayer_coords"))
     suite.addTest(TestVisuals("test_draw_assigners_advanced1"))
     suite.addTest(TestVisuals("test_multiaxis"))
+    suite.addTest(TestVisuals("test_mplex_networkx_layouts"))
+    suite.addTest(TestVisuals("test_mplex_fr_layout"))
     return unittest.TextTestRunner().run(suite).wasSuccessful() 
 
 if __name__ == '__main__':
