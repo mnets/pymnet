@@ -177,7 +177,6 @@ class TestVisuals(unittest.TestCase):
 
     def test_mplex_networkx_layouts(self):
         from pymnet import nx
-        #from pymnet import transforms
         g=nx.karate_club_graph()
         mplex=net.MultiplexNetwork()
         mplex.add_layer("karate-1")

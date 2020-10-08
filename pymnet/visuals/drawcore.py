@@ -26,7 +26,7 @@ from .drawbackends.threejs import NetFigureThreeJS,LayerThreeJS,NodeThreeJS,Edge
 imported_backends.append("threejs")
 
 
-def draw(net,layout="fr",layershape="rectangle",azim=-51,elev=22,show=False,layergap=1.0,camera_dist=None,autoscale=True,backend="mpl",
+def draw(net,layout="spring",layershape="rectangle",azim=-51,elev=22,show=False,layergap=1.0,camera_dist=None,autoscale=True,backend="mpl",
          figsize=None,nodeCoords={},nodelayerCoords={},
          layerPadding=0.05,alignedNodes=True,ax=None,
          layerColorDict={},layerColorRule={},defaultLayerColor="#29b7c1",

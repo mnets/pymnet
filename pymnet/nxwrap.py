@@ -178,7 +178,7 @@ def networkxdecorator(f):
 
         #Modify the NetworkX library such that new graphs are wrapped pymnet objects
         networkx_Graph_original=networkx.Graph
-        networkx.Graph=MonoplexGraphNetworkxNew
+        networkx.Graph=MonoplexGraphNetworkxView
 
         #Run the actual function
         rval=f(*args, **kwargs)
