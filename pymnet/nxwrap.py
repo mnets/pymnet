@@ -121,8 +121,11 @@ class MonoplexGraphWrapper_node(collections.MutableMapping):
 
 
 class MonoplexGraphNetworkxView(networkx.Graph):
-    def __init__(self,net,data=None,**kwargs):
+    def __init__(self,net=None,data=None,**kwargs):
         super(MonoplexGraphNetworkxView, self).__init__(**kwargs)
+
+        if net==None: #networkx is calling __class__()
+            net=MultilayerNetwork(aspects=0)
 
         self.net=net
 
