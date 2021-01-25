@@ -13,7 +13,7 @@ Multilayer Networks Library for Python (Pymnet)
    The visualization on the left is produced with the library. See the :ref:`visualization_tutorial` tutorial for instructions how to your own network data with the library!
 
 
-Pymnet is a free library for analysing multilayer networks. Available for download directly from our `repository <http://bitbucket.org/bolozna/multilayer-networks-library>`_.
+Pymnet is a free library for analysing multilayer networks. Available for download directly from our `repository <https://github.com/bolozna/Multilayer-networks-library>`_.
 
 
 **Main features include:**
