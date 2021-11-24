@@ -6,13 +6,25 @@ import collections
 from functools import wraps
 from pymnet.net import MultilayerNetwork
 
+#Pre 3.10
+try:
+    from collections import MutableMapping
+except ImportError:
+    pass
+
+#Post 3.10
+try:
+    from collections.abc import MutableMapping
+except ImportError:
+    pass
+
 #NetworkX supports tuples as node names, but pymnet doesn't (because in Python there is no way of distinguishing between net[1,2] and net[(1,2)] ). 
 #In order to make some of the NetworkX functions that use tuples and node names to work, we define a new class "ntuple" which is a tuple that is
 #used to store node names. 
 class ntuple(tuple):
     pass
 
-class MonoplexGraphWrapper_singleedge(collections.MutableMapping):
+class MonoplexGraphWrapper_singleedge(MutableMapping):
     def __init__(self,net,node1,node2):
         self.net=net
         self.node1=node1
@@ -36,7 +48,7 @@ class MonoplexGraphWrapper_singleedge(collections.MutableMapping):
     def copy(self):
         return dict( ((k,self[k]) for k in self) ) #dict(self.iteritems())
 
-class MonoplexGraphWrapper_adjlist(collections.MutableMapping):
+class MonoplexGraphWrapper_adjlist(MutableMapping):
     def __init__(self,net,node):
         self.net=net
         self.node=node
@@ -68,7 +80,7 @@ class MonoplexGraphWrapper_adjlist(collections.MutableMapping):
         self.net[self.node,key]=self.net.noEdge
 
 
-class MonoplexGraphWrapper_adj(collections.MutableMapping):
+class MonoplexGraphWrapper_adj(MutableMapping):
     def __init__(self,net):
         self.net=net
     def __getitem__(self,key):
@@ -98,7 +110,7 @@ class MonoplexGraphWrapper_adj(collections.MutableMapping):
         raise Exception("Cannot remove nodes.")
 
 
-class MonoplexGraphWrapper_node(collections.MutableMapping):
+class MonoplexGraphWrapper_node(MutableMapping):
     def __init__(self,net):
         self.net=net
     def __getitem__(self,key):

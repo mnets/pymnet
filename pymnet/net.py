@@ -1,8 +1,22 @@
 """Data structures for handling various forms of multilayer networks.
 """
 
-import math,itertools,pickle,collections
+import math,itertools,pickle
 import pymnet.transforms as transforms
+
+#Pre 3.10                                                                                                                                                                                                  
+try:
+    from collections import MutableMapping
+except ImportError:
+    pass
+
+#Post 3.10                                                                                                                                                                                                 
+try:
+    from collections.abc import MutableMapping
+except ImportError:
+    pass
+
+
 
 COLON=slice(None,None,None)
 
@@ -807,7 +821,7 @@ class MultilayerEdges:
 MultilayerNetwork.edges=property(MultilayerEdges)
 
 
-class MultiplexIntraNetDict(collections.MutableMapping):
+class MultiplexIntraNetDict(MutableMapping):
     def __init__(self,net):
         self._net=net
         self._dict={}
