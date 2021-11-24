@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import pymnet
-from pymnet import nx
+#from pymnet import nx
 import itertools
 
 def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=None,nlayers=None,intersection_type="strict"):
@@ -198,8 +198,8 @@ def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=Non
     assert all(i>=1 for i in sizes), "Inappropriate sizes"
     induced_graph = pymnet.subnet(network,nodelist,layerlist)
     try:
-        graph_is_connected = nx.is_connected(pymnet.transforms.get_underlying_graph(induced_graph))
-    except nx.networkx.NetworkXPointlessConcept:
+        graph_is_connected = pymnet.nx.is_connected(pymnet.transforms.get_underlying_graph(induced_graph))
+    except pymnet.nx.networkx.NetworkXPointlessConcept:
         return False
     if graph_is_connected:
         
@@ -385,8 +385,8 @@ def relaxed_check_reqs(network,nodelist,layerlist):
     """
     induced_graph = pymnet.subnet(network,nodelist,layerlist)
     try:
-        graph_is_connected = nx.is_connected(pymnet.transforms.get_underlying_graph(induced_graph))
-    except nx.networkx.NetworkXPointlessConcept:
+        graph_is_connected = pymnet.nx.is_connected(pymnet.transforms.get_underlying_graph(induced_graph))
+    except pymnet.nx.networkx.NetworkXPointlessConcept:
         return False
     if graph_is_connected:
         nls = set(induced_graph.iter_node_layers())
