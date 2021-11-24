@@ -114,7 +114,7 @@ class NodeLabelAssigner(NodePropertyAssigner):
         return super(NodeLabelAssigner,self).get_by_rule(item,rule)
 
 class NodeColorAssigner(NodePropertyAssigner):
-    rules=NodePropertyAssigner.rules-set(["name"])
+    rules=NodePropertyAssigner.rules
 
 class NodeSizeAssigner(NodePropertyAssigner):
     rules=NodePropertyAssigner.rules.union(set(["scaled"]))-set(["name"])
