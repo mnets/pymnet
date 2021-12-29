@@ -69,8 +69,7 @@ def orbit_counts_all(net, n, nets, invs, auts, orbit_list, allowed_aspects='all'
             sub_net = pymnet.subnet(net, node_comb, layers)
             ci_sub = str(pymnet.get_complete_invariant(sub_net, allowed_aspects=allowed_aspects))
             if ci_sub not in invs:
-                pymnet.draw(sub_net)
-                print(len(invs))
+                raise KeyError('The network contains a graphlet not found in the pre-constructed complete invariant dictionary (invs). This can be caused by invs creation not being compatible with the attributes of the network. For example, the network might not be fully interconnected.')
             i = invs[ci_sub][0]
             j = invs[ci_sub][1]
             nw = nets[i][j]
