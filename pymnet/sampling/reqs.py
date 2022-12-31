@@ -97,7 +97,7 @@ def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=Non
     intersections = [A∩B, A∩C, A∩D, B∩C, B∩D, C∩D, A∩B∩C, A∩B∩D, A∩C∩D, B∩C∩D, A∩B∩C∩D]
     
     When checking whether the size and intersection requirements are fulfilled,
-    each possible set of role assginments to the actual layers is checked. If even
+    each possible set of role assignments to the actual layers is checked. If even
     one is suitable, the function returns True.
     
     Continuing from the example above, if the actual induced subgraph has layers [X,Y,Z,W],

@@ -16,7 +16,7 @@ def aggregate(net,aspects,newNet=None,selfEdges=False):
 
     This function aggregates edges from multilayer aspects together
     by summing their weights. Any number of aspects is allowed, and the
-    network can have non-diagonal inter-layer links. The layers cannnot 
+    network can have non-diagonal inter-layer links. The layers cannot 
     be weighted such that they would have different coefficients when 
     the weights are summed together.
 

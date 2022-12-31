@@ -69,7 +69,7 @@ Automorphisms
 
 Automorphisms are isomorphisms with the network itself. One can calculate automorphism groups using this library. As automorphism are isomorphisms one needs to specify the type of the automorphism exactly in the same way as one does of isomorphisms. For example, in the above social network one can find the only (non-trivial) automorphism where Bob and Alice change labels:
 
->>> print pymnet.get_automorphism_generators(net_social,allowed_aspects=[0])) #node isomorphism
+>>> print pymnet.get_automorphism_generators(net_social,allowed_aspects=[0]) #node isomorphism
 [[{'Bob': 'Alice', 'Alice': 'Bob'}, {}]]
 >>> print pymnet.get_automorphism_generators(net_social,allowed_aspects=[1]) #layer isomorphism
 []

@@ -3,7 +3,7 @@
 Visualizing networks
 ====================
 
-The Multilayer Network Library can produce high quality images of multilayer and multiplex networks. The main method of producing network images in the library uses Matplotlib as a backend. These images can be saved both in vector formats (such as pdf or svg) and raster formats (such as png). Alternatively, one can produce pictures of networks using a method that uses Javascript and D3 as a backend for displaying figures. These interactive figures can be viewed with any modern browser. (Also, Networkx is used for some layouts).
+The Multilayer Network Library can produce high quality images of multilayer and multiplex networks. The main method of producing network images in the library uses Matplotlib as a backend. These images can be saved both in vector formats (such as pdf or svg) and raster formats (such as png). Alternatively, one can produce pictures of networks using a method that uses Javascript and D3 as a backend for displaying figures. These interactive figures can be viewed with any modern browser. (Also, NetworkX is used for some layouts).
 
 Drawing networks with the library is easy and is usually done with the "draw" method. Consider, for example, the following code:
 
@@ -17,7 +17,7 @@ Note that running this code doesn't actually show the figure, but it's stored in
 
 >>> fig.savefig("net.pdf")
 
-Alternatively you can view the network straigh away by telling the draw method that you want the figure to be shown:
+Alternatively you can view the network straight away by telling the draw method that you want the figure to be shown:
 
 >>> fig = draw(net,show=True)
 

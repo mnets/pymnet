@@ -895,7 +895,7 @@ class MultiplexNetwork(MultilayerNetwork):
        ('categorical',1.0) is categorical coupling with inter-edge weights
        equal to 1.0. If coupling is a network, it must be a monoplex one
        with the nodes corresponding to layer names. If a list is given, then
-       the multiplex network will have aspects equal to the lenght of that
+       the multiplex network will have aspects equal to the length of that
        list with each element corresponding to a coupling given as described
        above.
     noEdge : object
@@ -912,7 +912,7 @@ class MultiplexNetwork(MultilayerNetwork):
     The default implementation for this type of networks is 'sequence of
     graphs'. That is, each intra-layer network is stored separately and 
     accessing and modifying the intra-layer networks is independent of the
-    other intra-layer networks. The couplings edges are not stored explicitely
+    other intra-layer networks. The couplings edges are not stored explicitly
     but they are only generated when needed.
 
     See also

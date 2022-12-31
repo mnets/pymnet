@@ -24,7 +24,7 @@ def single_layer_conf(net,degs,degstype="distribution"):
     degstype : string
        If 'distribution', then degs parameter gives the degree distribution. I.e.,
        keys are degrees, and corresponding values are number of nodes with the given degree.
-       If 'nodes', then degs paramater gives node degres. I.e, keys are node names and
+       If 'nodes', then degs parameter gives node degrees. I.e, keys are node names and
        corresponding values are degrees of those nodes.
 
     Notes
@@ -208,7 +208,7 @@ def conf(degs,degstype="distribution",couplings=("categorical",1.0)):
     degs : dict, dict of dicts, list of dicts, MultiplexNetwork, MultilayerNetwork
        Degrees. If dict, a monoplex network is returned. If dict of dicts, a multiplex network with
        keys as layer names is returned. If list of dicts, then a multiplex network with a layer for
-       each element in the list is returned. See degstype parameter for the decscription of the dict
+       each element in the list is returned. See degstype parameter for the description of the dict
        used for describing intra-layer networks. If MultiplexNetwork (with 1 aspect) or MultilayerNetwork 
        (with 0 aspects) object is given then a copy of that network is produced with configuration
        model.
@@ -785,9 +785,9 @@ def er_overlaps_match_aggregated(n, edges, ps, couplings=None):
 def ba_total_degree(n, ms, couplings=None):
     """
     Generates a Barabasi-Albert multiplex network, where the preferential
-    attachement process is run for each layer separately and concurrently
+    attachment process is run for each layer separately and concurrently
     in a way that the total degree of the node is used for the preferential
-    attachement. That is, the new nodes attach preferentially to nodes that
+    attachment. That is, the new nodes attach preferentially to nodes that
     have high total degree (sum of degree in all layers).
     
     Parameters
@@ -876,7 +876,7 @@ try:
     
     def geo(n, edges, couplings=None):
         """
-        Generates a multiplex network where each layer is genereted using the
+        Generates a multiplex network where each layer is generated using the
         same soft geometric network model.
 
         The intra-layer networks are generated using the networkx function

@@ -169,7 +169,7 @@ def get_automorphism_generators(net,allowed_aspects="all",include_fixed=False,ba
 
 
 def get_isomorphism(net1,net2,allowed_aspects="all",include_fixed=False,backend="auto"):
-    """Returns an isomorphism betwee net1 and net2 if possible.
+    """Returns an isomorphism between net1 and net2 if possible.
 
     Parameters
     ----------
