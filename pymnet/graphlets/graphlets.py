@@ -127,7 +127,7 @@ def automorphism_orbits_nl(nets, allowed_aspects='all'):
     '''
     computes the automorphism orbits for node-layers for each network in nets
     
-    Paramaters
+    Parameters
     ----------
     nets: dict (key: n_nodes, value: list of networks)
         graphlets
@@ -262,7 +262,7 @@ def orbit_equations(n, nets, auts, invs, allowed_aspects='all'):
 def subtrahend(orbit1, orbit2, nets, auts, invs, allowed_aspects='all'):
     '''
     Returns the subtrahend for orbit2 in orbit equations (the value that is
-    substracted in the upper part of the binomial coefficient on theleft sides
+    subtracted in the upper part of the binomial coefficient on the sleft sides
     of the orbit equation)
     
     Parameters

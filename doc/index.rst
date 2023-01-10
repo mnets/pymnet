@@ -8,7 +8,7 @@ Multilayer Networks Library for Python (Pymnet)
        :height: 250 pt
        :align: left
 
-   The libarary is based on the general definition of **multilayer networks** presented in a `review article <http://arxiv.org/abs/1309.7233>`_. Multilayer networks can be used to represent various types network generalizations found in the literature. For example, multiplex networks, temporal networks, networks of networks, and interdependent networks are all types of multilayer networks. The library supports even more general types of networks with multiple *aspects* such that the networks can for example have both temporal and multiplex aspect at the same time. 
+   The library is based on the general definition of **multilayer networks** presented in a `review article <http://arxiv.org/abs/1309.7233>`_. Multilayer networks can be used to represent various types network generalizations found in the literature. For example, multiplex networks, temporal networks, networks of networks, and interdependent networks are all types of multilayer networks. The library supports even more general types of networks with multiple *aspects* such that the networks can for example have both temporal and multiplex aspect at the same time. 
 
    The visualization on the left is produced with the library. See the :ref:`visualization_tutorial` tutorial for instructions how to your own network data with the library!
 

@@ -108,7 +108,7 @@ Now, the node objects of the network need to be accessed by giving both the node
 0
 
 Again, the edges can be accessed in two ways. First one is similar to the tensor notation where the indices of nodes and layers are grouped together. The following command
-will add an edge between node 1 in layer 'a' to node 2 in layer 'b' (again, the nodes and layers are implicitely created):
+will add an edge between node 1 in layer 'a' to node 2 in layer 'b' (again, the nodes and layers are implicitly created):
 
 >>> mnet[1,2,'a','b'] = 1
 
@@ -143,8 +143,8 @@ Multiplex networks
 ------------------
 
 The multilayer networks can in theory be used to represented multiplex networks, but in practise it is often better to use a specialized class MultiplexNetwork to 
-when dealing with multiplex networks. There few reason for this. First, the MultiplexNetwork class offers an additional convinient interface for handling intra-layer networks.
-Second, the MultiplexNetwork class can take coupling rules as an input when it's constructed and use them to implicitely create the inter-layer edges when they are needed. This
+when dealing with multiplex networks. There few reason for this. First, the MultiplexNetwork class offers an additional convenient interface for handling intra-layer networks.
+Second, the MultiplexNetwork class can take coupling rules as an input when it's constructed and use them to implicitly create the inter-layer edges when they are needed. This
 saves some memory and makes it easier to create networks with such coupling structures. Third, this will let the functions in the library to know that your multilayer network is
 a multiplex network. Some of the functions only work for multiplex networks, but even the ones that work for general multilayer networks can use the information to speed up the
 processing. 
@@ -185,7 +185,7 @@ In ordinal networks only adjacent layers are connected to each other. In Multipl
 >>> onet['node','node',1,3]
 0
 
-You can also give the coupling strength, i.e. the weight of the inter-layer edges as a paramter
+You can also give the coupling strength, i.e. the weight of the inter-layer edges as a parameter
 
 >>> cnet = MultiplexNetwork(couplings=('categorical',10))
 >>> cnet.add_node(1)
@@ -194,7 +194,7 @@ You can also give the coupling strength, i.e. the weight of the inter-layer edge
 >>> cnet[1,1,'a','b']
 10
 
-Multiplex networks with multiple aspects can be constructed by a list of coupling rules as the coupling paramter in the constructor. For example,
+Multiplex networks with multiple aspects can be constructed by a list of coupling rules as the coupling parameter in the constructor. For example,
 the following code constructs a multiplex network where the first aspect is categorical and the second is ordinal
 
 >>> conet = MultiplexNetwork(couplings=['categorical','ordinal'])

@@ -58,7 +58,7 @@ class AuxiliaryGraphBuilder(object):
 
     def _assert_full_order(self,seq):
         for i in range(len(seq)-1):
-            assert seq[i]<seq[i+1], "Cannot sort the node or elemenetary layer names!"
+            assert seq[i]<seq[i+1], "Cannot sort the node or elementary layer names!"
 
     def _build_graph_general(self):
         """This is a reduction that works for all multilayer networks.
@@ -190,7 +190,7 @@ class AuxiliaryGraphBuilder(object):
 
 
 
-    ## The following functions need to be overriden:
+    ## The following functions need to be overridden:
     def build_init(self):
         raise NotImplemented()
 
@@ -204,7 +204,7 @@ class AuxiliaryGraphBuilder(object):
         raise NotImplemented()
     ##
 
-    ## The following can be overrridden if possible
+    ## The following can be overridden if possible
     def compare_structure(self,other):
         raise NotImplemented()
 

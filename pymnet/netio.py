@@ -44,7 +44,7 @@ def write_json(net,outputfile=None):
         return json.dumps(nets)
 
 def read_edge_files(edgeinput,layerinput=None,nodeinput=None,couplings='categorical',fullyInterconnected=True,directed=False,ignoreSelfLink=True):
-    """A multiplex file separed into files for layers, edge and nodes.
+    """A multiplex file separated into files for layers, edge and nodes.
     """
     net=MultiplexNetwork(couplings=[couplings],fullyInterconnected=fullyInterconnected,directed=directed)
     layerfile=open(layerinput,'r') if isinstance(layerinput,str) else layerinput
@@ -92,7 +92,7 @@ def read_ucinet(netinput,couplings=('categorical',1.0),fullyInterconnected=True)
     """Reads network in UCINET DL format.
 
     See http://www.analytictech.com/networks/dataentry.htm
-    for informal definition of the format. This implemetation
+    for informal definition of the format. This implementation
     is based on the provided url and some example files at
     the UCINET website.
 
@@ -113,7 +113,7 @@ def read_ucinet(netinput,couplings=('categorical',1.0),fullyInterconnected=True)
     labels to lower case.
 
     Currently, the network is assumed to be unweighted, and if
-    the input file contains a directed network the an undircted
+    the input file contains a directed network the an undirected
     network is returned anyway. The directions are removed in a
     way that i and j are connected if there is either link 
     i->j or j->i (or both).
