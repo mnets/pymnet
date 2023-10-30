@@ -7,7 +7,7 @@ tags:
 - network science
 - attributed graph
 authors:
-- name: Arash Badie Moridi
+- name: Arash Badie-Modiri
   orcid: 0000-0002-2027-360X
   affiliation: "1"
 - name: Corinna Coupette
