@@ -63,7 +63,7 @@ def draw(net,layout="spring",layershape="rectangle",azim=-51,elev=22,show=False,
        Layout algorithm. Use "fr" for Fruchterman-Reingold layout. 
        Options using networkx are "circular","shell","spring", or "spectral".
     layershape : string
-       Shape of the layers. Options are "rectangle" or "circular".
+       Shape of the layers. Options are "rectangle" or "circle".
     azim : float
        Azimuth of the layers given in degrees.
     elev : float
