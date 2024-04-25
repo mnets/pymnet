@@ -2,8 +2,11 @@
 __pycache__
 *~
 .DS_Store
+*.egg-info
 build/*
 dist/*
 
 doc/_build
 doc/autogen
+
+pymnet/tests/figs/
