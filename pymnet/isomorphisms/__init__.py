@@ -14,37 +14,52 @@ complete_invariant_backends=[]
 automorphism_group_generator_backends=[]
 isomorphism_mapping_backends=[]
 
-#lets try to import some backends
+# lets try to import some backends
 
 try:
     from . import nxbackend
-    auxbuilder_backends["nx"]=nxbackend.AuxiliaryGraphBuilderNX
+    auxbuilder_backends["nx"] = \
+        nxbackend.AuxiliaryGraphBuilderNX
 except ImportError:
     pass
 
 try:
     from . import blissbackend
     try:
-        blissbackend.bliss.Graph #Bliss import might fail silently...
-        auxbuilder_backends["bliss"]=blissbackend.AuxiliaryGraphBuilderBliss
+        blissbackend.bliss.Graph  # Bliss import might fail silently...
+        auxbuilder_backends["bliss"] = \
+            blissbackend.AuxiliaryGraphBuilderBliss
+    except AttributeError:
+        pass
+except ImportError:
+    pass
+
+try:
+    from .import bliss_bind_backend
+    try:
+        auxbuilder_backends["bliss_bind"] = \
+            bliss_bind_backend.AuxiliaryGraphBuilderBlissBind
     except AttributeError:
         pass
 except ImportError:
     pass
 
 
-
-#fill in the backends that are available to do various tasks
-for backendname,auxbuilder in auxbuilder_backends.items():
+# fill in the backends that are available to do various tasks
+# start from the most preferred backend, to the least preferred
+backend_order = ["bliss_bind", "bliss", "nx"]
+for backend_name in backend_order:
+    if backend_name not in auxbuilder_backends:
+        continue
+    auxbuilder = auxbuilder_backends[backend_name]
     if auxbuilder.has_comparison:
-        comparison_backends.append(backendname)
+        comparison_backends.append(backend_name)
     if auxbuilder.has_complete_invariant:
-        complete_invariant_backends.append(backendname)
+        complete_invariant_backends.append(backend_name)
     if auxbuilder.has_automorphism_group_generators:
-        automorphism_group_generator_backends.append(backendname)
+        automorphism_group_generator_backends.append(backend_name)
     if auxbuilder.has_isomorphism_mapping:
-        isomorphism_mapping_backends.append(backendname)
-
+        isomorphism_mapping_backends.append(backend_name)
 
 
 def is_isomorphic(net1,net2,allowed_aspects="all",backend="auto"):
