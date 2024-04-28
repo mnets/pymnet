@@ -1,5 +1,6 @@
-# README #
+# pymnet: Multilayer Network Analysis in Python #
 
+[![codecov](https://codecov.io/gh/mnets/pymnet/graph/badge.svg?token=LI6QBAF7N0)](https://codecov.io/gh/mnets/pymnet)
 
 ### What is this repository for? ###
 
