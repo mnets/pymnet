@@ -35,12 +35,15 @@ dependencies = [
 ]
 
 [project.urls]
-homepage = "https://www.mkivela.com/pymnet/"
-documentation = "https://www.mkivela.com/pymnet/"
-repository = "https://github.com/bolozna/Multilayer-networks-library"
-bug-tracker = "https://github.com/bolozna/Multilayer-networks-library/issues"
+homepage = "https://mnets.github.io/pymnet/"
+documentation = "https://mnets.github.io/pymnet/"
+repository = "https://github.com/mnets/pymnet"
+bug-tracker = "https://github.com/mnets/pymnet/issues"
 
 [project.optional-dependencies]
+test = [
+    "coverage >= 7.0"
+]
 
 [build-system]
 requires = [

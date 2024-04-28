@@ -17,10 +17,13 @@ jobs:
         run: python -m pip install -U pip
 
       - name: Install the package
-        run: python -m pip install .
+        run: python -m pip install .[test]
 
       - name: Run tests
-        run: python -m pymnet.tests
+        run: coverage run -m pymnet.tests
+
+      - name: Generate coverage report
+        run: coverage xml -o coverage.xml
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1
