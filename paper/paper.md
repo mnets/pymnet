@@ -50,6 +50,14 @@ where the sequence $\mathbf{L} = \\{ L_a \\}_{a=1}^{d}$ defines sets $L_a$ of el
 
 Pymnet also includes a specialized implementation of multiplex networks, a common subtype of multilayer networks. The advantages of the specialization include, for example, automatic lazy evaluation of interlayer coupling edges.
 
+# Features and examples
+
+Pymnet contains submodules for advanced structural analysis of multilayer networks. Graphlet degree analysis is a successful tool in the investigation of structure of graphs, and it has been generalized to multilayer networks [@sallmen2022]. Pymnet implements the graphlet degree analysis tools for single-aspect multiplex networks. A graphlet is an isomorphism class of (connected) networks which are typically small. Pymnet can generate all graphlets of specified size, i.e. all isomorphic multiplex networks with a user-specified number of nodes and layers (coming from a user-defined set of layers), user-defined interlayer couplings, and user-defined type of multilayer isomorphism. From the graphlets, pymnet can compute the automorphism orbits of nodes or node-layers in the graphlets, with user-specified type of isomorphism. For example, we can use pymnet to number and visualize all automorphism orbits of nodes using node-layer isomorphism of single-aspect multiplex graphlets with two or three nodes and two layers:
+
+![3 nodes, 2 layers automorphism orbits](https://github.com/mnets/pymnet/blob/publication/paper/figs/l2_n3.png?raw=true "Automorphism orbits of nodes with node-layer isomorphism")
+
+_Visualization script from [@sallmen2022] [repository](https://github.com/bolozna/multiplex-graphlet-analysis/blob/master/visualization.py)._
+
 # Related Software
 
 Pymnet extends the popular [networkx](https://networkx.org/) package—used for single-layer graph analysis—such that (some) [networkx](https://networkx.org/) functions can be applied to the individual layers of a multilayer network. To solve multilayer network isomorphisms, pymnet uses a back-end package, which can be either [networkx](https://networkx.org/) (limited functionality) or [PyBliss](http://www.tcs.hut.fi/Software/bliss/) [@junttila2011], [@junttila2007] (full functionality).
