@@ -40,15 +40,15 @@ Many complex systems with interacting elements can be represented in a natural w
 
 # Statement of Need
 
-Pymnet is a Python package for creating, analyzing, and visualizing multilayer networks. It is designed for network scientists with an easy-to-use yet flexible interface, and features representation of a very general class of multilayer networks, structural metrics of multilayer networks (e.g. clustering coefficients), multilayer network transforms, multilayer networks isomorphisms and automorphisms (with [PyBliss](http://www.tcs.hut.fi/Software/bliss/) [@junttila2011], [@junttila2007]), and multilayer random network models, among other things.
+Pymnet is a Python package for creating, analyzing, and visualizing multilayer networks. It is designed for network scientists with an easy-to-use yet flexible interface, and features representation of a very general class of multilayer networks, structural metrics of multilayer networks (e.g. clustering coefficients, graphlet analysis), multilayer network transforms, multilayer networks isomorphisms and automorphisms (with [PyBliss](http://www.tcs.hut.fi/Software/bliss/) [@junttila2011], [@junttila2007]), and multilayer random network models, among other things.
 
 Different kinds of multilayered and multimodal network data are becoming more and more available, but programmatic tools for handling such data are not mature. Python is a popular programming language for network scientists and data scientists, and pymnet answers the need for a featured multilayer network package available for the language.
 
 Pymnet implements the general multilayer network framework described in [@kivela2014]. The multilayer network $M$ is defined by
 $$M = (V_M, E_M, V, \mathbf{L})$$
-where the sequence $\mathbf{L} = \\{ L_a \\}_{a=1}^{d}$ defines sets $L_a$ of elementary layers, the set $V$ defines the nodes of the network, the vertices (that can be connected by edges) of the network are node-layers $V_M \subseteq{V \times L_1 \times ... \times L_d}$, and edges $E_M \subseteq V_M \times V_M$ are defined between node-layers. Simply, a node-layer is an association of a node $\in V$ with a layer $\in L_1 \times ... \times L_d$ with dimensionality $d$, and nodes can exist on an arbitrary number of layers and edges can connect node-layers within layers and across arbitrary layer pairs which can vary in an arbitrary number of dimensions.
+where the sequence $\mathbf{L} = \( L_a \)_{a=1}^{d}$ defines sets $L_a$ of elementary layers, the set $V$ defines the nodes of the network, the vertices (that can be connected by edges) of the network are node-layers $V_M \subseteq{V \times L_1 \times ... \times L_d}$, and edges $E_M \subseteq V_M \times V_M$ are defined between node-layers. Simply, a node-layer is an association of a node $\in V$ with a layer $\in L_1 \times ... \times L_d$ with dimensionality $d$, and nodes can exist on an arbitrary number of layers and edges can connect node-layers within layers and across arbitrary layer pairs which can vary in an arbitrary number of dimensions. The dimensions $1,2,...,d$ are called the aspects of the network.
 
-Pymnet also includes a specialized implementation of multiplex networks, a common subtype of multilayer networks. The advantages of the specialization include, for example, automatic lazy evaluation of interlayer coupling edges.
+Pymnet also includes a specialized implementation of multiplex networks, a common subtype of multilayer networks. In multiplex networks, edges across layers (interlayer edges) only occur between a node and its counterpart(s) on the other layers. The advantages of the specialization include, for example, automatic lazy evaluation of interlayer coupling edges.
 
 # Features and examples
 
