@@ -112,7 +112,7 @@ gcm_2 = pn.graphlets.GCM(orbits_2)
 print(pn.graphlets.GCD(gcm_1,gcm_2))
 ```
 
-outputs `5.99947838065`.
+outputs `5.999478380647439`.
 
 # Related Software
 
