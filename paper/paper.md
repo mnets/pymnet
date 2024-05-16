@@ -102,7 +102,7 @@ alice|1|1|0|0|0|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0
 
 where `(2,0,0)`, `(2,1,0)` etc. are representations of the orbits.
 
-From the orbit counts, we can calculate the graphlet correlation distance (GCD) between the two networks:
+From the orbit counts, we can calculate the graphlet correlation distance (GCD) [@yaverouglu2014] between the two networks:
 
 ```python
 orbits_1 = interface.read_graphlet_degree_distribution_folder('Results/M_1_2')
