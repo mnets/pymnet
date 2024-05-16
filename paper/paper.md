@@ -58,6 +58,62 @@ Pymnet contains submodules for advanced structural analysis of multilayer networ
 
 _Visualization script from [@sallmen2022] [repository](https://github.com/bolozna/multiplex-graphlet-analysis/blob/master/visualization.py)._
 
+We can generate networks and calculate graphlet degree distributions for them (using [interface](https://github.com/bolozna/multiplex-graphlet-analysis/blob/master/interface.py) from [@sallmen2022]):
+
+```python
+import pymnet as pn
+import interface
+
+def make_example_network_1():
+    M = pn.MultiplexNetwork(couplings='categorical',fullyInterconnected=True)
+    M[0,1,'a','a'] = 1
+    M[0,2,'b','b'] = 1
+    return M
+
+def make_example_network_2():
+    M = pn.MultiplexNetwork(couplings='categorical',fullyInterconnected=True)
+    M['alice','bob','a','a'] = 1
+    M['bob','carol','a','a'] = 1
+    M['alice','carol','a','a'] = 1
+    M['alice','carol','b','b'] = 1
+    return M
+
+M_1 = make_example_network_1()
+M_2 = make_example_network_2()
+interface.graphlet_degree_distributions(M_1,3,2,save_name='M_1')
+interface.graphlet_degree_distributions(M_2,3,2,save_name='M_2')
+```
+
+This produces files `Results/M_1_2/M_1_a_b.txt` with content
+
+n|(2, 0, 0)|(2, 1, 0)|(3, 0, 0)|(3, 0, 1)|(3, 1, 0)|(3, 1, 1)|(3, 2, 0)|(3, 2, 1)|(3, 2, 2)|(3, 3, 0)|(3, 4, 0)|(3, 4, 1)|(3, 5, 0)|(3, 5, 1)|(3, 6, 0)|(3, 6, 1)|(3, 7, 0)|(3, 7, 2)|(3, 8, 0)|(3, 8, 1)|(3, 9, 0)
+:-:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:
+0|2|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0
+1|1|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0
+2|1|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0
+
+and `Results/M_2_2/M_2_a_b.txt` with content
+
+n|(2, 0, 0)|(2, 1, 0)|(3, 0, 0)|(3, 0, 1)|(3, 1, 0)|(3, 1, 1)|(3, 2, 0)|(3, 2, 1)|(3, 2, 2)|(3, 3, 0)|(3, 4, 0)|(3, 4, 1)|(3, 5, 0)|(3, 5, 1)|(3, 6, 0)|(3, 6, 1)|(3, 7, 0)|(3, 7, 2)|(3, 8, 0)|(3, 8, 1)|(3, 9, 0)
+:-:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:
+carol|1|1|0|0|0|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0
+bob|2|0|0|0|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0
+alice|1|1|0|0|0|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0
+
+where `(2,0,0)`, `(2,1,0)` etc. are representations of the orbits.
+
+From the orbit counts, we can calculate the graphlet correlation distance (GCD) between the two networks:
+
+```python
+orbits_1 = interface.read_graphlet_degree_distribution_folder('Results/M_1_2')
+orbits_2 = interface.read_graphlet_degree_distribution_folder('Results/M_2_2')
+gcm_1 = pn.graphlets.GCM(orbits_1)
+gcm_2 = pn.graphlets.GCM(orbits_2)
+print(pn.graphlets.GCD(gcm_1,gcm_2))
+```
+
+outputs `5.99947838065`.
+
 # Related Software
 
 Pymnet extends the popular [networkx](https://networkx.org/) package—used for single-layer graph analysis—such that (some) [networkx](https://networkx.org/) functions can be applied to the individual layers of a multilayer network. To solve multilayer network isomorphisms, pymnet uses a back-end package, which can be either [networkx](https://networkx.org/) (limited functionality) or [PyBliss](http://www.tcs.hut.fi/Software/bliss/) [@junttila2011], [@junttila2007] (full functionality).
