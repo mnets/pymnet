@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - paper
+      - publication
 
 jobs:
   paper:
