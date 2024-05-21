@@ -82,9 +82,9 @@ From the graphlets, [pymnet](https://github.com/mnets/pymnet) can compute the au
 For example, we can use [pymnet](https://github.com/mnets/pymnet) to enumerate and visualize all automorphism orbits of nodes using node-layer isomorphism of single-aspect multiplex graphlets with two or three nodes and two layers. 
 The results are depicted in \autoref{fig:automorphisms}. 
 
-![Visualization script from the [repository](https://github.com/bolozna/multiplex-graphlet-analysis/blob/master/visualization.py) provided by @sallmen2022 \label{fig:automorphisms}](https://github.com/mnets/pymnet/blob/publication/paper/figs/l2_n3.png?raw=true "Automorphism orbits of nodes with node-layer isomorphism")
-
 Other amenities shipped with [pymnet](https://github.com/mnets/pymnet) include generators for generalizations of popular random-graph models to multilayer networks (e.g., Erdős-Rényi models and configuration models) as well as utilities for multilayer-network visualization. 
+
+![Visualization script from the [repository](https://github.com/bolozna/multiplex-graphlet-analysis/blob/master/visualization.py) provided by @sallmen2022. \label{fig:automorphisms}](https://github.com/mnets/pymnet/blob/publication/paper/figs/l2_n3.png?raw=true "Automorphism orbits of nodes with node-layer isomorphism")
 
 # Installation and Usage
 
