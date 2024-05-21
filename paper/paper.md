@@ -54,7 +54,7 @@ Python is a popular programming language for network scientists and data scienti
 
 [pymnet](https://github.com/mnets/pymnet) implements the general multilayer-network framework described by @kivela2014. 
 A *multilayer network* $M$ is defined by $M = (V_M, E_M, V, \mathbf{L})$,
-where the sequence $\mathbf{L} = \( L_a \)_{a=1}^{d}$ defines sets $L_a$ of *elementary layers*, the set $V$ defines the *nodes* of the network, the vertices (that can be connected by edges) of the network are *node-layers* $V_M \subseteq{V \times L_1 \times ... \times L_d}$, and *edges* $E_M \subseteq V_M \times V_M$ are defined between node-layers. 
+where the sequence $\mathbf{L} = (L_a)_{a=1}^{d}$ defines sets $L_a$ of *elementary layers*, the set $V$ defines the *nodes* of the network, the vertices (that can be connected by edges) of the network are *node-layers* $V_M \subseteq V \times L_1 \times ... \times L_d$, and *edges* $E_M \subseteq V_M \times V_M$ are defined between node-layers. 
 Put simply, a node-layer is an association of a node $v \in V$ with a layer $\in L_1 \times ... \times L_d$ with dimensionality $d$, nodes can exist on an arbitrary number of layers, and edges can connect node-layers within layers and across arbitrary pairs of layers, which can differ in an arbitrary number of dimensions. 
 The dimensions $1,2,...,d$ are called the *aspects* of the network.
 
