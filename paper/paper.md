@@ -42,29 +42,43 @@ A major advantage of representing complex systems as graphs is that the same gra
 However, the graph representation has its limitations. 
 For many systems, there is a need to represent richer network data, such as multidimensional features, several types of interactions, numerous layers of hierarchy, and multiple modalities, to capture the structure and dynamics of the systems more accurately than simple graphs would allow. 
 Multilayer networks generalize graphs to capture the rich network data often associated with complex systems, allowing us to study a broad range of phenomena using a common representation, using the same multilayer tools and methods. 
-With Pymnet, we introduce a Python package that provides the essential data structures and computational tools for multilayer network analysis.
+With `pymnet`, we introduce a Python package that provides the essential data structures and computational tools for multilayer network analysis.
 
 # Statement of Need
 
-Pymnet is a Python package for creating, analyzing, and visualizing multilayer networks. It is designed for network scientists with an easy-to-use yet flexible interface, and features representation of a very general class of multilayer networks, structural metrics of multilayer networks (e.g. clustering coefficients, graphlet analysis), multilayer network transforms, multilayer networks isomorphisms and automorphisms (with [PyBliss](http://www.tcs.hut.fi/Software/bliss/) [@junttila2011], [@junttila2007]), and multilayer random network models, among other things.
+`pymnet` is a Python package for creating, analyzing, and visualizing multilayer networks. 
+It is designed for network scientists with an easy-to-use yet flexible interface, featuring, inter alia, representations of a very general class of multilayer networks, structural metrics of multilayer networks (e.g., clustering coefficients and graphlet analysis), multilayer-network transforms, multilayer-network isomorphisms and automorphisms (with [PyBliss](http://www.tcs.hut.fi/Software/bliss/) [@junttila2011], [@junttila2007]), and random multilayer-network models.
 
-Different kinds of multilayered and multimodal network data are becoming more and more available, but programmatic tools for handling such data are not mature. Python is a popular programming language for network scientists and data scientists, and pymnet answers the need for a featured multilayer network package available for the language.
+Different kinds of multilayer network data are becoming more and more available, but our computational tools for handling such data are lagging behind. 
+Python is a popular programming language for network scientists and data scientists, and `pymnet` addresses the need for a feature-rich multilayer-network package in the language.
 
-Pymnet implements the general multilayer network framework described in [@kivela2014]. The multilayer network $M$ is defined by
-$$M = (V_M, E_M, V, \mathbf{L})$$
-where the sequence $\mathbf{L} = \( L_a \)_{a=1}^{d}$ defines sets $L_a$ of elementary layers, the set $V$ defines the nodes of the network, the vertices (that can be connected by edges) of the network are node-layers $V_M \subseteq{V \times L_1 \times ... \times L_d}$, and edges $E_M \subseteq V_M \times V_M$ are defined between node-layers. Simply, a node-layer is an association of a node $\in V$ with a layer $\in L_1 \times ... \times L_d$ with dimensionality $d$, and nodes can exist on an arbitrary number of layers and edges can connect node-layers within layers and across arbitrary layer pairs which can vary in an arbitrary number of dimensions. The dimensions $1,2,...,d$ are called the aspects of the network.
+`pymnet` implements the general multilayer-network framework described by @kivela2014. 
+The *multilayer network* $M$ is defined by 
+$$M = (V_M, E_M, V, \mathbf{L})\;,$$
+where the sequence $\mathbf{L} = \( L_a \)_{a=1}^{d}$ defines sets $L_a$ of *elementary layers*, the set $V$ defines the *nodes* of the network, the vertices (that can be connected by edges) of the network are *node-layers* $V_M \subseteq{V \times L_1 \times ... \times L_d}$, and *edges* $E_M \subseteq V_M \times V_M$ are defined between node-layers. 
+Put simply, a node-layer is an association of a node $v \in V$ with a layer $\in L_1 \times ... \times L_d$ with dimensionality $d$, nodes can exist on an arbitrary number of layers, and edges can connect node-layers within layers and across arbitrary pairs of layers, which can differ in an arbitrary number of dimensions. 
+The dimensions $1,2,...,d$ are called the aspects of the network.
 
-Pymnet also includes a specialized implementation of multiplex networks, a common subtype of multilayer networks. In multiplex networks, edges across layers (interlayer edges) only occur between a node and its counterpart(s) on the other layers. The advantages of the specialization include, for example, automatic lazy evaluation of interlayer coupling edges.
+Beyond the general multilayer-network framework described by @kivela2014, `pymnet` also includes a specialized implementation of multiplex networks, a common subtype of multilayer networks. 
+In multiplex networks, edges across layers (interlayer edges) only occur between a node and its counterpart(s) on the other layers. 
+The advantages of the specialization include, for example, automatic lazy evaluation of interlayer-coupling edges.
 
-# Features and examples
+# Features and Examples
 
-Pymnet contains submodules for advanced structural analysis of multilayer networks. Graphlet degree analysis is a successful tool in the investigation of structure of graphs, and it has been generalized to multilayer networks [@sallmen2022]. Pymnet implements the graphlet degree analysis tools for single-aspect multiplex networks. A graphlet is an isomorphism class of (connected) networks which are typically small. Pymnet can generate all graphlets of specified size, i.e. all isomorphic multiplex networks with a user-specified number of nodes and layers (coming from a user-defined set of layers), user-defined interlayer couplings, and user-defined type of multilayer isomorphism. From the graphlets, pymnet can compute the automorphism orbits of nodes or node-layers in the graphlets, with user-specified type of isomorphism. For example, we can use pymnet to number and visualize all automorphism orbits of nodes using node-layer isomorphism of single-aspect multiplex graphlets with two or three nodes and two layers:
+`pymnet` contains submodules for advanced structural analysis of multilayer networks. 
+Graphlet-degree analysis is a successful tool for investigating the structure of graphs that has been generalized to multilayer networks [@sallmen2022], 
+and `pymnet` implements graphlet-degree analysis for single-aspect multiplex networks. **TODO: we haven't defined "aspect"**
+A graphlet is an isomorphism class of (connected) induced subgraphs that are typically small. 
+`pymnet` can generate all graphlets of a specified size, i.e., all isomorphic multiplex networks with a user-specified number of nodes and layers (coming from a user-defined set of layers), user-defined interlayer couplings, and a user-defined type of multilayer isomorphism. 
+From the graphlets, `pymnet` can compute the automorphism orbits of nodes or node-layers in the graphlets, with a user-specified type of isomorphism. 
+For example, we can use `pymnet` to enumerate and visualize all automorphism orbits of nodes using node-layer isomorphism of single-aspect multiplex graphlets with two or three nodes and two layers. 
+The results are depicted in \autoref{fig:automorphisms}. 
 
-![3 nodes, 2 layers automorphism orbits](https://github.com/mnets/pymnet/blob/publication/paper/figs/l2_n3.png?raw=true "Automorphism orbits of nodes with node-layer isomorphism")
+![Visualization script from the [repository](https://github.com/bolozna/multiplex-graphlet-analysis/blob/master/visualization.py) provided by @sallmen2022](https://github.com/mnets/pymnet/blob/publication/paper/figs/l2_n3.png?raw=true "Automorphism orbits of nodes with node-layer isomorphism"){label="fig:automorphisms"}
 
-_Visualization script from [@sallmen2022] [repository](https://github.com/bolozna/multiplex-graphlet-analysis/blob/master/visualization.py)._
+**TODO: do we want the code examples here? reconsider - perhaps we should rather have a demo that shows the data structures (before the computational demo)**
 
-We can generate networks and calculate graphlet degree distributions for them (using [interface](https://github.com/bolozna/multiplex-graphlet-analysis/blob/master/interface.py) from [@sallmen2022]):
+We can generate networks and calculate graphlet-degree distributions for them (using [interface](https://github.com/bolozna/multiplex-graphlet-analysis/blob/master/interface.py) from @sallmen2022):
 
 ```python
 import pymnet as pn
@@ -122,13 +136,18 @@ outputs `5.999478380647439`.
 
 # Related Software
 
-Pymnet extends the popular [networkx](https://networkx.org/) package—used for single-layer graph analysis—such that (some) [networkx](https://networkx.org/) functions can be applied to the individual layers of a multilayer network. To solve multilayer network isomorphisms, pymnet uses a back-end package, which can be either [networkx](https://networkx.org/) (limited functionality) or [PyBliss](http://www.tcs.hut.fi/Software/bliss/) [@junttila2011], [@junttila2007] (full functionality).
+`pymnet` extends the popular [networkx](https://networkx.org/) package developed for single-layer graph analysis such that (some) [networkx](https://networkx.org/) functions can be applied to the individual layers of a multilayer network. 
+To solve multilayer-network isomorphisms, `pymnet` uses a backend package, which can be either [networkx](https://networkx.org/) (limited functionality) or [PyBliss](http://www.tcs.hut.fi/Software/bliss/) [@junttila2011; @junttila2007] (full functionality).
 
-# Projects Using Pymnet
+**TODO should we mention Reticula, hypernetx/hypergraphx, etc. as other examples of libraries enabling richer network analysis but with different foci?**
 
-Pymnet has been used in multiple scientific publications, for example [@kivela2014], [@kivela2017], [@sallmen2022], and [@nurmi2023].
+# Projects Using `pymnet`
+
+Pymnet has been used in multiple scientific publications, for example @kivela2014, @kivela2017, @sallmen2022, and @nurmi2023.
 
 # Acknowledgments
+
+**TODO**
 
 # References
 
