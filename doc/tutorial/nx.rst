@@ -5,7 +5,7 @@ Using NetworkX functions
 
 Start by importing the library:
 
->>> from pymnet import *
+>>> from pymnet import nx
 
 You can then run any NetworkX function from the pymnet.nx module. For example, you can produce the Karate Club network with the following command.
 
