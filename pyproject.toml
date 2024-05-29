@@ -1,6 +1,6 @@
 [project]
 name = "pymnet"
-version = "0.1.0"
+version = "0.2.0"
 description = "Multilayer network analysis library for Python"
 authors = [{name="Mikko Kivelä", email="mikko.kivela@iki.fi"}]
 requires-python = ">=3.8"
@@ -31,7 +31,8 @@ dependencies = [
   "matplotlib >= 3.8.0",
   "numpy >= 1.26.1",
   "scipy >= 1.11.1",
-  "networkx >= 2.0, < 3.0"
+  "networkx >= 2.0, < 3.0",
+  "bliss-bind >= 0.2.0 ; (sys_platform == 'darwin' or ( (platform_machine == 'x86_64' and sys_platform == 'linux') or (platform_machine == 'amd64' and sys_platform == 'win32') )) and python_version >= '3.8'"
 ]
 
 [project.urls]
