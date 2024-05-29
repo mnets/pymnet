@@ -265,6 +265,48 @@ class TestIsomorphisms(unittest.TestCase):
                                 backend=backend))
                         prevnet = net
 
+    def test_automorphism_generator(self, backend):
+        net_social = net.MultiplexNetwork(
+            couplings='categorical', fullyInterconnected=False)
+        net_social["Alice", "Bob", "Friends"] = 1
+        net_social["Alice", "Carol", "Friends"] = 1
+        net_social["Bob", "Carol", "Friends"] = 1
+        net_social["Alice", "Bob", "Married"] = 1
+
+        self.assertEqual(
+            isomorphisms.get_automorphism_generators(
+                net_social, allowed_aspects=[0], backend=backend),
+            [[{'Bob': 'Alice', 'Alice': 'Bob'}, {}]])
+
+        self.assertEqual(
+            isomorphisms.get_automorphism_generators(
+                net_social, allowed_aspects=[1], backend=backend), [])
+
+        self.assertEqual(
+            isomorphisms.get_automorphism_generators(
+                net_social, allowed_aspects=[0, 1], backend=backend),
+            [[{'Bob': 'Alice', 'Alice': 'Bob'}, {}]])
+
+        net_example = net.MultilayerNetwork(aspects=1)
+        net_example[1, 'A'][2, 'A'] = 1
+        net_example[2, 'A'][3, 'A'] = 1
+        net_example[3, 'B'][2, 'B'] = 1
+        net_example[2, 'B'][1, 'B'] = 1
+        net_example[3, 'A'][1, 'B'] = 1
+
+        self.assertEqual(
+            isomorphisms.get_automorphism_generators(
+                net_example, allowed_aspects=[0], backend=backend), [])
+
+        self.assertEqual(
+            isomorphisms.get_automorphism_generators(
+                net_example, allowed_aspects=[1], backend=backend), [])
+
+        self.assertEqual(
+            isomorphisms.get_automorphism_generators(
+                net_example, allowed_aspects=[0, 1], backend=backend),
+            [[{1: 3, 3: 1}, {'A': 'B', 'B': 'A'}]])
+
     # NX tests
 
     def test_comparison_random_relabel_mplex_single_aspect_fast_nx(self):
@@ -313,11 +355,15 @@ class TestIsomorphisms(unittest.TestCase):
         self.test_comparison_multiplex_category_counts_fast(
             backend="bliss_bind")
 
+    def test_automorphism_generator_bbind(self):
+        self.test_automorphism_generator(backend="bliss_bind")
+
 
 def test_isomorphisms():
     suite = unittest.TestSuite()
     if "nx" in isomorphisms.comparison_backends:
-        suite.addTest(TestIsomorphisms("test_comparison_simple_mlayer_nx"))
+        suite.addTest(TestIsomorphisms(
+            "test_comparison_simple_mlayer_nx"))
         suite.addTest(TestIsomorphisms(
             "test_comparison_random_relabel_mlayer_single_aspect_fast_nx"))
         suite.addTest(TestIsomorphisms(
@@ -326,7 +372,8 @@ def test_isomorphisms():
             "test_comparison_multiplex_category_counts_fast_nx"))
 
     if "bliss" in isomorphisms.comparison_backends:
-        suite.addTest(TestIsomorphisms("test_comparison_simple_mlayer_bliss"))
+        suite.addTest(TestIsomorphisms(
+            "test_comparison_simple_mlayer_bliss"))
         suite.addTest(TestIsomorphisms(
             "test_comparison_random_relabel_mlayer_single_aspect_fast_bliss"))
         suite.addTest(TestIsomorphisms(
@@ -343,6 +390,8 @@ def test_isomorphisms():
             "test_comparison_random_relabel_mplex_single_aspect_fast_bbind"))
         suite.addTest(TestIsomorphisms(
             "test_comparison_multiplex_category_counts_fast_bbind"))
+        suite.addTest(TestIsomorphisms(
+            "test_automorphism_generator_bbind"))
 
     return unittest.TextTestRunner().run(suite).wasSuccessful()
 
