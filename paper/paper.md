@@ -12,7 +12,7 @@ authors:
   affiliation: "1"
 - name: Corinna Coupette
   orcid: 0000-0001-9151-2092
-  affiliation: "2,3"
+  affiliation: "2,3,4"
 - name: Tarmo Nurmi
   orcid: 0000-0003-0258-7776
   affiliation: "4"
@@ -99,7 +99,7 @@ The only other library offering tools to work with multilayer networks in Python
 
 # Acknowledgments
 
-This work was supported by the European Commission FET-Proactive project PLEXMATH (Grant No. 317614) and the Academy of Finland (Grant No. **TODO**).
+This work was supported by the European Commission FET-Proactive project PLEXMATH (Grant No. 317614), the Academy of Finland (Grant No. **TODO**), and Digital Futures at KTH.
 
 # References
 
