@@ -28,8 +28,7 @@ affiliations:
   index: 3
 - name: Aalto University, Helsinki, Finland
   index: 4
-  
-date: 14 May 2024
+date: 31 May 2024
 bibliography: paper.bib
  
 ---
@@ -47,7 +46,7 @@ With [pymnet](https://github.com/mnets/pymnet), we introduce a Python package th
 # Statement of Need
 
 [pymnet](https://github.com/mnets/pymnet) is a Python package for creating, analyzing, and visualizing multilayer networks. 
-It is designed for network scientists with an easy-to-use yet flexible interface, featuring, inter alia, representations of a very general class of multilayer networks, structural metrics of multilayer networks (e.g., clustering coefficients and graphlet analysis), multilayer-network transforms, multilayer-network isomorphisms and automorphisms (with [PyBliss](http://www.tcs.hut.fi/Software/bliss/) [@junttila2011], [@junttila2007]), and random multilayer-network models.
+It is designed for network scientists with an easy-to-use yet flexible interface, featuring, inter alia, representations of a very general class of multilayer networks, structural metrics of multilayer networks (e.g., clustering coefficients and graphlet analysis), multilayer-network transforms, multilayer-network isomorphisms and automorphisms (with [PyBliss](http://www.tcs.hut.fi/Software/bliss/); @junttila2011; @junttila2007), and random multilayer-network models.
 
 Different kinds of multilayer network data are becoming more and more available, but our computational tools for handling such data are lagging behind. 
 Python is a popular programming language for network scientists and data scientists, and [pymnet](https://github.com/mnets/pymnet) addresses the need for a feature-rich multilayer-network package in the Python language that is actively maintained.
@@ -75,12 +74,12 @@ One example is graphlet-degree analysis, a powerful tool for investigating the s
 A graphlet is an isomorphism class of (connected) induced subgraphs that are typically small. 
 [pymnet](https://github.com/mnets/pymnet) can generate all graphlets of a specified size, i.e., all isomorphic multiplex networks with a user-specified number of nodes and layers (coming from a user-defined set of layers), user-defined interlayer couplings, and a user-defined type of multilayer isomorphism. 
 From the graphlets, [pymnet](https://github.com/mnets/pymnet) can compute the automorphism orbits of nodes or node-layers in the graphlets, with a user-specified type of isomorphism. 
-For example, we can use [pymnet](https://github.com/mnets/pymnet) to enumerate and visualize all automorphism orbits of nodes using node-layer isomorphism of single-aspect multiplex graphlets with two or three nodes and two layers. 
+For example, we can use [pymnet](https://github.com/mnets/pymnet) to enumerate and visualize all automorphism orbits of nodes in single-aspect multiplex graphlets with two or three nodes and two layers under node-layer isomorphism. 
 The results are depicted in \autoref{fig:automorphisms}. 
 
-Other amenities shipped with [pymnet](https://github.com/mnets/pymnet) include generators for generalizations of popular random-graph models to multilayer networks (e.g., Erdős-Rényi models and configuration models) as well as utilities for multilayer-network visualization. 
+Other amenities shipped with [pymnet](https://github.com/mnets/pymnet) include graph generators for generalizations of popular random-graph models to multilayer networks (e.g., Erdős-Rényi models and configuration models) as well as utilities for multilayer-network visualization. 
 
-![Visualization script from the [repository](https://github.com/bolozna/multiplex-graphlet-analysis/blob/master/visualization.py) provided by @sallmen2022. \label{fig:automorphisms}](https://github.com/mnets/pymnet/blob/publication/paper/figs/l2_n3.png?raw=true "Automorphism orbits of nodes with node-layer isomorphism"){ width=50% }
+![Using [pymnet](https://github.com/mnets/pymnet) to enumerate and visualize automorphism orbits of nodes in single-aspect multiplex graphlets under node-layer isomorphism. [Visualization script](https://github.com/bolozna/multiplex-graphlet-analysis/blob/master/visualization.py) provided by @sallmen2022. \label{fig:automorphisms}](https://github.com/mnets/pymnet/blob/publication/paper/figs/l2_n3.png?raw=true "Automorphism orbits of nodes with node-layer isomorphism"){ width=50% }
 
 # Installation and Usage
 
@@ -96,7 +95,7 @@ The only other library offering tools to work with multilayer networks in Python
 
 # Projects Using [pymnet](https://github.com/mnets/pymnet)
 
-[pymnet](https://github.com/mnets/pymnet) has been used in multiple scientific publications, for example @kivela2014, @kivela2017, @sallmen2022, and @nurmi2023.
+[pymnet](https://github.com/mnets/pymnet) has been used in multiple scientific publications, such as @kivela2014, @kivela2017, @del2020multiplex, @zhou2020network, @sallmen2022, and @nurmi2023.
 
 # Acknowledgments
 
