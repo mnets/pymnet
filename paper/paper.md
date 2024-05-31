@@ -62,17 +62,13 @@ Beyond the general multilayer-network framework described by @kivela2014, [pymne
 In multiplex networks, edges across layers (interlayer edges) only occur between a node and its counterpart(s) on the other layers. 
 The advantages of the specialization include, for example, automatic lazy evaluation of interlayer-coupling edges.
 
-# Features and Examples
-
-## Efficient Data Structures
+# Main Features and Examples
 
 [pymnet](https://github.com/mnets/pymnet)'s main data structure is `MultiLayerNetwork`, which is implemented as a dictionary of dictionaries with a tensor-like interface, where each key represents a node, and each value is another dictionary containing information about the neighbors of each node, with the neighbors as keys and the weights of their incident edges as values. 
 This structure ensures that adding nodes, removing nodes, querying for existence of edges, or querying for edge weights, all have constant average time complexity, and iterating over the neighbors of a node is linear in the number of nodes. Furthermore, the memory requirements are in $O(|V| + |L| + |E|)$ and typically dominated by the number of edges in the network.
 
 To represent multiplex networks, [pymnet](https://github.com/mnets/pymnet) offers `MultiplexNetwork`, which exploits the special structure of interlayer for efficiency, storing intralayer edges in separately for each layer and only generating interlayer edges according to the applicable interlayer-coupling rules when they are explicitly needed.
 This ensures that we can always iterate over intralayer edges in linear time, and that interlayer edges only require constant memory (i.e., the memory to store the rule to generate them).
-
-## Advanced Computational Tools
 
 [pymnet](https://github.com/mnets/pymnet) contains submodules for the advanced analysis of multilayer networks. 
 One example is graphlet-degree analysis, a powerful tool for investigating the structure of graphs that has been generalized to multilayer networks [@sallmen2022] and is implemented in [pymnet](https://github.com/mnets/pymnet) for single-aspect multiplex networks. 
@@ -84,7 +80,7 @@ The results are depicted in \autoref{fig:automorphisms}.
 
 Other amenities shipped with [pymnet](https://github.com/mnets/pymnet) include generators for generalizations of popular random-graph models to multilayer networks (e.g., Erdős-Rényi models and configuration models) as well as utilities for multilayer-network visualization. 
 
-![Visualization script from the [repository](https://github.com/bolozna/multiplex-graphlet-analysis/blob/master/visualization.py) provided by @sallmen2022. \label{fig:automorphisms}](https://github.com/mnets/pymnet/blob/publication/paper/figs/l2_n3.png?raw=true "Automorphism orbits of nodes with node-layer isomorphism")
+![Visualization script from the [repository](https://github.com/bolozna/multiplex-graphlet-analysis/blob/master/visualization.py) provided by @sallmen2022. \label{fig:automorphisms}](https://github.com/mnets/pymnet/blob/publication/paper/figs/l2_n3.png?raw=true "Automorphism orbits of nodes with node-layer isomorphism"){ width=50% }
 
 # Installation and Usage
 
