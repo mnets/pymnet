@@ -5,8 +5,8 @@
 ### What is this repository for? ###
 
 * Multilayer network analysis library for Python
-* [Documentation](http://mkivela.com/pymnet/)
-* [Tutorial](http://mkivela.com/pymnet/tutorial.html) for getting started.
+* [Documentation](https://mnets.github.io/pymnet/)
+* [Tutorial](https://mnets.github.io/pymnet/tutorial/index.html) for getting started.
 
 ### Main features ###
 
@@ -15,7 +15,7 @@
 * Multilayer networks and multiplex networks (with automatically generated lazy-evaluation coupling edges)
 * Functionality: Analysis, transformations, reading and writing networks, network models etc.
 * Visualization (using Matplotlib)
-* Integration with [NetworkX](https://networkx.github.io/) for monoplex network analysis
+* Integration with [NetworkX](https://networkx.org/) for monoplex network analysis
 
 
 ### Contribution guidelines ###
@@ -27,4 +27,4 @@
 
 ### Who do I talk to? ###
 
-* The main developer: [Mikko Kivela](http://www.mkivela.com/)
+* The main developer: [Mikko Kivelä](http://www.mkivela.com/)
