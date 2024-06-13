@@ -7,26 +7,26 @@ tags:
 - network science
 - attributed graph
 authors:
-- name: Arash Badie-Modiri
-  orcid: 0000-0002-2027-360X
-  affiliation: "1"
-- name: Corinna Coupette
-  orcid: 0000-0001-9151-2092
-  affiliation: "2,3,4"
 - name: Tarmo Nurmi
   orcid: 0000-0003-0258-7776
-  affiliation: "4"
+  affiliation: "1"
+- name: Arash Badie-Modiri
+  orcid: 0000-0002-2027-360X
+  affiliation: "2"
+- name: Corinna Coupette
+  orcid: 0000-0001-9151-2092
+  affiliation: "3,4"
 - name: Mikko Kivelä
   orcid: 0000-0003-2049-1954
-  affiliation: "4" 
+  affiliation: "1" 
 affiliations:
-- name: Central European University, Vienna, Austria
-  index: 1
-- name: KTH Royal Institute of Technology, Stockholm, Sweden
-  index: 2
-- name: Max Planck Institute for Informatics, Saarbrücken, Germany
-  index: 3
 - name: Aalto University, Helsinki, Finland
+  index: 1
+- name: Central European University, Vienna, Austria
+  index: 2
+- name: KTH Royal Institute of Technology, Stockholm, Sweden
+  index: 3
+- name: Max Planck Institute for Informatics, Saarbrücken, Germany
   index: 4
 date: 31 May 2024
 bibliography: paper.bib
@@ -46,14 +46,14 @@ With [pymnet](https://github.com/mnets/pymnet), we introduce a Python package th
 # Statement of Need
 
 [pymnet](https://github.com/mnets/pymnet) is a Python package for creating, analyzing, and visualizing multilayer networks. 
-It is designed for network scientists with an easy-to-use yet flexible interface, featuring, inter alia, representations of a very general class of multilayer networks, structural metrics of multilayer networks (e.g., clustering coefficients and graphlet analysis), multilayer-network transforms, multilayer-network isomorphisms and automorphisms (with [PyBliss](http://www.tcs.hut.fi/Software/bliss/); @junttila2011; @junttila2007), and random multilayer-network models.
+It is designed for network scientists with an easy-to-use yet flexible interface, featuring, inter alia, representations of a very general class of multilayer networks, structural metrics of multilayer networks (e.g., clustering coefficients @cozzo2015structure and graphlet analysis @sallmen2022), multilayer-network transforms, multilayer-network isomorphisms and automorphisms @kivela2017 (with [PyBliss](http://www.tcs.hut.fi/Software/bliss/); @junttila2011; @junttila2007), and random multilayer-network models.
 
 Different kinds of multilayer network data are becoming more and more available, but our computational tools for handling such data are lagging behind. 
 Python is a popular programming language for network scientists and data scientists, and [pymnet](https://github.com/mnets/pymnet) addresses the need for a feature-rich multilayer-network package in the Python language that is actively maintained.
 
 [pymnet](https://github.com/mnets/pymnet) implements the general multilayer-network framework described by @kivela2014. 
 A *multilayer network* $M$ is defined by $M = (V_M, E_M, V, \mathbf{L})$,
-where the sequence $\mathbf{L} = (L_a)_{a=1}^{d}$ defines sets $L_a$ of *elementary layers*, the set $V$ defines the *nodes* of the network, the vertices (that can be connected by edges) of the network are *node-layers* $V_M \subseteq V \times L_1 \times ... \times L_d$, and *edges* $E_M \subseteq V_M \times V_M$ are defined between node-layers. 
+where the sequence $\mathbf{L} = (L_a)_{a=1}^{d}$ defines sets $L_a$ of *elementary layers*, the set $V$ defines the *nodes* of the network, the *node-layers* $V_M \subseteq V \times L_1 \times ... \times L_d$, and *edges* $E_M \subseteq V_M \times V_M$ are defined between node-layers. 
 Put simply, a node-layer is an association of a node $v \in V$ with a layer $\in L_1 \times ... \times L_d$ with dimensionality $d$, nodes can exist on an arbitrary number of layers, and edges can connect node-layers within layers and across arbitrary pairs of layers, which can differ in an arbitrary number of dimensions. 
 The dimensions $1,2,...,d$ are called the *aspects* of the network.
 
@@ -87,7 +87,7 @@ Detailed installation and usage instructions, including tutorials demonstrating 
 
 # Related Packages
 
-[pymnet](https://github.com/mnets/pymnet) extends the popular [networkx](https://networkx.org/) package developed for single-layer network analysis such that (some) [networkx](https://networkx.org/) functions can be applied to the individual layers of a multilayer network. 
+[pymnet](https://github.com/mnets/pymnet) extends the popular [networkx](https://networkx.org/) package developed for single-layer network analysis such that [networkx](https://networkx.org/) functions can be applied to the individual layers of a multilayer network. These functions are automatically wrapped for use in [pymnet](https://github.com/mnets/pymnet) which has the benefit of having automatically including new functionality added to [networkx](https://networkx.org/). 
 To solve multilayer-network isomorphisms, [pymnet](https://github.com/mnets/pymnet) uses a backend package, which can be either [networkx](https://networkx.org/) (limited functionality) or [PyBliss](http://www.tcs.hut.fi/Software/bliss/) [@junttila2011; @junttila2007] (full functionality).
 
 The only other library offering tools to work with multilayer networks in Python is [multiNetX](https://github.com/nkoub/multinetx), which appeared after [pymnet](https://github.com/mnets/pymnet) and seems no longer actively maintained. 
@@ -95,11 +95,11 @@ The only other library offering tools to work with multilayer networks in Python
 
 # Projects Using [pymnet](https://github.com/mnets/pymnet)
 
-[pymnet](https://github.com/mnets/pymnet) has been used in multiple scientific publications, such as @kivela2014, @kivela2017, @del2020multiplex, @zhou2020network, @sallmen2022, and @nurmi2023.
+[pymnet](https://github.com/mnets/pymnet) has been used in multiple scientific publications, such as @kivela2014, @cozzo2015structure @kivela2017, @del2020multiplex, @zhou2020network, @sallmen2022, and @nurmi2023.
 
 # Acknowledgments
 
-This work was supported by the European Commission FET-Proactive project PLEXMATH (Grant No. 317614), the Academy of Finland (Grant No. **TODO**), and Digital Futures at KTH.
+This work was supported by the European Commission FET-Proactive project PLEXMATH (Grant No. 317614), the Academy of Finland (Grant No. 349366), and Digital Futures at KTH.
 
 # References
 
