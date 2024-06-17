@@ -193,10 +193,12 @@ def sample_multilayer_subgraphs_esu(network,results,sizes=None,intersections=Non
     --------
     Suppose we have the multilayer network N:
     
-    (1,'X')----(2,'X')----(3,'X')
-                  |
-                  |
-               (2,'Y')
+    .. code-block:: text
+    
+        (1,'X')----(2,'X')----(3,'X')
+                      |
+                      |
+                   (2,'Y')
     
     where (a,b) are nodelayer tuples with a = node identity and b = layer identity.
     After calling
