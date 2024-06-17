@@ -1,7 +1,7 @@
 Downloading and installing
 ==========================
 
-The easiest way to install pymnet  is via pip:
+The easiest way to install pymnet is via pip:
 
 .. code-block:: bash
 

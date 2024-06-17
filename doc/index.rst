@@ -20,7 +20,12 @@
    The visualization on the left is produced with the library. See the :ref:`visualization_tutorial` tutorial for instructions how to your own network data with the library!
 
 
-Pymnet is a free library for analysing multilayer networks. Available for download directly from our `repository <https://github.com/bolozna/Multilayer-networks-library>`_.
+``pymnet`` is a free library for analysing multilayer networks.
+The easiest way to get pymnet is via pip:
+
+.. code-block:: bash
+
+    $ pip install pymnet
 
 
 **Main features include:**
