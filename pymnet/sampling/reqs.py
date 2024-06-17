@@ -53,8 +53,11 @@ def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=Non
     True if the requirements are fulfilled, the induced subgraph has no empty nodes
     or layers, and the induced subgraph is connected. False otherwise.
     
-    Empty nodes or layers
-    ---------------------
+    Notes
+    -----
+    
+    **Empty nodes or layers**
+    
     The phrase 'does not contain any empty layers or nodes' means that for each
     layer, there is at least one nodelayer in the induced subgraph, and that for
     each node, there is at least one nodelayer in the induced subgraph.
@@ -62,8 +65,8 @@ def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=Non
     appears at least once as the node identity or the layer identity, respectively,
     among the nodelayers present in the induced subgraph.
     
-    Constructing the requirements
-    -----------------------------
+    **Constructing the requirements**
+    
     The sizes list contains the desired number of nodes on each layer in any order.
     This means that the layers in the actual found sub-network can be in any order.
     However, the order of entries in sizes determines the order of entries in intersections.
@@ -112,8 +115,8 @@ def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=Non
     to be tested do not matter (i.e calling this function with nodelist = [1,2] and layerlist = ['X','Y']
     gives the exact same return value as nodelist = [2,1] and layerlist = ['Y','X'], etc.).
     
-    Using Nones
-    -----------
+    **Using Nones**
+    
     If we only care about the cardinalities of some specific intersections, we can set
     the rest to None. For example, calling
     
@@ -133,8 +136,8 @@ def default_check_reqs(network,nodelist,layerlist,sizes,intersections,nnodes=Non
     Technically, only nnodes would be required, but both have to be given to make the function
     call more explicit and more intuitive to read.
     
-    Example
-    -------
+    Examples
+    --------
     Suppose we have the multilayer network N:
     
     (1,'X')----(2,'X')    (3,'X')
@@ -294,8 +297,8 @@ def default_calculate_required_lengths(sizes,intersections):
         The number of nodes and the number of layers required of an acceptable subgraph,
         as determined by the sizes and intersections requirements.
         
-    Details
-    -------
+    Notes
+    -----
     The number of layers (nlayers) that an acceptable subgraph must have is simply the
     length of sizes (since there is an entry for each layer). The number of nodes
     is the cardinality (size) of the union of the sets of nodes on each layer.
@@ -305,8 +308,8 @@ def default_calculate_required_lengths(sizes,intersections):
     in intersections. The cardinality and thus nnodes is calculated by following
     the inclusion-exclusion principle.
     
-    Example
-    -------
+    Examples
+    --------
     Calling
     
     >>> nnodes,nlayers = default_calculate_required_lengths([2,3,4],[2,1,2,1])
@@ -355,8 +358,8 @@ def relaxed_check_reqs(network,nodelist,layerlist):
     True if the induced subgraph is connected and does not contain empty layers
     or nodes, False otherwise.
     
-    Details
-    -------
+    Notes
+    -----
     The phrase 'does not contain any empty layers or nodes' means that for each
     layer, there is at least one nodelayer in the induced subgraph, and that for
     each node, there is at least one nodelayer in the induced subgraph.
@@ -364,14 +367,16 @@ def relaxed_check_reqs(network,nodelist,layerlist):
     appears at least once as the node identity or the layer identity, respectively,
     among the nodelayers present in the induced subgraph.
     
-    Example
-    -------
+    Examples
+    --------
     Suppose we have the multilayer network N:
     
-    (1,'X')----(2,'X')
-                  |
-                  |
-               (2,'Y')
+    .. code-block:: text
+    
+        (1,'X')----(2,'X')
+                      |
+                      |
+                   (2,'Y')
                
     Calling
     
