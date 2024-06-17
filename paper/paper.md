@@ -63,7 +63,7 @@ The advantages of this specialization include, for example, automatic lazy evalu
 
 # Main Features and Examples
 
-`pymnet`'s main data structure is `MultiLayerNetwork`, which is implemented as a dictionary of dictionaries with a tensor-like interface, where each key represents a node, and each value is another dictionary containing information about the neighbors of each node, with the neighbors as keys and the weights of their incident edges as values. 
+`pymnet`'s main data structure is `MultilayerNetwork`, which is implemented as a dictionary of dictionaries with a tensor-like interface, where each key represents a node, and each value is another dictionary containing information about the neighbors of each node, with the neighbors as keys and the weights of their incident edges as values.
 This structure ensures that adding nodes, removing nodes, querying for existence of edges, or querying for edge weights, all have constant average time complexity, and iterating over the neighbors of a node is linear in the number of nodes. Furthermore, the memory requirements are in $O(|V| + |L| + |E|)$ and typically dominated by the number of edges in the network.
 
 To represent multiplex networks, `pymnet` offers `MultiplexNetwork`, which exploits the special structure of interlayer edges for efficiency, storing intralayer edges separately for each layer and only generating interlayer edges according to the applicable interlayer-coupling rules when they are explicitly needed.
