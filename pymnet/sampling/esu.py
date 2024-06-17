@@ -20,7 +20,7 @@ def sample_multilayer_subgraphs_esu(network,results,sizes=None,intersections=Non
     some of which are sometimes required, and some of which are mutually
     exclusive. There are multiple functionalities to this function, and the choice
     is done based on the parameters passed by the user. For a description of all
-    of them, see section Usage.
+    of them, see section Notes.
     
     network : MultilayerNetwork
         The multilayer network to be analyzed.
@@ -112,7 +112,7 @@ def sample_multilayer_subgraphs_esu(network,results,sizes=None,intersections=Non
         or not acceptable, respectively). When this parameter is not None, you must also specify nnodes
         and nlayers.
         
-    Usage
+    Notes
     -----
     There are multiple functionalities built-in, and determining which is used is
     done by checking which parameters have been given by the user.
@@ -184,8 +184,8 @@ def sample_multilayer_subgraphs_esu(network,results,sizes=None,intersections=Non
     subgraph validity, the sixth uses the relaxed_check_reqs function, and the seventh
     uses the user-supplied checking function.
     
-    Example
-    -------
+    Examples
+    --------
     Suppose we have the multilayer network N:
     
     (1,'X')----(2,'X')----(3,'X')
@@ -210,11 +210,11 @@ def sample_multilayer_subgraphs_esu(network,results,sizes=None,intersections=Non
     
     the results list looks like [([1,2,3],['X'])] (or again, some other ordering).
     
-    Further reading
-    ---------------
+    See Also
+    --------
     The documentation of the functions default_check_reqs, default_calculate_required_lengths
     and relaxed_check_reqs offer more insight into what are considered acceptable induced subgraphs
-    in different cases in the functionalities described in the Usage section. You should read these
+    in different cases in the functionalities described in the Notes section. You should read these
     if you are not sure what you want to do or how to do it after reading this documentation.
     
     References
@@ -384,4 +384,4 @@ def _extend_subgraph(network,nodelist,layerlist,check_function,V_extension_nodes
                                 V_extension_layers_prime.add(layer)
 
             _extend_subgraph(network,new_nodelist,new_layerlist,check_function,V_extension_nodes_prime,V_extension_layers_prime,numberings,v,req_nodelist_len,req_layerlist_len,depth+1,p,results)    
-    return   
+    return
