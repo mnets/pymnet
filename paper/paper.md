@@ -98,7 +98,7 @@ The only other library offering tools to work with multilayer networks in Python
 
 # Projects Using `pymnet`
 
-`pymnet` has been used in numerous scientific publications across different disciplines, such as @kivela2014, @cozzo2015structure @kivela2017, @danchev2019centralized, @del2020multiplex, @zhou2020network, @baek2021social, bergermann2021orientations, @sallmen2022, and @nurmi2023.
+`pymnet` has been used in numerous scientific publications across different disciplines, such as @kivela2014, @cozzo2015structure @kivela2017, @danchev2019centralized, @del2020multiplex, @zhou2020network, @baek2021social, @bergermann2021orientations, @sallmen2022, and @nurmi2023.
 
 # Acknowledgments
 
