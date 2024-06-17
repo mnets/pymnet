@@ -139,10 +139,6 @@ Graphlets
 .. autosummary::
   :toctree: autogen
 
-.. automodule:: pymnet
-.. autosummary::
-  :toctree: autogen
-
   graphlets
   automorphism_orbits
   automorphism_orbits_nl
@@ -151,10 +147,6 @@ Graphlets
 Sampling
 ------------
 .. automodule:: pymnet.sampling
-.. autosummary::
-  :toctree: autogen
-
-.. automodule:: pymnet
 .. autosummary::
   :toctree: autogen
 
