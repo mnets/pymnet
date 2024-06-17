@@ -90,7 +90,7 @@ def automorphism_orbits(nets, allowed_aspects='all'):
     '''
     Computes the node automorphism orbits of each network in nets
     
-    Paramaters
+    Parameters
     ----------
     nets : dict (key: n_nodes, value: list of networks (MultiplexNetwork) )
         Graphlets, see function 'graphlets'
