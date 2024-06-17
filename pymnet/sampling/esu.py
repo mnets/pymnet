@@ -184,6 +184,11 @@ def sample_multilayer_subgraphs_esu(network,results,sizes=None,intersections=Non
     subgraph validity, the sixth uses the relaxed_check_reqs function, and the seventh
     uses the user-supplied checking function.
     
+    The documentation of the functions `sampling.reqs.default_check_reqs`, `sampling.reqs.default_calculate_required_lengths`
+    and `sampling.reqs.relaxed_check_reqs` offer more insight into what are considered acceptable induced subgraphs
+    in different cases in the functionalities described in this section. You should read these
+    if you are not sure what you want to do or how to do it after reading this documentation.
+    
     Examples
     --------
     Suppose we have the multilayer network N:
@@ -209,13 +214,6 @@ def sample_multilayer_subgraphs_esu(network,results,sizes=None,intersections=Non
     >>> sample_multilayer_subgraphs_esu(N,results,nnodes=3,nlayers=1)
     
     the results list looks like [([1,2,3],['X'])] (or again, some other ordering).
-    
-    See Also
-    --------
-    The documentation of the functions `sampling.reqs.default_check_reqs`, `sampling.reqs.default_calculate_required_lengths`
-    and `sampling.reqs.relaxed_check_reqs` offer more insight into what are considered acceptable induced subgraphs
-    in different cases in the functionalities described in the Notes section. You should read these
-    if you are not sure what you want to do or how to do it after reading this documentation.
     
     References
     ----------
