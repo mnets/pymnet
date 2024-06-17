@@ -133,3 +133,32 @@ Isomorphisms
   get_automorphism_generators
   get_isomorphism
 
+Graphlets
+------------
+.. automodule:: pymnet.graphlets
+.. autosummary::
+  :toctree: autogen
+
+.. automodule:: pymnet
+.. autosummary::
+  :toctree: autogen
+
+  graphlets
+  automorphism_orbits
+  automorphism_orbits_nl
+  orbit_equations
+
+Sampling
+------------
+.. automodule:: pymnet.sampling
+.. autosummary::
+  :toctree: autogen
+
+.. automodule:: pymnet
+.. autosummary::
+  :toctree: autogen
+
+  sample_multilayer_subgraphs_esu
+  default_check_reqs
+  relaxed_check_reqs
+
