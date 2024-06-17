@@ -141,8 +141,10 @@ Graphlets
 
   graphlets
   automorphism_orbits
-  automorphism_orbits_nl
   orbit_equations
+  orbit_counts_all
+  GCM
+  GCD
 
 Sampling
 ------------
@@ -150,7 +152,16 @@ Sampling
 .. autosummary::
   :toctree: autogen
 
+.. automodule:: pymnet.sampling.esu
+.. autosummary::
+  :toctree: autogen
+
   sample_multilayer_subgraphs_esu
+
+.. automodule:: pymnet.sampling.reqs
+.. autosummary::
+  :toctree: autogen
+
   default_check_reqs
   relaxed_check_reqs
 

@@ -1,8 +1,8 @@
-"""This a package for multiplex graphlet analysis.
+"""Package for multiplex graphlet analysis.
 
-The module is based on a master's thesis "Graphlets in Multilayer networks" (Aalto University 2018)
+If you use this package, please cite:
 
-Author: Sallamari Sallmen
+Sallamari Sallmen, Tarmo Nurmi, and Mikko Kivelä. "Graphlets in multilayer networks." Journal of Complex Networks 10.2 (2022): cnac005. https://doi.org/10.1093/comnet/cnac005
 """
 
 from . import graphlets as graphlets_module
