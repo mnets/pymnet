@@ -21,7 +21,7 @@
 
 
 ``pymnet`` is a free library for analysing multilayer networks.
-The easiest way to get pymnet is via pip:
+The easiest way to get ``pymnet`` is via pip:
 
 .. code-block:: bash
 
