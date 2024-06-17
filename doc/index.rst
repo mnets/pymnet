@@ -1,5 +1,5 @@
-``pymnet``: Multilayer Networks Library for Python
-==================================================
+``pymnet``: A Multilayer-Networks Library for Python
+====================================================
 
 .. toctree::
    :maxdepth: 2
