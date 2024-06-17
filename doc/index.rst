@@ -38,11 +38,11 @@ The easiest way to get ``pymnet`` is via pip:
 
 * Scalable implementation for sparse networks: memory usage scales linearly with the number of edges and number of nodes
 
-* Rule based generation and lazy-evaluation of coupling edges
+* Rule-based generation and lazy evaluation of coupling edges
 
-* Various network analysis methods, transformations, reading and writing networks, network models etc.
+* Various network analysis methods, transformations, reading and writing networks, network models, etc.
 
-* Visualization (using Matplotlib or D3 as a backend)
+* Visualization (using matplotlib or D3 as a backend)
 
 * Integration with NetworkX for monoplex network analysis
 
@@ -55,4 +55,4 @@ The easiest way to get ``pymnet`` is via pip:
 * :ref:`reference`: *Reference for all functions and classes in the library* 
 * :ref:`tutorial`: *Easy way of getting started with various topics*        
 
-A `pdf version of this documentation <MultilayerNetworksLibrary.pdf>`_ is also available.
+
