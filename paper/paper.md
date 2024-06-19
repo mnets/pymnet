@@ -69,7 +69,7 @@ This structure ensures that adding nodes, removing nodes, querying for existence
 To represent multiplex networks, `pymnet` offers `MultiplexNetwork`, which exploits the special structure of interlayer edges for efficiency, storing intralayer edges separately for each layer and only generating interlayer edges according to the applicable interlayer-coupling rules when they are explicitly needed.
 This ensures that we can always iterate over intralayer edges in linear time, and that interlayer edges only require constant memory (i.e., the memory to store the rule to generate them).
 
-`pymnet` contains submodules for the advanced analysis of multilayer networks. 
+`pymnet` contains submodules for advanced analysis of multilayer networks.
 One example is graphlet-degree analysis, a powerful tool for investigating the structure of graphs that has been generalized to multilayer networks [@sallmen2022] and is implemented in `pymnet` for single-aspect multiplex networks. 
 A graphlet is an isomorphism class of (connected) induced subgraphs that are typically small. 
 `pymnet` can generate all graphlets of a specified size, i.e., all isomorphic multiplex networks with a user-specified number of nodes and layers (coming from a user-defined set of layers), user-defined interlayer couplings, and a user-defined type of multilayer isomorphism. 
