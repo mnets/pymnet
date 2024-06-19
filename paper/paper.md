@@ -46,7 +46,7 @@ With `pymnet`, we introduce a Python package that provides the essential data st
 # Statement of Need
 
 [pymnet](https://github.com/mnets/pymnet) is a Python package for creating, analyzing, and visualizing multilayer networks. 
-It is designed for network scientists with an easy-to-use yet flexible interface, featuring, inter alia, representations of a very general class of multilayer networks, structural metrics of multilayer networks (e.g., clustering coefficients [@cozzo2015structure] and graphlet analysis [@sallmen2022]), multilayer-network transforms, multilayer-network isomorphisms and automorphisms [@kivela2017] (with [PyBliss](http://www.tcs.hut.fi/Software/bliss/); @junttila2011; @junttila2007), and random multilayer-network models.
+It is designed for network scientists with an easy-to-use yet flexible interface, featuring, inter alia, representations of a very general class of multilayer networks, structural metrics of multilayer networks (e.g., clustering coefficients [@cozzo2015structure] and graphlet analysis [@sallmen2022]), multilayer-network transforms, multilayer-network isomorphisms and automorphisms [@kivela2017] (with [`bliss`](https://users.aalto.fi/~tjunttil/bliss/); @junttila2011; @junttila2007), and random multilayer-network models.
 
 Different kinds of multilayer network data are becoming more and more available, but our computational tools for handling such data are lagging behind. 
 Python is a popular programming language for network scientists and data scientists, and `pymnet` addresses the need for a feature-rich multilayer-networks package in the Python language that is actively maintained.
@@ -88,7 +88,7 @@ Detailed installation and usage instructions, including tutorials demonstrating 
 # Related Packages
 
 `pymnet` extends the popular [networkx](https://networkx.org/) package developed for single-layer network analysis such that `networkx` functions can be applied to the individual layers of a multilayer network. These functions are automatically wrapped for use in `pymnet`, which has the benefit of automatically including new functionality added to `networkx`. 
-To solve multilayer-network isomorphisms, `pymnet` uses a backend package, which can be either `networkx` (limited functionality) or [PyBliss](http://www.tcs.hut.fi/Software/bliss/) [@junttila2011; @junttila2007] (full functionality). 
+To solve multilayer-network isomorphisms, `pymnet` uses a backend package, which can be either `networkx` (limited functionality) or [`bliss`](https://users.aalto.fi/~tjunttil/bliss/) [@junttila2011; @junttila2007] (full functionality).
 
 For multilayer-network visualization, `pymnet` uses [matplotlib](https://matplotlib.org/) as its default backend, enabling users to exert low-level control over figure aesthetics to produce publication-quality plots. 
 Support for interactive figures is provided via JavaScript and [D3.js](https://d3js.org/) as a backend.
