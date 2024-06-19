@@ -20,7 +20,7 @@ authors:
   orcid: 0000-0003-2049-1954
   affiliation: "1" 
 affiliations:
-- name: Aalto University, Espoo, Finland
+- name: Aalto University, Helsinki, Finland
   index: 1
 - name: Central European University, Vienna, Austria
   index: 2
