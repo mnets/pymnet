@@ -20,7 +20,7 @@ authors:
   orcid: 0000-0003-2049-1954
   affiliation: "1" 
 affiliations:
-- name: Aalto University, Helsinki, Finland
+- name: Aalto University, Espoo, Finland
   index: 1
 - name: Central European University, Vienna, Austria
   index: 2
@@ -28,7 +28,7 @@ affiliations:
   index: 3
 - name: Max Planck Institute for Informatics, Saarbrücken, Germany
   index: 4
-date: 17 June 2024
+date: 19 June 2024
 bibliography: paper.bib
  
 ---
