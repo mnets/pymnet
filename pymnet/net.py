@@ -751,9 +751,13 @@ class MultilayerNode(object):
         return self.mnet._get_strength_out(self.node,layers)
 
     def layers(self,*layers):
+        """
+        """
         return MultilayerNode(self.node,self.mnet,layers=layers)
 
     def iter_total(self):
+        """Iterate over all neighbors.
+        """
         for node in self._iter_nodes(self.mnet._iter_neighbors_total):
             yield node
 
