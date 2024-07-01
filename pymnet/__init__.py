@@ -1,9 +1,9 @@
-from .net import MultilayerNetwork,MultiplexNetwork
+from .net import MultilayerNetwork,MultiplexNetwork,MultilayerNode
 from .models import er,conf,single_layer_er,single_layer_conf,er_partially_interconnected,full,full_multilayer,er_multilayer
 from .transforms import aggregate,subnet,supra_adjacency_matrix
 from .netio import read_ucinet
 from .diagnostics import degs,density,multiplex_degs,multiplex_density
-from .cc import   lcc,cc_zhang,gcc_zhang,cc_onnela,cc_barrat,cc_barrett,cc_sequence,lcc_aw,avg_lcc_aw,gcc_aw,sncc_aw,elementary_cycles,lcc_brodka
+from .cc import lcc,cc_zhang,gcc_zhang,cc_onnela,cc_barrat,cc_barrett,cc_sequence,lcc_aw,avg_lcc_aw,gcc_aw,sncc_aw,elementary_cycles,lcc_brodka
 
 from .visuals import webplot
 from .visuals import draw
