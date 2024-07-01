@@ -6,7 +6,7 @@ Reference
 .. autosummary::
   :toctree: autogen
 
-Data structures
+Data Structures
 ---------------
 .. automodule:: pymnet.net
 .. autosummary::
@@ -20,7 +20,7 @@ Data structures
   MultiplexNetwork
   MultilayerNode
 
-Network models
+Network Models
 --------------
 .. automodule:: pymnet.models
 .. autosummary::
@@ -80,7 +80,7 @@ Basic Network Diagnostics
   multiplex_degs
   multiplex_density
 
-Clustering coefficients
+Clustering Coefficients
 -----------------------
 .. automodule:: pymnet.cc
 .. autosummary::
