@@ -117,7 +117,7 @@ def read_ucinet(netinput,couplings=('categorical',1.0),fullyInterconnected=True)
     labels to lower case.
 
     Currently, the network is assumed to be unweighted, and if
-    the input file contains a directed network then an undirected
+    the input file contains a directed network, then an undirected
     network is returned anyway. The directions are removed in a
     way that i and j are connected if there is either link 
     i->j or j->i (or both).
