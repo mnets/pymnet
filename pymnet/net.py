@@ -139,14 +139,14 @@ class MultilayerNetwork(object):
         
     #@classmehtod
     def _link_to_nodes(self,link):
-        """Returns the link as tuple of nodes in the graph representing
+        """Return the link as tuple of nodes in the graph representing
         the multislice structure. I.e. when given (i,j,s_1,r_1, ... ,s_d,r_d)
         (i,s_1,...,s_d),(j,r_1,...,r_d) is returned.
         """
         return (link[0],)+link[2::2],(link[1],)+link[3::2]
     #@classmehtod
     def _nodes_to_link(self,node1,node2):
-        """Returns a link when tuple of nodes is given in the graph representing
+        """Return a link when tuple of nodes is given in the graph representing
         the multislice structure. I.e. when given (i,s_1,...,s_d),(j,r_1,...,r_d) 
         (i,j,s_1,r_1, ... ,s_d,r_d) is returned.
         """
@@ -158,7 +158,7 @@ class MultilayerNetwork(object):
         return tuple(l)
     #@classmehtod
     def _short_link_to_link(self,slink):
-        """ Returns a full link for the shortened version of the link. That is,
+        """Return a full link for the shortened version of the link. That is,
         if (i,j,s_1,...,s_d) is given as input, then (i,j,s_1,s_1,...,s_d,s_d) is 
         returned.
         """
@@ -340,7 +340,7 @@ class MultilayerNetwork(object):
             return len(list(self._iter_neighbors_out(node,dims)))
 
     def _get_degree_total_dir(self,node,dims=None):
-        """Returns the total degree of a _directed_ multilayer network.
+        """Return the total degree of a _directed_ multilayer network.
         """
         assert self.directed
         if dims==None:
@@ -349,7 +349,7 @@ class MultilayerNetwork(object):
             return len(list(self._iter_neighbors_total(node,dims)))
 
     def _get_degree_in_dir(self,node,dims=None):
-        """Returns the in-degree of a _directed_ multilayer network.
+        """Return the in-degree of a _directed_ multilayer network.
         """
         assert self.directed
         if dims==None:
@@ -388,7 +388,7 @@ class MultilayerNetwork(object):
         return sum(map(lambda n:self._get_link(self._nodes_to_link(node,n)),self._iter_neighbors_out(node,dims)))
 
     def _get_strength_total_dir(self,node, dims=None):
-        """Private method returning nodes total strenght (sum of in- and out-strength)."""
+        """Private method returning nodes total strength (sum of in- and out-strength)."""
         return self._get_strength_in(node,dims)+self._get_strength_out(node,dims)
 
 
@@ -549,7 +549,7 @@ class MultilayerNetwork(object):
 
 
     def get_layers(self,aspect=1):
-        """Returns the set of (elementary) layers (in a given aspect).
+        """Return the set of (elementary) layers (in a given aspect).
         """
         return self.slices[aspect]
 
@@ -567,13 +567,13 @@ class MultilayerNetwork(object):
                     yield node
 
     def __iter__(self):
-        """Iterates over all nodes.
+        """Iterate over all nodes.
         """
         for node in self.slices[0]:
             yield node
 
     def iter_node_layers(self):
-        """ Iterate over all node-layer pairs.
+        """Iterate over all node-layer pairs.
         """
         if self.fullyInterconnected:
             for nl in itertools.product(*map(lambda i:self.slices[i],range(len(self.slices)))):
@@ -590,7 +590,7 @@ class MultilayerNetwork(object):
 
 
     def iter_layers(self,aspect=None):
-        """ Iterate over all layers.
+        """Iterate over all layers.
 
         If network has multiple aspects, tuples of all layer combinations are iterated
         over. If aspect is specified and there are more than a single aspect, then elementary
@@ -621,7 +621,7 @@ class MultilayerNetwork(object):
         return pickle.dumps(self).__hash__()
 
     def get_supra_adjacency_matrix(self,includeCouplings=True):
-        """Returns the supra-adjacency matrix and a list of node-layer pairs.
+        """Return the supra-adjacency matrix and a list of node-layer pairs.
 
         Parameters
         ----------
@@ -654,7 +654,7 @@ class MultilayerNetwork(object):
         return numpy.matrix(matrix),nodes
 
 class MultilayerNode(object):
-    """A node in a MultilayerNetwork. 
+    """A node in a MultilayerNetwork.
 
     The node objects are generated from the MultilayerNetwork objects with the
     __getitem__ method. The nodes can be used to access their neighboring edges,
@@ -663,7 +663,7 @@ class MultilayerNode(object):
     """
     #net[1,'a','x'][:,:,'y']=net[1,:,'a',:,'x','y']
     def __init__(self,node,mnet,layers=None):
-        """A node in multilayer network. 
+        """A node in a multilayer network.
         """
         self.node=node
         self.mnet=mnet
@@ -671,7 +671,7 @@ class MultilayerNode(object):
 
     def __getitem__(self,item):
         """
-        example:
+        Example:
         net[1,'a','x'][:,:,'y']=net[1,:,'a',:,'x','y']
         """
         if self.mnet.aspects==0:
@@ -687,7 +687,7 @@ class MultilayerNode(object):
         return self.deg()
 
     def deg(self,*layers):
-        """Returns the degree of the node.
+        """Return the degree of the node.
         """
         assert len(layers)==0 or len(layers)==(self.mnet.aspects+1)
         if layers==():
@@ -695,7 +695,7 @@ class MultilayerNode(object):
         return self.mnet._get_degree(self.node,layers)
 
     def deg_total(self,*layers):
-        """Returns the total degree of the node.
+        """Return the total degree of the node.
         """
         assert len(layers)==0 or len(layers)==(self.mnet.aspects+1)
         if layers==():
@@ -703,7 +703,7 @@ class MultilayerNode(object):
         return self.mnet._get_degree_total(self.node,layers)
 
     def deg_in(self,*layers):
-        """Returns the in-degree of the node.
+        """Return the in-degree of the node.
         """
         assert len(layers)==0 or len(layers)==(self.mnet.aspects+1)
         if layers==():
@@ -711,7 +711,7 @@ class MultilayerNode(object):
         return self.mnet._get_degree_in(self.node,layers)
 
     def deg_out(self,*layers):
-        """Returns the out-degree of the node.
+        """Return the out-degree of the node.
         """
         assert len(layers)==0 or len(layers)==(self.mnet.aspects+1)
         if layers==():
@@ -719,7 +719,7 @@ class MultilayerNode(object):
         return self.mnet._get_degree_out(self.node,layers)
 
     def str(self,*layers):
-        """Returns the weighted degree, i.e. the strength, of the node.
+        """Return the weighted degree, i.e. the strength, of the node.
         """
         assert len(layers)==0 or len(layers)==(self.mnet.aspects+1)
         if layers==():
@@ -727,7 +727,7 @@ class MultilayerNode(object):
         return self.mnet._get_strength(self.node,layers)
 
     def str_total(self,*layers):
-        """Returns the weighted totaldegree, i.e. the strength, of the node.
+        """Return the weighted totaldegree, i.e. the strength, of the node.
         """
         assert len(layers)==0 or len(layers)==(self.mnet.aspects+1)
         if layers==():
@@ -735,7 +735,7 @@ class MultilayerNode(object):
         return self.mnet._get_strength_total(self.node,layers)
 
     def str_in(self,*layers):
-        """Returns the weighted in-degree, i.e. the strength, of the node.
+        """Return the weighted in-degree, i.e. the strength, of the node.
         """
         assert len(layers)==0 or len(layers)==(self.mnet.aspects+1)
         if layers==():
@@ -743,15 +743,12 @@ class MultilayerNode(object):
         return self.mnet._get_strength_in(self.node,layers)
 
     def str_out(self,*layers):
-        """Returns the weighted out-degree, i.e. the strength, of the node.
+        """Return the weighted out-degree, i.e. the strength, of the node.
         """
         assert len(layers)==0 or len(layers)==(self.mnet.aspects+1)
         if layers==():
             layers=self.layers
         return self.mnet._get_strength_out(self.node,layers)
-
-    def __iter__(self):
-        return self.iter_total()
 
     def layers(self,*layers):
         return MultilayerNode(self.node,self.mnet,layers=layers)
@@ -761,10 +758,14 @@ class MultilayerNode(object):
             yield node
 
     def iter_out(self):
+        """Iterate over out-neighbors.
+        """
         for node in self._iter_nodes(self.mnet._iter_neighbors_out):
             yield node
 
     def iter_in(self):
+        """Iterate over in-neighbors.
+        """
         for node in self._iter_nodes(self.mnet._iter_neighbors_in):
             yield node
 
@@ -775,6 +776,9 @@ class MultilayerNode(object):
         else:
             for node in iterf(self.node,self.layers):
                 yield node[0]
+
+    def __iter__(self):
+        return self.iter_total()
 
 
 
@@ -968,7 +972,7 @@ class MultiplexNetwork(MultilayerNetwork):
         self._init_directions()
 
     def _get_edge_inter_aspects(self,link):
-        r"""Returns list of aspects where the two nodes of $G_M$ differ.
+        r"""Return list of aspects where the two nodes of $G_M$ differ.
         """
         dims=[]
         for d in range(self.aspects+1):
