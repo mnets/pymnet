@@ -1,10 +1,10 @@
-# pymnet: Multilayer Network Analysis in Python #
+# pymnet: A Python Library for Multilayer Networks #
 
 [![codecov](https://codecov.io/gh/mnets/pymnet/graph/badge.svg?token=LI6QBAF7N0)](https://codecov.io/gh/mnets/pymnet)
 
 ### What is this repository for? ###
 
-* Multilayer network analysis library for Python
+* Multilayer-network-analysis library for Python
 * [Documentation](https://mnets.github.io/pymnet/)
 * [Tutorial](https://mnets.github.io/pymnet/tutorial/index.html) for getting started.
 
