@@ -150,7 +150,7 @@ def cc_barrat(net,node,undefReturn=0.0):
         for i,j in itertools.combinations(net[node],2):
             if net[i][j]!=net.noEdge:
                 nom+=net[node][i]+net[node][j]
-        return nom/float((degree-1)*net[node].str())
+        return nom/float((degree-1) * net[node].strength())
     else:
         return undefReturn
 

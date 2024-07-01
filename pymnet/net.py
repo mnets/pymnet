@@ -718,7 +718,7 @@ class MultilayerNode(object):
             layers=self.layers
         return self.mnet._get_degree_out(self.node,layers)
 
-    def str(self,*layers):
+    def strength(self, *layers):
         """Return the weighted degree, i.e. the strength, of the node.
         """
         assert len(layers)==0 or len(layers)==(self.mnet.aspects+1)
@@ -726,7 +726,7 @@ class MultilayerNode(object):
             layers=self.layers
         return self.mnet._get_strength(self.node,layers)
 
-    def str_total(self,*layers):
+    def strength_total(self, *layers):
         """Return the weighted totaldegree, i.e. the strength, of the node.
         """
         assert len(layers)==0 or len(layers)==(self.mnet.aspects+1)
@@ -734,7 +734,7 @@ class MultilayerNode(object):
             layers=self.layers
         return self.mnet._get_strength_total(self.node,layers)
 
-    def str_in(self,*layers):
+    def strength_in(self, *layers):
         """Return the weighted in-degree, i.e. the strength, of the node.
         """
         assert len(layers)==0 or len(layers)==(self.mnet.aspects+1)
@@ -742,7 +742,7 @@ class MultilayerNode(object):
             layers=self.layers
         return self.mnet._get_strength_in(self.node,layers)
 
-    def str_out(self,*layers):
+    def strength_out(self, *layers):
         """Return the weighted out-degree, i.e. the strength, of the node.
         """
         assert len(layers)==0 or len(layers)==(self.mnet.aspects+1)
@@ -1199,7 +1199,7 @@ class MultiplexNetwork(MultilayerNetwork):
         s=0
         for d in self._select_dimensions(node,dims):
             if d==0:
-                s+=self._get_A_with_tuple(node[1:])[node[0]].str_total()
+                s+=self._get_A_with_tuple(node[1:])[node[0]].strength_total()
             else:
                 s+=self._get_dim_strength(node,d,direction="tot")
         return s
@@ -1211,7 +1211,7 @@ class MultiplexNetwork(MultilayerNetwork):
         s=0
         for d in self._select_dimensions(node,dims):
             if d==0:
-                s+=self._get_A_with_tuple(node[1:])[node[0]].str_in()
+                s+=self._get_A_with_tuple(node[1:])[node[0]].strength_in()
             else:
                 s+=self._get_dim_strength(node,d,direction="in")
         return s
@@ -1223,7 +1223,7 @@ class MultiplexNetwork(MultilayerNetwork):
         s=0
         for d in self._select_dimensions(node,dims):
             if d==0:
-                s+=self._get_A_with_tuple(node[1:])[node[0]].str_out()
+                s+=self._get_A_with_tuple(node[1:])[node[0]].strength_out()
             else:
                 s+=self._get_dim_strength(node,d,direction="out")
         return s
@@ -1344,7 +1344,7 @@ class ModularityMultilayerNetworkView(MultilayerNetwork):
         self.m={}
         for s in itertools.product(*mnet.slices[1:]):
             for node in mnet:
-                self.m[s]=self.m.get(s,0)+mnet[(node,)+s][(COLON,)+s].str()
+                self.m[s]=self.m.get(s,0)+mnet[(node,)+s][(COLON,)+s].strength()
             self.m[s]=self.m[s]/2.0
         self.u=0
         for i in itertools.product(*mnet.slices):
@@ -1357,8 +1357,8 @@ class ModularityMultilayerNetworkView(MultilayerNetwork):
 
         if item[2::2]==item[3::2]: #its inside slice
             s=item[2::2]
-            kis=self.mnet[(item[0],)+s][(COLON,)+s].str()
-            kjs=self.mnet[(item[1],)+s][(COLON,)+s].str()
+            kis=self.mnet[(item[0],)+s][(COLON,)+s].strength()
+            kjs=self.mnet[(item[1],)+s][(COLON,)+s].strength()
             ms=self.m[s]
             return v-self.gamma*kis*kjs/float(2.0*ms)
         else:
