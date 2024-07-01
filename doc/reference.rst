@@ -18,12 +18,7 @@ Data Structures
 
   MultilayerNetwork
   MultiplexNetwork
-
-.. automodule:: pymnet.net
-.. autosummary::
-  :toctree: autogen
-
-  MultilayerNode
+  net.MultilayerNode
 
 Network Models
 --------------
