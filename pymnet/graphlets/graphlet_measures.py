@@ -7,7 +7,7 @@ from collections import defaultdict as dd
 
 def orbit_counts_all(net, n, nets, invs, auts, orbit_list, allowed_aspects='all'):
     '''
-    Computes the orbit counts for all the nodes in net
+    Compute the orbit counts for all the nodes in net.
     
     Parameters
     ----------
@@ -23,7 +23,7 @@ def orbit_counts_all(net, n, nets, invs, auts, orbit_list, allowed_aspects='all'
     orbit_list : list of orbits
         as returned by ordered_orbit_list
     allowed_aspects : list, string
-        the aspects that can be permutated when computing isomorphisms
+        the aspects that can be permuted when computing isomorphisms
         
     Returns
     -------
@@ -89,7 +89,7 @@ def orbit_counts_all(net, n, nets, invs, auts, orbit_list, allowed_aspects='all'
 
 def orbit_numbers(n, nets, auts):
     '''
-    Gives numbers to the orbits
+    Assign numbers to the orbits.
     
     Parameters
     ----------
@@ -121,7 +121,7 @@ def orbit_numbers(n, nets, auts):
 
 def ordered_orbit_list(orbit_is):
     '''
-    Returns list of orbits ordered based on the orbit numbers
+    Return a list of orbits ordered based on the orbit numbers.
     
     Parameters
     ----------
@@ -145,7 +145,7 @@ def ordered_orbit_list(orbit_is):
     
 def orbit_counts(n, node0, net, nets, orbits, auts, invs, orbit_list, allowed_aspects='all'):
     '''
-    Computes the orbit counts for node0 in net
+    Compute the orbit counts for node0 in net.
     
     Parameters
     ----------
