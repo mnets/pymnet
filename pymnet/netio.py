@@ -4,12 +4,14 @@ from .net import MultilayerNetwork,MultiplexNetwork
 import math,json,os
 
 def write_ucinet(net,outputfile,outputType="edges"):
+    """Write a network in UCINET DL format.
+    """
     assert isinstance(net,MultiplexNetwork), "Multilayer networks not supported by the UCINET file format."
     if isinstance(outputfile,"".__class__) or isinstance(outputfile,u"".__class__):
         outputfile=open(outputfile,'w')
     
 def write_json(net,outputfile=None):
-    """Writes a multiplex network with a single aspect in a JSON format.
+    """Write a multiplex network with a single aspect in a JSON format.
     """
     assert isinstance(net,MultiplexNetwork)
     assert net.aspects==0 or net.aspects==1
@@ -44,7 +46,7 @@ def write_json(net,outputfile=None):
         return json.dumps(nets)
 
 def read_edge_files(edgeinput,layerinput=None,nodeinput=None,couplings='categorical',fullyInterconnected=True,directed=False,ignoreSelfLink=True):
-    """A multiplex file separated into files for layers, edge and nodes.
+    """Read a multiplex file separated into files for layers, edges, and nodes.
     """
     net=MultiplexNetwork(couplings=[couplings],fullyInterconnected=fullyInterconnected,directed=directed)
     layerfile=open(layerinput,'r') if isinstance(layerinput,str) else layerinput
@@ -61,6 +63,8 @@ def read_edge_files(edgeinput,layerinput=None,nodeinput=None,couplings='categori
 
 
 def write_edge_files(net,outputfiles,columnSeparator="\t",rowSeparator="\n",weights=True,masterFile=False,numericNodes=False):
+    """Write a multiplex file separated into files for layers, edges, and nodes.
+    """
     assert isinstance(net,MultiplexNetwork)
     assert net.aspects==1
     if masterFile:
@@ -89,7 +93,7 @@ def write_edge_files(net,outputfiles,columnSeparator="\t",rowSeparator="\n",weig
         mofile.close()
 
 def read_ucinet(netinput,couplings=('categorical',1.0),fullyInterconnected=True):
-    """Reads network in UCINET DL format.
+    """Read a network in UCINET DL format.
 
     See http://www.analytictech.com/networks/dataentry.htm
     for informal definition of the format. This implementation

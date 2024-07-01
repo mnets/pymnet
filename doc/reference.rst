@@ -63,7 +63,11 @@ Reading and Writing Networks
 .. autosummary::
   :toctree: autogen
 
+  read_edge_files
   read_ucinet
+  write_edge_files
+  write_json
+  write_ucinet
 
 Basic Network Diagnostics
 -------------------------
