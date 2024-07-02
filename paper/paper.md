@@ -1,5 +1,5 @@
 ---
-title: '`pymnet`: A Python Library for Multilayer Networks'
+title: 'pymnet: A Python Library for Multilayer Networks'
 tags:
 - Python
 - multilayer network
