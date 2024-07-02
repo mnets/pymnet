@@ -1,23 +1,18 @@
 """The draw function. This is used to create figures of the network.
 """
 
-from .drawbackends.threejs import (
-    NetFigureThreeJS,
-    LayerThreeJS,
-    NodeThreeJS,
-    EdgeThreeJS,
-)
-
 import random
 
-from .layouts import get_layout
 from . import drawassigners as das
+from .drawbackends.threejs import (EdgeThreeJS, LayerThreeJS, NetFigureThreeJS,
+                                   NodeThreeJS)
+from .layouts import get_layout
 
 possible_backends = ["mpl", "threejs"]
 imported_backends = []
 import_errors = {}
 try:
-    from .drawbackends.mpl import NetFigureMPL, LayerMPL, NodeMPL, EdgeMPL
+    from .drawbackends.mpl import EdgeMPL, LayerMPL, NetFigureMPL, NodeMPL
 
     imported_backends.append("mpl")
 except ImportError as e:

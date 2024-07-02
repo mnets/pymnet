@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 
 import sys
-import unittest
 import time
-import scipy, scipy.stats
-from pymnet import net, models
-from pymnet.sampling import reqs, dumb, esu, creators
+import unittest
+
+import scipy
+import scipy.stats
+
+from pymnet import models, net
+from pymnet.sampling import creators, dumb, esu, reqs
 
 
 class TestSampling(unittest.TestCase):

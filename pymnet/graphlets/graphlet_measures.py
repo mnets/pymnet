@@ -1,10 +1,12 @@
 """Module for graphlet data analysis
 """
 
-import pymnet
 import math
-from scipy.stats import spearmanr
 from collections import defaultdict as dd
+
+from scipy.stats import spearmanr
+
+import pymnet
 
 
 def orbit_counts_all(net, n, nets, invs, auts, orbit_list, allowed_aspects="all"):

@@ -1,49 +1,17 @@
-from .net import MultilayerNetwork, MultiplexNetwork
-from .models import (
-    er,
-    conf,
-    single_layer_er,
-    single_layer_conf,
-    er_partially_interconnected,
-    full,
-    full_multilayer,
-    er_multilayer,
-)
-from .transforms import aggregate, subnet, supra_adjacency_matrix
-from .netio import (
-    read_ucinet,
-    write_ucinet,
-    write_json,
-    read_edge_files,
-    write_edge_files,
-)
+from . import graphlets, isomorphisms
+from .cc import (avg_lcc_aw, cc_barrat, cc_barrett, cc_onnela, cc_sequence,
+                 cc_zhang, elementary_cycles, gcc_aw, gcc_zhang, lcc, lcc_aw,
+                 lcc_brodka, sncc_aw)
 from .diagnostics import degs, density, multiplex_degs, multiplex_density
-from .cc import (
-    lcc,
-    cc_zhang,
-    gcc_zhang,
-    cc_onnela,
-    cc_barrat,
-    cc_barrett,
-    cc_sequence,
-    lcc_aw,
-    avg_lcc_aw,
-    gcc_aw,
-    sncc_aw,
-    elementary_cycles,
-    lcc_brodka,
-)
-
-from .visuals import webplot
-from .visuals import draw
-
-from . import isomorphisms
-from .isomorphisms import is_isomorphic
-from .isomorphisms import get_complete_invariant
-from .isomorphisms import get_automorphism_generators
-from .isomorphisms import get_isomorphism
-
-from . import graphlets
+from .isomorphisms import (get_automorphism_generators, get_complete_invariant,
+                           get_isomorphism, is_isomorphic)
+from .models import (conf, er, er_multilayer, er_partially_interconnected,
+                     full, full_multilayer, single_layer_conf, single_layer_er)
+from .net import MultilayerNetwork, MultiplexNetwork
+from .netio import (read_edge_files, read_ucinet, write_edge_files, write_json,
+                    write_ucinet)
+from .transforms import aggregate, subnet, supra_adjacency_matrix
+from .visuals import draw, webplot
 
 try:
     from . import nxwrap as nx

@@ -1,6 +1,8 @@
+import heapq
+import itertools
+
 from .net import MultilayerNetwork, MultiplexNetwork
-from .transforms import subnet, aggregate, threshold
-import heapq, itertools
+from .transforms import aggregate, subnet, threshold
 
 
 def degs(net, degstype="distribution"):

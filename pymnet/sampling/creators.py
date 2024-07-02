@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import pymnet
 import random
+
+import pymnet
 
 
 def er_multilayer_partially_interconnected(nodes_by_layer, p, seed=None):

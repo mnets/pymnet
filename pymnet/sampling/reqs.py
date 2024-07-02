@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import pymnet
-
 # from pymnet import nx
 import itertools
+
+import pymnet
 
 
 def default_check_reqs(

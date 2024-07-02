@@ -2,8 +2,9 @@
 """
 
 import itertools
-from .net import MultiplexNetwork
+
 from . import transforms
+from .net import MultiplexNetwork
 
 
 def cc_num_den(net, node):

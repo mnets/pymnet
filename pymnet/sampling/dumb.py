@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import itertools
-from .reqs import (
-    default_check_reqs,
-    default_calculate_required_lengths,
-    relaxed_check_reqs,
-)
+
+from .reqs import (default_calculate_required_lengths, default_check_reqs,
+                   relaxed_check_reqs)
 
 
 def dumb_enumeration(

@@ -1,6 +1,6 @@
+import sys
 import unittest
 from operator import itemgetter
-import sys
 
 from pymnet import net, netio
 

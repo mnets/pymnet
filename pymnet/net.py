@@ -1,7 +1,10 @@
 """Data structures for handling various forms of multilayer networks.
 """
 
-import math, itertools, pickle
+import itertools
+import math
+import pickle
+
 import pymnet.transforms as transforms
 
 # Pre 3.10

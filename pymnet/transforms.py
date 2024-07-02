@@ -1,8 +1,8 @@
 """Functions taking in networks and returning transformed versions of them.
 """
 
-import math
 import itertools
+import math
 import random
 from functools import reduce
 

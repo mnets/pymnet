@@ -1,20 +1,19 @@
 """Matplotlib backend for the draw method.
 """
 
-from .. import drawnet
+# Checking if we can display graphics.
+import os
 
 import matplotlib
 
-# Checking if we can display graphics.
-import os
+from .. import drawnet
 
 if os.environ.get("DISPLAY", "") == "":
     matplotlib.use("Agg")
 
-from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle, PathPatch, Rectangle
-from mpl_toolkits.mplot3d import art3d
+from mpl_toolkits.mplot3d import Axes3D, art3d
 
 defaultLayerColors = ["red", "green", "blue"]
 

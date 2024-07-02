@@ -1,8 +1,10 @@
 """Module for creating network layouts.
 """
 
+import math
+import random
+
 import pymnet
-import math, random
 
 
 def get_layout(layout, net, alignedNodes=True, **kwargs):

@@ -1,9 +1,9 @@
-import unittest
-from operator import itemgetter
 import math
 import sys
+import unittest
+from operator import itemgetter
 
-from pymnet import net, models, diagnostics
+from pymnet import diagnostics, models, net
 
 
 class TestModels(unittest.TestCase):

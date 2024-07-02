@@ -1,5 +1,6 @@
-from pymnet import *
 from timeit import Timer
+
+from pymnet import *
 
 ### ER with large number of layers
 

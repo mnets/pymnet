@@ -1,9 +1,8 @@
+import sys
 import unittest
 from operator import itemgetter
-import sys
 
-
-from pymnet import net, transforms, diagnostics
+from pymnet import diagnostics, net, transforms
 
 
 class TestTransforms(unittest.TestCase):

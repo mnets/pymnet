@@ -1,8 +1,8 @@
-import unittest
-import sys
-
 import random
-from pymnet import net, transforms, models, isomorphisms
+import sys
+import unittest
+
+from pymnet import isomorphisms, models, net, transforms
 
 
 def random_relabel(net, relabel_aspects):

@@ -1,6 +1,7 @@
 """Multilayer network isomorphism backend using Bliss through bliss_bind."""
 
 import bliss_bind
+
 from . import isomcore
 
 

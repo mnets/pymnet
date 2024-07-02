@@ -1,9 +1,9 @@
+import sys
 import unittest
 from operator import itemgetter
 
-import sys
-from pymnet import net
 import pymnet
+from pymnet import net
 
 # from .. import net
 

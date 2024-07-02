@@ -1,9 +1,11 @@
 """Module which allows one to use Networkx methods for pymnet network objects.
 """
 
-import networkx
 import collections
 from functools import wraps
+
+import networkx
+
 from pymnet.net import MultilayerNetwork
 
 # Pre 3.10

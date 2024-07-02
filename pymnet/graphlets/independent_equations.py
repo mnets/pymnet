@@ -1,9 +1,10 @@
 """Module containing heuristics for finding independent equations of multiplex graphlets.
 """
 
-from . import graphlets
 import itertools
 from collections import defaultdict as dd
+
+from . import graphlets
 
 
 def independent_equations(n, n_l, layers, allowed_aspects="all"):

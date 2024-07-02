@@ -1,10 +1,12 @@
 """Module for creating plots of multiplex network for the web. This is completely separate functionality from the draw function.
 """
 
-import random, math
+import math
+import random
 
 import pymnet
 from pymnet.net import MultiplexNetwork
+
 from .. import netio
 
 webplot_template = """

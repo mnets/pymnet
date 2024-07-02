@@ -5,6 +5,7 @@ http://www.tcs.hut.fi/Software/bliss/
 """
 
 import PyBliss as bliss
+
 from . import isomcore
 
 

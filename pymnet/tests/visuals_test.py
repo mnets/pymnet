@@ -1,6 +1,7 @@
+import os
+import sys
 import unittest
 from operator import itemgetter
-import sys, os
 
 from pymnet import net, visuals
 

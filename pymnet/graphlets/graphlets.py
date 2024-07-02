@@ -1,9 +1,10 @@
 """ Module for theoretical analysis of graphlets.
 """
 
-import pymnet
 import itertools
 from collections import defaultdict as dd
+
+import pymnet
 
 
 def graphlets(n, layers, n_l=None, couplings=None, allowed_aspects="all"):

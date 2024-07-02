@@ -1,11 +1,11 @@
-import unittest
-from operator import itemgetter
-import sys
-
-from pymnet import net, cc, models, transforms
 import itertools
 import random
+import sys
+import unittest
+from operator import itemgetter
+
 import pymnet.net
+from pymnet import cc, models, net, transforms
 
 
 class TestCC(unittest.TestCase):

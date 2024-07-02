@@ -8,8 +8,10 @@ except NameError:
     xrange = range
 ######
 
+import math
+import random
+
 from .net import MultilayerNetwork, MultiplexNetwork
-import math, random
 
 
 def single_layer_conf(net, degs, degstype="distribution"):
@@ -896,8 +898,9 @@ def ba_total_degree(n, ms, couplings=None):
 
 
 try:
-    from . import nxwrap as nx
     import networkx
+
+    from . import nxwrap as nx
 
     def ws(n, edges, p=0.3, couplings=None):
         """

@@ -1,5 +1,6 @@
 import networkx
 from networkx.algorithms import isomorphism as nxisomorphism
+
 from . import isomcore
 
 

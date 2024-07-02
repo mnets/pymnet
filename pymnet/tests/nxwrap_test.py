@@ -1,9 +1,10 @@
-import unittest
+import itertools
 import sys
+import unittest
+
+import networkx
 
 from pymnet import net, nxwrap
-import networkx
-import itertools
 
 
 class TestNxwrap(unittest.TestCase):

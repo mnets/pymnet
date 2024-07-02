@@ -3,9 +3,9 @@
 This is still experimental and is missing many features.
 """
 
-from .. import drawnet
-from .. import drawbackends
 import os
+
+from .. import drawbackends, drawnet
 
 TEMPLATE_FILE = os.path.join(
     os.path.dirname(drawbackends.__file__), "threejs_template.html"

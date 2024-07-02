@@ -45,6 +45,10 @@ bug-tracker = "https://github.com/mnets/pymnet/issues"
 test = [
     "coverage >= 7.0"
 ]
+dev = [
+    "black >= 24.4",
+    "isort >= 5.13"
+]
 
 [build-system]
 requires = [

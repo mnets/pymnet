@@ -1,7 +1,7 @@
-import unittest
 import sys
+import unittest
 
-from pymnet import net, diagnostics, models, nx
+from pymnet import diagnostics, models, net, nx
 
 
 class TestDiagnostics(unittest.TestCase):
