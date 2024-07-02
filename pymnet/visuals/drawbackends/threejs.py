@@ -7,8 +7,9 @@ from .. import drawnet
 from .. import drawbackends
 import os
 
-TEMPLATE_FILE = os.path.join(os.path.dirname(
-    drawbackends.__file__), "threejs_template.html")
+TEMPLATE_FILE = os.path.join(
+    os.path.dirname(drawbackends.__file__), "threejs_template.html"
+)
 SIZE = 100
 
 
@@ -26,12 +27,9 @@ class NetFigureThreeJS(drawnet.NetFigure):
 
         self.draw_elements()
 
-        self.template = self.template.replace(
-            "@nodes", "".join(self.node_snippets))
-        self.template = self.template.replace(
-            "@edges", "".join(self.edge_snippets))
-        self.template = self.template.replace(
-            "@layers", "".join(self.layer_snippets))
+        self.template = self.template.replace("@nodes", "".join(self.node_snippets))
+        self.template = self.template.replace("@edges", "".join(self.edge_snippets))
+        self.template = self.template.replace("@layers", "".join(self.layer_snippets))
 
         return self.template
 
@@ -43,10 +41,10 @@ class NodeThreeJS(drawnet.Node):
         scene.add(node);
 
         """
-        snippet = snippet.replace("@x", str(SIZE*self.x))
-        snippet = snippet.replace("@y", str(10*SIZE*self.y))
-        snippet = snippet.replace("@z", str(10*SIZE*self.layer.z))
-        snippet = snippet.replace("@r", str(0.1*self.size/2.))
+        snippet = snippet.replace("@x", str(SIZE * self.x))
+        snippet = snippet.replace("@y", str(10 * SIZE * self.y))
+        snippet = snippet.replace("@z", str(10 * SIZE * self.layer.z))
+        snippet = snippet.replace("@r", str(0.1 * self.size / 2.0))
 
         self.net.node_snippets.append(snippet)
 
@@ -58,13 +56,13 @@ class EdgeThreeJS(drawnet.Edge):
         scene.add(link);
 
         """
-        snippet = snippet.replace("@x1", str(SIZE*self.node1.x))
-        snippet = snippet.replace("@y1", str(SIZE*self.node1.y))
-        snippet = snippet.replace("@z1", str(SIZE*self.node1.layer.z))
+        snippet = snippet.replace("@x1", str(SIZE * self.node1.x))
+        snippet = snippet.replace("@y1", str(SIZE * self.node1.y))
+        snippet = snippet.replace("@z1", str(SIZE * self.node1.layer.z))
 
-        snippet = snippet.replace("@x2", str(SIZE*self.node2.x))
-        snippet = snippet.replace("@y2", str(SIZE*self.node2.y))
-        snippet = snippet.replace("@z2", str(SIZE*self.node2.layer.z))
+        snippet = snippet.replace("@x2", str(SIZE * self.node2.x))
+        snippet = snippet.replace("@y2", str(SIZE * self.node2.y))
+        snippet = snippet.replace("@z2", str(SIZE * self.node2.layer.z))
 
         snippet = snippet.replace("@r", str(0.01))
 

@@ -1,12 +1,13 @@
 """Module for creating plots of multiplex network for the web. This is completely separate functionality from the draw function.
 """
-import random,math
+
+import random, math
 
 import pymnet
 from pymnet.net import MultiplexNetwork
 from .. import netio
 
-webplot_template="""
+webplot_template = """
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script>
  var mpnet = JSON.parse('@netjson');
@@ -91,11 +92,12 @@ webplot_template="""
 </script>
 """
 
-def webplot(net,outputfile=None):
+
+def webplot(net, outputfile=None):
     """Create a 3D visualization of a multiplex network for web using D3.
 
     Creates a webpage that contains a visualization of the input multiplex
-    network. The network must have only a single aspect. 
+    network. The network must have only a single aspect.
 
     Parameters
     ----------
@@ -103,7 +105,7 @@ def webplot(net,outputfile=None):
        The input network.
     outputfile : None, string, or file object
        Returns the output as a string if outputfile is None. If outputfile
-       is string, then uses it as a file name and tries to open it for 
+       is string, then uses it as a file name and tries to open it for
        writing. Finally, if outputfile is a file object then writes to that
        file.
 
@@ -112,21 +114,21 @@ def webplot(net,outputfile=None):
     String or None
        Returns the output as a string if outputfile is None.
     """
-    assert isinstance(net,MultiplexNetwork)
-    assert net.aspects==1
+    assert isinstance(net, MultiplexNetwork)
+    assert net.aspects == 1
 
-    script=webplot_template
-    netdatastr=netio.write_json(net)
+    script = webplot_template
+    netdatastr = netio.write_json(net)
 
-    replace={"@netjson" : netdatastr}
-    for key,val in replace.items():
-        script=script.replace(key,val)
-    
-    if outputfile==None:
+    replace = {"@netjson": netdatastr}
+    for key, val in replace.items():
+        script = script.replace(key, val)
+
+    if outputfile == None:
         return script
     else:
-        if isinstance(outputfile,"".__class__) or isinstance(outputfile,u"".__class__):
-            outputfile=open(outputfile,'w')
+        if isinstance(outputfile, "".__class__) or isinstance(outputfile, "".__class__):
+            outputfile = open(outputfile, "w")
 
         outputfile.write("<html><body>")
         outputfile.write(script)

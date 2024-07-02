@@ -8,6 +8,7 @@ import math
 # matplotlib can be loaded
 try:
     import matplotlib
+
     matplotlib_loaded = True
 except ImportError:
     matplotlib_loaded = False
@@ -33,13 +34,15 @@ class PropertyAssigner(object):
         if pdictval is not None:
             return pdictval
         elif len(self.propRule) > 0:
-            assert "rule" in self.propRule, \
-                "The rule dictionary must contain 'rule' key"
+            assert (
+                "rule" in self.propRule
+            ), "The rule dictionary must contain 'rule' key"
             if self.propRule["rule"] in self.rules:
                 return self.apply_modify_rules(
-                    self.get_by_rule(item, self.propRule["rule"]), item)
+                    self.get_by_rule(item, self.propRule["rule"]), item
+                )
             else:
-                raise Exception("Unknown rule: "+str(self.propRule["rule"]))
+                raise Exception("Unknown rule: " + str(self.propRule["rule"]))
         else:
             return self.defaultProp
 
@@ -50,8 +53,7 @@ class PropertyAssigner(object):
                 self.i += 1
             else:
                 self.i = 0
-            return self.propRule["sequence"][
-                self.i % len(self.propRule["sequence"])]
+            return self.propRule["sequence"][self.i % len(self.propRule["sequence"])]
         elif rule == "name":
             return item
 
@@ -62,18 +64,22 @@ class PropertyAssigner(object):
             item = self.propRule[item]
         if "scaleby" in self.propRule:
             if self.propRule["scaleby"] in self.rules:
-                item = item * \
-                    self.propRule[self.get_by_rule(
-                        origitem, self.propRule["scaleby"])]
+                item = (
+                    item
+                    * self.propRule[
+                        self.get_by_rule(origitem, self.propRule["scaleby"])
+                    ]
+                )
             else:
-                item = item*self.propRule["scaleby"]
+                item = item * self.propRule["scaleby"]
         if "colormap" in self.propRule:
             if matplotlib_loaded:
                 item = matplotlib.cm.get_cmap(self.propRule["colormap"])(item)
             else:
                 raise ImportError(
                     "The colormap feature uses matplotlib, and matplotlib "
-                    "cannot be imported.")
+                    "cannot be imported."
+                )
         return item
 
 
@@ -158,33 +164,37 @@ class NodeColorAssigner(NodePropertyAssigner):
 
 
 class NodeSizeAssigner(NodePropertyAssigner):
-    rules = NodePropertyAssigner.rules.union(set(["scaled"]))-set(["name"])
+    rules = NodePropertyAssigner.rules.union(set(["scaled"])) - set(["name"])
 
     def get_by_rule(self, item, rule):
         if rule == "scaled":
-            coeff = self.propRule["scalecoeff"] if "scalecoeff" in self.propRule else 1.0
+            coeff = (
+                self.propRule["scalecoeff"] if "scalecoeff" in self.propRule else 1.0
+            )
             n = len(self.net)
-            return coeff/float(math.sqrt(n))
+            return coeff / float(math.sqrt(n))
         return super(NodeSizeAssigner, self).get_by_rule(item, rule)
 
     def apply_modify_rules(self, item, origitem):
         if "propscale" in self.propRule:
             coeff = self.propRule["propscale"]
             n = len(self.net)
-            item = item*coeff/float(math.sqrt(n))
+            item = item * coeff / float(math.sqrt(n))
         return super(NodeSizeAssigner, self).apply_modify_rules(item, origitem)
 
 
 # nodes todo: marker
 
+
 class EdgePropertyAssigner(PropertyAssigner):
     rules = PropertyAssigner.rules.union(
-        set(["edgetype", "edgeweight", "sourcedestweight", "layer"]))
+        set(["edgetype", "edgeweight", "sourcedestweight", "layer"])
+    )
 
     def _get_from_property_dict(self, item):
         """Return the edge property from the property dict given by the user.
 
-        For directed networks this is same as the parent classes method. For 
+        For directed networks this is same as the parent classes method. For
         undirected networks both directions for edges are accepted.
         """
         if self.net.directed:

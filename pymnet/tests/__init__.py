@@ -11,12 +11,14 @@ from .sampling_test import test_sampling
 try:
     import networkx
     from .nxwrap_test import test_nxwrap
-    nximported=True
+
+    nximported = True
 except ImportError:
-    nximported=False
+    nximported = False
+
 
 def test_all():
-    codes=[]
+    codes = []
     codes.append(test_net())
     codes.append(test_cc())
     codes.append(test_diagnostics())
@@ -26,5 +28,6 @@ def test_all():
     codes.append(test_visuals())
     codes.append(test_isomorphisms())
     codes.append(test_sampling())
-    if nximported: codes.append(test_nxwrap())
+    if nximported:
+        codes.append(test_nxwrap())
     return all(codes)

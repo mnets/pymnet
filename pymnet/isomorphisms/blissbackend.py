@@ -27,8 +27,7 @@ class AuxiliaryGraphBuilderBliss(isomcore.AuxiliaryGraphBuilder):
         return self.blissgraph.get_isomorphism(other.blissgraph) is not None
 
     def complete_invariant_structure(self):
-        return str(self.blissgraph.relabel(
-            self.blissgraph.canonical_labeling()))
+        return str(self.blissgraph.relabel(self.blissgraph.canonical_labeling()))
 
     def finalize(self):
         pass

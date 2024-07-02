@@ -20,27 +20,29 @@ isomorphism_mapping_backends = []
 
 try:
     from . import nxbackend
-    auxbuilder_backends["nx"] = \
-        nxbackend.AuxiliaryGraphBuilderNX
+
+    auxbuilder_backends["nx"] = nxbackend.AuxiliaryGraphBuilderNX
 except ImportError:
     pass
 
 try:
     from . import blissbackend
+
     try:
         blissbackend.bliss.Graph  # Bliss import might fail silently...
-        auxbuilder_backends["bliss"] = \
-            blissbackend.AuxiliaryGraphBuilderBliss
+        auxbuilder_backends["bliss"] = blissbackend.AuxiliaryGraphBuilderBliss
     except AttributeError:
         pass
 except ImportError:
     pass
 
 try:
-    from .import bliss_bind_backend
+    from . import bliss_bind_backend
+
     try:
-        auxbuilder_backends["bliss_bind"] = \
+        auxbuilder_backends["bliss_bind"] = (
             bliss_bind_backend.AuxiliaryGraphBuilderBlissBind
+        )
     except AttributeError:
         pass
 except ImportError:
@@ -94,13 +96,13 @@ def is_isomorphic(net1, net2, allowed_aspects="all", backend="auto"):
     "Isomorphisms in Multilayer Networks", M. Kivela & M. A. Porter,
     arXiv:1506.00508 [physics.soc-ph]
     """
-    assert len(
-        comparison_backends) > 0, "No backends for comparison were imported!"
+    assert len(comparison_backends) > 0, "No backends for comparison were imported!"
     if backend == "auto":
         backend = comparison_backends[0]
     else:
-        assert backend in comparison_backends, "Backend " + \
-            str(backend)+" does not allow comparisons"
+        assert backend in comparison_backends, (
+            "Backend " + str(backend) + " does not allow comparisons"
+        )
 
     auxbuilder = auxbuilder_backends[backend]
     a1 = auxbuilder(net1, allowed_aspects)
@@ -143,21 +145,24 @@ def get_complete_invariant(net, allowed_aspects="all", backend="auto"):
     arXiv:1506.00508 [physics.soc-ph]
     """
 
-    assert len(complete_invariant_backends) > 0, \
-        "No backends for complete invariants were imported!"
+    assert (
+        len(complete_invariant_backends) > 0
+    ), "No backends for complete invariants were imported!"
     if backend == "auto":
         backend = complete_invariant_backends[0]
     else:
-        assert backend in complete_invariant_backends, "Backend " + \
-            str(backend)+" cannot be used to produce complete invariants"
+        assert backend in complete_invariant_backends, (
+            "Backend " + str(backend) + " cannot be used to produce complete invariants"
+        )
 
     auxbuilder = auxbuilder_backends[backend]
     aux_graph = auxbuilder(net, allowed_aspects)
     return aux_graph.get_complete_invariant()
 
 
-def get_automorphism_generators(net, allowed_aspects="all",
-                                include_fixed=False, backend="auto"):
+def get_automorphism_generators(
+    net, allowed_aspects="all", include_fixed=False, backend="auto"
+):
     """
     Returns automorphism generators for the given network. The generators are
     permutations that can be used to construct the automorphism group of the
@@ -194,13 +199,17 @@ def get_automorphism_generators(net, allowed_aspects="all",
     arXiv:1506.00508 [physics.soc-ph]
     """
 
-    assert len(automorphism_group_generator_backends) > 0, \
-        "No backends for automorphism generators were imported!"
+    assert (
+        len(automorphism_group_generator_backends) > 0
+    ), "No backends for automorphism generators were imported!"
     if backend == "auto":
         backend = automorphism_group_generator_backends[0]
     else:
-        assert backend in automorphism_group_generator_backends, "Backend " + \
-            str(backend)+" cannot be used to produce automorphism generators"
+        assert backend in automorphism_group_generator_backends, (
+            "Backend "
+            + str(backend)
+            + " cannot be used to produce automorphism generators"
+        )
 
     auxbuilder = auxbuilder_backends[backend]
     aux_graph = auxbuilder(net, allowed_aspects)
@@ -208,8 +217,9 @@ def get_automorphism_generators(net, allowed_aspects="all",
     return aux_graph.get_automorphism_generators(include_fixed=include_fixed)
 
 
-def get_isomorphism(net1, net2, allowed_aspects="all",
-                    include_fixed=False, backend="auto"):
+def get_isomorphism(
+    net1, net2, allowed_aspects="all", include_fixed=False, backend="auto"
+):
     """
     Returns an isomorphism between net1 and net2 if possible.
 
@@ -248,13 +258,17 @@ def get_isomorphism(net1, net2, allowed_aspects="all",
     arXiv:1506.00508 [physics.soc-ph]
     """
 
-    assert len(isomorphism_mapping_backends) > 0, \
-        "No backends for isomorphism mapping were imported!"
+    assert (
+        len(isomorphism_mapping_backends) > 0
+    ), "No backends for isomorphism mapping were imported!"
     if backend == "auto":
         backend = isomorphism_mapping_backends[0]
     else:
-        assert backend in isomorphism_mapping_backends, "Backend " + \
-            str(backend)+" cannot be used to produce isomorphism mappings"
+        assert backend in isomorphism_mapping_backends, (
+            "Backend "
+            + str(backend)
+            + " cannot be used to produce isomorphism mappings"
+        )
 
     auxbuilder = auxbuilder_backends[backend]
     aux_graph1 = auxbuilder(net1, allowed_aspects)

@@ -3,6 +3,7 @@ class AuxiliaryGraphBuilder(object):
     This is a generic class for building auxiliary graphs. Backends can
     inherit this class to create auxiliary graph builders.
     """
+
     # method can be used to compare networks
     has_comparison = False
 
@@ -20,10 +21,11 @@ class AuxiliaryGraphBuilder(object):
         self.net = net
 
         if allowed_aspects == "all":
-            allowed_aspects = range(net.aspects+1)
+            allowed_aspects = range(net.aspects + 1)
         self.asp = sorted(allowed_aspects)
         self.nasp = list(
-            filter(lambda a: a not in allowed_aspects, range(net.aspects+1)))
+            filter(lambda a: a not in allowed_aspects, range(net.aspects + 1))
+        )
 
         self.nodemap = {}
         self.auxnodemap = {}
@@ -38,7 +40,7 @@ class AuxiliaryGraphBuilder(object):
         elif reduction_type == "general":
             self._build_graph_general()
         else:
-            raise Exception("Unknown reduction type: "+str(reduction_type))
+            raise Exception("Unknown reduction type: " + str(reduction_type))
 
         self.finalize()
 
@@ -50,7 +52,7 @@ class AuxiliaryGraphBuilder(object):
 
     def _get_auxnode_id(self, auxnode):
         if auxnode not in self.auxnodemap:
-            self.auxnodemap[auxnode] = len(self.nodemap)+len(self.auxnodemap)
+            self.auxnodemap[auxnode] = len(self.nodemap) + len(self.auxnodemap)
         return self.auxnodemap[auxnode]
 
     def _slice_node_layer_allowed(self, nodelayer):
@@ -66,9 +68,10 @@ class AuxiliaryGraphBuilder(object):
         return tuple(s)
 
     def _assert_full_order(self, seq):
-        for i in range(len(seq)-1):
-            assert seq[i] < seq[i + 1], \
-                "Cannot sort the node or elementary layer names!"
+        for i in range(len(seq) - 1):
+            assert (
+                seq[i] < seq[i + 1]
+            ), "Cannot sort the node or elementary layer names!"
 
     def _build_graph_general(self):
         """
@@ -84,13 +87,16 @@ class AuxiliaryGraphBuilder(object):
         del nodecolors
         self._assert_full_order(nodecolors_sorted)
         self.colormap = dict(
-            ((color, colorid)
-                for colorid, color in enumerate(nodecolors_sorted)))
+            ((color, colorid) for colorid, color in enumerate(nodecolors_sorted))
+        )
 
         # each aux node has a color that is determined by the aspect
         self.auxcolormap = dict(
-            ((auxcolor, auxcolorid+len(self.colormap))
-                for auxcolorid, auxcolor in enumerate(sorted(self.asp))))
+            (
+                (auxcolor, auxcolorid + len(self.colormap))
+                for auxcolorid, auxcolor in enumerate(sorted(self.asp))
+            )
+        )
 
         # Add the underlying network
         # node-layers:
@@ -129,9 +135,9 @@ class AuxiliaryGraphBuilder(object):
 
     def compare(self, other):
         # make sure that the two are comparable
-        assert self.asp == other.asp and self.nasp == other.nasp, \
-            "Auxiliary graphs build for different isomorphisms, " \
-            "cannot compare."
+        assert self.asp == other.asp and self.nasp == other.nasp, (
+            "Auxiliary graphs build for different isomorphisms, " "cannot compare."
+        )
 
         return self.compare_labels(other) and self.compare_structure(other)
 
@@ -145,16 +151,14 @@ class AuxiliaryGraphBuilder(object):
         return tuple(sorted(self.colormap.items()))
 
     def get_complete_invariant(self):
-        return (self.complete_invariant_labels(),
-                self.complete_invariant_structure())
+        return (self.complete_invariant_labels(), self.complete_invariant_structure())
 
     def get_automorphism_generators(self, include_fixed=False):
         generators = []
-        invauxnodemap = dict(
-            ((self.auxnodemap[k], k) for k in self.auxnodemap))
+        invauxnodemap = dict(((self.auxnodemap[k], k) for k in self.auxnodemap))
         for permutation in self._automorphism_generators():
             mperms = []
-            for a in range(self.net.aspects+1):
+            for a in range(self.net.aspects + 1):
                 mperms.append({})
             for node in self.auxnodemap:
                 nodeid = self.auxnodemap[node]
@@ -177,10 +181,9 @@ class AuxiliaryGraphBuilder(object):
         if self.compare(other):
             permutation = self._isomorphism_mapping(other)
 
-            invauxnodemap = dict(
-                ((other.auxnodemap[k], k) for k in other.auxnodemap))
+            invauxnodemap = dict(((other.auxnodemap[k], k) for k in other.auxnodemap))
             mperms = []
-            for a in range(self.net.aspects+1):
+            for a in range(self.net.aspects + 1):
                 mperms.append({})
             for node in self.auxnodemap:
                 nodeid = self.auxnodemap[node]
@@ -213,6 +216,7 @@ class AuxiliaryGraphBuilder(object):
 
     def add_link(self, node1, node2):
         raise NotImplementedError()
+
     ##
 
     # The following can be overridden if possible
@@ -227,4 +231,5 @@ class AuxiliaryGraphBuilder(object):
 
     def _isomorphism_mapping(self, other):
         raise NotImplementedError()
+
     ##
