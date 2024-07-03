@@ -7,17 +7,13 @@ import pickle
 
 import pymnet.transforms as transforms
 
-# Pre 3.10
+
 try:
+    # Pre 3.10
     from collections import MutableMapping
 except ImportError:
-    pass
-
-# Post 3.10
-try:
+    # Post 3.10
     from collections.abc import MutableMapping
-except ImportError:
-    pass
 
 
 COLON = slice(None, None, None)
