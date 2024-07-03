@@ -523,7 +523,7 @@ def er_multilayer(nodes, layers, p, randomWeights=False):
         for l2 in layers:
             for n1 in range(nodes):
                 for n2 in range(n1 + 1, nodes):
-                    if n1 != n2 or l1 != l2 and random.random() < p:
+                    if (n1 != n2 or l1 != l2) and random.random() < p:
                         if randomWeights:
                             n[n1, n2, l1, l2] = random.random()
                         else:
