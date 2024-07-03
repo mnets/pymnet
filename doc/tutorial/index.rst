@@ -3,7 +3,7 @@
 Tutorials
 =========
 
-The following tutorial will help you with to get started with using the library. 
+The following tutorials will help you with to get started with using the library.
 
 .. toctree::
    :maxdepth: 5
