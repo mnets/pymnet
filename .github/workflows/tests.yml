@@ -8,14 +8,28 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    name: run tests on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ['3.8', '3.9', '3.10', '3.11', '3.12']
+
+    env:
+      OS: ${{ matrix.os }}
+      PYTHON: ${{ matrix.python }} 
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: ${{ matrix.python }}
+
+      - name: System information
+        run: python -c "import sys, platform; print(sys.platform, platform.machine())"
 
       - name: Update pip
         run: python -m pip install -U pip
@@ -33,4 +47,5 @@ jobs:
         uses: codecov/codecov-action@v4.0.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          env_vars: OS,PYTHON
           slug: mnets/pymnet
