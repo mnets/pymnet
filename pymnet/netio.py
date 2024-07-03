@@ -13,7 +13,7 @@ def write_ucinet(net, outputfile, outputType="edges"):
     assert isinstance(
         net, MultiplexNetwork
     ), "Multilayer networks not supported by the UCINET file format."
-    if isinstance(outputfile, "".__class__) or isinstance(outputfile, "".__class__):
+    if isinstance(outputfile, str):
         outputfile = open(outputfile, "w")
 
 
@@ -46,8 +46,8 @@ def write_json(net, outputfile=None):
                 }
             )
 
-    if outputfile != None:
-        if isinstance(outputfile, "".__class__) or isinstance(outputfile, "".__class__):
+    if outputfile is not None:
+        if isinstance(outputfile, str):
             outputfile = open(outputfile, "w")
 
         json.dump(nets, outputfile)
@@ -264,19 +264,20 @@ def read_ucinet(netinput, couplings=("categorical", 1.0), fullyInterconnected=Tr
         raise Exception("No data found.")
 
     # sort out the labels
-    if labels_embedded and (labels != None or rlabels != None or clabels != None):
+    if labels_embedded and (
+            labels is not None or rlabels is not None or clabels is not None):
         raise Exception("No additional labels when using embedded labels.")
-    if llabels == None:
+    if llabels is None:
         llabels = range(nm)
-    if labels != None and rlabels != None and clabels != None:
+    if labels is not None and rlabels is not None and clabels is not None:
         raise Exception("Redundant labels given.")
-    if rlabels == None:
-        if labels == None:
+    if rlabels is None:
+        if labels is None:
             rlabels = range(n)
         else:
             rlabels = labels
-    if clabels == None:
-        if labels == None:
+    if clabels is None:
+        if labels is None:
             clabels = list(range(n))
         else:
             clabels = labels

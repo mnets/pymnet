@@ -136,6 +136,31 @@ Data:
         n[1, 2, 3, 3] = 1
         self.assertEqual(pickle.loads(pickle.dumps(n)), n)
 
+    def test_write_json(self):
+        import json
+        import tempfile
+        import os
+
+        n = net.MultiplexNetwork(couplings=[("categorical", 1)])
+        n[1, 2, 3, 3] = 1
+        j = json.loads(netio.write_json(n))
+        self.assertEqual({node["name"] for node in j["nodes"]}, {1, 2})
+        self.assertEqual({layer["name"] for layer in j["layers"]}, {3})
+        self.assertEqual(
+            [({link["source"], link["target"]}, link["value"], link["layer"])
+                for link in j["links"]],
+            [({0, 1}, 1, 0)])
+
+        with tempfile.TemporaryDirectory() as tmp:
+            with open(os.path.join(tmp, "fobject"), 'w') as f:
+                netio.write_json(n, outputfile=f)
+            with open(os.path.join(tmp, "fobject")) as f:
+                self.assertEqual(json.load(f), j)
+
+            netio.write_json(n, outputfile=os.path.join(tmp, "fname"))
+            with open(os.path.join(tmp, "fname")) as f:
+                self.assertEqual(json.load(f), j)
+
 
 def test_io():
     suite = unittest.TestSuite()
@@ -143,6 +168,7 @@ def test_io():
     suite.addTest(TestIO("test_read_ucinet_mplex_fullnet"))
     suite.addTest(TestIO("test_read_ucinet_mplex_nonglobalnodes"))
     suite.addTest(TestIO("test_pickle"))
+    suite.addTest(TestIO("test_write_json"))
 
     return unittest.TextTestRunner().run(suite).wasSuccessful()
 
