@@ -29,8 +29,8 @@ classifiers = [
 
 dependencies = [
   "matplotlib >= 3.7.0",
-  "numpy >= 1.26.1",
-  "scipy >= 1.11.1",
+  "numpy >= 1.23.0",
+  "scipy >= 1.10.0",
   "networkx >= 2.0, < 4.0",
   "bliss-bind >= 0.2.0 ; (sys_platform == 'darwin' or ( (platform_machine == 'x86_64' and sys_platform == 'linux') or (platform_machine == 'AMD64' and sys_platform == 'win32') )) and python_version >= '3.8'"
 ]
