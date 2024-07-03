@@ -94,9 +94,7 @@ $ python -m twine upload wheelhouse/pymnet-$VERSION-py3-none-any.whl --verbose
 Remember to replace `$VERSION` with the version in the generated file!
 
 Uplading a new wheel under the `pymnet` project is only available to the
-[package maintainers on PyPI][maintainer].
+[package maintainers on PyPI][maintainers].
 
 [twine]: https://twine.readthedocs.io/en/latest/
 [maintainers]: https://pypi.org/project/pymnet/
-
-
