@@ -1,7 +1,6 @@
 import math
 import sys
 import unittest
-from operator import itemgetter
 
 from pymnet import diagnostics, models, net
 
@@ -15,7 +14,7 @@ class TestModels(unittest.TestCase):
         size = 10
         full = net.MultilayerNetwork(aspects=0)
         models.single_layer_er(
-            full, range(10, 10 + size), p=None, edges=int((size * (size - 1)) / 2)
+            full, range(10, 10 + size), p=None, edges=(size * (size - 1))//2
         )
         for i in full:
             for j in full:
@@ -103,6 +102,29 @@ class TestModels(unittest.TestCase):
         self.assertEqual(set(net.A["l1"]), set(range(100)))
         self.assertEqual(set(net.A["l2"]), set(range(20, 120)))
 
+    def test_full_multiplex_network(self):
+        self.assertEqual(
+            diagnostics.degs(
+                models.full(nodes=10, layers=None)), {9: 10})
+
+        self.assertEqual(
+            diagnostics.degs(
+                models.full(nodes=10, layers=['a', 'b'])),
+            {10: 20})
+        self.assertEqual(
+            diagnostics.multiplex_degs(
+                models.full(nodes=10, layers=['a', 'b'])),
+            {'a': {9: 10}, 'b': {9: 10}})
+
+        self.assertEqual(
+            diagnostics.degs(
+                models.full(nodes=10, layers=2)),
+            {10: 20})
+        self.assertEqual(
+            diagnostics.multiplex_degs(
+                models.full(nodes=10, layers=2)),
+            {0: {9: 10}, 1: {9: 10}})
+
 
 def test_models():
     suite = unittest.TestSuite()
@@ -110,6 +132,7 @@ def test_models():
     suite.addTest(TestModels("test_multiplex_erdosrenyi"))
     suite.addTest(TestModels("test_monoplex_configuration_model"))
     suite.addTest(TestModels("test_multiplex_configuration_model"))
+    suite.addTest(TestModels("test_full_multiplex_network"))
 
     return unittest.TextTestRunner().run(suite).wasSuccessful()
 
