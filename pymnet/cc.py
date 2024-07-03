@@ -161,9 +161,12 @@ def cc_barrat(net, node, undefReturn=0.0):
 
 
 def cc_barrett_optimized(net, node, anet, undefReturn=0.0):
-    """Multiplex clustering coefficient defined by Barrett et al.
+    r"""Multiplex clustering coefficient defined by Barrett et al.
 
-    See SI of "Taking sociality seriously: the structure of multi-dimensional social networks as a source of information for individuals.", Louise Barrett, S. Peter Henzi, David Lusseau, Phil. Trans. R. Soc. B 5 August 2012 vol. 367 no. 1599 2108-2118
+    See SI of "Taking sociality seriously: the structure of multi-dimensional
+    social networks as a source of information for individuals.",
+    Louise Barrett, S. Peter Henzi, David Lusseau, Phil. Trans. R. Soc. B 5
+    August 2012 vol. 367 no. 1599 2108-2118
 
     \frac{\sum_j^n \sum_h^n \sum_k^b ( a_{ijk} \sum_l^b (a_{ihl} \sum_m^b a_{jhm} ) )} {\sum_j^n \sum_h^n \sum_k^b (a_{ijk} \sum_l^b \max(a_{ihl},a_{jhl}) )}
     """
