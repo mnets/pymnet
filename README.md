@@ -24,6 +24,8 @@
 * Please write unit tests and add them to the testing framework
 * Documentation using Python docstring and Sphinx
 
+More information is available on [HACKING.md](HACKING.md).
+
 
 ### Who do I talk to? ###
 

@@ -57,9 +57,5 @@ requires = [
 ]
 build-backend = "setuptools.build_meta"
 
-[tools.setuptools]
-packages = [
-	"pymnet", "pymnet.tests", "pymnet.visuals",
-	"pymnet.visuals.drawbackends", "pymnet.isomorphisms",
-	"pymnet.graphlets", "pymnet.sampling"
-]
+[tool.setuptools.packages.find]
+exclude = ["wheelhouse"]
