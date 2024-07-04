@@ -8,15 +8,6 @@ import os
 from .net import MultilayerNetwork, MultiplexNetwork
 
 
-def write_ucinet(net, outputfile, outputType="edges"):
-    """Write a network in UCINET DL format."""
-    assert isinstance(
-        net, MultiplexNetwork
-    ), "Multilayer networks not supported by the UCINET file format."
-    if isinstance(outputfile, str):
-        outputfile = open(outputfile, "w")
-
-
 def write_json(net, outputfile=None):
     """Write a multiplex network with a single aspect in a JSON format."""
     assert isinstance(net, MultiplexNetwork)
@@ -56,10 +47,8 @@ def write_json(net, outputfile=None):
         return json.dumps(nets)
 
 
-def read_edge_files(
+def read_edge_file(
     edgeinput,
-    layerinput=None,
-    nodeinput=None,
     couplings="categorical",
     fullyInterconnected=True,
     directed=False,
@@ -71,9 +60,7 @@ def read_edge_files(
         fullyInterconnected=fullyInterconnected,
         directed=directed,
     )
-    layerfile = open(layerinput, "r") if isinstance(layerinput, str) else layerinput
     edgefile = open(edgeinput, "r") if isinstance(edgeinput, str) else edgeinput
-    nodefile = open(nodeinput, "r") if isinstance(nodeinput, str) else nodeinput
 
     for line in edgefile:
         li, fi, ti, w = line.split()
@@ -265,7 +252,8 @@ def read_ucinet(netinput, couplings=("categorical", 1.0), fullyInterconnected=Tr
 
     # sort out the labels
     if labels_embedded and (
-            labels is not None or rlabels is not None or clabels is not None):
+        labels is not None or rlabels is not None or clabels is not None
+    ):
         raise Exception("No additional labels when using embedded labels.")
     if llabels is None:
         llabels = range(nm)
