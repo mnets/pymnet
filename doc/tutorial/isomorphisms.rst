@@ -46,8 +46,8 @@ We want to compare networks, so lets create another network. A transportation ne
    :align:   center
 
 
-Isomorphism
------------
+Isomorphisms
+------------
 
 Clearly the two above networks have the same structure but different labels of nodes and layers. In terms of multilayer network isomorphisms, this means that the two networks are node-layer isomorphic (but not node isomorphic or layer isomorphic). This can be confirmed using the *is_isomorphic* function as follows: 
 
