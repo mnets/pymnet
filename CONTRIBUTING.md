@@ -7,13 +7,14 @@ the code. The tests are located at `pymnet/tests/`.
 
 ## Getting started
 
-Best way to begin contributing is by create a fork of this project on GitHub,
-makeing your modifications and sending in a pull request. Refere to [GitHub
+The best way to begin contributing is by creating a fork of this project on GitHub,
+making your modifications, and sending in a pull request. 
+Refer to [GitHub
 documentations][github-how-to] on the basic workflow.
 
-Currently, the code is hosted on GitHub at https://github.com/mnets/pymnet
+Currently, the code is hosted on GitHub at https://github.com/mnets/pymnet.
 
-Before commiting a lot of time and  making big changes, it might be a good
+Before commiting a lot of time and making big changes, it might be a good
 idea to talk about it with the developers by creating an issue.
 
 [github-how-to]: https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project
@@ -21,7 +22,7 @@ idea to talk about it with the developers by creating an issue.
 ## Reporting bugs or suggesting improvments
 
 Use [GitHub issues][github-issues] for reporting bugs or suggesting
-improvments. It would help everyone involved if you can include a minimal
+improvments. It would help everyone involved if you could include a minimal
 example to demonstrate the problem in isolation.
 
 [github-issues]: https://docs.github.com/en/issues/tracking-your-work-with-issues/creating-an-issue
@@ -73,8 +74,7 @@ Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
 
 ## Release
 
-So far, we are not using GitHub releases. Releasing a new version is a three
-step process: Bumping version number in `pyproject.toml`, building a wheel
+So far, we are not using GitHub releases. Releasing a new version is a three -step process: Bumping version number in `pyproject.toml`, building a wheel
 file, and uploading it to PyPI.
 
 You can build a new wheel using `pip`:
