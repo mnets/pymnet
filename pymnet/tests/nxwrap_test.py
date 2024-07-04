@@ -34,19 +34,6 @@ class TestNxwrap(unittest.TestCase):
 
         self.test_monoplex_basics(nnx)
 
-    def test_monoplex_basics_writing_nx_nxversion1(self):
-        n = net.MultilayerNetwork(aspects=0)
-        nnx = nxwrap.MonoplexGraphNetworkxView(n)
-        nnx.add_node(1)
-        nnx.add_nodes_from([2, 3, 4, 5])
-        nnx.add_edge(1, 2)
-        nnx[2][3] = 3
-        nnx.add_edge(4, 5)
-        nnx[4][5] = 1
-        nnx[4][5] = 4
-
-        self.test_monoplex_basics(nnx)
-
     def test_monoplex_basics_writing_nx(self):
         n = net.MultilayerNetwork(aspects=0)
         nnx = nxwrap.MonoplexGraphNetworkxView(n)
@@ -90,35 +77,6 @@ class TestNxwrap(unittest.TestCase):
         self.assertEqual(len(knet.edges), 78)
         self.assertNotEqual(knet[0, 1], 0)
         # self.assertNotEqual(networkx.Graph,nxwrap.MonoplexGraphNetworkxNew)
-
-    def test_monoplex_tuples_nxversion1(self):
-        n = net.MultilayerNetwork(aspects=0)
-        nnx = nxwrap.MonoplexGraphNetworkxView(n)
-        nnx.add_node((1, "a"))
-        nnx.add_nodes_from([(2, "a"), (3, "a"), (4, "a"), (5, "a")])
-        nnx.add_edge((1, "a"), (2, "a"))
-        nnx[(2, "a")][(3, "a")] = 3
-        nnx.add_edge((4, "a"), (5, "a"))
-        nnx[(4, "a")][(5, "a")] = 1
-        nnx[(4, "a")][(5, "a")] = 4
-
-        self.assertEqual(nnx[(1, "a")][(2, "a")]["weight"], 1)
-        self.assertEqual(nnx[(2, "a")][(3, "a")]["weight"], 3)
-        self.assertEqual(nnx[(4, "a")][(5, "a")]["weight"], 4)
-
-        self.assertEqual(nnx[(2, "a")][(1, "a")]["weight"], 1)
-        self.assertEqual(nnx[(3, "a")][(2, "a")]["weight"], 3)
-        self.assertEqual(nnx[(5, "a")][(4, "a")]["weight"], 4)
-
-        self.assertEqual(
-            set(map(frozenset, networkx.connected_components(nnx))),
-            set(
-                [
-                    frozenset([(1, "a"), (2, "a"), (3, "a")]),
-                    frozenset([(4, "a"), (5, "a")]),
-                ]
-            ),
-        )
 
     def test_monoplex_tuples(self):
         n = net.MultilayerNetwork(aspects=0)
