@@ -24,7 +24,7 @@
 * Please write unit tests and add them to the testing framework
 * Documentation using Python docstring and Sphinx
 
-More information is available [here](CONTRIBUTING.md).
+More information is available [here](.github/CONTRIBUTING.md).
 
 
 ### Who do I talk to? ###
