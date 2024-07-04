@@ -6,8 +6,7 @@ different backends. Currently the following backends are supported (the
 functions these backends can be used for are in parenthesis):
 
 - NetworkX :  "nx" (is_isomorphic, get_isomorphism)
-- BlissBind : "bliss" (is_isomorphic, get_isomorphism, get_automorphism_generators, get_complete_invariant)
-- PyBliss : "bliss" (is_isomorphic, get_isomorphism, get_automorphism_generators, get_complete_invariant)
+- bliss-bind : "bliss_bind" (is_isomorphic, get_isomorphism, get_automorphism_generators, get_complete_invariant)
 """
 
 auxbuilder_backends = {}
@@ -26,17 +25,6 @@ except ImportError:
     pass
 
 try:
-    from . import blissbackend
-
-    try:
-        blissbackend.bliss.Graph  # Bliss import might fail silently...
-        auxbuilder_backends["bliss"] = blissbackend.AuxiliaryGraphBuilderBliss
-    except AttributeError:
-        pass
-except ImportError:
-    pass
-
-try:
     from . import bliss_bind_backend
 
     try:
@@ -51,7 +39,7 @@ except ImportError:
 
 # fill in the backends that are available to do various tasks
 # start from the most preferred backend, to the least preferred
-backend_order = ["bliss_bind", "bliss", "nx"]
+backend_order = ["bliss_bind", "nx"]
 for backend_name in backend_order:
     if backend_name not in auxbuilder_backends:
         continue

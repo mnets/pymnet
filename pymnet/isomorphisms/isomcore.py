@@ -181,7 +181,8 @@ class AuxiliaryGraphBuilder(object):
         if self.compare(other):
             permutation = self._isomorphism_mapping(other)
 
-            invauxnodemap = dict(((other.auxnodemap[k], k) for k in other.auxnodemap))
+            invauxnodemap = dict(((other.auxnodemap[k], k)
+                                 for k in other.auxnodemap))
             mperms = []
             for a in range(self.net.aspects + 1):
                 mperms.append({})

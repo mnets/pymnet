@@ -420,20 +420,6 @@ class TestIsomorphisms(unittest.TestCase):
     def test_comparison_multiplex_category_counts_fast_nx(self):
         self.test_comparison_multiplex_category_counts_fast(backend="nx")
 
-    # PyBliss tests
-
-    def test_comparison_random_relabel_mplex_single_aspect_fast_bliss(self):
-        self.test_comparison_random_relabel_mplex_single_aspect_fast(backend="bliss")
-
-    def test_comparison_random_relabel_mlayer_single_aspect_fast_bliss(self):
-        self.test_comparison_random_relabel_mlayer_single_aspect_fast(backend="bliss")
-
-    def test_comparison_simple_mlayer_bliss(self):
-        self.test_comparison_simple_mlayer(backend="bliss")
-
-    def test_comparison_multiplex_category_counts_fast_bliss(self):
-        self.test_comparison_multiplex_category_counts_fast(backend="bliss")
-
     # bliss_bind tests
     def test_comparison_random_relabel_mplex_single_aspect_fast_bbind(self):
         self.test_comparison_random_relabel_mplex_single_aspect_fast(
@@ -473,23 +459,8 @@ def test_isomorphisms():
             )
         )
         suite.addTest(
-            TestIsomorphisms("test_comparison_multiplex_category_counts_fast_nx")
-        )
-
-    if "bliss" in isomorphisms.comparison_backends:
-        suite.addTest(TestIsomorphisms("test_comparison_simple_mlayer_bliss"))
-        suite.addTest(
             TestIsomorphisms(
-                "test_comparison_random_relabel_mlayer_single_aspect_fast_bliss"
-            )
-        )
-        suite.addTest(
-            TestIsomorphisms(
-                "test_comparison_random_relabel_mplex_single_aspect_fast_bliss"
-            )
-        )
-        suite.addTest(
-            TestIsomorphisms("test_comparison_multiplex_category_counts_fast_bliss")
+                "test_comparison_multiplex_category_counts_fast_nx")
         )
 
     if "bliss_bind" in isomorphisms.comparison_backends:
