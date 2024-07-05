@@ -68,7 +68,7 @@ def single_layer_conf(net, degs, degstype="distribution"):
             if k == 0:
                 net.add_node(node)
     else:
-        raise Exception("Invalid degstype: '" + str(degstype) + "'")
+        raise ValueError("Invalid degstype: '" + str(degstype) + "'")
 
     # Here we should do the Erdos-Gallai test
     assert nstubs % 2 == 0
@@ -186,7 +186,7 @@ def single_layer_er(net, nodes, p=None, edges=None):
     """
 
     if (p is None and edges is None) or (p is not None and edges is not None):
-        raise Exception("Give one of the parameters: p or edges.")
+        raise ValueError("Give one of the parameters: p or edges.")
 
     n = len(nodes)
     for node in nodes:
