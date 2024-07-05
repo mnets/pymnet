@@ -26,6 +26,10 @@ class TestModels(unittest.TestCase):
         models.single_layer_er(net2, range(10), p=None, edges=30)
         self.assertEqual(len(net2.edges), 30)
 
+        net3 = net.MultilayerNetwork(aspects=0)
+        models.single_layer_er(net3, range(10), p=1.0, edges=None)
+        self.assertEqual(len(net3.edges), 45)
+
     def test_multiplex_erdosrenyi(self):
         net = models.er(10, 0.5)
         net2 = models.er(10, [0.4, 0.6])
