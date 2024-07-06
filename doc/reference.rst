@@ -64,6 +64,7 @@ Reading and Writing Networks
   :toctree: autogen
 
   read_edge_file
+  write_edge_file
   read_ucinet
   write_edge_files
   write_json
