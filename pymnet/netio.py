@@ -9,7 +9,17 @@ from .net import MultilayerNetwork, MultiplexNetwork
 
 
 def write_json(net, outputfile=None):
-    """Write a multiplex network with a single aspect in a JSON format."""
+    """
+    Write a multiplex network with a single aspect in a JSON format.
+
+    Parameters
+    ----------
+    net: MultiplexNetwork
+        The MultiplexNetwork object to write.
+    outputfile: str
+        The name of the file to write to.
+
+    """
     assert isinstance(net, MultiplexNetwork)
     assert net.aspects == 0 or net.aspects == 1
     nets = {}
@@ -48,25 +58,25 @@ def write_json(net, outputfile=None):
 
 
 def read_edge_file(
-    edgefile,
+    inputfile,
     couplings="categorical",
     fullyInterconnected=True,
     directed=False,
-    sep=" ",
+    sep="\t",
 ):
     """
     Read a multiplex file following the syntax::
 
-        layer1{int} node1{int} node2{int} weight{float}\n
+        layer1{int}|sep|node1{int}|sep|node2{int}|sep|weight{float}\n
         ...\n
-        layer_l{int} node_i{int} node_j{int} weight_k{float}
+        layer_l{int}|sep|node_i{int}|sep|node_j{int}|sep|weight_k{float}
 
     Self-links are ignored.
 
     Parameters
     ----------
-    edgefile: str
-        The input file name.
+    inputfile: str
+        Name of the input file.
     couplings : list, str, tuple, None, MultilayerNetwork
        Parameter determining how the layers are coupled, i.e., what
        inter-layer edges are present. Passed to the constructor of MultiplexNetwork.
@@ -76,7 +86,7 @@ def read_edge_file(
     directed: bool
         If True, treat the input file as a directed edge list. Default is False.
     sep: str
-        The separator used to separate the values in each line.
+        Column separator. Default is tab character.
 
     Returns
     -------
@@ -91,16 +101,73 @@ def read_edge_file(
         fullyInterconnected=fullyInterconnected,
         directed=directed,
     )
-    edgefile = open(edgefile, "r")
+    inputfile = open(inputfile, "r")
 
-    for line in edgefile:
+    for line in inputfile:
         li, fi, ti, w = line.split(sep)
         li, fi, ti, w = int(li), int(fi), int(ti), float(w)
         if fi != ti:
             net[fi, ti, li] = w
 
-    edgefile.close()
+    inputfile.close()
     return net
+
+
+def write_edge_file(
+    net,
+    outputfile,
+    sep="\t",
+    weights=True,
+    numericNodes=False,
+):
+    """
+    Write a multiplex file following the syntax::
+
+        layer1{int}|sep|node1{int}|sep|node2{int}|sep|weight{float}\n
+        ...\n
+        layer_l{int}|sep|node_i{int}|sep|node_j{int}|sep|weight_k{float}
+
+    Self-links are ignored.
+
+    Parameters
+    ----------
+    net: MultiplexNetwork
+        The MultiplexNetwork object to write.
+    outputfile: str
+        Name of the output file.
+    sep: str
+        Column separator. Default is tab character.
+    weights: bool
+        If True, include edge weights in the output. Default is True.
+    numericNodes: bool
+        If True, map node names to numbers. Default is False.
+    """
+    assert isinstance(net, MultiplexNetwork)
+    assert net.aspects == 1
+
+    if numericNodes:
+        nodetonumber = _map_nodes_to_numbers(net)
+
+    ofile = open(outputfile, "w")
+    for layer in net.get_layers():
+        for edge in net.A[layer].edges:
+            n1, n2 = edge[0], edge[1]
+            if numericNodes:
+                n1, n2 = nodetonumber[n1], nodetonumber[n2]
+            if weights:
+                ofile.write(
+                    str(layer)
+                    + sep
+                    + str(n1)
+                    + sep
+                    + str(n2)
+                    + sep
+                    + str(edge[2])
+                    + "\n"
+                )
+            else:
+                ofile.write(str(layer) + sep + str(n1) + sep + str(n2) + "\n")
+    ofile.close()
 
 
 def write_edge_files(
@@ -112,16 +179,34 @@ def write_edge_files(
     masterFile=False,
     numericNodes=False,
 ):
-    """Write a multiplex file separated into files for layers, edges, and nodes."""
+    """
+    Write a multiplex file separated into files for layers, edges, and nodes.
+
+    Parameters
+    ----------
+    net: MultiplexNetwork
+        The MultiplexNetwork object to write.
+    outputfiles: str
+        Base name for all output files.
+    columnSeparator: str
+        Column separator. Default is tab character.
+    rowSeparator: str
+        Row separator. Default is newline character.
+    weights: bool
+        If True, include edge weights in the output. Default is True.
+    masterFile: bool
+        If True, write a master file collecting the names of all layer files. Default is False.
+    numericNodes: bool
+        If True, map node names to numbers. Default is False.
+
+    """
     assert isinstance(net, MultiplexNetwork)
     assert net.aspects == 1
     if masterFile:
         mofile = open(outputfiles + ".txt", "w")
 
     if numericNodes:
-        nodetonumber = {}
-        for i, node in enumerate(net):
-            nodetonumber[node] = i
+        nodetonumber = _map_nodes_to_numbers(net)
 
     for layer in net.get_layers():
         ofilename = outputfiles + str(layer) + ".edg"
@@ -146,6 +231,13 @@ def write_edge_files(
         ofile.close()
     if masterFile:
         mofile.close()
+
+
+def _map_nodes_to_numbers(net):
+    nodetonumber = {}
+    for i, node in enumerate(net):
+        nodetonumber[node] = i
+    return nodetonumber
 
 
 def read_ucinet(netinput, couplings=("categorical", 1.0), fullyInterconnected=True):

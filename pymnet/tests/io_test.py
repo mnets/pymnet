@@ -191,6 +191,20 @@ Data:
             net = netio.read_edge_file(fn, sep="\t")
             self.assertEqual(len(net.edges), 1)
 
+    def test_write_edge_file(self):
+        n = net.MultiplexNetwork(couplings=[("categorical", 1)])
+        n[1, 2, 3, 3] = 1
+        with tempfile.TemporaryDirectory() as tmp:
+            name = os.path.join(tmp, "test.edgelist")
+            netio.write_edge_file(n, name, sep="\t")
+
+            with open(name) as edges:
+                layer, l1, l2, w = next(edges).split("\t")
+                self.assertEqual(({int(l1), int(l2)}, int(w)), ({1, 2}, 1))
+                self.assertEqual(int(layer), 3)
+                net2 = netio.read_edge_file(name, sep="\t")
+                self.assertListEqual(list(net2.edges), list(n.edges))
+
 
 def test_io():
     suite = unittest.TestSuite()
@@ -201,6 +215,7 @@ def test_io():
     suite.addTest(TestIO("test_write_json"))
     suite.addTest(TestIO("test_write_edge_files"))
     suite.addTest(TestIO("test_read_edge_file"))
+    suite.addTest(TestIO("test_write_edge_file"))
 
     return unittest.TextTestRunner().run(suite).wasSuccessful()
 

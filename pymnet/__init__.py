@@ -32,7 +32,13 @@ from .models import (
     single_layer_er,
 )
 from .net import MultilayerNetwork, MultiplexNetwork
-from .netio import read_edge_file, read_ucinet, write_edge_files, write_json
+from .netio import (
+    read_edge_file,
+    write_edge_file,
+    read_ucinet,
+    write_edge_files,
+    write_json,
+)
 from .transforms import aggregate, subnet, supra_adjacency_matrix
 from .visuals import draw, webplot
 
