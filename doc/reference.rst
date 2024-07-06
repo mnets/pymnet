@@ -55,7 +55,7 @@ Transforming Networks
 
 Reading and Writing Networks
 ----------------------------
-.. automodule:: pymnet.io
+.. automodule:: pymnet.netio
 .. autosummary::
   :toctree: autogen
 
