@@ -104,7 +104,7 @@ def read_edge_file(
     inputfile = open(inputfile, "r")
 
     for line in inputfile:
-        li, fi, ti, w = line.split(sep)
+        li, fi, ti, w = line.strip().split(sep)
         li, fi, ti, w = int(li), int(fi), int(ti), float(w)
         if fi != ti:
             net[fi, ti, li] = w

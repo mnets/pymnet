@@ -184,7 +184,7 @@ Data:
             fn = f"{name}.txt"
             with open(fn, "w") as f:
                 f.write("1 1 2 0.5\n1 2 2 0.75")
-            net = netio.read_edge_file(fn)
+            net = netio.read_edge_file(fn, sep=" ")
             self.assertEqual(len(net.edges), 1)
             with open(fn, "w") as f:
                 f.write("1\t1\t2\t0.5\n1\t2\t2\t0.75")
