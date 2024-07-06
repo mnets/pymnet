@@ -932,7 +932,7 @@ class MultiplexNetwork(MultilayerNetwork):
     Parameters
     ----------
     couplings : list, str, tuple, None, MultilayerNetwork
-       Parameter determining how the layers are coupled, i.e. what
+       Parameter determining how the layers are coupled, i.e., what
        inter-layer edges are present.
        If string, the parameter must be on of the  policy types:
        'ordinal', 'categorical', or 'none'. None is same as 'none'. Tuple

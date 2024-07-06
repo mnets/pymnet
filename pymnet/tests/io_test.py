@@ -147,12 +147,15 @@ Data:
         self.assertEqual({node["name"] for node in j["nodes"]}, {1, 2})
         self.assertEqual({layer["name"] for layer in j["layers"]}, {3})
         self.assertEqual(
-            [({link["source"], link["target"]}, link["value"], link["layer"])
-                for link in j["links"]],
-            [({0, 1}, 1, 0)])
+            [
+                ({link["source"], link["target"]}, link["value"], link["layer"])
+                for link in j["links"]
+            ],
+            [({0, 1}, 1, 0)],
+        )
 
         with tempfile.TemporaryDirectory() as tmp:
-            with open(os.path.join(tmp, "fobject"), 'w') as f:
+            with open(os.path.join(tmp, "fobject"), "w") as f:
                 netio.write_json(n, outputfile=f)
             with open(os.path.join(tmp, "fobject")) as f:
                 self.assertEqual(json.load(f), j)
@@ -168,15 +171,25 @@ Data:
             name = os.path.join(tmp, "test")
             netio.write_edge_files(n, name, masterFile=True)
 
-            with open(name+".txt") as master:
+            with open(name + ".txt") as master:
                 self.assertEqual(master.readlines(), ["test3.edg;3;\n"])
 
-            with open(name+"3.edg") as layer:
+            with open(name + "3.edg") as layer:
                 l1, l2, w = next(layer).split()
-                self.assertEqual(
-                    ({int(l1), int(l2)}, int(w)),
-                    ({1, 2}, 1)
-                )
+                self.assertEqual(({int(l1), int(l2)}, int(w)), ({1, 2}, 1))
+
+    def test_read_edge_file(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            name = os.path.join(tmp, "test")
+            fn = f"{name}.txt"
+            with open(fn, "w") as f:
+                f.write("1 1 2 0.5\n1 2 2 0.75")
+            net = netio.read_edge_file(fn)
+            self.assertEqual(len(net.edges), 1)
+            with open(fn, "w") as f:
+                f.write("1\t1\t2\t0.5\n1\t2\t2\t0.75")
+            net = netio.read_edge_file(fn, sep="\t")
+            self.assertEqual(len(net.edges), 1)
 
 
 def test_io():

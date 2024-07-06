@@ -48,25 +48,58 @@ def write_json(net, outputfile=None):
 
 
 def read_edge_file(
-    edgeinput,
+    edgefile,
     couplings="categorical",
     fullyInterconnected=True,
     directed=False,
-    ignoreSelfLink=True,
+    sep=" ",
 ):
-    """Read a multiplex file separated into files for layers, edges, and nodes."""
+    """
+    Read a multiplex file following the syntax::
+
+        layer1{int} node1{int} node2{int} weight{float}\n
+        ...\n
+        layer_l{int} node_i{int} node_j{int} weight_k{float}
+
+    Self-links are ignored.
+
+    Parameters
+    ----------
+    edgefile: str
+        The input file name.
+    couplings : list, str, tuple, None, MultilayerNetwork
+       Parameter determining how the layers are coupled, i.e., what
+       inter-layer edges are present. Passed to the constructor of MultiplexNetwork.
+    fullyInterconnected : bool
+        If False, nodes having zero degree on a layer are not added
+        to that layer. Default is True.
+    directed: bool
+        If True, treat the input file as a directed edge list. Default is False.
+    sep: str
+        The separator used to separate the values in each line.
+
+    Returns
+    -------
+    An instance of MultiplexNetwork.
+
+    See also
+    --------
+    MultiplexNetwork: The class of the returned object.
+    """
     net = MultiplexNetwork(
         couplings=[couplings],
         fullyInterconnected=fullyInterconnected,
         directed=directed,
     )
-    edgefile = open(edgeinput, "r") if isinstance(edgeinput, str) else edgeinput
+    edgefile = open(edgefile, "r")
 
     for line in edgefile:
-        li, fi, ti, w = line.split()
+        li, fi, ti, w = line.split(sep)
         li, fi, ti, w = int(li), int(fi), int(ti), float(w)
-        if fi != ti or not ignoreSelfLink:
+        if fi != ti:
             net[fi, ti, li] = w
+
+    edgefile.close()
     return net
 
 
@@ -125,8 +158,8 @@ def read_ucinet(netinput, couplings=("categorical", 1.0), fullyInterconnected=Tr
 
     Parameters
     ----------
-    netinput : string, sequence
-       The input file name if string, otherwise any iterable.
+    netinput : str, Iterable
+       The input file name if str, otherwise any iterable.
     couplings : tuple
        Passed for MultiplexNetwork when the network object is created.
     fullyInterconnected : bool
@@ -211,7 +244,7 @@ def read_ucinet(netinput, couplings=("categorical", 1.0), fullyInterconnected=Tr
     except StopIteration:
         raise Exception("Empty or incomplete file.")
 
-    # Lets read the rest of the variables next.
+    # Let's read the rest of the variables next.
     # default values:
     format = "fullmatrix"
     labels = None
