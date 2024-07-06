@@ -255,9 +255,9 @@ the following code constructs a multiplex network where the first aspect is cate
     >>> conet.add_layer("b", 1)
     >>> conet.add_layer(1, 2)
     >>> conet.add_layer(2, 2)
-    >>> conet.add_layer(3, 3)
+    >>> conet.add_layer(3, 2)
     >>> conet["node", "node", "a", "a", 1, 2]
-    1
+    1.0
 
 In this case, the intra-layer network must be accessed by giving a combination of layers.
 
