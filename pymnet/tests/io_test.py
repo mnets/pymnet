@@ -1,5 +1,6 @@
 import sys
 import unittest
+import tempfile
 from operator import itemgetter
 
 from pymnet import net, netio
@@ -138,7 +139,6 @@ Data:
 
     def test_write_json(self):
         import json
-        import tempfile
         import os
 
         n = net.MultiplexNetwork(couplings=[("categorical", 1)])
@@ -160,6 +160,15 @@ Data:
             netio.write_json(n, outputfile=os.path.join(tmp, "fname"))
             with open(os.path.join(tmp, "fname")) as f:
                 self.assertEqual(json.load(f), j)
+
+    def test_edgefile_io(self):
+        n = net.MultiplexNetwork(couplings=[("categorical", 1)])
+        n[1, 2, 3, 3] = 1
+        with tempfile.TemporaryDirectory() as tmp:
+            netio.write_edge_files(net, tmp)
+            net2 = netio.read_edge_file(tmp)
+
+            self.assertEqual(net, net2)
 
 
 def test_io():
