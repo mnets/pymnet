@@ -25,7 +25,8 @@ Multiplex ER network with large number of layers
 
 First, we create an Erdos-Renyi multiplex network with small number of nodes and large number of layers and categorical couplings. We choose to have :math:`n=10` nodes and :math:`b=10^5` layers with edge probability of :math:`p=0.1`. This will result in a network with around :math:`9 \times 10^5` intra-layer edges and :math:`10 \binom{10^5}{2} \approx 5 \times 10^{10}` inter-layer edges. The command for creating this network is
 
->>> net=er(10,10**5*[0.1])
+>>> import pymnet
+>>> net = pymnet.er(10, 10**5*[0.1])
 
 The command takes around 2.4 seconds to run (averaged over 100 runs) in the above mentioned computer. Note that, internally, this command creates a sparse matrix representation of the intra-layer networks (i.e. only edges that exist are created) and the inter-layer edges are not actually created explicitly. Creating a full adjacency tensor, or a supra-adjacency matrix, would require creating an object with :math:`10^{12}` elements, and even a sparse representation with all edges explicitly generated would have around :math:`5 \times 10^{10}` elements.
 
@@ -34,7 +35,7 @@ Multiplex ER network with large number of nodes
 
 Next we create an ER network with :math:`n=10^5` nodes, :math:`b=10` layers, and average degree around one. The total number of intra-layer edges will be around :math:`5 \times 10^5`. This can be done with the following command
 
->>> net=er(10**5,10*[10**-5])
+>>> net = pymnet.er(10**5,10*[10**-5])
 
 The total time to complete this task is around 3.4 seconds.
 
