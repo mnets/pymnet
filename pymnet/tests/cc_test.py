@@ -2,7 +2,6 @@ import itertools
 import random
 import sys
 import unittest
-from operator import itemgetter
 
 import pymnet.net
 from pymnet import cc, models, net, transforms
@@ -23,7 +22,6 @@ class TestCC(unittest.TestCase):
         self.assertEqual(cc.cc_zhang(n, 1), 1.0)
         self.assertEqual(cc.cc_onnela(n, 1), 1.0)
         self.assertEqual(cc.cc_barrat(n, 1), 1.0)
-        self.assertEqual(cc.cc_barrat_optimized(n, 1), 1.0)
 
     def test_unweighted_flat_simple(self):
         n = net.MultilayerNetwork(aspects=0)
@@ -36,7 +34,6 @@ class TestCC(unittest.TestCase):
         self.assertEqual(cc.cc_zhang(n, 1), 1.0 / 3.0)
         self.assertEqual(cc.cc_onnela(n, 1), 1.0 / 3.0)
         self.assertEqual(cc.cc_barrat(n, 1), 1.0 / 3.0)
-        self.assertEqual(cc.cc_barrat_optimized(n, 1), 1.0 / 3.0)
 
     def test_weighted_flat_simple(self):
         pass  # TODO
@@ -130,7 +127,14 @@ class TestCC(unittest.TestCase):
         an[2, 4] = 1
 
         for i in range(4):
-            self.assertEqual(cc.cc_barrett(n, i, an), cc.cc_barrett_explicit(n, i))
+            self.assertEqual(
+                cc.cc_barrett(n, i, an),
+                cc.cc_barrett_explicit(n, i)
+            )
+            self.assertEqual(
+                cc.cc_barrett(n, i, an),
+                cc.cc_barrett_optimized(n, i, an)
+            )
 
         self.assertEqual(cc.lcc_brodka(n, 1, anet=None, threshold=1), 2.0 / 3.0)
         self.assertEqual(cc.lcc_brodka(n, 2, anet=None, threshold=1), 4.0 / 3.0)
@@ -606,11 +610,8 @@ class TestCC(unittest.TestCase):
         anet = pymnet.transforms.aggregate(net, 1)
         for snode in net.slices[0]:
             self.assertEqual(
-                cc.cc_barrett_explicit(net, snode), cc.cc_barrett(net, snode, anet)
-            )
-            self.assertEqual(
-                cc.cc_barrett_optimized(net, snode, anet),
-                cc.cc_barrett(net, snode, anet),
+                cc.cc_barrett_explicit(net, snode),
+                cc.cc_barrett(net, snode, anet)
             )
             self.assertEqual(
                 cc.cc_barrett(net, snode, anet),
