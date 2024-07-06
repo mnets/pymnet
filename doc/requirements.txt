@@ -1,3 +1,4 @@
 numpydoc == 1.6.0
 furo
 sphinx-copybutton
+toml
