@@ -284,7 +284,7 @@ def read_ucinet(netinput, couplings=("categorical", 1.0), fullyInterconnected=Tr
                     nlabels += 1
                     yield label.strip()  # .lower()
         except StopIteration:
-            raise Exception("File ended while reading labels.")
+            raise ValueError("File ended while reading labels.")
 
     # check if the input is file name instead of iterable
     if isinstance(netinput, str):
@@ -310,11 +310,12 @@ def read_ucinet(netinput, couplings=("categorical", 1.0), fullyInterconnected=Tr
                 try:
                     nval, mchar = nvalmchar.split()  # any whitespace ok
                 except ValueError:
-                    raise Exception("Error reading number of nodes in line: %s" % line)
+                    raise ValueError(
+                        "Error reading number of nodes in line: %s" % line)
             elif dims == 0:
-                raise Exception("Number of nodes (and slices) not given")
+                raise ValueError("Number of nodes (and slices) not given")
             else:
-                raise Exception("Too many aspects?")
+                raise ValueError("Too many aspects?")
 
             assert nchar.strip().lower() == "n"
             assert mchar.strip().lower() == "nm"
@@ -334,7 +335,7 @@ def read_ucinet(netinput, couplings=("categorical", 1.0), fullyInterconnected=Tr
         else:  # the size is on this line
             n, nm = parse_size(line[2:])
     except StopIteration:
-        raise Exception("Empty or incomplete file.")
+        raise ValueError("Empty or incomplete file.")
 
     # Let's read the rest of the variables next.
     # default values:
@@ -354,7 +355,7 @@ def read_ucinet(netinput, couplings=("categorical", 1.0), fullyInterconnected=Tr
                 if len(f) == 2:
                     format = f[1].strip()
                 else:
-                    raise Exception("Invalid line: '%s'" % line.strip())
+                    raise ValueError("Invalid line: '%s'" % line.strip())
             elif line.startswith("labels:"):
                 labels = list(read_labels(ii, n))
             elif line.startswith("row labels:"):
@@ -372,14 +373,14 @@ def read_ucinet(netinput, couplings=("categorical", 1.0), fullyInterconnected=Tr
                 raise Exception("Invalid command: '%s'" % line.strip())
     except StopIteration:
         pass
-    if data == False:
-        raise Exception("No data found.")
+    if not data:
+        raise ValueError("No data found.")
 
     # sort out the labels
     if labels_embedded and (
         labels is not None or rlabels is not None or clabels is not None
     ):
-        raise Exception("No additional labels when using embedded labels.")
+        raise ValueError("No additional labels when using embedded labels.")
     if llabels is None:
         llabels = range(nm)
     if labels is not None and rlabels is not None and clabels is not None:
@@ -425,27 +426,28 @@ def read_ucinet(netinput, couplings=("categorical", 1.0), fullyInterconnected=Tr
                 if labels_embedded:
                     rlabels.append(fields[0].lower())
                     fields = fields[1:]
-                assert len(fields) == n, "Invalid number of columns: %d" % len(fields)
+                assert len(fields) == n, \
+                    "Invalid number of columns: %d" % len(fields)
                 for column, field in enumerate(fields):
+                    ffield = float(field)
                     if nm == 1:
-                        if clabels[column] != rlabels[row]:
-                            if float(field) != 0.0:
-                                net[clabels[column]][rlabels[row]] = float(field)
+                        if clabels[column] != rlabels[row] and ffield != 0.0:
+                            net[clabels[column]][rlabels[row]] = ffield
                     else:
                         level = int(math.floor(row / n))
                         if clabels[column] != rlabels[row % n]:
-                            if float(field) != 0.0:
+                            if ffield != 0.0:
                                 net[
                                     clabels[column],
                                     rlabels[row % n],
                                     llabels[level],
                                     llabels[level],
-                                ] = float(field)
+                                ] = ffield
                 row += 1
         except StopIteration:
             assert row == n * nm, "Invalid number of rows in the data"
     else:
-        raise Exception("Format '%s' is not supported" % format)
+        raise ValueError("Format '%s' is not supported" % format)
 
     if fullyInterconnected and nm != 1:
         for layer in llabels:
