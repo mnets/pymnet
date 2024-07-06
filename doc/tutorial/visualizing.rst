@@ -9,9 +9,9 @@ Drawing networks with the library is easy and is usually done with the :code:`dr
 
 .. code-block:: python
 
-    >>> from pymnet import *
-    >>> net = models.er_multilayer(5, 2, 0.2)
-    >>> fig = draw(net)
+    >>> import pymnet
+    >>> net = pymnet.er_multilayer(5, 2, 0.2)
+    >>> fig = pymnet.draw(net)
 
 The first line of this code imports :code:`pymnet`. The second line creates a random node-aligned multilayer network with 5 nodes and 2 layers, where two node-layers are connected to each other with a probability of 0.2. The third line then creates a picture of that network.
 
@@ -25,7 +25,7 @@ Alternatively, you can view the network straight away by telling the draw method
 
 .. code-block:: python
 
-    >>> fig = draw(net, show=True)
+    >>> fig = pymnet.draw(net, show=True)
 
 The figure produced looks like this:
 
@@ -36,7 +36,7 @@ Multiplex-network figures can also be produced. For example, running the followi
 
 .. code-block:: python
 
-    >>> fig = draw(er(10, 3*[0.4]), layout="spring")
+    >>> fig = pymnet.draw(er(10, 3*[0.4]), layout="spring")
 
 produces the following picture of a multiplex Erdos-Renyi network:
 
@@ -47,7 +47,7 @@ There are multiple ways of customizing the figures. For documentation, look at t
 
 .. code-block:: python
 
-    >>> fig = draw(er(10, 3*[0.3]),
+    >>> fig = pymnet.draw(er(10, 3*[0.3]),
                  layout="circular",
                  layershape="circle",
                  nodeColorDict={(0,0):"r", (1,0):"r", (0,1):"r"},
@@ -65,9 +65,9 @@ If the network is large, then it is often desirable not to plot the coupling edg
 
 .. code-block:: python
 
-    >>> net = read_ucinet("bkfrat.dat", couplings="none")
-    >>> net = transforms.threshold(net, 4)
-    >>> fig = draw(net,
+    >>> net = pymnet.read_ucinet("bkfrat.dat", couplings="none")
+    >>> net = pymnet.transforms.threshold(net, 4)
+    >>> fig = pymnet.draw(net,
                  show=True,
                  layout="spring",
                  layerColorRule={},

@@ -8,13 +8,13 @@ Start by importing the library:
 
 .. code-block:: python
 
-    >>> from pymnet import *
+    >>> import pymnet
 
 :code:`MultilayerNetwork` is the basic network class in the library – all other types of networks are special cases of it. In order to get a monoplex network object, you can simply construct a :code:`MultilayerNetwork` with 0 aspects.
 
 .. code-block:: python
 
-    >>> net = MultilayerNetwork(aspects=0)
+    >>> net = pymnet.MultilayerNetwork(aspects=0)
 
 You can now start adding nodes to the network with the :code:`add_node` method:
 
@@ -105,7 +105,7 @@ By default, all network objects are undirected. Directed network objects can be 
 
 .. code-block:: python
 
-    >>> dirnet = MultilayerNetwork(aspects=0, directed=True)
+    >>> dirnet = pymnet.MultilayerNetwork(aspects=0, directed=True)
     >>> dirnet[1, 2] = 1
     >>> dirnet[1, 2]
     1
@@ -122,7 +122,7 @@ We are now ready to move to more general multilayer networks with an  arbitrary 
 
 .. code-block:: python
 
-    >>> mnet = MultilayerNetwork(aspects=1)
+    >>> mnet = pymnet.MultilayerNetwork(aspects=1)
 
 Networks of this type are similar to the monoplex ones, but now you have layers in addition to nodes. You can add new layers with the :code:`add_layer` method:
 
@@ -163,7 +163,7 @@ You can create networks with arbitrary number of aspects. The syntax for this ty
 
 .. code-block:: python
 
-    >>> mnet2 = MultilayerNetwork(aspects=2)
+    >>> mnet2 = pymnet.MultilayerNetwork(aspects=2)
     >>> mnet2[1, 2, "a" ,"b", "x" ,"y"] = 1
     >>> mnet2[1, "a", "x"][2, "b", "y"]
     1
@@ -191,7 +191,7 @@ The simplest multiplex network is the one with no coupling edges. You would crea
 
 :code:`MultiplexNetwork`
 
->>> mplex = MultiplexNetwork(couplings="none")
+>>> mplex = pymnet.MultiplexNetwork(couplings="none")
 
 The nodes and edges can be accessed and added as usual:
 
@@ -212,7 +212,7 @@ In categorical networks, all the diagonal inter-layer edges are present.
 
 .. code-block:: python
 
-    >>> cnet = MultiplexNetwork(couplings="categorical")
+    >>> cnet = pymnet.MultiplexNetwork(couplings="categorical")
     >>> cnet.add_node(1)
     >>> cnet.add_layer("a")
     >>> cnet.add_layer("b")
@@ -223,7 +223,7 @@ In ordinal networks, only adjacent layers are connected to each other. In a :cod
 
 .. code-block:: python
 
-    >>> onet = MultiplexNetwork(couplings="ordinal")
+    >>> onet = pymnet.MultiplexNetwork(couplings="ordinal")
     >>> onet.add_node("node")
     >>> onet.add_layer(1)
     >>> onet.add_layer(2)
@@ -237,7 +237,7 @@ You can also give the coupling strength, i.e. the weight of the inter-layer edge
 
 .. code-block:: python
 
-    >>> cnet = MultiplexNetwork(couplings=("categorical", 10))
+    >>> cnet = pymnet.MultiplexNetwork(couplings=("categorical", 10))
     >>> cnet.add_node(1)
     >>> cnet.add_layer("a")
     >>> cnet.add_layer("b")
@@ -249,7 +249,7 @@ the following code constructs a multiplex network where the first aspect is cate
 
 .. code-block:: python
 
-    >>> conet = MultiplexNetwork(couplings=["categorical", "ordinal"])
+    >>> conet = pymnet.MultiplexNetwork(couplings=["categorical", "ordinal"])
     >>> conet.add_node("node")
     >>> conet.add_layer("a", 1)
     >>> conet.add_layer("b", 1)

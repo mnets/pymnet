@@ -5,7 +5,7 @@ Using NetworkX functions
 
 Start by importing the library:
 
->>> from pymnet import nx, models
+>>> from pymnet import nx
 
 You can then run any NetworkX function from the pymnet.nx module. For example, you can produce the Karate Club network with the following command.
 
@@ -25,5 +25,6 @@ For the sake of reproducability in the next example, let's explicitly seed the r
 
 You can also pass Pymnet objects as arguments to NetworkX functions in a similar way. This is handy, for example, when analyzing monoplex structures of intra-layer networks of multiplex networks. For example, producing a multiplex network with three Erdos-Renyi intra-layer networks using Pymnet and calculating the number of connected components in each layer can be done with the following command:
 
->>> {name: nx.number_connected_components(layer) for name, layer in models.er(1000, 3*[0.005]).A.items()}
+>>> import pymnet
+>>> {name: nx.number_connected_components(layer) for name, layer in pymnet.er(1000, 3*[0.005]).A.items()}
 {0: 10, 1: 9, 2: 5}
