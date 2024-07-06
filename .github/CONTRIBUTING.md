@@ -49,6 +49,20 @@ With the repository cloned in the current directory, you can run the
 $ python -m pymnet.tests
 ```
 
+## Writing tests
+
+Please ensure that your code is covered by unit tests. 
+We use `codecov` to monitor coverage, and the `codecov/project` check integrated with the GitHub repository checks if a commit decreases coverage.
+
+## Formatting code
+
+Please use `black` to format your code and `isort` to sort imports. 
+Both can be installed via `pip install ".[dev]"`.
+
+## Writing documentation
+
+Please follow the `numpydoc` docstring standard explained [here](https://numpydoc.readthedocs.io/en/latest/format.html).
+
 ## Building documentation
 
 With the repository cloned in the current directory, you can build the
