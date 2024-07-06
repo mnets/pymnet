@@ -200,6 +200,7 @@ def test_io():
     suite.addTest(TestIO("test_pickle"))
     suite.addTest(TestIO("test_write_json"))
     suite.addTest(TestIO("test_write_edge_files"))
+    suite.addTest(TestIO("test_read_edge_file"))
 
     return unittest.TextTestRunner().run(suite).wasSuccessful()
 
