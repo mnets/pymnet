@@ -247,6 +247,11 @@ class TestNet(unittest.TestCase):
         testnet = net.MultilayerNetwork(aspects=0)
         self.test_flat(testnet)
 
+    def test_set_link(self):
+        testnet = net.MultilayerNetwork(aspects=0)
+        with self.assertRaises(TypeError):
+            testnet._set_link((1, 2), "hello")
+
     ##### Test simple couplings
 
     def test_simple_couplings(self, net, hasDiagonalLinks=False):
@@ -942,6 +947,7 @@ def test_net():
     suite.addTest(TestNet("test_mlayer_2dim_nonglobalnodes"))
     suite.addTest(TestNet("test_mplex_adding_intralayer_nets"))
     suite.addTest(TestNet("test_selfedges"))
+    suite.addTest(TestNet("test_set_link"))
 
     return unittest.TextTestRunner().run(suite).wasSuccessful()
 

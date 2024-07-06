@@ -266,6 +266,12 @@ class MultilayerNetwork(object):
         return self.noEdge
 
     def _set_link(self, link, value):
+        if not (isinstance(value, int) or isinstance(value, float)):
+            raise TypeError(
+                "Trying to set a value of type "
+                + type(value).__name__
+                + " to a link! Only integers and floats are supported."
+            )
         # keep track of nodes and layers in net?
         node1, node2 = self._link_to_nodes(link)
         if value == self.noEdge:
@@ -716,7 +722,7 @@ class MultilayerNode(object):
     def __init__(self, node, mnet, layers=None):
         """A node in a multilayer network."""
         self.node = node
-        self.mnet = mnet
+        self.__mnet = mnet
         self.layers = layers
 
     def __getitem__(self, item):
@@ -724,91 +730,91 @@ class MultilayerNode(object):
         Example:
         net[1,'a','x'][:,:,'y']=net[1,:,'a',:,'x','y']
         """
-        if self.mnet.aspects == 0:
+        if self.__mnet.aspects == 0:
             item = (item,)
-        return self.mnet[self.mnet._nodes_to_link(self.node, item)]
+        return self.__mnet[self.__mnet._nodes_to_link(self.node, item)]
 
     def __setitem__(self, item, value):
-        if self.mnet.aspects == 0:
+        if self.__mnet.aspects == 0:
             item = (item,)
-        self.mnet[self.mnet._nodes_to_link(self.node, item)] = value
+        self.__mnet[self.__mnet._nodes_to_link(self.node, item)] = value
 
     def __len__(self):
         return self.deg()
 
     def deg(self, *layers):
         """Return the degree of the node."""
-        assert len(layers) == 0 or len(layers) == (self.mnet.aspects + 1)
+        assert len(layers) == 0 or len(layers) == (self.__mnet.aspects + 1)
         if layers == ():
             layers = self.layers
-        return self.mnet._get_degree(self.node, layers)
+        return self.__mnet._get_degree(self.node, layers)
 
     def deg_total(self, *layers):
         """Return the total degree of the node."""
-        assert len(layers) == 0 or len(layers) == (self.mnet.aspects + 1)
+        assert len(layers) == 0 or len(layers) == (self.__mnet.aspects + 1)
         if layers == ():
             layers = self.layers
-        return self.mnet._get_degree_total(self.node, layers)
+        return self.__mnet._get_degree_total(self.node, layers)
 
     def deg_in(self, *layers):
         """Return the in-degree of the node."""
-        assert len(layers) == 0 or len(layers) == (self.mnet.aspects + 1)
+        assert len(layers) == 0 or len(layers) == (self.__mnet.aspects + 1)
         if layers == ():
             layers = self.layers
-        return self.mnet._get_degree_in(self.node, layers)
+        return self.__mnet._get_degree_in(self.node, layers)
 
     def deg_out(self, *layers):
         """Return the out-degree of the node."""
-        assert len(layers) == 0 or len(layers) == (self.mnet.aspects + 1)
+        assert len(layers) == 0 or len(layers) == (self.__mnet.aspects + 1)
         if layers == ():
             layers = self.layers
-        return self.mnet._get_degree_out(self.node, layers)
+        return self.__mnet._get_degree_out(self.node, layers)
 
     def strength(self, *layers):
         """Return the weighted degree, i.e. the strength, of the node."""
-        assert len(layers) == 0 or len(layers) == (self.mnet.aspects + 1)
+        assert len(layers) == 0 or len(layers) == (self.__mnet.aspects + 1)
         if layers == ():
             layers = self.layers
-        return self.mnet._get_strength(self.node, layers)
+        return self.__mnet._get_strength(self.node, layers)
 
     def strength_total(self, *layers):
         """Return the weighted totaldegree, i.e. the strength, of the node."""
-        assert len(layers) == 0 or len(layers) == (self.mnet.aspects + 1)
+        assert len(layers) == 0 or len(layers) == (self.__mnet.aspects + 1)
         if layers == ():
             layers = self.layers
-        return self.mnet._get_strength_total(self.node, layers)
+        return self.__mnet._get_strength_total(self.node, layers)
 
     def strength_in(self, *layers):
         """Return the weighted in-degree, i.e. the strength, of the node."""
-        assert len(layers) == 0 or len(layers) == (self.mnet.aspects + 1)
+        assert len(layers) == 0 or len(layers) == (self.__mnet.aspects + 1)
         if layers == ():
             layers = self.layers
-        return self.mnet._get_strength_in(self.node, layers)
+        return self.__mnet._get_strength_in(self.node, layers)
 
     def strength_out(self, *layers):
         """Return the weighted out-degree, i.e. the strength, of the node."""
-        assert len(layers) == 0 or len(layers) == (self.mnet.aspects + 1)
+        assert len(layers) == 0 or len(layers) == (self.__mnet.aspects + 1)
         if layers == ():
             layers = self.layers
-        return self.mnet._get_strength_out(self.node, layers)
+        return self.__mnet._get_strength_out(self.node, layers)
 
     def iter_total(self):
         """Iterate over all neighbors."""
-        for node in self._iter_nodes(self.mnet._iter_neighbors_total):
+        for node in self._iter_nodes(self.__mnet._iter_neighbors_total):
             yield node
 
     def iter_out(self):
         """Iterate over out-neighbors."""
-        for node in self._iter_nodes(self.mnet._iter_neighbors_out):
+        for node in self._iter_nodes(self.__mnet._iter_neighbors_out):
             yield node
 
     def iter_in(self):
         """Iterate over in-neighbors."""
-        for node in self._iter_nodes(self.mnet._iter_neighbors_in):
+        for node in self._iter_nodes(self.__mnet._iter_neighbors_in):
             yield node
 
     def _iter_nodes(self, iterf):
-        if self.mnet.aspects > 0:
+        if self.__mnet.aspects > 0:
             for node in iterf(self.node, self.layers):
                 yield node  # maybe should only return the indices that can change?
         else:
