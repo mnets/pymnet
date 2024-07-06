@@ -1,4 +1,5 @@
 import sys
+import os
 import unittest
 import tempfile
 from operator import itemgetter
@@ -139,7 +140,6 @@ Data:
 
     def test_write_json(self):
         import json
-        import os
 
         n = net.MultiplexNetwork(couplings=[("categorical", 1)])
         n[1, 2, 3, 3] = 1
@@ -161,14 +161,22 @@ Data:
             with open(os.path.join(tmp, "fname")) as f:
                 self.assertEqual(json.load(f), j)
 
-    def test_edgefile_io(self):
+    def test_write_edge_files(self):
         n = net.MultiplexNetwork(couplings=[("categorical", 1)])
         n[1, 2, 3, 3] = 1
         with tempfile.TemporaryDirectory() as tmp:
-            netio.write_edge_files(net, tmp)
-            net2 = netio.read_edge_file(tmp)
+            name = os.path.join(tmp, "test")
+            netio.write_edge_files(n, name, masterFile=True)
 
-            self.assertEqual(net, net2)
+            with open(name+".txt") as master:
+                self.assertEqual(master.readlines(), ["test3.edg;3;\n"])
+
+            with open(name+"3.edg") as layer:
+                l1, l2, w = next(layer).split()
+                self.assertEqual(
+                    ({int(l1), int(l2)}, int(w)),
+                    ({1, 2}, 1)
+                )
 
 
 def test_io():
@@ -178,6 +186,7 @@ def test_io():
     suite.addTest(TestIO("test_read_ucinet_mplex_nonglobalnodes"))
     suite.addTest(TestIO("test_pickle"))
     suite.addTest(TestIO("test_write_json"))
+    suite.addTest(TestIO("test_write_edge_files"))
 
     return unittest.TextTestRunner().run(suite).wasSuccessful()
 
