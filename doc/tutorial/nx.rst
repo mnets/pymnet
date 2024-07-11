@@ -18,7 +18,7 @@ This will produce a native Pymnet multilayer network object with 0 aspects (i.e.
 >>> net.aspects
 0
 
-For the sake of reproducability in the next example, let's explicitly seed the ranom number generator here:
+For the sake of reproducibility in the next example, let's explicitly seed the random number generator here:
 
 >>> import random
 >>> random.seed(42)
