@@ -49,7 +49,7 @@ As a second option, you can first access a node object and then get the edge poi
 
     >>> net[1][2] = 1
 
-These to ways are equivalent, but the difference will become important when we move on to networks that are not monoplex anymore. You can also add edges between nodes that you have not explicitly created, and in this case, the missing nodes are created automatically:
+These two ways are equivalent, but the difference will become important when we move on to networks that are not monoplex anymore. You can also add edges between nodes that you have not explicitly created, and in this case, the missing nodes are created automatically:
 
 .. code-block:: python
 
@@ -182,7 +182,7 @@ Sometimes new syntax is needed. For example, the aspect must be specified when a
 Multiplex networks
 ------------------
 
-The multilayer networks can in theory be used to represented multiplex networks, but in practice, it is often better to use a specialized class :code:`MultiplexNetwork` when dealing with multiplex networks.
+The multilayer networks can in theory be used to represent multiplex networks, but in practice, it is often better to use a specialized class :code:`MultiplexNetwork` when dealing with multiplex networks.
 There are several reasons for this. First, the :code:`MultiplexNetwork` class offers an additional convenient interface for handling intra-layer networks.
 Second, the :code:`MultiplexNetwork` class can take coupling rules as an input when it is constructed and use them to implicitly create the inter-layer edges when they are needed. This saves some memory and makes it easier to create networks with such coupling structures.
 Third, using a :code:`MultiplexNetwork` will let the functions in the library know that your multilayer network is a multiplex network. Some of the functions only work for multiplex networks, but even the ones that work for general multilayer networks can use the information to speed up the processing.
