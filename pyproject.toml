@@ -49,6 +49,9 @@ dev = [
     "black >= 24.4",
     "isort >= 5.13"
 ]
+tutorial = [
+    "jupyterlab >= 4.2"
+]
 
 [build-system]
 requires = [
