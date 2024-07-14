@@ -6,7 +6,7 @@ import sys
 
 class TestTutorials(unittest.TestCase):
     def setUp(self):
-        self.networktypes = "../tutorials/01_networktypes"
+        self.networktypes = "../../doc/tutorials/networktypes"
 
     def test_networktypes(self):
         subprocess.call(
@@ -23,7 +23,7 @@ class TestTutorials(unittest.TestCase):
 
     def tearDown(self):
         subprocess.call(
-            f"rm ../tutorials/{self.networktypes}.nbconvert.ipynb", shell=True
+            f"rm ../../doc/tutorials/{self.networktypes}.nbconvert.ipynb", shell=True
         )
 
 
