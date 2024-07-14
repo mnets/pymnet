@@ -7,7 +7,6 @@ from .net_test import test_net
 from .sampling_test import test_sampling
 from .transforms_test import test_transforms
 from .visuals_test import test_visuals
-from .tutorial_test import test_tutorials
 
 try:
     import networkx
@@ -30,7 +29,6 @@ def test_all():
     codes.append(test_visuals())
     codes.append(test_isomorphisms())
     codes.append(test_sampling())
-    # codes.append(test_tutorials())
     if nximported:
         codes.append(test_nxwrap())
     return all(codes)
