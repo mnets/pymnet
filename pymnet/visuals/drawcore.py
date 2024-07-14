@@ -4,8 +4,12 @@
 import random
 
 from . import drawassigners as das
-from .drawbackends.threejs import (EdgeThreeJS, LayerThreeJS, NetFigureThreeJS,
-                                   NodeThreeJS)
+from .drawbackends.threejs import (
+    EdgeThreeJS,
+    LayerThreeJS,
+    NetFigureThreeJS,
+    NodeThreeJS,
+)
 from .layouts import get_layout
 
 possible_backends = ["mpl", "threejs"]
@@ -104,7 +108,7 @@ def draw(
 ):
     """Visualize a multilayer network.
 
-    Creates a 3D pictures of multilayer networks are drawn using Matplotlib.
+    Create 3D pictures of multilayer networks drawn using Matplotlib.
     The network can be any type of multilayer
     network with a single aspect.
 
@@ -186,7 +190,7 @@ def draw(
     value is specific to node properites such as node size or node color. Empty
     property dictionary means that there is no rule for setting the property,
     and a rule can be set by adding an item to the property rule dictionary
-    with "rule" as a key and value correspoding to the specific rule.
+    with "rule" as a key and value corresponding to the specific rule.
 
     Generic properties:
 
@@ -224,7 +228,7 @@ def draw(
     - "colormap" : Use a Matplotlib color map to map a number to a color. Value
       is the colormap name, e.g. "jet". - "scaleby" : Multiply the property
       values by a constant given by the value.
-    - "f" : Any function take takes the value as an argument an returns the
+    - "f" : Any function take takes the value as an argument and returns the
       modified value.
 
     Node size modifiers:
