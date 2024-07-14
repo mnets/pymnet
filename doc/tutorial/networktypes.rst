@@ -233,7 +233,7 @@ In ordinal networks, only adjacent layers are connected to each other. In a :cod
     >>> onet["node", "node", 1, 3]
     0
 
-You can also give the coupling strength, i.e. the weight of the inter-layer edges, as a parameter
+You can also give the coupling strength, i.e. the weight of the inter-layer edges, as a parameter:
 
 .. code-block:: python
 
