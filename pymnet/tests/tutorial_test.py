@@ -5,7 +5,7 @@ import subprocess
 
 class TestTutorials(unittest.TestCase):
     def setUp(self):
-        self.networktypes = "../tutorials/01_networktypes"
+        self.networktypes = "tutorials/01_networktypes"
 
     def test_networktypes(self):
         res = subprocess.call(
@@ -21,9 +21,7 @@ class TestTutorials(unittest.TestCase):
         self.assertListEqual(out, out_original)
 
     def tearDown(self):
-        subprocess.call(
-            f"rm ../tutorials/{self.networktypes}.nbconvert.ipynb", shell=True
-        )
+        subprocess.call(f"rm tutorials/{self.networktypes}.nbconvert.ipynb", shell=True)
 
 
 def test_tutorials():
