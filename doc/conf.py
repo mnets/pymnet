@@ -29,29 +29,31 @@
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.autosummary',
-    'sphinx_copybutton',
-    'numpydoc',
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
+    "sphinx_copybutton",
+    "numpydoc",
+    "myst_nb",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # The suffix of source filenames.
-source_suffix = '.rst'
+source_suffix = ".rst"
 
 # The encoding of source files.
 # source_encoding = 'utf-8-sig'
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = "index"
 
 # General information about the project.
-project = u'pymnet: Multilayer Networks Library'
-copyright = u'2013, Mikko Kivela'
+project = "pymnet: Multilayer Networks Library"
+copyright = "2013, Mikko Kivela"
 
 import toml
+
 project_data = toml.load("../pyproject.toml")
 
 # The version info for the project you're documenting, acts as replacement for
@@ -75,7 +77,7 @@ release = project_data["project"]["version"]
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['_build']
+exclude_patterns = ["_build"]
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -93,7 +95,7 @@ exclude_patterns = ['_build']
 # show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = "sphinx"
 pygments_dark_style = "monokai"
 
 
@@ -108,14 +110,13 @@ modindex_common_prefix = ["pymnet."]
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'furo'
+html_theme = "furo"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 html_theme_options = {
-    "source_repository":
-        "https://github.com/mnets/pymnet",
+    "source_repository": "https://github.com/mnets/pymnet",
     "source_branch": "master",
     "source_directory": "doc/",
 }
@@ -142,12 +143,12 @@ html_baseurl = "https://mnets.github.io/pymnet/"
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = ["_static"]
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
 # directly to the root of the documentation.
-html_extra_path = ['robots.txt']
+html_extra_path = ["robots.txt"]
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
@@ -191,7 +192,7 @@ html_show_copyright = False
 # html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'MultilayerNetworksLibrarydoc'
+htmlhelp_basename = "MultilayerNetworksLibrarydoc"
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -199,10 +200,8 @@ htmlhelp_basename = 'MultilayerNetworksLibrarydoc'
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
     # 'papersize': 'letterpaper',
-
     # The font size ('10pt', '11pt' or '12pt').
     # 'pointsize': '10pt',
-
     # Additional stuff for the LaTeX preamble.
     # 'preamble': '',
 }
@@ -211,8 +210,13 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'pymnet.tex', u'Multilayer Networks Library Documentation',
-   u'Mikko Kivela', 'manual'),
+    (
+        "index",
+        "pymnet.tex",
+        "Multilayer Networks Library Documentation",
+        "Mikko Kivela",
+        "manual",
+    ),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -241,9 +245,13 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'multilayernetworkslibrary',
-     u'Multilayer Networks Library Documentation',
-     [u'Mikko Kivela'], 1)
+    (
+        "index",
+        "multilayernetworkslibrary",
+        "Multilayer Networks Library Documentation",
+        ["Mikko Kivela"],
+        1,
+    )
 ]
 
 # If true, show URL addresses after external links.
@@ -256,11 +264,15 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'MultilayerNetworksLibrary',
-   u'Multilayer Networks Library Documentation',
-   u'Mikko Kivela', 'MultilayerNetworksLibrary',
-   'Pymnet is a free library for analysing multilayer networks',
-   'Miscellaneous'),
+    (
+        "index",
+        "MultilayerNetworksLibrary",
+        "Multilayer Networks Library Documentation",
+        "Mikko Kivela",
+        "MultilayerNetworksLibrary",
+        "Pymnet is a free library for analysing multilayer networks",
+        "Miscellaneous",
+    ),
 ]
 
 # Documents to append as an appendix to all manuals.
@@ -277,4 +289,4 @@ texinfo_documents = [
 
 autosummary_generate = True
 
-copybutton_exclude = '.linenos, .gp, .go'
+copybutton_exclude = ".linenos, .gp, .go"
