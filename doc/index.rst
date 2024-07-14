@@ -6,7 +6,7 @@
    :hidden:
 
    overview
-   tutorial/index
+   tutorials
    reference
 
 .. sidebar:: Multilayer networks
@@ -17,7 +17,7 @@
 
    The library is based on the general definition of **multilayer networks** presented in a `review article <http://arxiv.org/abs/1309.7233>`_. Multilayer networks can be used to represent various types network generalizations found in the literature. For example, multiplex networks, temporal networks, networks of networks, and interdependent networks are all types of multilayer networks. The library supports even more general types of networks with multiple *aspects* such that the networks can for example have both temporal and multiplex aspect at the same time. 
 
-   The visualization on the left is produced with the library. See the :ref:`visualization_tutorial` tutorial for instructions on how to analyze your own network data with the library!
+   The visualization on the left is produced with the library. See the visualization tutorial for instructions on how to visualize your own network data with the library!
 
 
 ``pymnet`` is a free library for analyzing multilayer networks.
@@ -53,6 +53,6 @@ The easiest way to get ``pymnet`` is via pip:
 
 * :ref:`overview`: *Overview of the design of the library and benchmarks* 
 * :ref:`reference`: *Reference for all functions and classes in the library* 
-* :ref:`tutorial`: *Easy way of getting started with various topics*        
+* :ref:`tutorials`: *Easy way of getting started with various topics*
 
 
