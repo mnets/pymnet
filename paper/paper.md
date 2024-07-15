@@ -38,9 +38,9 @@ bibliography: paper.bib
 Many complex systems can be readily modeled as networks and represented as graphs. 
 Such systems include social interactions, transport infrastructures, biological pathways, brains, ecosystems, and many more. 
 A major advantage of representing complex systems as graphs is that the same graph tools and methods can be applied in a wide variety of domains. 
-However, the graph representation has its limitations. 
-For many systems, there is a need to represent richer network data, such as multidimensional features, several types of interactions, numerous layers of hierarchy, and multiple modalities, to capture the structure and dynamics of the systems more accurately than simple graphs would allow. 
-Multilayer networks [@kivela2014] generalize graphs to capture the rich network data often associated with complex systems, allowing us to study a broad range of phenomena using a common representation, using the same multilayer tools and methods. 
+However, the graph representation has its limitations: 
+Many systems contain nodes with multidimensional features, interactions of various types, different levels of hierarchy, or multiple modalities, which deserve to be modeled but cannot be described by simple graphs.
+Multilayer networks [@kivela2014] generalize graphs to capture the rich network data often associated with complex systems, allowing us to study a broad range of phenomena using the same representations, tools, and methods. 
 With `pymnet`, we introduce a Python package that provides the essential data structures and computational tools for multilayer network analysis.
 
 # Statement of Need
