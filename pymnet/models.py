@@ -79,8 +79,7 @@ def single_layer_conf(net, degs, degstype="distribution"):
     for s in range(int(len(stubs) / 2)):
         node1, node2 = sorted([stubs[2 * s], stubs[2 * s + 1]])
 
-        edgetoindex[(node1, node2)] = edgetoindex.get((node1, node2), []) + \
-            [2 * s]
+        edgetoindex[(node1, node2)] = edgetoindex.get((node1, node2), []) + [2 * s]
 
         if net[node1, node2] != 0:
             multiedges.add((node1, node2))
@@ -96,16 +95,13 @@ def single_layer_conf(net, degs, degstype="distribution"):
             while repeat:
                 # select two edges at random
                 e1i, e2i = map(
-                    lambda x: 2 * x,
-                    random.sample(range(int(len(stubs) / 2)), 2)
+                    lambda x: 2 * x, random.sample(range(int(len(stubs) / 2)), 2)
                 )
-                c = [node, stubs[e1i], stubs[e1i + 1],
-                     stubs[e2i], stubs[e2i + 1]]
+                c = [node, stubs[e1i], stubs[e1i + 1], stubs[e2i], stubs[e2i + 1]]
                 n2, n3 = sorted([c[1], c[2]])
                 n4, n5 = sorted([c[3], c[4]])
                 if len(set(c)) == len(c):
-                    if (n2, n3) not in multiedges and \
-                            (n4, n5) not in multiedges:
+                    if (n2, n3) not in multiedges and (n4, n5) not in multiedges:
                         if (
                             net[node, n2] == 0
                             and net[node, n4] == 0
@@ -127,16 +123,13 @@ def single_layer_conf(net, degs, degstype="distribution"):
             while repeat:
                 # select two edges at random
                 e1i, e2i = map(
-                    lambda x: 2 * x,
-                    random.sample(range(int(len(stubs) / 2)), 2)
+                    lambda x: 2 * x, random.sample(range(int(len(stubs) / 2)), 2)
                 )
-                c = [n1, n2, stubs[e1i], stubs[e1i + 1],
-                     stubs[e2i], stubs[e2i + 1]]
+                c = [n1, n2, stubs[e1i], stubs[e1i + 1], stubs[e2i], stubs[e2i + 1]]
                 n3, n4 = sorted([c[2], c[3]])
                 n5, n6 = sorted([c[4], c[5]])
                 if len(set(c)) == len(c):
-                    if (n3, n4) not in multiedges and \
-                            (n5, n6) not in multiedges:
+                    if (n3, n4) not in multiedges and (n5, n6) not in multiedges:
                         if (
                             net[n1, n3] == 0
                             and net[n2, n4] == 0
@@ -154,8 +147,7 @@ def single_layer_conf(net, degs, degstype="distribution"):
                             net[n1, n5] = 1
                             net[n2, n6] = 1
                             si1, si2 = sorted(
-                                [edgetoindex[n1, n2].pop(),
-                                 edgetoindex[n1, n2].pop()]
+                                [edgetoindex[n1, n2].pop(), edgetoindex[n1, n2].pop()]
                             )
                             stubs[si1], stubs[si1 + 1] = sorted([n1, n3])
                             stubs[si2], stubs[si2 + 1] = sorted(
@@ -292,11 +284,9 @@ def conf(degs, degstype="distribution", couplings=("categorical", 1.0)):
                     nodeAligned = False
                 nnodes = lnnodes
         else:
-            raise ValueError(
-                "degstype should be either `distribution' or `nodes'")
+            raise ValueError("degstype should be either `distribution' or `nodes'")
 
-        net = MultiplexNetwork(couplings=[couplings],
-                               fullyInterconnected=nodeAligned)
+        net = MultiplexNetwork(couplings=[couplings], fullyInterconnected=nodeAligned)
         if namedlayers:
             # layers=degs.iteritems()
             layers = ((node, degs[node]) for node in degs)
@@ -334,8 +324,7 @@ def er(n, p=None, edges=None):
     """
     # What kind of network?
     fic = not hasattr(n, "__iter__")  # fully interconnected
-    monoplex = (not hasattr(p, "__iter__")) and \
-        (not hasattr(edges, "__iter__")) and fic
+    monoplex = (not hasattr(p, "__iter__")) and (not hasattr(edges, "__iter__")) and fic
 
     # Sanity check for parameters
     if (p is None and edges is None) or (p is not None and edges is not None):
@@ -621,11 +610,9 @@ def conf_overlaps(ol_degs, couplings=None):
                 while repeat:
                     # select two edges at random
                     e1i, e2i = map(
-                        lambda x: 2 * x,
-                        random.sample(range(int(len(stubs) / 2)), 2)
+                        lambda x: 2 * x, random.sample(range(int(len(stubs) / 2)), 2)
                     )
-                    c = [node, stubs[e1i], stubs[e1i + 1],
-                         stubs[e2i], stubs[e2i + 1]]
+                    c = [node, stubs[e1i], stubs[e1i + 1], stubs[e2i], stubs[e2i + 1]]
                     n2, n3 = sorted([c[1], c[2]])
                     n4, n5 = sorted([c[3], c[4]])
                     if len(set(c)) == len(c):
@@ -660,16 +647,14 @@ def conf_overlaps(ol_degs, couplings=None):
                                 used_edges.add(e3)
 
         for n1, n2 in multiedges:
-            for dummy in range(len(edgetoindex[(n1, n2)])//2):
+            for dummy in range(len(edgetoindex[(n1, n2)]) // 2):
                 repeat = True
                 while repeat:
                     # select two edges at random
                     e1i, e2i = map(
-                        lambda x: 2 * x,
-                        random.sample(range(int(len(stubs) / 2)), 2)
+                        lambda x: 2 * x, random.sample(range(int(len(stubs) / 2)), 2)
                     )
-                    c = [n1, n2, stubs[e1i], stubs[e1i + 1],
-                         stubs[e2i], stubs[e2i + 1]]
+                    c = [n1, n2, stubs[e1i], stubs[e1i + 1], stubs[e2i], stubs[e2i + 1]]
                     n3, n4 = sorted([c[2], c[3]])
                     n5, n6 = sorted([c[4], c[5]])
                     if len(set(c)) == len(c):
@@ -725,16 +710,13 @@ def conf_overlaps(ol_degs, couplings=None):
                 while repeat:
                     # select two edges at random
                     e1i, e2i = map(
-                        lambda x: 2 * x,
-                        random.sample(range(int(len(stubs) / 2)), 2)
+                        lambda x: 2 * x, random.sample(range(int(len(stubs) / 2)), 2)
                     )
-                    c = [n1, n2, stubs[e1i], stubs[e1i + 1],
-                         stubs[e2i], stubs[e2i + 1]]
+                    c = [n1, n2, stubs[e1i], stubs[e1i + 1], stubs[e2i], stubs[e2i + 1]]
                     n3, n4 = sorted([c[2], c[3]])
                     n5, n6 = sorted([c[4], c[5]])
                     if len(set(c)) == len(c):
-                        if (n3, n4) not in takenedges and \
-                                (n5, n6) not in takenedges:
+                        if (n3, n4) not in takenedges and (n5, n6) not in takenedges:
                             e1 = tuple(sorted([n1, n3]))
                             e2 = tuple(sorted([n2, n5]))
                             e3 = tuple(sorted([n4, n6]))
@@ -821,8 +803,7 @@ def er_overlaps_match_aggregated(n, edges, ps, couplings=None):
             i = 0
             while i < (k * m):
                 edge_index = random.choice(range(int((n * (n - 1)) / 2)))
-                v = int(1 + math.floor(
-                    -0.5 + math.sqrt(0.25 + 2 * edge_index)))
+                v = int(1 + math.floor(-0.5 + math.sqrt(0.25 + 2 * edge_index)))
                 w = edge_index - int((v * (v - 1)) / 2)
                 edge = (w, v)
                 if edge not in used_edges:
@@ -947,7 +928,7 @@ try:
         same soft geometric network model.
 
         The intra-layer networks are generated using the networkx function
-        soft_random_geometeric_graph.
+        soft_random_geometric_graph.
 
         Parameters
         ----------

@@ -136,7 +136,6 @@ class TestModels(unittest.TestCase):
         )
 
     def test_conf_overlaps(self):
-        random.seed(42)
         ol_dict = {
             (0, 0): {0: 0, 1: 0, 2: 1, 3: 1},
             (0, 1): {0: 1, 1: 1, 2: 0},
@@ -146,6 +145,40 @@ class TestModels(unittest.TestCase):
         self.assertListEqual(
             list(model.edges),
             [(0, 1, 0, 0, 1), (0, 1, 1, 1, 1), (2, 3, 0, 0, 1), (4, 5, 1, 1, 1)],
+        )
+        ol_dict = {
+            (0, 0): {0: 1, 1: 0, 2: 1, 3: 2},
+            (0, 1): {0: 1, 1: 1, 2: 0},
+            (1, 1): {0: 0, 1: 1, 4: 2, 5: 1},
+        }
+        random.seed(1)
+        model = models.conf_overlaps(ol_dict)
+        self.assertSetEqual(
+            set(model.edges),
+            {
+                (0, 1, 0, 0, 1),
+                (0, 1, 1, 1, 1),
+                (0, 3, 0, 0, 1),
+                (1, 4, 1, 1, 1),
+                (2, 3, 0, 0, 1),
+                (4, 5, 1, 1, 1),
+            },
+        )
+
+    def test_ba_total_degree(self):
+        random.seed(42)
+        model = models.ba_total_degree(100, [1, 2])
+        self.assertEqual(len(list(model.edges)), 295)
+        self.assertListEqual(
+            list(model.edges)[10:12], [(0, 12, 1, 1, 1), (0, 22, 1, 1, 1)]
+        )
+
+    def test_geo(self):
+        random.seed(42)
+        model = models.geo(200, [10, 10])
+        self.assertEqual(len(list(model.edges)), 26)
+        self.assertListEqual(
+            list(model.edges)[:2], [(2, 90, 0, 0, 1), (2, 186, 0, 0, 1)]
         )
 
 
@@ -158,6 +191,8 @@ def test_models():
     suite.addTest(TestModels("test_full_multiplex_network"))
     suite.addTest(TestModels("test_er_partially_interconnected"))
     suite.addTest(TestModels("test_conf_overlaps"))
+    suite.addTest(TestModels("test_ba_total_degree"))
+    suite.addTest(TestModels("test_geo"))
 
     return unittest.TextTestRunner().run(suite).wasSuccessful()
 
