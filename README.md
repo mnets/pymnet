@@ -49,5 +49,5 @@ Before you get started, please check out our [contribution guide](CONTRIBUTING.m
 
 ## Asking Questions
 
-* For bugs, feature requests, etc., please open an issue in our [issue tracker](/issues).
+* For bugs, feature requests, etc., please open an issue in our [issue tracker](https://github.com/mnets/pymnet/issues).
 * Otherwise, feel free to contact the main developer: [Mikko Kivelä](http://www.mkivela.com/)
