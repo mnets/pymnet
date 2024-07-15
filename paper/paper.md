@@ -93,7 +93,7 @@ To solve multilayer-network isomorphisms, `pymnet` uses a backend package, which
 For multilayer-network visualization, `pymnet` uses [matplotlib](https://matplotlib.org/) as its default backend, enabling users to exert low-level control over figure aesthetics to produce publication-quality plots. 
 Support for interactive figures is provided via JavaScript and [D3.js](https://d3js.org/) as a backend.
 
-The only other library offering tools to work with multilayer networks in Python is [multiNetX](https://github.com/nkoub/multinetx), which appeared after `pymnet` and seems no longer actively maintained. 
+To the best of our knowledge, the only other libraries offering tools to work with multilayer networks in Python are [multiNetX](https://github.com/nkoub/multinetx) and [py3plex](https://github.com/SkBlaz/py3plex), both of which appeared after `pymnet`. 
  Support for working with multilayer networks in Julia is offered by [MultilayerGraphs.jl](https://github.com/JuliaGraphs/MultilayerGraphs.jl) from @moroni2023, who also compile a list of R packages offering similar functionality. 
 
 # Projects Using `pymnet`
