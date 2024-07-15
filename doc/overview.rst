@@ -24,7 +24,7 @@ For example, the following code constructs and visualizes a small multiplex soci
 
    fig_social = draw(net_social, layout="circular", layerPadding=0.2, defaultLayerLabelLoc=(0.9,0.9))
 
-.. image:: socialnet.png
+.. figure:: /_static/socialnet.png
   :width: 400
   :alt: An image of a small multiplex social network.
 
