@@ -20,7 +20,7 @@ if not has_display:
             try:
                 matplotlib.use(ib, force=True)
                 break
-            except ImportError:
+            except (ImportError, RuntimeError):
                 matplotlib.use("Agg")
                 continue
     else:
