@@ -173,6 +173,7 @@ class TestModels(unittest.TestCase):
             list(model.edges)[10:12], [(0, 12, 1, 1, 1), (0, 22, 1, 1, 1)]
         )
 
+    # TODO double-check model implementation
     def test_geo(self):
         random.seed(42)
         model = models.geo(200, [10, 10])
@@ -180,6 +181,18 @@ class TestModels(unittest.TestCase):
         self.assertListEqual(
             list(model.edges)[:2], [(2, 90, 0, 0, 1), (2, 186, 0, 0, 1)]
         )
+
+    def test_ws(self):
+        random.seed(42)
+        model = models.ws(10, [20, 20])
+        self.assertEqual(len(list(model.edges)), 40)
+        self.assertListEqual(
+            list(model.edges)[10:12], [(1, 9, 0, 0, 1), (1, 4, 0, 0, 1)]
+        )
+
+    # TODO double-check model implementation
+    def test_er_overlaps_match_aggregated(self):
+        pass
 
 
 def test_models():
@@ -193,6 +206,8 @@ def test_models():
     suite.addTest(TestModels("test_conf_overlaps"))
     suite.addTest(TestModels("test_ba_total_degree"))
     suite.addTest(TestModels("test_geo"))
+    suite.addTest(TestModels("test_ws"))
+    suite.addTest(TestModels("test_er_overlaps_match_aggregated"))
 
     return unittest.TextTestRunner().run(suite).wasSuccessful()
 
