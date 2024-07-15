@@ -7,6 +7,15 @@ It is designed for network scientists with an easy-to-use yet flexible interface
 
 To learn more about the concepts and design principles underlying `pymnet`, check out [this overview](https://mnets.github.io/pymnet/overview.html).
 
+## Features
+
+* Written in pure Python
+* Full support for general [multilayer networks](http://comnet.oxfordjournals.org/content/2/3/203)
+* Efficient handling of multiplex networks (with automatically generated lazy evaluation of coupling edges)
+* Extensive functionality –– analysis, transformations, reading and writing networks, network models, etc.
+* Flexible multilayer-network visualization (using Matplotlib and D3)
+* Integration with [NetworkX](https://networkx.org/) for monoplex network analysis
+
 ## Working with pymnet
 
 ### Installation
@@ -31,16 +40,6 @@ fig_social = draw(net_social, layout="circular", layerPadding=0.2, defaultLayerL
 ```
 ![An image of a small multiplex social network.](socialnet.png)
 
-
-
-## Features
-
-* Written in pure Python
-* Full support for general [multilayer networks](http://comnet.oxfordjournals.org/content/2/3/203)
-* Efficient handling of multiplex networks (with automatically generated lazy evaluation of coupling edges)
-* Extensive functionality –– analysis, transformations, reading and writing networks, network models, etc.
-* Flexible multilayer-network visualization (using Matplotlib and D3)
-* Integration with [NetworkX](https://networkx.org/) for monoplex network analysis
 
 ## Contributing
 
