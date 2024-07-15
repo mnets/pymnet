@@ -29,7 +29,7 @@ net_social["Alice", "Bob", "Married"] = 1
 
 fig_social = draw(net_social, layout="circular", layerPadding=0.2, defaultLayerLabelLoc=(0.9,0.9))
 ```
-![An image of a small multiplex social network.](/doc/tutorials/socialnet.png | width = 50)
+![An image of a small multiplex social network.](socialnet.png | width = 50)
 
 
 
