@@ -15,7 +15,7 @@ authors:
   affiliation: "2"
 - name: Corinna Coupette
   orcid: 0000-0001-9151-2092
-  affiliation: "3,4"
+  affiliation: "1,3,4"
 - name: Mikko Kivelä
   orcid: 0000-0003-2049-1954
   affiliation: "1" 
