@@ -25,7 +25,7 @@ We recommend executing the following command in a virtual environment:
 ### Usage
 To get started with `pymnet`, check out our [tutorials](https://mnets.github.io/pymnet/tutorials) –– and when in doubt, consult the [API reference](https://mnets.github.io/pymnet/reference.html) contained in our [documentation](https://mnets.github.io/pymnet/).
 
-As a small example, with the following code, we can create a small multiplex network capturing different types of social relations between individuals and visualize the result:
+As an introductory example, with the following code, we can create a small multiplex network capturing different types of social relations between individuals and visualize the result:
 
 ```python
 from pymnet import *
