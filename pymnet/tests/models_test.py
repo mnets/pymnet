@@ -1,4 +1,5 @@
 import math
+import random
 import sys
 import unittest
 
@@ -14,7 +15,7 @@ class TestModels(unittest.TestCase):
         size = 10
         full = net.MultilayerNetwork(aspects=0)
         models.single_layer_er(
-            full, range(10, 10 + size), p=None, edges=(size * (size - 1))//2
+            full, range(10, 10 + size), p=None, edges=(size * (size - 1)) // 2
         )
         for i in full:
             for j in full:
@@ -107,27 +108,45 @@ class TestModels(unittest.TestCase):
         self.assertEqual(set(net.A["l2"]), set(range(20, 120)))
 
     def test_full_multiplex_network(self):
-        self.assertEqual(
-            diagnostics.degs(
-                models.full(nodes=10, layers=None)), {9: 10})
+        self.assertEqual(diagnostics.degs(models.full(nodes=10, layers=None)), {9: 10})
 
         self.assertEqual(
-            diagnostics.degs(
-                models.full(nodes=10, layers=['a', 'b'])),
-            {10: 20})
+            diagnostics.degs(models.full(nodes=10, layers=["a", "b"])), {10: 20}
+        )
         self.assertEqual(
-            diagnostics.multiplex_degs(
-                models.full(nodes=10, layers=['a', 'b'])),
-            {'a': {9: 10}, 'b': {9: 10}})
+            diagnostics.multiplex_degs(models.full(nodes=10, layers=["a", "b"])),
+            {"a": {9: 10}, "b": {9: 10}},
+        )
 
+        self.assertEqual(diagnostics.degs(models.full(nodes=10, layers=2)), {10: 20})
         self.assertEqual(
-            diagnostics.degs(
-                models.full(nodes=10, layers=2)),
-            {10: 20})
-        self.assertEqual(
-            diagnostics.multiplex_degs(
-                models.full(nodes=10, layers=2)),
-            {0: {9: 10}, 1: {9: 10}})
+            diagnostics.multiplex_degs(models.full(nodes=10, layers=2)),
+            {0: {9: 10}, 1: {9: 10}},
+        )
+
+    def test_er_partially_interconnected(self):
+        random.seed(42)
+        nodes = [list(range(10)), list(range(0, 10, 2))]
+        ps = [0.1, 0.1]
+        model = models.er_partially_interconnected(
+            nodes, ps, couplings=("categorical", 0.9)
+        )
+        self.assertListEqual(
+            list(model.edges)[:2], [(0, 5, 0, 0, 1), (0, 0, 0, 1, 0.9)]
+        )
+
+    def test_conf_overlaps(self):
+        random.seed(42)
+        ol_dict = {
+            (0, 0): {0: 0, 1: 0, 2: 1, 3: 1},
+            (0, 1): {0: 1, 1: 1, 2: 0},
+            (1, 1): {0: 0, 1: 0, 4: 1, 5: 1},
+        }
+        model = models.conf_overlaps(ol_dict)
+        self.assertListEqual(
+            list(model.edges),
+            [(0, 1, 0, 0, 1), (0, 1, 1, 1, 1), (2, 3, 0, 0, 1), (4, 5, 1, 1, 1)],
+        )
 
 
 def test_models():
@@ -137,6 +156,8 @@ def test_models():
     suite.addTest(TestModels("test_monoplex_configuration_model"))
     suite.addTest(TestModels("test_multiplex_configuration_model"))
     suite.addTest(TestModels("test_full_multiplex_network"))
+    suite.addTest(TestModels("test_er_partially_interconnected"))
+    suite.addTest(TestModels("test_conf_overlaps"))
 
     return unittest.TextTestRunner().run(suite).wasSuccessful()
 
