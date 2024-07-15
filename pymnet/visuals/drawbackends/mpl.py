@@ -11,20 +11,20 @@ from .. import drawnet
 # The previous backend-detection code caused problems on windows.
 # This fragment now tries to set an interactive backend where available and otherwise defaults to Agg,
 # which should mimic the previously intended behavior.
-has_display = bool(os.environ.get("DISPLAY", ""))
-if not has_display:
-    current_backend = matplotlib.get_backend()
-    interactive_backends = matplotlib.rcsetup.interactive_bk
-    if interactive_backends and current_backend not in interactive_backends:
-        for ib in interactive_backends:
-            try:
-                matplotlib.use(ib, force=True)
-                break
-            except (ImportError, RuntimeError):
-                matplotlib.use("Agg")
-                continue
-    else:
-        matplotlib.use("Agg")
+# has_display = bool(os.environ.get("DISPLAY", ""))
+# if not has_display:
+#     current_backend = matplotlib.get_backend()
+#     interactive_backends = matplotlib.rcsetup.interactive_bk
+#     if interactive_backends and current_backend not in interactive_backends:
+#         for ib in interactive_backends:
+#             try:
+#                 matplotlib.use(ib, force=True)
+#                 break
+#             except (ImportError, RuntimeError):
+#                 matplotlib.use("Agg")
+#                 continue
+#     else:
+#         matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle, PathPatch, Rectangle
