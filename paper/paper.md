@@ -83,8 +83,6 @@ Other amenities shipped with `pymnet` include graph generators for generalizatio
 
 # Real-World Example
 
-# Working with real-world data
-
 As an example of how `pymnet` can be used to analyze real-world data, we explore data documenting the *legal* international trade in endangered species, which is crucial for monitoring progress toward the United Nations' Sustainable Development Goal 15. 
 The Convention on International Trade in Endangered Species of Wild Fauna and Flora (CITES) regulates this trade, and the [CITES database](https://trade.cites.org/) provides highly granular trade data, accompanied by great [documentation](https://trade.cites.org/cites_trade_guidelines/en-CITES_Trade_Database_Guide.pdf). 
 
@@ -92,11 +90,10 @@ To keep matters simple, we analyze an excerpt from the CITES database, investiga
 In the multilayer-network model representing this data, our nodes are countries or territories importing and exporting endangered species (represented by their ISO-2 codes), our aspects are years (two elementary layers: 2010 and 2020) and trade terms (two elementary layers: "live" and "meat"), and our edges represent bilateral trades, measured in the number of specimens ("live") or the number of kilograms ("meat") traded. 
 More details on the data provenance and our preprocessing steps are available in the `pymnet` repository.
 
-When visualizing the data with `pymnet`, as done in \autoref{fig:cites2010} and \autoref{fig:cites2020} (where we draw undirected edges representing aggregate trade volumes of at least one million specimens resp. one thousand kilograms), we witness an expansion of trade from 2010 to 2020 in both volume and diversity of trade partners. 
+In \autoref{fig:cites2010} and \autoref{fig:cites2020}, we visualize the data with `pymnet`, only drawing undirected edges representing aggregate trade volumes of at least one million specimens resp. one thousand kilograms, scaling nodes by degree, and mapping trade volume to edge widths and edge colors.
+We observe an expansion of trade from 2010 to 2020 in both trade volume and diversity of trade partners, which is particularly pronounced for trade in meat.
 
-![CITES Trade in 2010. \label{fig:cites2010}](https://github.com/mnets/pymnet/blob/publication/paper/figs/cites-trades_commercial_live-meat_2010.png?raw=true "CITES Trade in 2010"){ width=50% }
-
-![CITES Trade in 2020. \label{fig:cites2020}](https://github.com/mnets/pymnet/blob/publication/paper/figs/cites-trades_commercial_live-meat_2020.png?raw=true "CITES Trade in 2020"){ width=50% }
+![CITES Trade in 2010. \label{fig:cites2010}](https://github.com/mnets/pymnet/blob/publication/paper/figs/cites-trades_commercial_live-meat_2010.png?raw=true "CITES Trade in 2010"){ width=45% } ![CITES Trade in 2020. \label{fig:cites2020}](https://github.com/mnets/pymnet/blob/publication/paper/figs/cites-trades_commercial_live-meat_2020.png?raw=true "CITES Trade in 2020"){ width=45% }
 
 # Installation and Usage
 
