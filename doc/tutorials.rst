@@ -13,4 +13,5 @@ The following tutorials will help you with to get started with using the library
    tutorials/visualizing
    tutorials/isomorphisms
    tutorials/nx
+   tutorials/realworld
 
