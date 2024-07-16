@@ -61,7 +61,7 @@ Beyond the general multilayer-network framework described by @kivela2014, `pymne
 In multiplex networks, edges across layers (interlayer edges) only occur between a node and its counterpart(s) on the other layers. 
 The advantages of this specialization include, for example, automatic lazy evaluation of interlayer-coupling edges.
 
-# Main Features and Examples
+# Main Features
 
 `pymnet`'s main data structure is `MultilayerNetwork`, which is implemented as a dictionary of dictionaries with a tensor-like interface, where each key represents a node, and each value is another dictionary containing information about the neighbors of each node, with the neighbors as keys and the weights of their incident edges as values.
 This structure ensures that adding nodes, removing nodes, querying for existence of edges, or querying for edge weights, all have constant average time complexity, and iterating over the neighbors of a node is linear in the number of nodes. Furthermore, the memory requirements are in $O(|V| + |L| + |E|)$ and typically dominated by the number of edges in the network.
@@ -80,6 +80,23 @@ The results are depicted in \autoref{fig:automorphisms}.
 Other amenities shipped with `pymnet` include graph generators for generalizations of popular random-graph models to multilayer networks (e.g., Erdős-Rényi models and configuration models) as well as utilities for multilayer-network visualization. 
 
 ![Using `pymnet` to enumerate and visualize automorphism orbits of nodes in single-aspect multiplex graphlets under node-layer isomorphism. [Visualization script](https://github.com/bolozna/multiplex-graphlet-analysis/blob/master/visualization.py) adapted from @sallmen2022. \label{fig:automorphisms}](https://github.com/mnets/pymnet/blob/publication/paper/figs/l2_n3.png?raw=true "Automorphism orbits of nodes with node-layer isomorphism"){ width=75% }
+
+# Real-World Example
+
+# Working with real-world data
+
+As an example of how `pymnet` can be used to analyze real-world data, we explore data documenting the *legal* international trade in endangered species, which is crucial for monitoring progress toward the United Nations' Sustainable Development Goal 15. 
+The Convention on International Trade in Endangered Species of Wild Fauna and Flora (CITES) regulates this trade, and the [CITES database](https://trade.cites.org/) provides highly granular trade data, accompanied by great [documentation](https://trade.cites.org/cites_trade_guidelines/en-CITES_Trade_Database_Guide.pdf). 
+
+To keep matters simple, we analyze an excerpt from the CITES database, investigating the trade in endangered species in two different *years* (2010 and 2020), for two different *trade terms* (live specimens and meat), and restricting ourselves to species taken from the *wild* and traded for *commercial* purposes.
+In the multilayer-network model representing this data, our nodes are countries or territories importing and exporting endangered species (represented by their ISO-2 codes), our aspects are years (two elementary layers: 2010 and 2020) and trade terms (two elementary layers: "live" and "meat"), and our edges represent bilateral trades, measured in the number of specimens ("live") or the number of kilograms ("meat") traded. 
+More details on the data provenance and our preprocessing steps are available in the `pymnet` repository.
+
+When visualizing the data with `pymnet`, as done in \autoref{fig:cites2010} and \autoref{fig:cites2020} (where we draw undirected edges representing aggregate trade volumes of at least one million specimens resp. one thousand kilograms), we witness an expansion of trade from 2010 to 2020 in both volume and diversity of trade partners. 
+
+![CITES Trade in 2010. \label{fig:cites2010}](https://github.com/mnets/pymnet/blob/publication/paper/figs/cites-trades_commercial_live-meat_2010.png?raw=true "CITES Trade in 2010"){ width=50% }
+
+![CITES Trade in 2020. \label{fig:cites2020}](https://github.com/mnets/pymnet/blob/publication/paper/figs/cites-trades_commercial_live-meat_2020.png?raw=true "CITES Trade in 2020"){ width=50% }
 
 # Installation and Usage
 
