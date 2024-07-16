@@ -50,7 +50,8 @@ dev = [
     "isort >= 5.13"
 ]
 tutorial = [
-    "jupyterlab >= 4.2"
+    "jupyterlab >= 4.2",
+    "pandas"
 ]
 
 [build-system]
