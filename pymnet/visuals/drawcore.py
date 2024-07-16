@@ -165,7 +165,7 @@ def draw(
 
     Various visible elements can be set values using a property setting scheme
     which is similar for all of the following properties: layer color, layer
-    label, node labe, node size, node color, edge color, edge width, and edge
+    label, node label, node size, node color, edge color, edge width, and edge
     style.
 
     Each of each property has three parameters that can be used to set the
