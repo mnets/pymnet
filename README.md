@@ -53,3 +53,5 @@ Before you get started, please check out our [contribution guide](CONTRIBUTING.m
 
 * For bugs, feature requests, etc., please use [GitHub issues][github-issues].
 * Otherwise, feel free to contact the main developer: [Mikko Kivelä](http://www.mkivela.com/)
+
+[github-issues]: https://github.com/mnets/pymnet/issues
