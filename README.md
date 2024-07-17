@@ -20,7 +20,9 @@ To learn more about the concepts and design principles underlying `pymnet`, chec
 
 ### Installation
 We recommend executing the following command in a virtual environment: 
-> pip install pymnet
+```console
+$ python -m pip install pymnet
+```
 
 ### Usage
 To get started with `pymnet`, check out our [tutorials](https://mnets.github.io/pymnet/tutorials) –– and when in doubt, consult the [API reference](https://mnets.github.io/pymnet/reference.html) contained in our [documentation](https://mnets.github.io/pymnet/).
@@ -28,19 +30,19 @@ To get started with `pymnet`, check out our [tutorials](https://mnets.github.io/
 As an introductory example, with the following code, we can create a small multiplex network capturing different types of social relations between individuals and visualize the result:
 
 ```python
-from pymnet import *
+import pymnet
 
-net_social = MultiplexNetwork(couplings="categorical", fullyInterconnected=False)
+net_social = pymnet.MultiplexNetwork(couplings="categorical", fullyInterconnected=False)
 net_social["Alice", "Bob", "Friends"] = 1
 net_social["Alice", "Carol", "Friends"] = 1
 net_social["Bob", "Carol", "Friends"] = 1
 net_social["Alice", "Bob", "Married"] = 1
 
-fig_social = draw(net_social, layout="circular", layerPadding=0.2, defaultLayerLabelLoc=(0.9,0.9))
+fig_social = pymnet.draw(net_social, layout="circular", layerPadding=0.2, defaultLayerLabelLoc=(0.9,0.9))
 ```
 
 <p align="center" style="margin-top:-6rem;margin-bottom:-3rem">
-    <img alt="An image of a small multiplex social network." width="60%" src="socialnet.png"> 
+    <img alt="An image of a small multiplex social network." width="60%" src="https://github.com/mnets/pymnet/raw/master/socialnet.png"> 
 </p>
 
 
