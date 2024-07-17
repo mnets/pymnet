@@ -7,7 +7,6 @@ import pickle
 
 import pymnet.transforms as transforms
 
-
 try:
     # Pre 3.10
     from collections import MutableMapping

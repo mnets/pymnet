@@ -1,7 +1,7 @@
-import sys
 import os
-import unittest
+import sys
 import tempfile
+import unittest
 from operator import itemgetter
 
 from pymnet import net, netio

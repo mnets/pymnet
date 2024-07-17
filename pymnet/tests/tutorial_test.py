@@ -1,7 +1,8 @@
-import nbformat
-import unittest
 import subprocess
 import sys
+import unittest
+
+import nbformat
 
 
 class TestTutorials(unittest.TestCase):

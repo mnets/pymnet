@@ -5,8 +5,11 @@ import random
 
 import pymnet
 
-from .reqs import (default_calculate_required_lengths, default_check_reqs,
-                   relaxed_check_reqs)
+from .reqs import (
+    default_calculate_required_lengths,
+    default_check_reqs,
+    relaxed_check_reqs,
+)
 
 
 def sample_multilayer_subgraphs_esu(

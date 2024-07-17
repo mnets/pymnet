@@ -5,6 +5,9 @@
 import os
 
 import matplotlib
+import matplotlib.pyplot as plt
+from matplotlib.patches import Circle, PathPatch, Rectangle
+from mpl_toolkits.mplot3d import Axes3D, art3d
 
 from .. import drawnet
 
@@ -26,9 +29,6 @@ from .. import drawnet
 #     else:
 #         matplotlib.use("Agg")
 
-import matplotlib.pyplot as plt
-from matplotlib.patches import Circle, PathPatch, Rectangle
-from mpl_toolkits.mplot3d import Axes3D, art3d
 
 defaultLayerColors = ["red", "green", "blue"]
 
