@@ -29,10 +29,10 @@ def graphlets(n, layers, n_l=None, couplings=None, allowed_aspects="all"):
     -------
     nets : dict (key: n_nodes, value: list of MultiplexNetwork objects)
         graphlets
-    invariants : dict (key: str(complete invariant), value: tuple(index in 'nets': n_nodes, index in the list of multiplex networks))
+    invariants : dict (key: complete invariant, value: tuple(index in 'nets': n_nodes, index in the list of multiplex networks))
         complete invariants of the graphlets, the values can be used to match the graphlets in 'nets'
     """
-    if n_l == None:
+    if n_l is None:
         n_l = len(layers)
 
     nets = {}
@@ -42,17 +42,18 @@ def graphlets(n, layers, n_l=None, couplings=None, allowed_aspects="all"):
     for net_layers in itertools.combinations(layers, n_l):
         layer_combs = layer_combinations(net_layers)
         for layer_comb in layer_combs:
-            net = pymnet.MultiplexNetwork(couplings=couplings, fullyInterconnected=True)
+            net = pymnet.MultiplexNetwork(
+                couplings=couplings, fullyInterconnected=True)
             for layer in layer_comb:
                 net[0, 1, layer] = 1
 
             for layer in net_layers:
                 net.add_layer(layer)
 
-            ci = pymnet.get_complete_invariant(net, allowed_aspects=allowed_aspects)
-            ci_s = str(ci)
-            if not ci_s in invariants:
-                invariants[ci_s] = (2, len(nets2))
+            ci = pymnet.get_complete_invariant(
+                net, allowed_aspects=allowed_aspects)
+            if ci not in invariants:
+                invariants[ci] = (2, len(nets2))
                 nets2.append(net)
 
     nets[2] = nets2
@@ -77,13 +78,13 @@ def graphlets(n, layers, n_l=None, couplings=None, allowed_aspects="all"):
 
                         for layer in net_layers:
                             new_net.add_layer(layer)
-                        # check if isomorphic with a previous graph & add only if not isomorphic
+                        # check if isomorphic with a previous graph & add only
+                        # if not isomorphic
                         ci = pymnet.get_complete_invariant(
                             new_net, allowed_aspects=allowed_aspects
                         )
-                        ci_s = str(ci)
-                        if not ci_s in invariants:
-                            invariants[ci_s] = (i + 1, len(nets_i_1))
+                        if ci not in invariants:
+                            invariants[ci] = (i + 1, len(nets_i_1))
                             nets_i_1.append(new_net)
 
         nets[i + 1] = nets_i_1
@@ -106,8 +107,9 @@ def automorphism_orbits(nets, allowed_aspects="all"):
     -------
     auts : dict (key: (n_nodes, net_index, node), value: node_orbit_index)
         Automorphism orbits. 'n_nodes' is the key in 'nets'. 'net_index' is the
-        index in the list of networks. 'node' is the node name in the given network.
-        'node_orbit_index' gets the same value for nodes that are in the same orbit.
+        index in the list of networks. 'node' is the node name in the given
+        network. 'node_orbit_index' gets the same value for nodes that are in
+        the same orbit.
     """
 
     auts = dd()
@@ -189,7 +191,7 @@ def orbit_equations(n, nets, auts, invs, allowed_aspects="all"):
         graphlets, as returned by graphlets
     auts : dd (key: (n_nodes, net_index, node), value: node)
         automorphisms, as returned by automorphism_orbits
-    invs : dict (key: str(complete invariant), value: tuple(n_nodes, net_index in nets))
+    invs : dict (key: complete invariant, value: tuple(n_nodes, net_index in nets))
         complete invariants of the graphlets, as returned by graphlets
     allowed_aspects : list, string
         the aspects that can be permutated when computing isomorphisms
@@ -248,10 +250,8 @@ def orbit_equations(n, nets, auts, invs, allowed_aspects="all"):
 
                         comb_nets += add_e_nets
                         for comb_net in comb_nets:
-                            ci_comb = str(
-                                pymnet.get_complete_invariant(
-                                    comb_net[0], allowed_aspects=allowed_aspects
-                                )
+                            ci_comb = pymnet.get_complete_invariant(
+                                comb_net[0], allowed_aspects=allowed_aspects
                             )
                             iso_net = invs[ci_comb]
                             iso = pymnet.get_isomorphism(
@@ -269,7 +269,7 @@ def orbit_equations(n, nets, auts, invs, allowed_aspects="all"):
                                 iso_net[1],
                                 auts[iso_net[0], iso_net[1], node_o],
                             )
-                            if not new_orbit in new_orbits:
+                            if new_orbit not in new_orbits:
                                 new_orbits.add(new_orbit)
                                 new_nets[new_orbit] = comb_net
 
@@ -337,9 +337,8 @@ def subtrahend(orbit1, orbit2, nets, auts, invs, allowed_aspects="all"):
         for nodes_s in partition:
             nodes_g = set(nodes_s) | set([the_node])
             sub_net = pymnet.subnet(net1, nodes_g, layers)
-            ci_sub = str(
-                pymnet.get_complete_invariant(sub_net, allowed_aspects=allowed_aspects)
-            )
+            ci_sub = pymnet.get_complete_invariant(
+                sub_net, allowed_aspects=allowed_aspects)
             if ci_sub in invs and invs[ci_sub] == (n_nodes2, orbit2[1]):
                 iso = pymnet.get_isomorphism(
                     sub_net, net2, allowed_aspects=allowed_aspects
@@ -439,7 +438,8 @@ def combine_orbits(orbit1, orbit2, nets, allowed_aspects="all"):
             new_net[e[0], e[1], e[2], e[3]] = e[4]
 
     new_nets.append(new_net)
-    ci = str(pymnet.get_complete_invariant(new_net, allowed_aspects=allowed_aspects))
+    ci = pymnet.get_complete_invariant(
+        new_net, allowed_aspects=allowed_aspects)
     new_invs.add(ci)
 
     if allowed_aspects != [0]:
@@ -453,10 +453,9 @@ def combine_orbits(orbit1, orbit2, nets, allowed_aspects="all"):
                 if e[0] != e[1]:
                     new_net[e[0], e[1], e[2], e[3]] = e[4]
 
-            ci = str(
-                pymnet.get_complete_invariant(new_net, allowed_aspects=allowed_aspects)
-            )
-            if not ci in new_invs:
+            ci = pymnet.get_complete_invariant(
+                new_net, allowed_aspects=allowed_aspects)
+            if ci not in new_invs:
                 new_nets.append(new_net)
                 new_invs.add(ci)
 
@@ -532,10 +531,9 @@ def merge_nodes(both_orbit_nodes, net, allowed_aspects="all"):
                 if neighbor[0] != node2:
                     new_net[node1, neighbor[0], layer, neighbor[1]] = 1
 
-        ci = str(
-            pymnet.get_complete_invariant(new_net, allowed_aspects=allowed_aspects)
-        )
-        if not ci in new_invs:
+        ci = pymnet.get_complete_invariant(
+            new_net, allowed_aspects=allowed_aspects)
+        if ci not in new_invs:
             new_nets.append(new_net)
             new_nets_and_nodes.append((new_net, both_orbit_nodes + [node1]))
             new_invs.add(ci)
@@ -711,25 +709,27 @@ def coefficient_help(
     net2 = nets[orbit2[0]][orbit2[1]]
     n_nodes1 = len(net1.slices[0])
 
-    for node_comb in itertools.combinations(nodes, n_nodes1 - len(both_orbit_nodes)):
+    node_combs = itertools.combinations(
+        nodes, n_nodes1 - len(both_orbit_nodes))
+    for node_comb in node_combs:
         nodes_s2 = nodes_a - set(node_comb)
         nodes_s1 = (nodes_a - nodes_s2) | set(both_orbit_nodes)
         sub1 = pymnet.subnet(net, nodes_s1, layers)
         sub2 = pymnet.subnet(net, nodes_s2, layers)
-        ci_sub1 = str(
-            pymnet.get_complete_invariant(sub1, allowed_aspects=allowed_aspects)
-        )
-        ci_sub2 = str(
-            pymnet.get_complete_invariant(sub2, allowed_aspects=allowed_aspects)
-        )
-        if not ci_sub1 in invs or not ci_sub2 in invs:
+        ci_sub1 = pymnet.get_complete_invariant(
+            sub1, allowed_aspects=allowed_aspects)
+        ci_sub2 = pymnet.get_complete_invariant(
+            sub2, allowed_aspects=allowed_aspects)
+        if ci_sub1 not in invs or ci_sub2 not in invs:
             continue
         if invs[ci_sub1] == (orbit1[0], orbit1[1]) and invs[ci_sub2] == (
             orbit2[0],
             orbit2[1],
         ):
-            iso1 = pymnet.get_isomorphism(sub1, net1, allowed_aspects=allowed_aspects)
-            iso2 = pymnet.get_isomorphism(sub2, net2, allowed_aspects=allowed_aspects)
+            iso1 = pymnet.get_isomorphism(sub1, net1,
+                                          allowed_aspects=allowed_aspects)
+            iso2 = pymnet.get_isomorphism(sub2, net2,
+                                          allowed_aspects=allowed_aspects)
             if the_node in iso1[0]:
                 iso_node1 = iso1[0][the_node]
             else:
@@ -754,7 +754,7 @@ def orbit_name(node, net, nets, invs, auts, allowed_aspects="all"):
     finds the name of the orbit given node and net
     """
 
-    ci = str(pymnet.get_complete_invariant(net, allowed_aspects=allowed_aspects))
+    ci = pymnet.get_complete_invariant(net, allowed_aspects=allowed_aspects)
     i, j = invs[ci]
     net_i = nets[i][j]
     iso = pymnet.get_isomorphism(
@@ -765,9 +765,8 @@ def orbit_name(node, net, nets, invs, auts, allowed_aspects="all"):
     return (i, j, k)
 
 
-def partitions(
-    s, r
-):  # Gareth Rees https://stackoverflow.com/questions/14559946/producing-all-groups-of-fixed-length-combinations
+# Gareth Rees https://stackoverflow.com/questions/14559946/producing-all-groups-of-fixed-length-combinations
+def partitions(s, r):
     """
     Generate partitions of the iterable `s` into subsets of size `r`.
 
@@ -787,9 +786,8 @@ def partitions(
             yield (first_subset,) + p
 
 
-def partitions_with_remainder(
-    s, r
-):  # Gareth Rees https://stackoverflow.com/questions/14559946/producing-all-groups-of-fixed-length-combinations
+# Gareth Rees https://stackoverflow.com/questions/14559946/producing-all-groups-of-fixed-length-combinations
+def partitions_with_remainder(s, r):
     """
     Generate partitions of the iterable `s` into subsets of size
     `r` plus a remainder.
@@ -800,7 +798,7 @@ def partitions_with_remainder(
     [((0, 1, 2),), ((1, 2), (0,)), ((0, 2), (1,)), ((0, 1), (2,))]
     """
     s = set(s)
-    for n in xrange(len(s), -1, -r):  # n is size of remainder.
+    for n in range(len(s), -1, -r):  # n is size of remainder.
         if n == 0:
             for p in partitions(s, r):
                 yield p

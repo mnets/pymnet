@@ -20,7 +20,7 @@ def orbit_counts_all(net, n, nets, invs, auts, orbit_list, allowed_aspects="all"
         max number of nodes
     nets : dict (key: n_nodes, value: list of networks)
         Graphlets, as produced by graphlets
-    invs : dict (key: str(complete invariant), value: tuple(n_nodes, net_index in nets))
+    invs : dict (key: complete invariant, value: tuple(n_nodes, net_index in nets))
         complete invariants of the graphlets, as produced by graphlet
     auts : dd (key: (n_nodes, net_index, node), value: node)
         automorphisms, as produced by automorphism_orbits
@@ -71,17 +71,21 @@ def orbit_counts_all(net, n, nets, invs, auts, orbit_list, allowed_aspects="all"
         processed.add(node0)
         for node_comb in node_sets:
             sub_net = pymnet.subnet(net, node_comb, layers)
-            ci_sub = str(
-                pymnet.get_complete_invariant(sub_net, allowed_aspects=allowed_aspects)
-            )
+            ci_sub = pymnet.get_complete_invariant(
+                sub_net, allowed_aspects=allowed_aspects)
             if ci_sub not in invs:
                 raise KeyError(
-                    "The network contains a graphlet not found in the pre-constructed complete invariant dictionary (invs). This can be caused by invs creation not being compatible with the attributes of the network. For example, the network might not be fully interconnected."
+                    "The network contains a graphlet not found in the "
+                    "pre-constructed complete invariant dictionary (invs). "
+                    "This can be caused by invs creation not being compatible "
+                    "with the attributes of the network. For example, the "
+                    "network might not be fully interconnected."
                 )
             i = invs[ci_sub][0]
             j = invs[ci_sub][1]
             nw = nets[i][j]
-            iso = pymnet.get_isomorphism(sub_net, nw, allowed_aspects=allowed_aspects)
+            iso = pymnet.get_isomorphism(
+                sub_net, nw, allowed_aspects=allowed_aspects)
             for node in node_comb:
                 if node in iso[0]:
                     orbits[node, (i, j, auts[i, j, iso[0][node]])] += 1
@@ -165,7 +169,7 @@ def orbit_counts(
         dictionary where the counts will be stored
     auts : dd (key: (n_nodes, net_index, node), value: node)
         automorphism orbits
-    invs : dict (key: str(complete invariant), value: tuple(n_nodes, net_index in nets))
+    invs : dict (key: complete invariant, value: tuple(n_nodes, net_index in nets))
         complete invariants of the graphlets
     orbit_list : list of orbits
     allowed_aspects : list, string
@@ -179,9 +183,8 @@ def orbit_counts(
     node_sets = touching_orbit_nodes(node0, net, n)
     for nodes_s in node_sets:
         sub_net = pymnet.subnet(net, nodes_s, layers)
-        ci_sub = str(
-            pymnet.get_complete_invariant(sub_net, allowed_aspects=allowed_aspects)
-        )
+        ci_sub = pymnet.get_complete_invariant(
+            sub_net, allowed_aspects=allowed_aspects)
         i = invs[ci_sub][1]
         n_nodes = invs[ci_sub][0]
         nw = nets[n_nodes][i]

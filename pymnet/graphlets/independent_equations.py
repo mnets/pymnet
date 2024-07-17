@@ -34,7 +34,8 @@ def independent_equations(n, n_l, layers, allowed_aspects="all"):
     Implemented for up to 4-node graphlets
     """
 
-    nets, invs = graphlets.graphlets(n, layers, n_l, allowed_aspects=allowed_aspects)
+    nets, invs = graphlets.graphlets(
+        n, layers, n_l, allowed_aspects=allowed_aspects)
     auts = graphlets.automorphism_orbits(nets, allowed_aspects=allowed_aspects)
     orbit_lists = graphlets.list_orbits(auts)
     eqs = graphlets.orbit_equations(
@@ -54,7 +55,8 @@ def independent_equations(n, n_l, layers, allowed_aspects="all"):
             continue
 
         eqNet = eq_network(
-            undefined, set_eqs, n, nets, auts, invs, allowed_aspects=allowed_aspects
+            undefined, set_eqs, n, nets, auts, invs,
+            allowed_aspects=allowed_aspects
         )
 
         for eq in eqs_sub:
@@ -285,7 +287,7 @@ def eq_network(undefined, set_eqs, max_nodes, nets, auts, invs, allowed_aspects=
         graphlets
     auts : dd (key: (n_nodes, net_index, node), value: node)
         automorphisms
-    invs : dict (key: str(complete invariant), value: tuple(n_nodes, net_index in nets))
+    invs : dict (key: complete invariant, value: tuple(n_nodes, net_index in nets))
         complete invariants of the graphlets
     allowed_aspects : list, string
         the aspects that can be permutated when computing isomorphisms
@@ -359,7 +361,6 @@ def eq_network(undefined, set_eqs, max_nodes, nets, auts, invs, allowed_aspects=
 
 
 def too_many_nodes(eq, orbit, max_nodes):
-
     n = orbit[0]
 
     if len(eq[0]) != 3:
@@ -382,12 +383,11 @@ def too_many_nodes(eq, orbit, max_nodes):
 
 
 def find_equations(orbit, eq, set_eqs):
-
     eqs = set()
 
     for orbit_eq in set_eqs[eq]:
         key = find_key(orbit, orbit_eq, set_eqs)
-        if key != None:
+        if key is not None:
             eqs.add(key)
         else:
             eqs = set()
@@ -397,7 +397,6 @@ def find_equations(orbit, eq, set_eqs):
 
 
 def find_key(orbit1, orbit2, eqs):
-
     if orbit1 == orbit2 and (orbit1, 2) in eqs:
         return (orbit1, 2)
 
@@ -442,7 +441,8 @@ def three_orbit_equations(
 
         else:
             sub = graphlets.subtrahend(
-                orbit, orbit1, nets, auts, invs, allowed_aspects=allowed_aspects
+                orbit, orbit1, nets, auts, invs,
+                allowed_aspects=allowed_aspects
             )
             key = find_key(orbit, orbit1, set_eqs)
             if sub == 0:
@@ -498,7 +498,6 @@ def three_orbit_equations(
 
 
 def all_inds_and_deps(eq_net):
-
     eqs = []
     eq_is = []
     eq_edges = []
@@ -530,13 +529,10 @@ def all_inds_and_deps(eq_net):
             eq_net_best = eq_net.copy()
             max_deps = len(dependent)
 
-        # break # remove this!!! only for 4-node 3-layer vertex isomorphism
-
     return inds, deps, eq_net_best
 
 
 def SCCs(net):
-
     net_r = reverse(net)
     post = DFS(net_r)
 
@@ -556,7 +552,6 @@ def SCCs(net):
 
 
 def reverse(eq_net):
-
     net_r = {}
 
     for eq in eq_net:
@@ -570,12 +565,11 @@ def reverse(eq_net):
 
 
 def explore(v, net, visited, post):
-
     visited_c = visited.copy()
     visited_c.add(v)
     if len(net[v]) > 0:
         for u in net[v]:
-            if not u in visited_c:
+            if u not in visited_c:
                 visited_c, post = explore(u, net, visited_c, post)
 
     post.append(v)
@@ -584,18 +578,16 @@ def explore(v, net, visited, post):
 
 
 def DFS(net):
-
     visited = set()
     post = []
     for v in net:
-        if not v in visited:
+        if v not in visited:
             visited, post = explore(v, net, visited, post)
 
     return post
 
 
 def independents_and_dependents(SCC, eq_net):
-
     independent = set()
     dependent = set()
 
