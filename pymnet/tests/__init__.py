@@ -1,5 +1,6 @@
 from .cc_test import test_cc
 from .diagnostics_test import test_diagnostics
+from .graphlets_test import test_graphlets
 from .io_test import test_io
 from .isomorphisms_test import test_isomorphisms
 from .models_test import test_models
@@ -29,6 +30,7 @@ def test_all():
     codes.append(test_visuals())
     codes.append(test_isomorphisms())
     codes.append(test_sampling())
+    codes.append(test_graphlets())
     if nximported:
         codes.append(test_nxwrap())
     return all(codes)
