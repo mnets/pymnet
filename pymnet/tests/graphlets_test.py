@@ -217,6 +217,153 @@ class TestGraphlets(unittest.TestCase):
         target_reds = ["(3, 7, 0)", "(3, 9, 0)", "(3, 6, 0)"]
         assert set(reds) == set(target_reds)
 
+    ### tests for graphlet_measures file
+
+    def test_orbit_counts_all(self):
+        M = net.MultiplexNetwork(couplings="categorical", fullyInterconnected=True)
+        M[42, 99, "x", "x"] = 1
+        M[42, 99, "z", "z"] = 1
+        M[99, 101, "z", "z"] = 1
+        M[42, 101, "z", "z"] = 1
+        nets, invs = graphlets.graphlets(
+            n=3,
+            layers=["a", "b", "c"],
+            n_l=2,
+            couplings="categorical",
+            allowed_aspects="all",
+        )
+        auts = graphlets.automorphism_orbits(nets, allowed_aspects="all")
+        orbit_is = graphlets.orbit_numbers(n=3, nets=nets, auts=auts)
+        orbit_list = graphlets.ordered_orbit_list(orbit_is)
+        orbits = graphlets.orbit_counts_all(
+            net=M,
+            n=3,
+            nets=nets,
+            invs=invs,
+            auts=auts,
+            orbit_list=orbit_list,
+            allowed_aspects="all",
+        )
+        target_orbits = {
+            (101, (2, 1, 0)): 0,
+            (42, (2, 1, 0)): 1,
+            (42, (3, 8, 1)): 0,
+            (42, (3, 2, 1)): 0,
+            (101, (3, 2, 1)): 0,
+            (42, (3, 3, 0)): 0,
+            (99, (3, 1, 0)): 0,
+            (101, (3, 3, 0)): 0,
+            (42, (3, 7, 0)): 0,
+            (42, (3, 4, 0)): 0,
+            (42, (3, 2, 0)): 0,
+            (99, (3, 4, 1)): 0,
+            (99, (3, 1, 1)): 0,
+            (99, (3, 9, 0)): 0,
+            (99, (3, 8, 1)): 0,
+            (42, (3, 1, 1)): 0,
+            (99, (3, 2, 0)): 0,
+            (99, (3, 8, 0)): 0,
+            (101, (3, 5, 0)): 1,
+            (101, (3, 2, 2)): 0,
+            (99, (3, 0, 0)): 0,
+            (42, (3, 0, 1)): 0,
+            (42, (3, 2, 2)): 0,
+            (42, (3, 4, 1)): 0,
+            (99, (3, 6, 0)): 0,
+            (101, (3, 4, 1)): 0,
+            (99, (3, 2, 1)): 0,
+            (101, (3, 6, 1)): 0,
+            (42, (3, 9, 0)): 0,
+            (42, (3, 6, 0)): 0,
+            (101, (3, 9, 0)): 0,
+            (99, (3, 0, 1)): 0,
+            (99, (3, 7, 2)): 0,
+            (99, (3, 5, 1)): 1,
+            (101, (3, 8, 1)): 0,
+            (101, (3, 8, 0)): 0,
+            (101, (3, 4, 0)): 0,
+            (101, (2, 0, 0)): 2,
+            (101, (3, 2, 0)): 0,
+            (99, (3, 5, 0)): 0,
+            (99, (3, 7, 0)): 0,
+            (42, (3, 6, 1)): 0,
+            (101, (3, 6, 0)): 0,
+            (101, (3, 1, 1)): 0,
+            (99, (3, 3, 0)): 0,
+            (42, (3, 1, 0)): 0,
+            (99, (3, 6, 1)): 0,
+            (42, (3, 8, 0)): 0,
+            (42, (3, 5, 0)): 0,
+            (99, (2, 1, 0)): 1,
+            (101, (3, 1, 0)): 0,
+            (101, (3, 0, 0)): 0,
+            (42, (3, 0, 0)): 0,
+            (101, (3, 0, 1)): 0,
+            (99, (3, 2, 2)): 0,
+            (101, (3, 5, 1)): 0,
+            (99, (2, 0, 0)): 1,
+            (42, (3, 5, 1)): 1,
+            (42, (2, 0, 0)): 1,
+            (101, (3, 7, 2)): 0,
+            (42, (3, 7, 2)): 0,
+            (99, (3, 4, 0)): 0,
+            (101, (3, 7, 0)): 0,
+        }
+        assert orbits == target_orbits
+
+    def test_orbit_counts(self):
+        M = net.MultiplexNetwork(couplings="categorical", fullyInterconnected=True)
+        M[42, 99, "x", "x"] = 1
+        M[42, 99, "z", "z"] = 1
+        M[99, 101, "z", "z"] = 1
+        M[42, 101, "z", "z"] = 1
+        nets, invs = graphlets.graphlets(
+            n=3,
+            layers=["a", "b", "c"],
+            n_l=2,
+            couplings="categorical",
+            allowed_aspects="all",
+        )
+        auts = graphlets.automorphism_orbits(nets, allowed_aspects="all")
+        orbit_is = graphlets.orbit_numbers(n=3, nets=nets, auts=auts)
+        orbit_list = graphlets.ordered_orbit_list(orbit_is)
+        orbits_n0 = dict()
+        graphlets.orbit_counts(
+            n=3,
+            node0=42,
+            net=M,
+            nets=nets,
+            orbits=orbits_n0,
+            invs=invs,
+            auts=auts,
+            orbit_list=orbit_list,
+            allowed_aspects="all",
+        )
+        target_orbits_n0 = {
+            (42, (3, 1, 0)): 0,
+            (42, (3, 1, 1)): 0,
+            (42, (3, 8, 1)): 0,
+            (42, (3, 8, 0)): 0,
+            (42, (3, 2, 1)): 0,
+            (42, (3, 7, 2)): 0,
+            (42, (3, 7, 0)): 0,
+            (42, (3, 0, 1)): 0,
+            (42, (3, 0, 0)): 0,
+            (42, (3, 5, 0)): 0,
+            (42, (3, 4, 1)): 0,
+            (42, (3, 4, 0)): 0,
+            (42, (3, 3, 0)): 0,
+            (42, (3, 5, 1)): 1,
+            (42, (3, 9, 0)): 0,
+            (42, (3, 2, 0)): 0,
+            (42, (2, 0, 0)): 1,
+            (42, (3, 2, 2)): 0,
+            (42, (3, 6, 1)): 0,
+            (42, (3, 6, 0)): 0,
+            (42, (2, 1, 0)): 1,
+        }
+        assert orbits_n0 == target_orbits_n0
+
 
 def makesuite():
     suite = unittest.TestSuite()
@@ -226,6 +373,8 @@ def makesuite():
     suite.addTest(TestGraphlets("test_orbit_equations"))
     suite.addTest(TestGraphlets("test_independent_equations"))
     suite.addTest(TestGraphlets("test_redundant_orbits"))
+    suite.addTest(TestGraphlets("test_orbit_counts_all"))
+    suite.addTest(TestGraphlets("test_orbit_counts"))
     return suite
 
 
