@@ -156,6 +156,18 @@ class TestGraphlets(unittest.TestCase):
             ((2, 1, 0), 2): {(3, 8, 0): 1, (3, 7, 2): 1, (3, 9, 0): 1},
         }
         assert orbit_eqs == target_orbit_eqs
+        # test with 4 nodes
+        nets, invs = graphlets.graphlets(
+            n=4,
+            layers=["a", "b", "c"],
+            n_l=2,
+            couplings="categorical",
+            allowed_aspects="all",
+        )
+        auts = graphlets.automorphism_orbits(nets, allowed_aspects="all")
+        orbit_eqs = graphlets.orbit_equations(
+            n=4, nets=nets, auts=auts, invs=invs, allowed_aspects="all"
+        )
 
     ### tests for independent_equations file
 
