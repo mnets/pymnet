@@ -41,7 +41,7 @@ A major advantage of representing complex systems as graphs is that the same gra
 However, the graph representation has its limitations: 
 Many systems contain nodes with multidimensional features, interactions of various types, different levels of hierarchy, or multiple modalities, which deserve to be modeled but cannot be described by simple graphs.
 Multilayer networks [@kivela2014] generalize graphs to capture the rich network data often associated with complex systems, allowing us to study a broad range of phenomena using the same representations, tools, and methods. 
-With `pymnet`, we introduce a Python package that provides the essential data structures and computational tools for multilayer network analysis.
+With `pymnet`, we introduce a Python package that provides the essential data structures and computational tools for multilayer-network analysis.
 As highlights, the library offers efficient and scalable implementations for sparse multilayer networks and multiplex networks, integration with `bliss` to analyze multilayer-network isomorphisms and automorphisms, and versatile methods for multilayer-network visualization.
 
 # Statement of Need
