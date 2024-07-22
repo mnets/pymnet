@@ -39,7 +39,7 @@ Many complex systems can be readily modeled as networks and represented as graph
 Such systems include social interactions, transport infrastructures, biological pathways, brains, ecosystems, and many more. 
 A major advantage of representing complex systems as graphs is that the same graph tools and methods can be applied in a wide variety of domains. 
 However, the graph representation has its limitations: 
-Many systems contain nodes with multidimensional features, interactions of various types, different levels of hierarchy, or multiple modalities, which deserve to be modeled but cannot be described by simple graphs.
+many systems contain nodes with multidimensional features, interactions of various types, different levels of hierarchy, or multiple modalities, which deserve to be modeled but cannot be described by simple graphs.
 Multilayer networks [@kivela2014] generalize graphs to capture the rich network data often associated with complex systems, allowing us to study a broad range of phenomena using the same representations, tools, and methods. 
 With `pymnet`, we introduce a Python package that provides the essential data structures and computational tools for multilayer-network analysis.
 As highlights, the library offers efficient and scalable implementations for sparse multilayer networks and multiplex networks, integration with `bliss` to analyze multilayer-network isomorphisms and automorphisms, and versatile methods for multilayer-network visualization.
@@ -49,7 +49,7 @@ As highlights, the library offers efficient and scalable implementations for spa
 [pymnet](https://github.com/mnets/pymnet) is a Python package for creating, analyzing, and visualizing multilayer networks. 
 It is designed for network scientists with an easy-to-use yet flexible interface, featuring, inter alia, representations of a very general class of multilayer networks, structural metrics of multilayer networks (e.g., clustering coefficients [@cozzo2015structure] and graphlet analysis [@sallmen2022]), multilayer-network transforms, multilayer-network isomorphisms and automorphisms [@kivela2017] (with [`bliss`](https://users.aalto.fi/~tjunttil/bliss/) [@junttila2011; @junttila2007]), and random multilayer-network models.
 
-Different kinds of multilayer network data are becoming more and more available, but our computational tools for handling such data are lagging behind. 
+Different kinds of multilayer network data are becoming increasingly available, but our computational tools for handling such data lag behind. 
 Python is a popular programming language for network scientists and data scientists, and `pymnet` addresses the need for a feature-rich multilayer-networks package in the Python language that is actively maintained.
 
 `pymnet` implements the general multilayer-network framework described by @kivela2014. 
@@ -65,7 +65,7 @@ The advantages of this specialization include, for example, automatic lazy evalu
 # Main Features
 
 `pymnet`'s main data structure is `MultilayerNetwork`, which is implemented as a dictionary of dictionaries with a tensor-like interface, where each key represents a node, and each value is another dictionary containing information about the neighbors of each node, with the neighbors as keys and the weights of their incident edges as values.
-This structure ensures that adding nodes, removing nodes, querying for existence of edges, or querying for edge weights, all have constant average time complexity, and iterating over the neighbors of a node is linear in the number of nodes. Furthermore, the memory requirements are in $O(|V| + |L| + |E|)$ and typically dominated by the number of edges in the network.
+This structure ensures that adding nodes, removing nodes, querying for existence of edges, or querying for edge weights all have constant average time complexity, and iterating over the neighbors of a node is linear in the number of nodes. Furthermore, the memory requirements are in $O(|V| + |L| + |E|)$ and typically dominated by the number of edges in the network.
 
 To represent multiplex networks, `pymnet` offers `MultiplexNetwork`, which exploits the special structure of interlayer edges for efficiency, storing intralayer edges separately for each layer and only generating interlayer edges according to the applicable interlayer-coupling rules when they are explicitly needed.
 This ensures that we can always iterate over intralayer edges in linear time, and that interlayer edges only require constant memory (i.e., the memory to store the rule to generate them).
