@@ -1,6 +1,8 @@
 # pymnet: A Python Library for Multilayer Networks
 
 [![codecov](https://codecov.io/gh/mnets/pymnet/graph/badge.svg?token=LI6QBAF7N0)](https://codecov.io/gh/mnets/pymnet)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.06930/status.svg)](https://doi.org/10.21105/joss.06930)
+
 
 `pymnet` is a Python package for creating, analyzing, and visualizing multilayer networks as formalized by [Kivelä et al. (2014)](https://doi.org/10.1093/comnet/cnu016).
 It is designed for network scientists with an easy-to-use yet flexible interface, featuring, inter alia, representations of a very general class of multilayer networks, structural metrics of multilayer networks, and random multilayer-network models. 
