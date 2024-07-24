@@ -78,9 +78,9 @@ From the graphlets, `pymnet` can compute the automorphism orbits of nodes or nod
 For example, we can use `pymnet` to enumerate and visualize all automorphism orbits of nodes in single-aspect multiplex graphlets with two or three nodes and two layers under node-layer isomorphism. 
 The results are depicted in \autoref{fig:automorphisms}. 
 
-Other amenities shipped with `pymnet` include graph generators for generalizations of popular random-graph models to multilayer networks (e.g., Erdős-Rényi models and configuration models) as well as utilities for multilayer-network visualization. 
+![Using `pymnet` to enumerate and visualize automorphism orbits of nodes in single-aspect multiplex graphlets under node-layer isomorphism. [Visualization script](https://github.com/bolozna/multiplex-graphlet-analysis/blob/master/visualization.py) adapted from @sallmen2022. \label{fig:automorphisms}](https://github.com/mnets/pymnet/blob/publication/paper/figs/l2_n3.png?raw=true "Automorphism orbits of nodes with node-layer isomorphism"){ width=75% } 
 
-![Using `pymnet` to enumerate and visualize automorphism orbits of nodes in single-aspect multiplex graphlets under node-layer isomorphism. [Visualization script](https://github.com/bolozna/multiplex-graphlet-analysis/blob/master/visualization.py) adapted from @sallmen2022. \label{fig:automorphisms}](https://github.com/mnets/pymnet/blob/publication/paper/figs/l2_n3.png?raw=true "Automorphism orbits of nodes with node-layer isomorphism"){ width=75% }
+Other amenities shipped with `pymnet` include graph generators for generalizations of popular random-graph models to multilayer networks (e.g., Erdős-Rényi models and configuration models) as well as utilities for multilayer-network visualization.
 
 # Real-World Example
 
